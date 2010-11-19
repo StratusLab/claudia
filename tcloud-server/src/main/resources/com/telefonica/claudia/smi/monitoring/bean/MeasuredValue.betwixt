@@ -1,0 +1,17 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+
+<info>
+
+<!--
+<hide property='measuredValueId'/>
+<hide property='measurementTypeId'/>
+<hide property='qualityTypeId'/>
+-->
+
+<element name='Sample'>
+	<attribute name='unit' property='unit' />
+	<attribute name='timestamp' property='registerDate' />
+	<attribute name='value' property='value' />
+	<addDefaults/>
+</element>
+</info>

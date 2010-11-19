@@ -1,0 +1,9 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<info>
+<element name='MeasureDescriptionList'>
+	<attribute name='href' property='href' />
+	<element name='Link' property='link' />
+	<element name="MeasureDescriptor"  property="measureDescriptors"/>
+</element>
+	<addDefaults/>
+</info>

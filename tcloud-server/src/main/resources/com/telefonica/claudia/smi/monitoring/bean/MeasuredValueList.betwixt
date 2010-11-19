@@ -1,0 +1,9 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<info primitiveTypes='element'>
+<element name='Measure'>
+	<attribute name='href' property='href' />
+	<element name='Link' property='link' />
+	<element name="Sample"  property="measuredValues"/>
+	<addDefaults/>
+</element>
+</info>

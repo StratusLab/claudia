@@ -1,0 +1,9 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<info primitiveTypes='attribute'>
+<element name='Link'>
+	<attribute name='rel' property='rel' />
+	<attribute name='type' property='type' />
+	<attribute name='href' property='href' />
+	<addDefaults/>
+</element>
+</info>

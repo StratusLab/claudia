@@ -1,0 +1,22 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<info>
+<hide property='measurementTypeId'/>
+<!--
+<hide property='analogDigital'/>
+<hide property='active'/>
+<hide property='elementId'/>
+<hide property='engineeringUnit'/>
+<hide property='itemName'/>
+-->
+<element name='MeasureDescriptor'>
+	<attribute name='href' property='href' />
+	<attribute name='name' property='name' />
+	<element name='Link' property='link1' />
+	<element name='Link' property='link2' />
+	<element name='Unit' property='valueType' />
+	<element name='MinValue' property='minValue' />
+	<element name='MaxValue' property='maxValue' />
+	<element name='Description' property='description' />
+	<addDefaults/>
+</element>
+</info>

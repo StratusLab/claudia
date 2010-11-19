@@ -1,0 +1,13 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+
+<info>
+<hide property='name'/>
+
+<element name='UnknownElements'>
+	<element name='Element'>
+		<attribute name='type' property='elementType' />
+		<attribute name='ref' property='ref' />	
+	</element>
+	<addDefaults/>
+</element>
+</info>
