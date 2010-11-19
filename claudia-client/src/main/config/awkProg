@@ -1,0 +1,7 @@
+/.*@KPICHANNELNAME.*/	{ for (i=0; i< NF; i++)
+			if ($(i+1) ~ /.*value.*/) {
+				substring = substr($(i+1), index($(i+1), "\""));	
+				gsub("\"", "", substring);
+				print substring;
+				}
+			}
