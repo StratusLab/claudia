@@ -1,0 +1,37 @@
+<assembly>
+  <id>deployable</id>
+
+  <formats>
+    <format>zip</format>
+  </formats>
+
+  <baseDirectory></baseDirectory>
+  
+  <fileSets>
+    <fileSet>
+      <directory>${project.build.directory}</directory>
+      <includes>
+        <include>*.jar</include>
+      </includes>
+      <outputDirectory>/</outputDirectory>
+      <fileMode>0644</fileMode>
+      <directoryMode>0644</directoryMode>
+    </fileSet>
+
+  </fileSets>
+
+  <dependencySets>
+    <dependencySet>
+      <unpack>false</unpack>
+      <useTransitiveDependencies>true</useTransitiveDependencies>
+      <outputDirectory>/</outputDirectory>
+      <scope>runtime</scope>
+      <excludes>
+        <exclude>com.telefonica.claudia:tcloud-server</exclude>
+      </excludes>
+      <directoryMode>0644</directoryMode>
+    </dependencySet>
+  </dependencySets>
+
+</assembly>
+
