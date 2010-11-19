@@ -1,0 +1,710 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+    Service Manifest RESERVOIR 
+    THALES GIS
+	
+    Creation Date: 25/11/2009
+
+    Modifications :
+    ***********
+     V0.1.1: 10/12/2009: JV: add head sections and correct UTF-8 encoding
+     V0.2.0: 08/01/2010: JV: rewrite to conform new kvm images
+     V0.2.1: 10/01/2010: JMF: extensions
+     V0.2.1: 12/01/2010: JMF: rewriting to be XML & OVF compliant
+     V0.4.0: 14/01/2010: TID: partial fixing
+     V0.4.1: 15/01/2010: JMF: changes according to TID comments
+     V0.4.2: 19/01/2010: JMF+Fermín working on the file in Messina F2F
+     V0.4.3: 26/01/2010: JMF: changes to reflect software architecture changes (from 1 network to 2 networks)
+     V0.4.5: 09/02/2010: JMF+AD: added the monitoring server, the Availability section, and the Performance Objective section; changes to the ElasticArray section
+     V0.4.6: 15/02/2010: JMF+CB: changes to the properties (use of @IP and @PrecedentTierEntryPoint macros), and validation against XSD schema
+     V0.4.7: 16/02/2010: Fermín: adjusting ProductSections (justifications in inline XML comments)
+     V0.4.8: 16/02/2010: JMF: changes on the IP properties & macros
+     V0.4.9: 25/02/2010: Fermín: fixes (discussed by email)
+     V0.4.9.1: 28/02/2010: Fermín: 768MB->1024MB for the database
+     V0.4.10: 03/03/2010: Fermin: new properties for IP configuration in Load_Balancer, Monitoring and Database
+     V0.4.11: 04/03/2010: JMF: add new KPIs + changes in max nb instances
+      V0.4.12: 11/03/2010: JMF: add SERVICEID property to monitoring
+     V0.4.12.1: 16/03/2010: Fermín: fix @ServiceID -> @ServiceId
+     V0.4.12.2: 16/03/2010: JMF: add the digests + change the path to templates + add public to the service_network
+     V0.4.12.3: 16/03/2010: Fermín: solving some problems with encoding
+     V0.4.12.4: 16/03/2010: JMF: digest changes
+     V0.4.12.5: 17/03/2010: JMF: digest + elasticity changes
+     V0.4.12.6: 20/03/2010: IL+JMF: add the netmon
+-->
+<!--
+
+     Envelope Section
+     ================
+     
+-->
+
+<Envelope xmlns:ovf="http://schemas.dmtf.org/ovf/envelope/1" xmlns="http://schemas.dmtf.org/ovf/envelope/1" xmlns:rsrvr="http://schemas.telefonica.com/claudia/ovf" xmlns:vssd="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_VirtualSystemSettingData" xmlns:rasd="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.telefonica.com/claudia/ovf TCloud_Reservoir.xsd">
+
+<!--
+
+     Global Sections
+     ===============
+     
+-->
+	<!-- References Section -->
+	<References>
+		<File ovf:id="Portail" ovf:href="file:///Thales.images/vm/one/kjbossx1-one.img" rsrvr:digest="0de2f1406d3d8f4259ff0d36d0c62fdf"/>
+		<File ovf:id="Service_Portal" ovf:href="file:///Thales.images/vm/one/kjbossx1-one.img" rsrvr:digest="0de2f1406d3d8f4259ff0d36d0c62fdf"/>
+		<File ovf:id="Service_Reference" ovf:href="file:///Thales.images/vm/one/kjbossx1-one.img" rsrvr:digest="0de2f1406d3d8f4259ff0d36d0c62fdf"/>
+		<File ovf:id="Service_Map" ovf:href="file:///Thales.images/vm/one/kjbossx1-one.img" rsrvr:digest="0de2f1406d3d8f4259ff0d36d0c62fdf"/>
+		<File ovf:id="Database" ovf:href="file:///Thales.images/vm/one/kmysqlx-one.img" rsrvr:digest="b7514c3c79a5128717d49a2f43f06b0a"/>
+		<File ovf:id="Load_Balancer" ovf:href="file:///Thales.images/vm/one/klvsx-one.img" rsrvr:digest="193906205d160f63da7db53189638ecf"/>
+		<File ovf:id="Monitoring" ovf:href="file:///Thales.images/vm/one/kmonitoringx-one.img" rsrvr:digest="d86479deb4fa96387a2b51614b52b788"/>
+                <File ovf:id="THNETMON" ovf:href="file:///Thales.images/vm/one/netmon-one.img"/>
+	</References>
+	<!-- Disk Section -->
+	<DiskSection>
+		<Info>Describes the set of virtual disks used by VEEs</Info>
+		<Disk ovf:diskId="Disk_Portail" ovf:fileRef="Portail" ovf:capacity="10GB" ovf:format="http://www.gnome.org/~markmc/qcow-image-format.html"/>
+		<Disk ovf:diskId="Disk_Service_Portal" ovf:fileRef="Service_Portal" ovf:capacity="10GB" ovf:format="http://www.gnome.org/~markmc/qcow-image-format.html"/>
+		<Disk ovf:diskId="Disk_Service_Reference" ovf:fileRef="Service_Reference" ovf:capacity="10GB" ovf:format="http://www.gnome.org/~markmc/qcow-image-format.html"/>
+		<Disk ovf:diskId="Disk_Service_Map" ovf:fileRef="Service_Map" ovf:capacity="10GB" ovf:format="http://www.gnome.org/~markmc/qcow-image-format.html"/>
+		<Disk ovf:diskId="Disk_Database" ovf:fileRef="Database" ovf:capacity="10GB" ovf:format="http://www.gnome.org/~markmc/qcow-image-format.html"/>
+		<Disk ovf:diskId="Disk_Load_Balancing" ovf:fileRef="Load_Balancer" ovf:capacity="10GB" ovf:format="http://www.gnome.org/~markmc/qcow-image-format.html"/>
+		<Disk ovf:diskId="Disk_Monitoring" ovf:fileRef="Monitoring" ovf:capacity="10GB" ovf:format="http://www.gnome.org/~markmc/qcow-image-format.html"/>
+                <Disk ovf:diskId="Disk_THNETMON" ovf:fileRef="THNETMON" ovf:capacity="4GB" ovf:format="http://www.gnome.org/~markmc/qcow-image-format.html"/>
+	</DiskSection>
+	<!-- Network Section -->
+	<NetworkSection>
+		<Info>List of logical networks used in the service</Info>
+		<Network ovf:name="service_network" rsrvr:public="true">
+		<Description>Public network</Description>
+		</Network>
+		<Network ovf:name="virtual_network1"><Description>Network to connect service components</Description></Network>
+	</NetworkSection>
+	<!-- KPISection -->
+	<rsrvr:KPISection>
+		<ovf:Info>KPIs Section</ovf:Info>
+		<rsrvr:KPI KPIname="Portail_ResponseTime"/>
+		<rsrvr:KPI KPIname="ServicePortal_ResponseTime"/>
+		<rsrvr:KPI KPIname="ServiceReference_ResponseTime"/>
+		<rsrvr:KPI KPIname="ServiceMap_ResponseTime"/>
+                <rsrvr:KPI KPIname="Portail_NbRequests"/>
+		<rsrvr:KPI KPIname="ServicePortal_NbRequests"/>
+		<rsrvr:KPI KPIname="ServiceReference_NbRequests"/>
+		<rsrvr:KPI KPIname="ServiceMap_NbRequests"/>
+	</rsrvr:KPISection>
+	<!-- VirtualSystemCollection Section -->
+	<VirtualSystemCollection ovf:id="GIS@RESERVOIR">
+		<ovf:Info>A multi-tiered software solution</ovf:Info>
+		<ovf:Name>GIS@Reservoir</ovf:Name>
+		<!-- Startup Section -->
+		<StartupSection>
+			<Info>"Starting (and stopping) sequence for the service"</Info>
+                        <Item ovf:id="THNETMON" ovf:order="7" ovf:startAction="powerOn" ovf:startDelay="120" ovf:stopAction="powerOff" ovf:stopDelay="120" ovf:waitingForGuest="true"/>
+			<Item ovf:id="Portail" ovf:order="6" ovf:startAction="powerOn" ovf:startDelay="120" ovf:stopAction="powerOff" ovf:stopDelay="120" ovf:waitingForGuest="true"/>
+			<Item ovf:id="Service_Portal" ovf:order="5" ovf:startAction="powerOn" ovf:startDelay="120" ovf:stopAction="powerOff" ovf:stopDelay="120" ovf:waitingForGuest="true"/>
+			<Item ovf:id="Service_Reference" ovf:order="4" ovf:startAction="powerOn" ovf:startDelay="120" ovf:stopAction="powerOff" ovf:stopDelay="120" ovf:waitingForGuest="true"/>
+			<Item ovf:id="Service_Map" ovf:order="3" ovf:startAction="powerOn" ovf:startDelay="120" ovf:stopAction="powerOff" ovf:stopDelay="120" ovf:waitingForGuest="true"/>
+			<Item ovf:id="Load_Balancer" ovf:order="2" ovf:startAction="powerOn" ovf:startDelay="120" ovf:stopAction="powerOff" ovf:stopDelay="120" ovf:waitingForGuest="true"/>
+			<Item ovf:id="Monitoring" ovf:order="1" ovf:startAction="powerOn" ovf:startDelay="120" ovf:stopAction="powerOff" ovf:stopDelay="120" ovf:waitingForGuest="true"/>
+			<Item ovf:id="Database" ovf:order="0" ovf:startAction="powerOn" ovf:startDelay="120" ovf:stopAction="powerOff" ovf:stopDelay="120" ovf:waitingForGuest="true"/>
+		</StartupSection>
+		<!-- Performance Objective Sections -->
+		<rsrvr:PerformanceObjectiveSection>
+			<ovf:Info>Performance</ovf:Info>
+			<rsrvr:Constraint>
+				<rsrvr:Name>Response time objective</rsrvr:Name>
+				<rsrvr:KPIName>Portail_ResponseTime</rsrvr:KPIName>
+				<rsrvr:Window unit="minute">10</rsrvr:Window>
+				<rsrvr:Range unit="ms">
+					<rsrvr:Min>0</rsrvr:Min>
+					<rsrvr:Max>3000</rsrvr:Max>
+				</rsrvr:Range>
+				<rsrvr:Percentage>99.9</rsrvr:Percentage>
+			</rsrvr:Constraint>
+		</rsrvr:PerformanceObjectiveSection> 
+		<!-- Product Sections -->
+		<ProductSection ovf:class="com.thales.GIS">
+			<Info>Information about the installed software</Info>
+			<Product>THALES GIS</Product>
+			<Vendor>THALES</Vendor>
+			<Version>1.0</Version>
+			<!-- Common Properties to every VirtualSystem. The "value" attribute includes a default value. -->
+			<Property ovf:key="LVSNAME" ovf:type="string" ovf:value="klvsx"/> 			<!-- klvsx is the default value. -->
+			<Property ovf:key="DATABASENAME" ovf:type="string" ovf:value="kmysqlx"/>		<!-- kmysqlx is the default value. -->
+		</ProductSection>	
+		
+		<!-- VirtualSystem Sections -->
+		<VirtualSystem ovf:id="Load_Balancer" rsrvr:min="1" rsrvr:max="1" rsrvr:initial="1">
+			<Info>Load Balancer description</Info>
+			<ProductSection ovf:class="com.thales.load_balancer">
+				<Info>Product customization</Info>
+				<Product>LVS</Product>
+				<Version>XX</Version>
+				<Property ovf:key="HOSTNAME" ovf:type="string" rsrvr:cloudConfigurable="true" ovf:value="klvsx"/>
+				<Property ovf:key="IPPUB" ovf:type="string" rsrvr:cloudConfigurable="true" ovf:value="@IP(service_network,IPPUB)"/>
+				<Property ovf:key="NETMASKPUB" ovf:type="string" rsrvr:cloudConfigurable="true" ovf:value="@Netmask(service_network)"/>
+				<Property ovf:key="GATEWAYPUB" ovf:type="string" rsrvr:cloudConfigurable="true" ovf:value="@Gateway(service_network)"/>
+				<Property ovf:key="VIP1" ovf:type="string" rsrvr:cloudConfigurable="true" ovf:value="@IP(service_network,VIP1)"/>
+				<Property ovf:key="LVSIP" ovf:type="string" rsrvr:cloudConfigurable="true" ovf:value="@IP(virtual_network1,LSIP)"/>
+				<Property ovf:key="VIP2" ovf:type="string" rsrvr:cloudConfigurable="true" ovf:value="@IP(virtual_network1,VIP2)"/>
+				<Property ovf:key="VIP3" ovf:type="string" rsrvr:cloudConfigurable="true" ovf:value="@IP(virtual_network1,VIP3)"/>
+				<Property ovf:key="VIP4" ovf:type="string" rsrvr:cloudConfigurable="true" ovf:value="@IP(virtual_network1,VIP4)"/>
+				<Property ovf:key="DATABASEIP" ovf:type="string" rsrvr:cloudConfigurable="true" ovf:value="@PrecedentTierEntryPoint(virtual_network1,Database)"/>
+				<Property ovf:key="MONITORINGIP" ovf:type="string" rsrvr:cloudConfigurable="true" ovf:value="@PrecedentTierEntryPoint(virtual_network1,Monitoring)"/>
+			</ProductSection>
+			<OperatingSystemSection ovf:id="37" ovf:version="5">
+				<Info>The kind of installed guest operating system</Info>
+				<Description>CentOS 5 (32 bit)</Description>
+			</OperatingSystemSection>
+			<VirtualHardwareSection>
+				<Info>Virtual Hardware Requirements : 512MB , 1 CPU , 1 disk , 1 nic </Info>
+				<System>
+					<vssd:ElementName>Virtual Hardware Family</vssd:ElementName>
+					<vssd:InstanceID>0</vssd:InstanceID>
+					<vssd:VirtualSystemType>kvm</vssd:VirtualSystemType>
+				</System>
+				<Item>
+					<rasd:Description>Number of virtual CPU</rasd:Description>
+					<rasd:ElementName>1 virtual CPU</rasd:ElementName>
+					<rasd:InstanceID>1</rasd:InstanceID>
+					<rasd:ResourceType>3</rasd:ResourceType>
+					<rasd:VirtualQuantity>1</rasd:VirtualQuantity>
+				</Item>
+				<Item>
+					<rasd:AllocationUnits>MegaBytes</rasd:AllocationUnits>
+					<rasd:Description>Memory Size</rasd:Description>
+					<rasd:ElementName>512 MB of memory</rasd:ElementName>
+					<rasd:InstanceID>2</rasd:InstanceID>
+					<rasd:ResourceType>4</rasd:ResourceType>
+					<rasd:VirtualQuantity>512</rasd:VirtualQuantity>
+				</Item>
+				<Item>
+					<rasd:AutomaticAllocation>true</rasd:AutomaticAllocation>
+					<rasd:Connection>service_network</rasd:Connection>
+					<rasd:ElementName>Ethernet adapter on service_network</rasd:ElementName>
+					<rasd:InstanceID>3</rasd:InstanceID>
+					<rasd:ResourceType>10</rasd:ResourceType>
+				</Item>
+				<Item>
+					<rasd:AutomaticAllocation>true</rasd:AutomaticAllocation>
+					<rasd:Connection>virtual_network1</rasd:Connection>
+					<rasd:ElementName>Ethernet adapter on virtual_network1</rasd:ElementName>
+					<rasd:InstanceID>4</rasd:InstanceID>
+					<rasd:ResourceType>10</rasd:ResourceType>
+				</Item>
+				<Item>
+					<rasd:ElementName>Hard disk1</rasd:ElementName>
+					<rasd:HostResource>ovf://disk/Disk_Load_Balancing</rasd:HostResource>
+					<rasd:InstanceID>5</rasd:InstanceID>
+					<rasd:Parent>4</rasd:Parent>
+					<rasd:ResourceType>17</rasd:ResourceType>
+				</Item>
+			</VirtualHardwareSection>
+			<rsrvr:AvailabilitySection>
+				<Info>Availability</Info>
+				<rsrvr:Window unit="hour">24</rsrvr:Window>
+				<rsrvr:Percentile>99.9</rsrvr:Percentile>
+			</rsrvr:AvailabilitySection>
+		</VirtualSystem>
+		<VirtualSystem ovf:id="Portail" rsrvr:min="1" rsrvr:max="4" rsrvr:initial="1">
+			<Info>Portail description</Info>
+			<ProductSection ovf:class="com.thales.portail">
+				<Info>Product customization</Info>
+				<Product>Portail</Product>
+				<Version>X.X</Version>
+				<!-- Specific Properties  -->	
+				<Property ovf:key="TYPE" ovf:type="string" ovf:value="Portail"/>	
+				<Property ovf:key="HOSTNAME" ovf:type="string" rsrvr:cloudConfigurable="true" ovf:value="kjbossxp@id(0)"/>
+				<Property ovf:key="VIP1" ovf:type="string" rsrvr:cloudConfigurable="true" ovf:value="@PrecedentTierEntryPoint(service_network,Load_Balancer)"/>
+				<!-- the Activation Engine processing LVSIP will take the *first* element in the list  -->
+				<Property ovf:key="LVSIP" ovf:type="string" rsrvr:cloudConfigurable="true" ovf:value="@PrecedentTierEntryPoint(virtual_network1,Load_Balancer)"/>
+				<Property ovf:key="DATABASEIP" ovf:type="string" rsrvr:cloudConfigurable="true" ovf:value="@PrecedentTierEntryPoint(virtual_network1,Database)"/>
+			</ProductSection>
+			<OperatingSystemSection ovf:id="37" ovf:version="5">
+				<Info>The kind of installed guest operating system</Info>
+				<Description>CentOS 5 (32 bit)</Description>
+			</OperatingSystemSection>
+			<VirtualHardwareSection>
+				<Info>Virtual Hardware Requirements : 512MB , 1 CPU , 1 disk , 1 nic </Info>
+				<System>
+					<vssd:ElementName>Virtual Hardware Family</vssd:ElementName>
+					<vssd:InstanceID>0</vssd:InstanceID>
+					<vssd:VirtualSystemType>kvm</vssd:VirtualSystemType>
+				</System>
+				<Item>
+					<rasd:Description>Number of virtual CPU</rasd:Description>
+					<rasd:ElementName>1 virtual CPU</rasd:ElementName>
+					<rasd:InstanceID>1</rasd:InstanceID>
+					<rasd:ResourceType>3</rasd:ResourceType>
+					<rasd:VirtualQuantity>1</rasd:VirtualQuantity>
+				</Item>
+				<Item>
+					<rasd:AllocationUnits>MegaBytes</rasd:AllocationUnits>
+					<rasd:Description>Memory Size</rasd:Description>
+					<rasd:ElementName>512 MB of memory</rasd:ElementName>
+					<rasd:InstanceID>2</rasd:InstanceID>
+					<rasd:ResourceType>4</rasd:ResourceType>
+					<rasd:VirtualQuantity>512</rasd:VirtualQuantity>
+				</Item>
+				<Item>
+					<rasd:AutomaticAllocation>true</rasd:AutomaticAllocation>
+					<rasd:Connection>virtual_network1</rasd:Connection>
+					<rasd:ElementName>Ethernet adapter on virtual_network1</rasd:ElementName>
+					<rasd:InstanceID>3</rasd:InstanceID>
+					<rasd:ResourceType>10</rasd:ResourceType>
+				</Item>
+				<Item>
+					<rasd:ElementName>Hard disk1</rasd:ElementName>
+					<rasd:HostResource>ovf://disk/Disk_Portail</rasd:HostResource>
+					<rasd:InstanceID>4</rasd:InstanceID>
+					<rasd:Parent>4</rasd:Parent>
+					<rasd:ResourceType>17</rasd:ResourceType>
+				</Item>
+			</VirtualHardwareSection>
+			<!-- Portail ElasticArraySection -->
+			<rsrvr:ElasticArraySection>
+				<ovf:Info>Portail ElasticArraySection</ovf:Info>
+				<rsrvr:Rule>
+					<rsrvr:KPIName>Portail_NbRequests</rsrvr:KPIName>
+					<rsrvr:Window unit="second">4</rsrvr:Window>
+					<rsrvr:Frequency>60</rsrvr:Frequency>
+					<rsrvr:Quota>10</rsrvr:Quota>
+				</rsrvr:Rule>
+			</rsrvr:ElasticArraySection>
+			<rsrvr:AvailabilitySection>
+				<Info>Availability</Info>
+				<rsrvr:Window unit="hour">24</rsrvr:Window>
+				<rsrvr:Percentile>99.9</rsrvr:Percentile>
+			</rsrvr:AvailabilitySection>
+		</VirtualSystem>
+		<VirtualSystem ovf:id="Service_Portal" rsrvr:min="1" rsrvr:max="4" rsrvr:initial="1">
+			<Info>Service Portal description</Info>
+			<ProductSection ovf:class="com.thales.service_portal">
+				<Info>Product customization</Info>
+				<Product>Service_Portal</Product>
+				<Version>X.X</Version>
+				<!-- Specific Properties  -->	
+				<Property ovf:key="TYPE" ovf:type="string" ovf:value="ServicePortal"/>		
+				<Property ovf:key="HOSTNAME" ovf:type="string" rsrvr:cloudConfigurable="true" ovf:value="kjbossxsp@id(0)"/>
+				<!-- the Activation Engine processing VIP2 will take the *second* element in the list  -->
+				<Property ovf:key="VIP2" ovf:type="string" rsrvr:cloudConfigurable="true" ovf:value="@PrecedentTierEntryPoint(virtual_network1,Load_Balancer)"/>
+				<!-- the Activation Engine processing LVSIP will take the *first* element in the list  -->
+				<Property ovf:key="LVSIP" ovf:type="string" rsrvr:cloudConfigurable="true" ovf:value="@PrecedentTierEntryPoint(virtual_network1,Load_Balancer)"/>
+				<Property ovf:key="DATABASEIP" ovf:type="string" rsrvr:cloudConfigurable="true" ovf:value="@PrecedentTierEntryPoint(virtual_network1,Database)"/>
+			</ProductSection>
+			<OperatingSystemSection ovf:id="37" ovf:version="5">
+				<Info>The kind of installed guest operating system</Info>
+				<Description>CentOS 5 (32 bit)</Description>
+			</OperatingSystemSection>
+			<VirtualHardwareSection>
+				<Info>Virtual Hardware Requirements : 512MB , 1 CPU , 1 disk , 1 nic </Info>
+				<System>
+					<vssd:ElementName>Virtual Hardware Family</vssd:ElementName>
+					<vssd:InstanceID>0</vssd:InstanceID>
+					<vssd:VirtualSystemType>kvm</vssd:VirtualSystemType>
+				</System>
+				<Item>
+					<rasd:Description>Number of virtual CPU</rasd:Description>
+					<rasd:ElementName>1 virtual CPU</rasd:ElementName>
+					<rasd:InstanceID>1</rasd:InstanceID>
+					<rasd:ResourceType>3</rasd:ResourceType>
+					<rasd:VirtualQuantity>1</rasd:VirtualQuantity>
+				</Item>
+				<Item>
+					<rasd:AllocationUnits>MegaBytes</rasd:AllocationUnits>
+					<rasd:Description>Memory Size</rasd:Description>
+					<rasd:ElementName>512 MB of memory</rasd:ElementName>
+					<rasd:InstanceID>2</rasd:InstanceID>
+					<rasd:ResourceType>4</rasd:ResourceType>
+					<rasd:VirtualQuantity>512</rasd:VirtualQuantity>
+				</Item>
+				<Item>
+					<rasd:AutomaticAllocation>true</rasd:AutomaticAllocation>
+					<rasd:Connection>virtual_network1</rasd:Connection>
+					<rasd:ElementName>Ethernet adapter on virtual_network1</rasd:ElementName>
+					<rasd:InstanceID>3</rasd:InstanceID>
+					<rasd:ResourceType>10</rasd:ResourceType>
+				</Item>
+				<Item>
+					<rasd:ElementName>Hard disk1</rasd:ElementName>
+					<rasd:HostResource>ovf://disk/Disk_Service_Portal</rasd:HostResource>
+					<rasd:InstanceID>4</rasd:InstanceID>
+					<rasd:Parent>4</rasd:Parent>
+					<rasd:ResourceType>17</rasd:ResourceType>
+				</Item>
+			</VirtualHardwareSection>
+			<!-- Service Portal ElasticArraySection -->
+			<rsrvr:ElasticArraySection>
+				<ovf:Info>Service Portal ElasticArraySection</ovf:Info>
+				<rsrvr:Rule>
+					<rsrvr:KPIName>ServicePortal_NbRequests</rsrvr:KPIName>
+					<rsrvr:Window unit="second">4</rsrvr:Window>
+					<rsrvr:Frequency>60</rsrvr:Frequency>
+					<rsrvr:Quota>10</rsrvr:Quota>
+				</rsrvr:Rule>
+			</rsrvr:ElasticArraySection>
+			<rsrvr:AvailabilitySection>
+				<Info>Availability</Info>
+				<rsrvr:Window unit="hour">24</rsrvr:Window>
+				<rsrvr:Percentile>99.9</rsrvr:Percentile>
+			</rsrvr:AvailabilitySection>
+		</VirtualSystem>
+		<VirtualSystem ovf:id="Service_Reference" rsrvr:min="1" rsrvr:max="4" rsrvr:initial="1">
+			<Info>Service Reference description</Info>
+			<ProductSection ovf:class="com.thales.service_reference">
+				<Info>Product customization</Info>
+				<Product>Service_Reference</Product>
+				<Version>X.X</Version>
+				<!-- Specific Properties  -->
+				<Property ovf:key="TYPE" ovf:type="string" ovf:value="ServiceReference"/>		
+				<Property ovf:key="HOSTNAME" ovf:type="string" rsrvr:cloudConfigurable="true" ovf:value="kjbossxsr@id(0)"/>
+				<!-- the Activation Engine processing VIP3 will take the *third* element in the list  -->
+				<Property ovf:key="VIP3" ovf:type="string" rsrvr:cloudConfigurable="true" ovf:value="@PrecedentTierEntryPoint(virtual_network1,Load_Balancer)"/>
+				<!-- the Activation Engine processing LVSIP will take the *first* element in the list  -->
+				<Property ovf:key="LVSIP" ovf:type="string" rsrvr:cloudConfigurable="true" ovf:value="@PrecedentTierEntryPoint(virtual_network1,Load_Balancer)"/>
+				<Property ovf:key="DATABASEIP" ovf:type="string" rsrvr:cloudConfigurable="true" ovf:value="@PrecedentTierEntryPoint(virtual_network1,Database)"/>
+			</ProductSection>				
+			<OperatingSystemSection ovf:id="37" ovf:version="5">
+				<Info>The kind of installed guest operating system</Info>
+				<Description>CentOS 5 (32 bit)</Description>
+			</OperatingSystemSection>
+			<VirtualHardwareSection>
+				<Info>Virtual Hardware Requirements : 512 MB , 1 CPU , 1 disk , 1 nic </Info>
+				<System>
+					<vssd:ElementName>Virtual Hardware Family</vssd:ElementName>
+					<vssd:InstanceID>0</vssd:InstanceID>
+					<vssd:VirtualSystemType>kvm</vssd:VirtualSystemType>
+				</System>
+				<Item>
+					<rasd:Description>Number of virtual CPU</rasd:Description>
+					<rasd:ElementName>1 virtual CPU</rasd:ElementName>
+					<rasd:InstanceID>1</rasd:InstanceID>
+					<rasd:ResourceType>3</rasd:ResourceType>
+					<rasd:VirtualQuantity>1</rasd:VirtualQuantity>
+				</Item>
+				<Item>
+					<rasd:AllocationUnits>MegaBytes</rasd:AllocationUnits>
+					<rasd:Description>Memory Size</rasd:Description>
+					<rasd:ElementName>512 MB of memory</rasd:ElementName>
+					<rasd:InstanceID>2</rasd:InstanceID>
+					<rasd:ResourceType>4</rasd:ResourceType>
+					<rasd:VirtualQuantity>512</rasd:VirtualQuantity>
+				</Item>
+				<Item>
+					<rasd:AutomaticAllocation>true</rasd:AutomaticAllocation>
+					<rasd:Connection>virtual_network1</rasd:Connection>
+					<rasd:ElementName>Ethernet adapter on virtual_network1</rasd:ElementName>
+					<rasd:InstanceID>3</rasd:InstanceID>
+					<rasd:ResourceType>10</rasd:ResourceType>
+				</Item>
+				<Item>
+					<rasd:ElementName>Hard disk1</rasd:ElementName>
+					<rasd:HostResource>ovf://disk/Disk_Service_Reference</rasd:HostResource>
+					<rasd:InstanceID>4</rasd:InstanceID>
+					<rasd:Parent>4</rasd:Parent>
+					<rasd:ResourceType>17</rasd:ResourceType>
+				</Item>
+			</VirtualHardwareSection>
+			<!--Service Reference ElasticArraySection-->
+			<rsrvr:ElasticArraySection>
+				<ovf:Info>Service Reference ElasticArraySection</ovf:Info>
+				<rsrvr:Rule>
+					<rsrvr:KPIName>ServiceReference_NbRequests</rsrvr:KPIName>
+					<rsrvr:Window unit="second">4</rsrvr:Window>
+					<rsrvr:Frequency>60</rsrvr:Frequency>
+					<rsrvr:Quota>20</rsrvr:Quota>
+				</rsrvr:Rule>
+			</rsrvr:ElasticArraySection>
+			<rsrvr:AvailabilitySection>
+				<Info>Availability</Info>
+				<rsrvr:Window unit="hour">24</rsrvr:Window>
+				<rsrvr:Percentile>99.9</rsrvr:Percentile>
+			</rsrvr:AvailabilitySection>
+		</VirtualSystem>
+		<VirtualSystem ovf:id="Service_Map" rsrvr:min="1" rsrvr:max="4" rsrvr:initial="1">
+			<Info>Service Map description</Info>
+			<ProductSection ovf:class="com.thales.service_map">
+				<Info>Product customization</Info>
+				<Product>Service_Map</Product>
+				<Version>X.X</Version>
+				<!-- Specific Properties -->
+				<Property ovf:key="TYPE" ovf:type="string" ovf:value="ServiceMap"/>		
+				<Property ovf:key="HOSTNAME" ovf:type="string" rsrvr:cloudConfigurable="true" ovf:value="kjbossxsm@id(0)"/>
+				<!-- the Activation Engine processing VIP2 will take the *fourth* element in the list  -->
+				<Property ovf:key="VIP4" ovf:type="string" rsrvr:cloudConfigurable="true" ovf:value="@PrecedentTierEntryPoint(virtual_network1,Load_Balancer)"/>
+				<!-- the Activation engine processing LVSIP will take the *first* element in the list  -->
+				<Property ovf:key="LVSIP" ovf:type="string" rsrvr:cloudConfigurable="true" ovf:value="@PrecedentTierEntryPoint(virtual_network1,Load_Balancer)"/>
+				<Property ovf:key="DATABASEIP" ovf:type="string" rsrvr:cloudConfigurable="true" ovf:value="@PrecedentTierEntryPoint(virtual_network1,Database)"/>
+			</ProductSection>
+			<OperatingSystemSection ovf:id="37" ovf:version="5">
+				<Info>The kind of installed guest operating system</Info>
+				<Description>CentOS 5 (32 bit)</Description>
+			</OperatingSystemSection>
+			<VirtualHardwareSection>
+				<Info>Virtual Hardware Requirements : 512 MB , 1 CPU , 1 disk , 1 nic </Info>
+				<System>
+					<vssd:ElementName>Virtual Hardware Family</vssd:ElementName>
+					<vssd:InstanceID>0</vssd:InstanceID>
+					<vssd:VirtualSystemType>kvm</vssd:VirtualSystemType>
+				</System>
+				<Item>
+					<rasd:Description>Number of virtual CPU</rasd:Description>
+					<rasd:ElementName>1 virtual CPU</rasd:ElementName>
+					<rasd:InstanceID>1</rasd:InstanceID>
+					<rasd:ResourceType>3</rasd:ResourceType>
+					<rasd:VirtualQuantity>1</rasd:VirtualQuantity>
+				</Item>
+				<Item>
+					<rasd:AllocationUnits>MegaBytes</rasd:AllocationUnits>
+					<rasd:Description>Memory Size</rasd:Description>
+					<rasd:ElementName>512 MB of memory</rasd:ElementName>
+					<rasd:InstanceID>2</rasd:InstanceID>
+					<rasd:ResourceType>4</rasd:ResourceType>
+					<rasd:VirtualQuantity>512</rasd:VirtualQuantity>
+				</Item>
+				<Item>
+					<rasd:AutomaticAllocation>true</rasd:AutomaticAllocation>
+					<rasd:Connection>virtual_network1</rasd:Connection>
+					<rasd:ElementName>Ethernet adapter on virtual_network1</rasd:ElementName>
+					<rasd:InstanceID>3</rasd:InstanceID>
+					<rasd:ResourceType>10</rasd:ResourceType>
+				</Item>
+				<Item>
+					<rasd:ElementName>Hard disk1</rasd:ElementName>
+					<rasd:HostResource>ovf://disk/Disk_Service_Map</rasd:HostResource>
+					<rasd:InstanceID>4</rasd:InstanceID>
+					<rasd:Parent>4</rasd:Parent>
+					<rasd:ResourceType>17</rasd:ResourceType>
+				</Item>
+			</VirtualHardwareSection>
+			<!--Service Map ElasticArraySection-->
+			<rsrvr:ElasticArraySection>
+				<ovf:Info>Service Map ElasticArraySection</ovf:Info>
+				<rsrvr:Rule>
+					<rsrvr:KPIName>ServiceMap_NbRequests</rsrvr:KPIName>
+					<rsrvr:Window unit="second">4</rsrvr:Window>
+					<rsrvr:Frequency>60</rsrvr:Frequency>
+					<rsrvr:Quota>10</rsrvr:Quota>
+				</rsrvr:Rule>
+			</rsrvr:ElasticArraySection>
+			<rsrvr:AvailabilitySection>
+				<Info>Availability</Info>
+				<rsrvr:Window unit="hour">24</rsrvr:Window>
+				<rsrvr:Percentile>99.9</rsrvr:Percentile>
+			</rsrvr:AvailabilitySection>
+		</VirtualSystem>
+		<VirtualSystem ovf:id="Database" rsrvr:min="1" rsrvr:max="1" rsrvr:initial="1">
+			<Info>Database description</Info>
+			<ProductSection ovf:class="com.thales.database">
+				<Info>Product customization</Info>
+				<Product>Database</Product>
+				<Version>X.X</Version>
+				<!-- Specific Properties -->	
+				<Property ovf:key="HOSTNAME" ovf:type="string" ovf:value="kmysqlx"/>
+				<Property ovf:key="DATABASEIP" ovf:type="string" rsrvr:cloudConfigurable="true" ovf:value="@IP(virtual_network1)"/>
+				<Property ovf:key="IPPUB" ovf:type="string" rsrvr:cloudConfigurable="true" ovf:value="@IP(service_network)"/>
+				<Property ovf:key="NETMASKPUB" ovf:type="string" rsrvr:cloudConfigurable="true" ovf:value="@Netmask(service_network)"/>
+				<Property ovf:key="GATEWAYPUB" ovf:type="string" rsrvr:cloudConfigurable="true" ovf:value="@Gateway(service_network)"/>				
+			</ProductSection>			
+			<rsrvr:DeploymentSection>
+				<Info>The database sensitive data must remain in France</Info>
+				<rsrvr:Restriction>
+					<rsrvr:Country>FR</rsrvr:Country>
+				</rsrvr:Restriction>
+			</rsrvr:DeploymentSection>
+			<OperatingSystemSection ovf:id="37" ovf:version="5">
+				<Info>The kind of installed guest operating system</Info>
+				<Description>CentOS 5 (32 bit)</Description>
+			</OperatingSystemSection>
+			<VirtualHardwareSection>
+				<Info>Virtual Hardware Requirements : 1024MB , 1 CPU , 1 disk , 1 nic </Info>
+				<System>
+					<vssd:ElementName>Virtual Hardware Family</vssd:ElementName>
+					<vssd:InstanceID>0</vssd:InstanceID>
+					<vssd:VirtualSystemType>kvm</vssd:VirtualSystemType>
+				</System>
+				<Item>
+					<rasd:Description>Number of virtual CPU</rasd:Description>
+					<rasd:ElementName>1 virtual CPU</rasd:ElementName>
+					<rasd:InstanceID>1</rasd:InstanceID>
+					<rasd:ResourceType>3</rasd:ResourceType>
+					<rasd:VirtualQuantity>1</rasd:VirtualQuantity>
+				</Item>
+				<Item>
+					<rasd:AllocationUnits>MegaBytes</rasd:AllocationUnits>
+					<rasd:Description>Memory Size</rasd:Description>
+					<rasd:ElementName>1024 MB of memory</rasd:ElementName>
+					<rasd:InstanceID>2</rasd:InstanceID>
+					<rasd:ResourceType>4</rasd:ResourceType>
+					<rasd:VirtualQuantity>1024</rasd:VirtualQuantity>
+				</Item>
+				<Item>
+					<rasd:AutomaticAllocation>true</rasd:AutomaticAllocation>
+					<rasd:Connection>virtual_network1</rasd:Connection>
+					<rasd:ElementName>Ethernet adapter on virtual_network1</rasd:ElementName>
+					<rasd:InstanceID>3</rasd:InstanceID>
+					<rasd:ResourceType>10</rasd:ResourceType>
+				</Item>
+				<Item>
+					<rasd:AutomaticAllocation>true</rasd:AutomaticAllocation>
+					<rasd:Connection>service_network</rasd:Connection>
+					<rasd:ElementName>Ethernet adapter on sevice_network</rasd:ElementName>
+					<rasd:InstanceID>4</rasd:InstanceID>
+					<rasd:ResourceType>10</rasd:ResourceType>
+				</Item>				
+				<Item>
+					<rasd:ElementName>Hard disk1</rasd:ElementName>
+					<rasd:HostResource>ovf://disk/Disk_Database</rasd:HostResource>
+					<rasd:InstanceID>5</rasd:InstanceID>
+					<rasd:Parent>5</rasd:Parent>
+					<rasd:ResourceType>17</rasd:ResourceType>
+				</Item>
+			</VirtualHardwareSection>
+			<rsrvr:AvailabilitySection>
+				<Info>Availability</Info>
+				<rsrvr:Window unit="hour">24</rsrvr:Window>
+				<rsrvr:Percentile>99.9</rsrvr:Percentile>
+			</rsrvr:AvailabilitySection>
+		</VirtualSystem>
+		<VirtualSystem ovf:id="Monitoring" rsrvr:min="1" rsrvr:max="1" rsrvr:initial="1">
+			<Info>Monitoring description</Info>
+			<ProductSection ovf:class="com.thales.monitoring">
+				<Info>Product customization</Info>
+				<Product>Monitoring</Product>
+				<Version>X.X</Version>
+				<!-- Specific Properties -->	
+				<Property ovf:key="HOSTNAME" ovf:type="string" ovf:value="kmonitoringx"/>
+				<Property ovf:key="MONITORINGIP" ovf:type="string" rsrvr:cloudConfigurable="true" ovf:value="@IP(virtual_network1)"/>
+				<Property ovf:key="IPPUB" ovf:type="string" rsrvr:cloudConfigurable="true" ovf:value="@IP(service_network)"/>
+				<Property ovf:key="NETMASKPUB" ovf:type="string" rsrvr:cloudConfigurable="true" ovf:value="@Netmask(service_network)"/>
+				<Property ovf:key="GATEWAYPUB" ovf:type="string" rsrvr:cloudConfigurable="true" ovf:value="@Gateway(service_network)"/>
+				<Property ovf:key="SERVICEID" ovf:type="string" rsrvr:cloudConfigurable="true" ovf:value="@ServiceId"/>				
+			</ProductSection>			
+			<OperatingSystemSection ovf:id="37" ovf:version="5">
+				<Info>The kind of installed guest operating system</Info>
+				<Description>CentOS 5 (32 bit)</Description>
+			</OperatingSystemSection>
+			<VirtualHardwareSection>
+				<!-- Info>Virtual Hardware Requirements : 768MB , 1 CPU , 1 disk , 1 nic </Info-->
+				<Info>Virtual Hardware Requirements : 1024MB , 1 CPU , 1 disk , 1 nic </Info>
+				<System>
+					<vssd:ElementName>Virtual Hardware Family</vssd:ElementName>
+					<vssd:InstanceID>0</vssd:InstanceID>
+					<vssd:VirtualSystemType>kvm</vssd:VirtualSystemType>
+				</System>
+				<Item>
+					<rasd:Description>Number of virtual CPU</rasd:Description>
+					<rasd:ElementName>1 virtual CPU</rasd:ElementName>
+					<rasd:InstanceID>1</rasd:InstanceID>
+					<rasd:ResourceType>3</rasd:ResourceType>
+					<rasd:VirtualQuantity>1</rasd:VirtualQuantity>
+				</Item>
+				<Item>
+					<rasd:AllocationUnits>MegaBytes</rasd:AllocationUnits>
+					<rasd:Description>Memory Size</rasd:Description>
+					<rasd:ElementName>1024 MB of memory</rasd:ElementName>
+					<rasd:InstanceID>2</rasd:InstanceID>
+					<rasd:ResourceType>4</rasd:ResourceType>
+					<rasd:VirtualQuantity>1024</rasd:VirtualQuantity>
+				</Item>
+				<!--Item>
+					<rasd:AllocationUnits>MegaBytes</rasd:AllocationUnits>
+					<rasd:Description>Memory Size</rasd:Description>
+					<rasd:ElementName>768 MB of memory</rasd:ElementName>
+					<rasd:InstanceID>2</rasd:InstanceID>
+					<rasd:ResourceType>4</rasd:ResourceType>
+					<rasd:VirtualQuantity>768</rasd:VirtualQuantity>
+				</Item-->
+				<Item>
+					<rasd:AutomaticAllocation>true</rasd:AutomaticAllocation>
+					<rasd:Connection>virtual_network1</rasd:Connection>
+					<rasd:ElementName>Ethernet adapter on virtual_network1</rasd:ElementName>
+					<rasd:InstanceID>3</rasd:InstanceID>
+					<rasd:ResourceType>10</rasd:ResourceType>
+				</Item>
+				<Item>
+					<rasd:AutomaticAllocation>true</rasd:AutomaticAllocation>
+					<rasd:Connection>service_network</rasd:Connection>
+					<rasd:ElementName>Ethernet adapter on sevice_network</rasd:ElementName>
+					<rasd:InstanceID>4</rasd:InstanceID>
+					<rasd:ResourceType>10</rasd:ResourceType>
+				</Item>				
+				<Item>
+					<rasd:ElementName>Hard disk1</rasd:ElementName>
+					<rasd:HostResource>ovf://disk/Disk_Monitoring</rasd:HostResource>
+					<rasd:InstanceID>5</rasd:InstanceID>
+					<rasd:Parent>5</rasd:Parent>
+					<rasd:ResourceType>17</rasd:ResourceType>
+				</Item>
+			</VirtualHardwareSection>
+			<rsrvr:AvailabilitySection>
+				<Info>Availability</Info>
+				<rsrvr:Window unit="hour">24</rsrvr:Window>
+				<rsrvr:Percentile>99.0</rsrvr:Percentile>
+			</rsrvr:AvailabilitySection>
+		</VirtualSystem>
+                <VirtualSystem ovf:id="THNETMON" rsrvr:min="1" rsrvr:max="1" rsrvr:initial="1">
+			<ovf:ProductSection ovf:class="system" ovf:instance="THNETMON">
+                        	<Info>Hostname of NETVAN</Info>
+                        	<ovf:Property ovf:key="hostname" rsrvr:cloudConfigurable="true" ovf:value="ThalesVAN" ovf:type="string"/>
+                        </ovf:ProductSection>
+                        <ovf:ProductSection ovf:class="system.nic1.ifcfg" ovf:instance="THNETMON">
+                        	<Info>NIC1 Config</Info>
+                        	<ovf:Property ovf:key="bootproto" ovf:value="static" ovf:type="string"/>
+                        	<ovf:Property ovf:key="startmode" ovf:value="auto" ovf:type="string"/>
+                        	<ovf:Property ovf:key="ipaddr" rsrvr:cloudConfigurable="true" ovf:value="@IP(virtual_network1)" ovf:type="string"/>
+                        	<ovf:Property ovf:key="netmask" rsrvr:cloudConfigurable="true" ovf:value="@Netmask(virtual_network1)" ovf:type="string"/>
+                        	<ovf:Property ovf:key="usercontrol" ovf:value="no" ovf:type="string"/>
+                        </ovf:ProductSection>
+                        <ovf:ProductSection ovf:instance="THNETMON">
+                        	<Info> Service Role of VM</Info>
+                        	<ovf:Property ovf:key="type" ovf:userConfigurable="true" ovf:value="THNETMON" ovf:type="string"/>
+                        </ovf:ProductSection>			
+			<OperatingSystemSection ovf:id="37" ovf:version="5">
+				<Info>The kind of installed guest operating system</Info>
+				<Description>CentOS 5 (32 bit)</Description>
+			</OperatingSystemSection>
+			<VirtualHardwareSection>
+				<Info>Virtual Hardware Requirements : 512MB , 1 CPU , 1 disk , 2 nic </Info>
+				<System>
+					<vssd:ElementName>Virtual Hardware Family</vssd:ElementName>
+					<vssd:InstanceID>0</vssd:InstanceID>
+					<vssd:VirtualSystemType>kvm</vssd:VirtualSystemType>
+				</System>
+				<Item>
+					<rasd:Description>Number of virtual CPU</rasd:Description>
+					<rasd:ElementName>1 virtual CPU</rasd:ElementName>
+					<rasd:InstanceID>1</rasd:InstanceID>
+					<rasd:ResourceType>3</rasd:ResourceType>
+					<rasd:VirtualQuantity>1</rasd:VirtualQuantity>
+				</Item>
+				<Item>
+					<rasd:AllocationUnits>MegaBytes</rasd:AllocationUnits>
+					<rasd:Description>Memory Size</rasd:Description>
+					<rasd:ElementName>512 MB of memory</rasd:ElementName>
+					<rasd:InstanceID>2</rasd:InstanceID>
+					<rasd:ResourceType>4</rasd:ResourceType>
+					<rasd:VirtualQuantity>512</rasd:VirtualQuantity>
+				</Item>
+				<Item>
+					<rasd:AutomaticAllocation>true</rasd:AutomaticAllocation>
+					<rasd:Connection>virtual_network1</rasd:Connection>
+					<rasd:ElementName>Ethernet adapter on virtual_network1</rasd:ElementName>
+					<rasd:InstanceID>3</rasd:InstanceID>
+					<rasd:ResourceType>10</rasd:ResourceType>
+				</Item>
+				<Item>
+					<rasd:AutomaticAllocation>true</rasd:AutomaticAllocation>
+					<rasd:Connection>virtual_network1</rasd:Connection>
+					<rasd:ElementName>Ethernet adapter on virtual_network1</rasd:ElementName>
+					<rasd:InstanceID>4</rasd:InstanceID>
+					<rasd:ResourceType>10</rasd:ResourceType>
+				</Item>			
+				<Item>
+					<rasd:ElementName>Hard disk1</rasd:ElementName>
+					<rasd:HostResource>ovf://disk/Disk_THNETMON</rasd:HostResource>
+					<rasd:InstanceID>5</rasd:InstanceID>
+					<rasd:Parent>5</rasd:Parent>
+					<rasd:ResourceType>17</rasd:ResourceType>
+				</Item>
+			</VirtualHardwareSection>
+		</VirtualSystem>
+	</VirtualSystemCollection>
+</Envelope>

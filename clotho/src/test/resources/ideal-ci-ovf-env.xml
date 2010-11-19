@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ns1:Environment xmlns:ns2="http://schemas.dmtf.org/wbem/wscim/1/common" xmlns:ns1="http://schemas.dmtf.org/ovf/environment/1" ns1:id="CI">
+	<ns1:PropertySection>
+		<ns1:Property ns1:value="com.sap.ovf.ci.hostname.COMMON" ns1:key="system.hostname"/>
+		<ns1:Property ns1:value="static" ns1:key="system.nic0.ifcfg.bootproto"/>
+		<ns1:Property ns1:value="auto" ns1:key="system.nic0.ifcfg.startmode"/>
+		<ns1:Property ns1:value="com.sap.ovf.ci.privateip.COMMON" ns1:key="system.nic0.ifcfg.ipaddr"/>
+		<ns1:Property ns1:value="255.255.255.0" ns1:key="system.nic0.ifcfg.netmask"/>
+		<ns1:Property ns1:value="no" ns1:key="system.nic0.ifcfg.usercontrol"/>
+		<ns1:Property ns1:value="dhcp" ns1:key="system.nic1.ifcfg.bootproto"/>
+		<ns1:Property ns1:value="auto" ns1:key="system.nic1.ifcfg.startmode"/>
+		<ns1:Property ns1:value="no" ns1:key="system.nic1.ifcfg.usercontrol"/>
+		<ns1:Property ns1:value="eth0" ns1:key="update.system.hosts.hostname.ipaddr"/>
+		<ns1:Property ns1:value="CI" ns1:key="com.sap.ovf.servicerole.type"/>
+		<ns1:Property ns1:value="ActiveUsers" ns1:key="monitoring.KPIName"/>
+		<ns1:Property ns1:value="ERP@Reservoir" ns1:key="system.domain.serviceid.COMMON"/>
+		<ns1:Property ns1:value="BEN" ns1:key="com.sap.ovf.ci.sid.COMMON"/>
+		<ns1:Property ns1:value="701" ns1:key="com.sap.ovf.ci.version.COMMON"/>
+		<ns1:Property ns1:value="SAPCI1" ns1:key="com.sap.ovf.ci.hostname.COMMON"/>
+		<ns1:Property ns1:value="10.0.0.1" ns1:key="com.sap.ovf.ci.privateip.COMMON"/>
+		<ns1:Property ns1:value="com.sap.ovf.ci.privateip.COMMON" ns1:key="com.sap.ovf.ci.ip.COMMON"/>
+		<ns1:Property ns1:value="myDomain" ns1:key="system.resolve.search.COMMON"/>
+		<ns1:Property ns1:value="12.23.34.45" ns1:key="system.resolve.nameserver.1.COMMON"/>
+		<ns1:Property ns1:value="com.sap.ovf.ci.hostname.COMMON" ns1:key="com.sap.ovf.db.hostname.COMMON"/>
+		<ns1:Property ns1:value="com.sap.ovf.ci.privateip.COMMON" ns1:key="com.sap.ovf.db.ip.COMMON"/>
+	</ns1:PropertySection>
+	<ns1:Entity ns1:id="DI">
+		<ns1:PropertySection>
+			<ns1:Property ns1:value="SAPDI0" ns1:key="system.hostname"/>
+			<ns1:Property ns1:value="0.75" ns1:key="com.sap.ovf.di.ram_allocation"/>
+			<ns1:Property ns1:value="3" ns1:key="com.sap.ovf.di.wp_no_dia_per_vcpu"/>
+			<ns1:Property ns1:value="1" ns1:key="com.sap.ovf.di.wp_no_vb_per_vcpu"/>
+			<ns1:Property ns1:value="1" ns1:key="com.sap.ovf.di.profile.rdisp/wp_no_vb2"/>
+			<ns1:Property ns1:value="static" ns1:key="system.nic0.ifcfg.bootproto"/>
+			<ns1:Property ns1:value="auto" ns1:key="system.nic0.ifcfg.startmode"/>
+			<ns1:Property ns1:value="NOIP" ns1:key="system.nic0.ifcfg.ipaddr"/>
+			<ns1:Property ns1:value="255.255.255.0" ns1:key="system.nic0.ifcfg.netmask"/>
+			<ns1:Property ns1:value="no" ns1:key="system.nic0.ifcfg.usercontrol"/>
+			<ns1:Property ns1:value="dhcp" ns1:key="system.nic1.ifcfg.bootproto"/>
+			<ns1:Property ns1:value="auto" ns1:key="system.nic1.ifcfg.startmode"/>
+			<ns1:Property ns1:value="no" ns1:key="system.nic1.ifcfg.usercontrol"/>
+			<ns1:Property ns1:value="eth0" ns1:key="update.system.hosts.hostname.ipaddr"/>
+			<ns1:Property ns1:value="DI" ns1:key="com.sap.ovf.servicerole.type"/>
+		</ns1:PropertySection>
+	</ns1:Entity>
+</ns1:Environment>

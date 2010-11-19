@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ns1:Environment xmlns:ns2="http://schemas.dmtf.org/wbem/wscim/1/common" xmlns:ns1="http://schemas.dmtf.org/ovf/environment/1" ns1:id="VEEExecutor">
+	<ns1:PropertySection>
+		<ns1:Property ns1:value="10.0.0.1" ns1:key="com.sun.executor.IPforMaster"/>
+		<ns1:Property ns1:value="executor00" ns1:key="com.sun.executor.hostname"/>
+	</ns1:PropertySection>
+	<ns1:Entity ns1:id="VEEMaster">
+		<ns1:PropertySection>
+			<ns1:Property ns1:value="http://monoring_uri/SGEService/" ns1:key="com.sun.master.KPIChannel"/>
+			<ns1:Property ns1:value="SGEService" ns1:key="com.sun.master.KPIQualifier"/>
+		</ns1:PropertySection>
+	</ns1:Entity>
+</ns1:Environment>

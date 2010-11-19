@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Envelope xmlns:ovf="http://schemas.dmtf.org/ovf/envelope/1" xmlns="http://schemas.dmtf.org/ovf/envelope/1" xmlns:rsrvr="http://schemas.telefonica.com/claudia/ovf" xmlns:vssd="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_VirtualSystemSettingData" xmlns:rasd="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.telefonica.com/claudia/ovf reservoir.xsd">
+	<References>
+	  <!--  Note: these digests are not final. These values match IBM testbed on Fri 19/3/2010 -->
+		<File ovf:id="master" ovf:href="file:///images/masters/hardy32_master_unlimited2.img" rsrvr:digest="8f1643c4fdf83ab3827190ab771f76e1"/>
+		<File ovf:id="execution" ovf:href="file:///images/masters/hardy32_executor_unlimited2.img" rsrvr:digest="8080eaaa7f4912314c0362129877c1f9"/>
+	</References>
+	<DiskSection>
+		<Info>The SGE service uses two disk templates, one for VEEMaster and another for VEEExecutor</Info>
+		<Disk ovf:diskId="master" ovf:fileRef="master" ovf:capacity="1536MB" ovf:format="http://www.gnome.org/~markmc/qcow-image-format.html"/>
+		<Disk ovf:diskId="execution" ovf:fileRef="execution" ovf:capacity="1024MB" ovf:format="http://www.gnome.org/~markmc/qcow-image-format.html"/>
+	</DiskSection>
+	<NetworkSection>
+		<Info>The SGE service uses one one pubilc network (admin_net) and one internal network (sge_net)</Info>
+		<Network ovf:name="0_admin_net" rsrvr:public="true">
+			<Description>Network to provide administrative access to VEEMaster</Description>
+		</Network>
+    <Network ovf:name="1_sge_net">
+			<Description>Network to connect service components (VEEMaster and VEEExecutors)</Description>
+		</Network>
+	</NetworkSection>
+	<rsrvr:KPISection>
+		<Info>SGE only uses one KPI: the length of the jobs queue</Info>
+		<rsrvr:KPI KPIname="queueLength"/>		
+	</rsrvr:KPISection>
+	<!--  VM descriptions -->
+	<VirtualSystemCollection ovf:id="SGEService">
+		<Info>The SGE service is composed by two types of VMs, VEEMaster and VEEExecutor</Info>
+		<StartupSection>
+			<Info>VEEMaster has to be booted before any VEEExecutor</Info>
+			<Item ovf:id="VEEMaster" ovf:order="0" ovf:waitingForGuest="true"/>
+			<Item ovf:id="VEEExecutor" ovf:order="1"/>
+		</StartupSection>		   
+		<VirtualSystem ovf:id="VEEMaster" rsrvr:min="1" rsrvr:max="1" rsrvr:initial="1">
+			<Info>Master VEE description</Info>
+			<!--  Master daemon configuration parameters -->
+			<ProductSection ovf:class="com.sun.master">
+				<Info>Product customization for the installed master software</Info>
+				<Product>SGE Master</Product>
+				<Version>6.2</Version>				
+				<Property ovf:key="KPIChannel" ovf:type="string" rsrvr:cloudConfigurable="true" ovf:value="@MonitoringChannel"/>
+				<Property ovf:key="KPIQualifier" ovf:type="string" rsrvr:cloudConfigurable="true" ovf:value="@ServiceId"/>
+			</ProductSection>
+			<rsrvr:AvailabilitySection>
+			<Info>Availability requested by the Service Provider</Info>
+				<rsrvr:Window unit="hour">2</rsrvr:Window>
+				<rsrvr:Percentile>99.0</rsrvr:Percentile>
+			</rsrvr:AvailabilitySection>
+			<VirtualHardwareSection>
+				<Info>Virtual Hardware Requirements: 512Mb, 2 CPU, 1 disk, 1 nic</Info>
+				<System>
+					<vssd:ElementName>Virtual Hardware Family</vssd:ElementName>
+					<vssd:InstanceID>0</vssd:InstanceID>
+					<vssd:VirtualSystemType>kvm</vssd:VirtualSystemType>
+				</System>
+				<Item>
+					<rasd:Description>Number of virtual CPUs</rasd:Description>
+					<rasd:ElementName>1 virtual CPU</rasd:ElementName>
+					<rasd:InstanceID>1</rasd:InstanceID>
+					<rasd:ResourceType>3</rasd:ResourceType>
+					<rasd:VirtualQuantity>1</rasd:VirtualQuantity>
+				</Item>
+				<Item>
+					<rasd:AllocationUnits>MegaBytes</rasd:AllocationUnits>
+					<rasd:Description>Memory Size</rasd:Description>
+					<rasd:ElementName>512 MB of memory</rasd:ElementName>
+					<rasd:InstanceID>2</rasd:InstanceID>
+					<rasd:ResourceType>4</rasd:ResourceType>
+					<rasd:VirtualQuantity>512</rasd:VirtualQuantity>
+				</Item>
+				<Item>
+			    <rasd:AutomaticAllocation>true</rasd:AutomaticAllocation>
+					<rasd:Connection>0_admin_net</rasd:Connection>
+					<rasd:ElementName>Ethernet adapter on admin_net network</rasd:ElementName>
+					<rasd:InstanceID>3</rasd:InstanceID>
+					<rasd:ResourceType>10</rasd:ResourceType>
+        </Item>
+				<Item>
+				  <rasd:AutomaticAllocation>true</rasd:AutomaticAllocation>
+					<rasd:Connection>1_sge_net</rasd:Connection>
+					<rasd:ElementName>Ethernet adapter on sge_net network</rasd:ElementName>
+					<rasd:InstanceID>3</rasd:InstanceID>
+					<rasd:ResourceType>10</rasd:ResourceType>	
+				</Item>
+				<Item>
+					<rasd:ElementName>Harddisk 1</rasd:ElementName>
+					<rasd:HostResource>ovf://disk/master</rasd:HostResource>
+					<rasd:InstanceID>5</rasd:InstanceID>
+					<rasd:Parent>4</rasd:Parent>
+					<rasd:ResourceType>17</rasd:ResourceType>
+				</Item>
+			</VirtualHardwareSection>
+		</VirtualSystem>
+		<VirtualSystem ovf:id="VEEExecutor" rsrvr:min="2" rsrvr:max="5" rsrvr:initial="2">
+			<Info>Executor VEE description</Info>
+			<!--  Executor daemon on the executor image configuration parameters  -->
+			<ProductSection ovf:class="com.sun.executor">
+				<Info>Product customization for the installed executor software</Info>
+				<Product>SGE Executor</Product>
+				<Version>6.2</Version>
+				<Property ovf:key="IPforMaster" ovf:type="string" rsrvr:cloudConfigurable="true" ovf:value="@PrecedentTierEntryPoint(1_sge_net,VEEMaster)"/>
+           		<Property ovf:key="hostname" ovf:type="string" rsrvr:cloudConfigurable="true" ovf:value="executor@id(0)"/>
+			</ProductSection>
+			<rsrvr:AvailabilitySection>
+			<Info>Availability requested by the Service Provider</Info>
+				<rsrvr:Window unit="hour">2</rsrvr:Window>
+				<rsrvr:Percentile>99.0</rsrvr:Percentile>
+				</rsrvr:AvailabilitySection>
+			<rsrvr:ElasticArraySection>
+				<Info>There are two elasticity rules, to scale up and down VEEExecutor components</Info>
+				<rsrvr:Rule>
+		    		<rsrvr:KPIName>queueLength</rsrvr:KPIName>
+					<rsrvr:Window unit="minute">5</rsrvr:Window>
+					<rsrvr:Frequency>20</rsrvr:Frequency>
+					<rsrvr:Quota>45</rsrvr:Quota>
+					<rsrvr:Tolerance>55.55</rsrvr:Tolerance>
+				</rsrvr:Rule>
+			</rsrvr:ElasticArraySection>
+			<VirtualHardwareSection>
+				<Info>Virtual Hardware Requirements: 512Mb, 1 CPU, 1 disk, 1 nic</Info>
+				<System>
+					<vssd:ElementName>Virtual Hardware Family</vssd:ElementName>
+					<vssd:InstanceID>0</vssd:InstanceID>
+					<vssd:VirtualSystemType>kvm</vssd:VirtualSystemType>
+				</System>
+				<Item>
+					<rasd:Description>Number of virtual CPUs</rasd:Description>
+					<rasd:ElementName>1 virtual CPU</rasd:ElementName>
+					<rasd:InstanceID>1</rasd:InstanceID>
+					<rasd:ResourceType>3</rasd:ResourceType>
+					<rasd:VirtualQuantity>1</rasd:VirtualQuantity>
+				</Item>
+				<Item>
+					<rasd:AllocationUnits>MegaBytes</rasd:AllocationUnits>
+					<rasd:Description>Memory Size</rasd:Description>
+					<rasd:ElementName>512 MB of memory</rasd:ElementName>
+					<rasd:InstanceID>2</rasd:InstanceID>
+					<rasd:ResourceType>4</rasd:ResourceType>
+					<rasd:VirtualQuantity>512</rasd:VirtualQuantity>
+				</Item>
+				<Item>
+					<rasd:AutomaticAllocation>true</rasd:AutomaticAllocation>
+					<rasd:Connection>1_sge_net</rasd:Connection>
+					<rasd:ElementName>Ethernet adapter on sge_net network</rasd:ElementName>
+					<rasd:InstanceID>3</rasd:InstanceID>
+					<rasd:ResourceType>10</rasd:ResourceType>
+				</Item>
+				<Item>
+					<rasd:ElementName>Harddisk 1</rasd:ElementName>
+					<rasd:HostResource>ovf://disk/execution</rasd:HostResource>
+					<rasd:InstanceID>5</rasd:InstanceID>
+					<rasd:Parent>4</rasd:Parent>
+					<rasd:ResourceType>17</rasd:ResourceType>
+				</Item>
+			</VirtualHardwareSection>
+		</VirtualSystem>
+	</VirtualSystemCollection>
+</Envelope>

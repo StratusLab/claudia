@@ -1,0 +1,24 @@
+package es.tid.reservoir.serviceManager.sca;
+ 
+import  es.tid.reservoir.serviceManager.deployment.ServiceApplication;
+import  es.tid.reservoir.serviceManager.deployment.VEE;
+import  es.tid.reservoir.serviceManager.bim.jpa.dao.*;
+import  es.tid.reservoir.serviceManager.bim.jpa.model.*;
+import java.util.Iterator;
+
+rule "SCA"
+	no-loop true
+	when
+		sa : ServiceApplication(  )
+		sp : Sp(  );
+		eval (sp.getOutStanding())
+	then
+		for (Iterator<VEE> it = sa.getVEEs().iterator(); it.hasNext();) {
+             VEE vee = (VEE)it.next();
+             //int initReplicas = vee.getInitReplicas();
+             vee.setInitReplicas(1);
+             
+         }
+   	 	
+		update(sa);
+end

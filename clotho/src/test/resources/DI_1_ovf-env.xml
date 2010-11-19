@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<ns1:Environment xmlns:ns1="http://schemas.dmtf.org/ovf/environment/1" xmlns:ns2="http://schemas.dmtf.org/wbem/wscim/1/common" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.dmtf.org/ovf/environment/1 ../xsd/dsp8027.xsd">
+	<ns1:PropertySection>
+		<ns1:Property ns1:value="0.75" ns1:key="com.sap.ovf.di.ram_allocation"/>
+		<ns1:Property ns1:value="no" ns1:key="system.nic0.ifcfg.usercontrol"/>
+		<ns1:Property ns1:value="10.0.0.3" ns1:key="system.nic0.ifcfg.ipaddr"/>
+		<ns1:Property ns1:value="VM Network" ns1:key="system.nic0.network"/>
+		<ns1:Property ns1:value="" ns1:key="system.routes.route.1"/>
+		<ns1:Property ns1:value="10.0.0.1" ns1:key="com.sap.ovf.ci.ip"/>
+		<ns1:Property ns1:value="" ns1:key="system.nic0.mac"/>
+		<ns1:Property ns1:value="static" ns1:key="system.nic0.ifcfg.bootproto"/>
+		<ns1:Property ns1:value="dhcp.bfsl.sap.corp" ns1:key="system.resolve.search"/>
+		<ns1:Property ns1:value="1" ns1:key="com.sap.ovf.di.profile.rdisp/wp_no_vb2"/>
+		<ns1:Property ns1:value="BEN" ns1:key="com.sap.ovf.di.sid"/>
+		<ns1:Property ns1:value="1" ns1:key="com.sap.ovf.di.wp_no_vb_per_vcpu"/>
+		<ns1:Property ns1:value="10.0.0.1" ns1:key="com.sap.ovf.db.ip"/>
+		<ns1:Property ns1:value="3" ns1:key="com.sap.ovf.di.wp_no_dia_per_vcpu"/>
+		<ns1:Property ns1:value="SAPDI1" ns1:key="system.hostname"/>
+		<ns1:Property ns1:value="eth0" ns1:key="system.nic0.name"/>
+		<ns1:Property ns1:value="10.0.0.255" ns1:key="system.nic0.ifcfg.broadcast"/>
+		<ns1:Property ns1:value="SAPCI1" ns1:key="com.sap.ovf.ci.hostname"/>
+		<ns1:Property ns1:value="http://proxy.wdf.sap.corp:8080" ns1:key="system.proxy.http_proxy"/>
+		<ns1:Property ns1:value="701" ns1:key="com.sap.ovf.di.version"/>
+		<ns1:Property ns1:value="auto" ns1:key="system.nic0.ifcfg.startmode"/>
+		<ns1:Property ns1:value="http://proxy.wdf.sap.corp:8080" ns1:key="system.proxy.https_proxy"/>
+		<ns1:Property ns1:value="SAPCI1" ns1:key="com.sap.ovf.db.hostname"/>
+		<ns1:Property ns1:value="255.255.255.0" ns1:key="system.nic0.ifcfg.netmask"/>
+	</ns1:PropertySection>
+</ns1:Environment>

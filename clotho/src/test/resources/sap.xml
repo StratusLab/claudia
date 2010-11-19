@@ -1,0 +1,536 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2008 rel. 2 sp2 (http://www.altova.com) by Boris Mikhailovski (SAP Portals Israel Ltd) -->
+<!-- Updated by Boris Mikhailovski @SAP Nov/2009 b.mikhailovski@sap.com 	
+	 version 17-JAN-2010 follow up uodates l-->
+<Envelope xmlns:ovf="http://schemas.dmtf.org/ovf/envelope/1" xmlns="http://schemas.dmtf.org/ovf/envelope/1" xmlns:rsrvr="http://schemas.telefonica.com/claudia/ovf" xmlns:vssd="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_VirtualSystemSettingData" xmlns:rasd="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.telefonica.com/claudia/ovf Reservoir.xsd
+
+	http://schemas.dmtf.org/ovf/environment/1 http://schemas.dmtf.org/ovf/environment/1/dsp8027.xsd">
+	<ovf:References>
+		<ovf:File ovf:href="file://share/sap-images/landscape/SAPDI241.img" ovf:id="DI"/>
+		<ovf:File ovf:href="file://share/sap-images/landscape/SAPCI1.img" ovf:id="CI"/>
+		<ovf:File ovf:href="file://share/sap-images/landscape/SAPPROXY.img" ovf:id="SAPPROXY"/>
+		<ovf:File ovf:href="file://share/NETMON.img" ovf:id="NETMON"/>
+	</ovf:References>
+	<ovf:DiskSection>
+		<ovf:Info>Virtual disk information</ovf:Info>
+		<ovf:Disk ovf:capacity="3" ovf:capacityAllocationUnits="byte * 2^30" ovf:diskId="SAPPROXY_Disk" ovf:fileRef="SAPPROXY" ovf:format="http://www.nongnu.org/qemu/qemu-doc.html#qcow2"/>
+		<ovf:Disk ovf:capacity="3" ovf:capacityAllocationUnits="byte * 2^30" ovf:diskId="DI_Disk" ovf:fileRef="DI" ovf:format="http://www.nongnu.org/qemu/qemu-doc.html#qcow2"/>
+		<ovf:Disk ovf:capacity="200" ovf:capacityAllocationUnits="byte * 2^30" ovf:diskId="CI_Disk" ovf:fileRef="CI" ovf:format="http://www.nongnu.org/qemu/qemu-doc.html#qcow2"/>
+		<ovf:Disk ovf:capacity="4" ovf:capacityAllocationUnits="byte * 2^30" ovf:diskId="NETMON_Disk" ovf:fileRef="NETMON" ovf:format="http://www.nongnu.org/qemu/qemu-doc.html#qcow2"/>
+	</ovf:DiskSection>
+	<ovf:NetworkSection>
+		<ovf:Info>List of logical networks used in the service</ovf:Info>
+		<ovf:Network ovf:name="Private_Network" rsrvr:public="false">
+			<ovf:Description>Network to connect service components
+			</ovf:Description>
+		</ovf:Network>
+		<ovf:Network ovf:name="External_Network" rsrvr:public="true">
+			<ovf:Description>Network to connect service components
+			</ovf:Description>
+		</ovf:Network>
+	</ovf:NetworkSection>
+	<!-- start of affinity section -->
+	<rsrvr:AffinitySection>
+		<Info>Sets basic afinity rules </Info>
+		<rsrvr:Affinity scope="physical">
+			<rsrvr:VirtualSystemId>CI</rsrvr:VirtualSystemId>
+			<rsrvr:VirtualSystemId>SAPPROXY</rsrvr:VirtualSystemId>
+		</rsrvr:Affinity>
+		<rsrvr:AntiAffinity scope="physical">
+			<rsrvr:VirtualSystemId>CI</rsrvr:VirtualSystemId>
+			<rsrvr:VirtualSystemId>DI</rsrvr:VirtualSystemId>
+		</rsrvr:AntiAffinity>
+	</rsrvr:AffinitySection>
+	<!-- start of affinity section -->
+	<rsrvr:KPISection>
+		<ovf:Info>String</ovf:Info>
+		<rsrvr:KPI KPIname="AvgUsersPerDI"/>
+	</rsrvr:KPISection>
+	<ovf:VirtualSystemCollection ovf:id="ERP@Reservoir">
+		<ovf:Info>A multi-tiered software solution</ovf:Info>
+		<ovf:Name>ERP@Reservoir</ovf:Name>
+		<ovf:StartupSection>
+			<ovf:Info>Startup order</ovf:Info>
+			<!-- CI will start before the SAPPROXY in order to enable usage of @Preceident macro -->
+			<ovf:Item ovf:id="CI" ovf:order="1" ovf:startAction="powerOn" ovf:startDelay="120" ovf:stopAction="powerOff" ovf:stopDelay="120" ovf:waitingForGuest="true"/>
+			<ovf:Item ovf:id="SAPPROXY" ovf:order="2" ovf:startAction="powerOn" ovf:startDelay="120" ovf:stopAction="powerOff" ovf:stopDelay="120" ovf:waitingForGuest="true"/>
+			<ovf:Item ovf:id="NETMON" ovf:order="3" ovf:startAction="powerOn" ovf:startDelay="120" ovf:stopAction="powerOff" ovf:stopDelay="120" ovf:waitingForGuest="true"/>
+			<ovf:Item ovf:id="DI" ovf:order="4" ovf:startAction="powerOn" ovf:startDelay="120" ovf:stopAction="powerOff" ovf:stopDelay="120" ovf:waitingForGuest="true"/>
+
+			<!-- Disabled due to initial number of DI is 0
+				<ovf:Item ovf:id="DI" ovf:order="3" ovf:startAction="powerOn" ovf:startDelay="120" ovf:stopAction="powerOff" ovf:stopDelay="120"/>
+			-->
+		</ovf:StartupSection>
+		<ovf:ResourceAllocationSection>
+			<ovf:Info>CPU and memory resource requirements</ovf:Info>
+			<ovf:Item>
+				<rasd:AllocationUnits>byte * 2^20</rasd:AllocationUnits>
+				<rasd:ElementName>Memory reservation</rasd:ElementName>
+				<rasd:InstanceID>2</rasd:InstanceID>
+				<rasd:Reservation>16000</rasd:Reservation>
+				<rasd:ResourceType>4</rasd:ResourceType>
+			</ovf:Item>
+		</ovf:ResourceAllocationSection>
+		<!-- 
+              Common ProductSections
+         -->
+		<ovf:ProductSection>
+			<ovf:Info>Information about the installed software</ovf:Info>
+			<ovf:Product>SAP ERP</ovf:Product>
+			<ovf:Vendor>SAP</ovf:Vendor>
+			<ovf:Version>6.0</ovf:Version>
+		</ovf:ProductSection>
+		<ovf:ProductSection ovf:class="system.domain" ovf:instance="COMMON">
+			<Info>Service ID</Info>
+			<ovf:Property ovf:key="serviceid" rsrvr:cloudConfigurable="true" ovf:value="@ServiceId" ovf:type="string"/>
+		</ovf:ProductSection>
+		<ovf:ProductSection ovf:class="com.sap.ovf.ci" ovf:instance="COMMON">
+			<Info>CI Instance Name</Info>
+			<ovf:Property ovf:key="sid" ovf:value="BEN" ovf:type="string"/>
+			<ovf:Property ovf:key="version" ovf:value="701" ovf:type="string"/>
+			<!-- CI HOSTNAME -->
+			<ovf:Property ovf:key="hostname" ovf:value="SAPCI1" ovf:type="string"/>
+			<!-- CI PRIVATEIP -->
+			<Property ovf:key="ip" ovf:value="com.sap.ovf.ci.privateip" ovf:type="string"/>
+		</ovf:ProductSection>
+		<ovf:ProductSection ovf:class="system.resolve" ovf:instance="COMMON">
+			<Info>Resolve Settings</Info>
+			<!-- TBD: Domain names of the External_ Network are assigned by ?-->
+			<ovf:Property ovf:key="search" rsrvr:cloudConfigurable="true" ovf:value="@Domain" ovf:type="string"/>
+		</ovf:ProductSection>
+		<ovf:ProductSection ovf:class="system.resolve.nameserver" ovf:instance="COMMON">
+			<Info>System resolve nameserver</Info>
+			<ovf:Property ovf:key="1" rsrvr:cloudConfigurable="true" ovf:value="@DNSServer(External_Network)" ovf:type="string"/>
+		</ovf:ProductSection>
+		<ovf:ProductSection ovf:class="com.sap.ovf.db" ovf:instance="COMMON">
+			<ovf:Info>Information about the installed software</ovf:Info>
+			<ovf:Property ovf:key="hostname" ovf:type="string" ovf:value="com.sap.ovf.ci.hostname.COMMON"/>
+			<ovf:Property ovf:key="ip" ovf:type="string" ovf:value="com.sap.ovf.ci.privateip"/>
+		</ovf:ProductSection>
+		<ProductSection ovf:class="com.sap.ovf.monitoring" ovf:instance="COMMON">
+			<Info> Defines the monitoring channel, the value is Multicast Transport URI </Info>
+			<Property ovf:type="anyURI" ovf:key="monitoringchannel" rsrvr:cloudConfigurable="true" ovf:value="@MonitoringChannel"/>
+		</ProductSection>
+		<!-- SAPPROXY -->
+		<ovf:VirtualSystem ovf:id="SAPPROXY" rsrvr:min="1" rsrvr:max="1" rsrvr:initial="1">
+			<ovf:Info>A virtual machine</ovf:Info>
+			<Name>Reservoir SAPPROXY</Name>
+			<ovf:OperatingSystemSection ovf:id="85" ovf:version="10">
+				<ovf:Info>The kind of installed guest operating system</ovf:Info>
+				<ovf:Description>Suse Linux Enterprise Server 10 (64 bit)
+			</ovf:Description>
+				<rsrvr:DeploymentSection>
+					<Info>Strict deployment in Sweden</Info>
+					<rsrvr:Restriction>
+						<rsrvr:Country>SE</rsrvr:Country>
+					</rsrvr:Restriction>
+				</rsrvr:DeploymentSection>
+			</ovf:OperatingSystemSection>
+			<ovf:VirtualHardwareSection>
+				<ovf:Info>Virtual hardware requirements</ovf:Info>
+				<ovf:System>
+					<vssd:ElementName>Virtual Hardware Family</vssd:ElementName>
+					<vssd:InstanceID>0</vssd:InstanceID>
+					<vssd:VirtualSystemIdentifier>ReservoirSapProxy</vssd:VirtualSystemIdentifier>
+					<vssd:VirtualSystemType>kvm</vssd:VirtualSystemType>
+				</ovf:System>
+				<ovf:Item>
+					<rasd:AllocationUnits>hertz * 10^6</rasd:AllocationUnits>
+					<rasd:Description>Number of Virtual CPUs</rasd:Description>
+					<rasd:ElementName>2 virtual CPU(s)</rasd:ElementName>
+					<rasd:InstanceID>1</rasd:InstanceID>
+					<rasd:ResourceType>3</rasd:ResourceType>
+					<rasd:VirtualQuantity>2</rasd:VirtualQuantity>
+					<!--          <rasd:VirtualQuantityUnits>count</rasd:VirtualQuantityUnits>-->
+				</ovf:Item>
+				<ovf:Item>
+					<rasd:AllocationUnits>byte * 2^20</rasd:AllocationUnits>
+					<rasd:Description>Memory Size</rasd:Description>
+					<rasd:ElementName>2GB of Memory</rasd:ElementName>
+					<rasd:InstanceID>2</rasd:InstanceID>
+					<rasd:ResourceType>4</rasd:ResourceType>
+					<rasd:VirtualQuantity>2048</rasd:VirtualQuantity>
+					<!--          <rasd:VirtualQuantityUnits>byte * 2^20</rasd:VirtualQuantityUnits>-->
+				</ovf:Item>
+				<ovf:Item>
+					<!-- DIs ae connected to Public_Network only because of the load generator -->
+					<rasd:AutomaticAllocation>true</rasd:AutomaticAllocation>
+					<rasd:Connection>Private_Network</rasd:Connection>
+					<rasd:Description>E1000 ethernet adapter on "External Network"</rasd:Description>
+					<rasd:ElementName>Network Adapter 0</rasd:ElementName>
+					<rasd:InstanceID>7</rasd:InstanceID>
+					<rasd:ResourceSubType>E1000</rasd:ResourceSubType>
+					<rasd:ResourceType>10</rasd:ResourceType>
+				</ovf:Item>
+				<ovf:Item>
+					<rasd:AddressOnParent>7</rasd:AddressOnParent>
+					<rasd:AutomaticAllocation>true</rasd:AutomaticAllocation>
+					<rasd:Connection>External_Network</rasd:Connection>
+					<rasd:Description>E1000 ethernet adapter on "VM Network"</rasd:Description>
+					<rasd:ElementName>Network Adapter 1</rasd:ElementName>
+					<rasd:InstanceID>8</rasd:InstanceID>
+					<rasd:ResourceSubType>E1000</rasd:ResourceSubType>
+					<rasd:ResourceType>10</rasd:ResourceType>
+				</ovf:Item>
+				<ovf:Item>
+					<rasd:AddressOnParent>0</rasd:AddressOnParent>
+					<rasd:ElementName>Hard Disk 1</rasd:ElementName>
+					<rasd:HostResource>ovf://disk/SAPPROXY_Disk</rasd:HostResource>
+					<rasd:InstanceID>9</rasd:InstanceID>
+					<rasd:Parent>3</rasd:Parent>
+					<rasd:ResourceType>17</rasd:ResourceType>
+				</ovf:Item>
+			</ovf:VirtualHardwareSection>
+			<!-- Availability section silver -->
+			<rsrvr:AvailabilitySection>
+				<Info>SAPPROXY SLA</Info>
+				<rsrvr:Window unit="hour">168</rsrvr:Window>
+				<rsrvr:Percentile>99.9</rsrvr:Percentile>
+			</rsrvr:AvailabilitySection>
+			<!--start of SAPPROXY Product Section-->
+			<ovf:ProductSection ovf:class="system" ovf:instance="SAPPROXY">
+				<Info>Hostname of DI</Info>
+				<ovf:Property ovf:key="hostname" rsrvr:cloudConfigurable="true" ovf:value="SAPPROXY@id(0)" ovf:type="string"/>
+			</ovf:ProductSection>
+			<ovf:ProductSection ovf:class="system.nic0.ifcfg" ovf:instance="SAPPROXY">
+				<Info>NIC0 CONFIGURATION</Info>
+				<ovf:Property ovf:key="bootproto" ovf:value="dhcp" ovf:type="string"/>
+				<ovf:Property ovf:key="startmode" ovf:value="auto" ovf:type="string"/>
+				<ovf:Property ovf:key="usercontrol" ovf:value="no" ovf:type="string"/>
+			</ovf:ProductSection>
+			<ovf:ProductSection ovf:class="system.nic1.ifcfg" ovf:instance="SAPPROXY">
+				<Info>NIC1 Config</Info>
+				<ovf:Property ovf:key="bootproto" ovf:value="static" ovf:type="string"/>
+				<ovf:Property ovf:key="startmode" ovf:value="auto" ovf:type="string"/>
+				<ovf:Property ovf:key="ipaddr" rsrvr:cloudConfigurable="true" ovf:value="@IP(Private_Network)" ovf:type="string"/>
+				<ovf:Property ovf:key="netmask" rsrvr:cloudConfigurable="true" ovf:value="@Netmask(Private_Network)" ovf:type="string"/>
+				<ovf:Property ovf:key="usercontrol" ovf:value="no" ovf:type="string"/>
+			</ovf:ProductSection>
+			<ovf:ProductSection ovf:class="update.system.hosts.hostname" ovf:instance="SAPPROXY">
+				<Info> Update the /etc/hosts with the proper NIC IP</Info>
+				<ovf:Property ovf:key="ipaddr" ovf:userConfigurable="true" ovf:value="eth0" ovf:type="string"/>
+			</ovf:ProductSection>
+			<ovf:ProductSection ovf:class="com.sap.ovf.servicerole" ovf:instance="SAPPROXY">
+				<Info> Service Role of VM</Info>
+				<ovf:Property ovf:key="type" ovf:userConfigurable="true" ovf:value="SAPPROXY" ovf:type="string"/>
+			</ovf:ProductSection>
+			<ovf:ProductSection ovf:class="com.sap.ovf.ci">
+				<ovf:Info>sets the internal address for CI </ovf:Info>
+				<Property ovf:key="privateip" rsrvr:cloudConfigurable="true" ovf:type="string" ovf:value="@PrecedentTierEntryPoint(Private_Network,CI)"/>
+			</ovf:ProductSection>
+			<ProductSection ovf:class="com.sap.ovf.monitoring.kpi.0" ovf:instance="SAPPROXY">
+				<Info> KPI AverageUsersPerInstance </Info>
+				<Property ovf:type="string" ovf:key="kpiname" ovf:value="AvgUsersPerDI"/>
+				<Property ovf:type="integer" ovf:key="frequence" ovf:value="5"/>
+			</ProductSection>
+		</ovf:VirtualSystem>
+		<!-- CI -->
+		<ovf:VirtualSystem ovf:id="CI" rsrvr:min="1" rsrvr:max="1" rsrvr:initial="1" rsrvr:uuid="file:///share/sap-images/landscape/ci.uuid">
+			<ovf:Info>A virtual machine</ovf:Info>
+			<ovf:Name>Reservoir CI 2.4</ovf:Name>
+			<ovf:OperatingSystemSection ovf:id="85" ovf:version="10">
+				<ovf:Info>The kind of installed guest operating system</ovf:Info>
+				<ovf:Description>Suse Linux Enterprise Server 10 (64 bit)
+				</ovf:Description>
+			</ovf:OperatingSystemSection>
+			<rsrvr:PerformanceObjectiveSection>
+				<Info>SAP CI CPU IDLE</Info>
+				<rsrvr:Constraint>
+					<rsrvr:Name>IDLE% CPU </rsrvr:Name>
+					<rsrvr:KPIName>CPU </rsrvr:KPIName>
+					<rsrvr:Window unit="hour">24</rsrvr:Window>
+					<rsrvr:Range>
+						<rsrvr:Min>10</rsrvr:Min>
+						<rsrvr:Max>100</rsrvr:Max>
+					</rsrvr:Range>
+					<rsrvr:Percentage>90</rsrvr:Percentage>
+				</rsrvr:Constraint>
+			</rsrvr:PerformanceObjectiveSection>
+			<ovf:VirtualHardwareSection>
+				<ovf:Info>Virtual hardware requirements</ovf:Info>
+				<ovf:System>
+					<vssd:ElementName>Virtual Hardware Family</vssd:ElementName>
+					<vssd:InstanceID>0</vssd:InstanceID>
+					<vssd:VirtualSystemIdentifier>ReservoirCI</vssd:VirtualSystemIdentifier>
+					<vssd:VirtualSystemType>kvm</vssd:VirtualSystemType>
+				</ovf:System>
+				<ovf:Item>
+					<rasd:AllocationUnits>hertz * 10^6</rasd:AllocationUnits>
+					<rasd:Description>Number of Virtual CPUs</rasd:Description>
+					<rasd:ElementName>4 virtual CPU(s)</rasd:ElementName>
+					<rasd:InstanceID>1</rasd:InstanceID>
+					<rasd:ResourceType>3</rasd:ResourceType>
+					<rasd:VirtualQuantity>4</rasd:VirtualQuantity>
+					<!--<rasd:VirtualQuantityUnits>count</rasd:VirtualQuantityUnits>-->
+				</ovf:Item>
+				<ovf:Item>
+					<rasd:AllocationUnits>byte * 2^20</rasd:AllocationUnits>
+					<rasd:Description>Memory Size</rasd:Description>
+					<rasd:ElementName>7 GB</rasd:ElementName>
+					<rasd:InstanceID>2</rasd:InstanceID>
+					<rasd:ResourceType>4</rasd:ResourceType>
+					<rasd:VirtualQuantity>7168</rasd:VirtualQuantity>
+					<!--  <rasd:VirtualQuantityUnits>byte * 2^20</rasd:VirtualQuantityUnits> -->
+				</ovf:Item>
+				<ovf:Item>
+					<rasd:AutomaticAllocation>true</rasd:AutomaticAllocation>
+					<rasd:Connection>Private_Network</rasd:Connection>
+					<rasd:Description>E1000 ethernet adapter on "VM Network"</rasd:Description>
+					<rasd:ElementName>Network Adapter 0</rasd:ElementName>
+					<rasd:InstanceID>3</rasd:InstanceID>
+					<rasd:ResourceSubType>E1000</rasd:ResourceSubType>
+					<rasd:ResourceType>10</rasd:ResourceType>
+				</ovf:Item>
+				<ovf:Item>
+					<rasd:AddressOnParent>0</rasd:AddressOnParent>
+					<rasd:ElementName>Hard Disk 1</rasd:ElementName>
+					<rasd:HostResource>ovf://disk/CI_Disk</rasd:HostResource>
+					<rasd:InstanceID>9</rasd:InstanceID>
+					<rasd:Parent>3</rasd:Parent>
+					<rasd:ResourceType>17</rasd:ResourceType>
+				</ovf:Item>
+			</ovf:VirtualHardwareSection>
+			<rsrvr:DeploymentSection>
+				<Info>Strict deployment in Sweden</Info>
+				<rsrvr:Restriction>
+					<rsrvr:Country>SE</rsrvr:Country>
+				</rsrvr:Restriction>
+			</rsrvr:DeploymentSection>
+			<!-- TBD Availability section  CI GOLD, it's impossible to set fraction part of value for percentile -->
+			<rsrvr:AvailabilitySection>
+				<Info>SAPCI SLA</Info>
+				<rsrvr:Window unit="minute">60</rsrvr:Window>
+				<rsrvr:Percentile>99.9</rsrvr:Percentile>
+			</rsrvr:AvailabilitySection>
+			<ovf:ProductSection ovf:class="system" ovf:instance="CI">
+				<Info>Hostname of CI</Info>
+				<!-- CI should have a pre-defined and fixed name -->
+				<ovf:Property ovf:key="hostname" ovf:value="com.sap.ovf.ci.hostname.COMMON" ovf:type="string"/>
+			</ovf:ProductSection>
+			<ProductSection ovf:class="com.sap.ovf.ci" ovf:instance="CI">
+				<Info>privateip sets private IP address </Info>
+				<Property ovf:type="string" ovf:key="privateip" rsrvr:cloudConfigurable="true" ovf:value="@IP(Private_Network)"/>
+			</ProductSection>
+			<ovf:ProductSection ovf:class="system.nic0.ifcfg" ovf:instance="CI">
+				<Info>NIC0 CONFIGURATION</Info>
+				<ovf:Property ovf:key="bootproto" ovf:value="static" ovf:type="string"/>
+				<ovf:Property ovf:key="startmode" ovf:value="auto" ovf:type="string"/>
+				<ovf:Property ovf:key="ipaddr" ovf:value="com.sap.ovf.ci.privateip.CI" ovf:type="string"/>
+				<ovf:Property ovf:key="netmask" rsrvr:cloudConfigurable="true" ovf:value="@Netmask(Private_Network)" ovf:type="string"/>
+				<ovf:Property ovf:key="usercontrol" ovf:value="no" ovf:type="string"/>
+			</ovf:ProductSection>
+			<!--update.system.hosts.hostname.ipaddr -> assigns to host IP Address of the specified NIC -->
+			<!-- redundant section for possible use, appeared also in SAPPROXY -->
+			<ProductSection ovf:class="com.sap.ovf.monitoring.kpi.0" ovf:instance="CI">
+				<Info> KPI AverageUsersPerInstance </Info>
+				<Property ovf:type="string" ovf:key="kpiname" ovf:value="AvgUsersPerDI"/>
+				<Property ovf:type="integer" ovf:key="frequence" ovf:value="5"/>
+			</ProductSection>
+			<ovf:ProductSection ovf:class="update.system.hosts.hostname" ovf:instance="CI">
+				<Info> Update the /etc/hosts with the proper NIC IP</Info>
+				<ovf:Property ovf:key="ipaddr" ovf:userConfigurable="true" ovf:value="eth0" ovf:type="string"/>
+			</ovf:ProductSection>
+			<ovf:ProductSection ovf:class="com.sap.ovf.servicerole" ovf:instance="CI">
+				<Info> Service Role of VM</Info>
+				<ovf:Property ovf:key="type" ovf:userConfigurable="true" ovf:value="CI" ovf:type="string"/>
+			</ovf:ProductSection>
+		</ovf:VirtualSystem>
+		<!-- SAPDI -->
+		<ovf:VirtualSystem ovf:id="DI" rsrvr:min="1" rsrvr:max="10" rsrvr:initial="1">
+			<ovf:Info>A virtual machine</ovf:Info>
+			<Name>ReservoirDI</Name>
+			<ovf:OperatingSystemSection ovf:id="85" ovf:version="10">
+				<ovf:Info>The kind of installed guest operating system</ovf:Info>
+				<ovf:Description>Suse Linux Enterprise Server 10 (64 bit)
+			</ovf:Description>
+			</ovf:OperatingSystemSection>
+			<rsrvr:ElasticArraySection>
+				<ovf:Info>Rule section for DI elasticity</ovf:Info>
+				<rsrvr:Rule>
+					<rsrvr:KPIName>AvgUsersPerDI</rsrvr:KPIName>
+					<rsrvr:Window unit="minute">5</rsrvr:Window>
+					<rsrvr:Frequency>1</rsrvr:Frequency>
+					<rsrvr:Quota>400</rsrvr:Quota>
+					<rsrvr:Tolerance>20</rsrvr:Tolerance>
+				</rsrvr:Rule>
+			</rsrvr:ElasticArraySection>
+			<ovf:VirtualHardwareSection>
+				<ovf:Info>Virtual hardware requirements</ovf:Info>
+				<ovf:System>
+					<vssd:ElementName>Virtual Hardware Family</vssd:ElementName>
+					<vssd:InstanceID>0</vssd:InstanceID>
+					<vssd:VirtualSystemIdentifier>ReservoirDI</vssd:VirtualSystemIdentifier>
+					<vssd:VirtualSystemType>kvm</vssd:VirtualSystemType>
+				</ovf:System>
+				<ovf:Item>
+					<rasd:AllocationUnits>hertz * 10^6</rasd:AllocationUnits>
+					<rasd:Description>Number of Virtual CPUs</rasd:Description>
+					<rasd:ElementName>2 virtual CPU(s)</rasd:ElementName>
+					<rasd:InstanceID>1</rasd:InstanceID>
+					<rasd:ResourceType>3</rasd:ResourceType>
+					<rasd:VirtualQuantity>2</rasd:VirtualQuantity>
+					<!--          <rasd:VirtualQuantityUnits>count</rasd:VirtualQuantityUnits>-->
+				</ovf:Item>
+				<ovf:Item>
+					<rasd:AllocationUnits>byte * 2^20</rasd:AllocationUnits>
+					<rasd:Description>Memory Size</rasd:Description>
+					<rasd:ElementName>3 GB of Memory</rasd:ElementName>
+					<rasd:InstanceID>2</rasd:InstanceID>
+					<rasd:ResourceType>4</rasd:ResourceType>
+					<rasd:VirtualQuantity>3072</rasd:VirtualQuantity>
+					<!--          <rasd:VirtualQuantityUnits>byte * 2^20</rasd:VirtualQuantityUnits>-->
+				</ovf:Item>
+				<ovf:Item>
+					<!-- DIs ae connected to Public_Network only because of the load generator -->
+					<rasd:AutomaticAllocation>true</rasd:AutomaticAllocation>
+					<rasd:Connection>Private_Network</rasd:Connection>
+					<rasd:Description>E1000 ethernet adapter on "External Network"</rasd:Description>
+					<rasd:ElementName>Network Adapter 0</rasd:ElementName>
+					<rasd:InstanceID>7</rasd:InstanceID>
+					<rasd:ResourceSubType>E1000</rasd:ResourceSubType>
+					<rasd:ResourceType>10</rasd:ResourceType>
+				</ovf:Item>
+				<ovf:Item>
+					<rasd:AddressOnParent>0</rasd:AddressOnParent>
+					<rasd:ElementName>Hard Disk 1</rasd:ElementName>
+					<rasd:HostResource>ovf://disk/DI_Disk</rasd:HostResource>
+					<rasd:InstanceID>9</rasd:InstanceID>
+					<rasd:Parent>3</rasd:Parent>
+					<rasd:ResourceType>17</rasd:ResourceType>
+				</ovf:Item>
+			</ovf:VirtualHardwareSection>
+			<!-- Availability section  DI bronze  -->
+			<rsrvr:AvailabilitySection>
+				<Info>SAP DI SLA</Info>
+				<rsrvr:Window unit="hour">168</rsrvr:Window>
+				<rsrvr:Percentile>90</rsrvr:Percentile>
+			</rsrvr:AvailabilitySection>
+			<!--start of DI Product Section-->
+			<ovf:ProductSection ovf:class="system" ovf:instance="DI">
+				<Info>Hostname of DI</Info>
+				<ovf:Property ovf:key="hostname" rsrvr:cloudConfigurable="true" ovf:value="SAPDI@id(0)" ovf:type="string"/>
+			</ovf:ProductSection>
+			<ovf:ProductSection ovf:class="com.sap.ovf.di" ovf:instance="DI">
+				<ovf:Info>Information about the installed software</ovf:Info>
+				<ovf:Property ovf:key="ram_allocation" ovf:type="string" ovf:userConfigurable="true" ovf:value="0.75"/>
+				<ovf:Property ovf:key="wp_no_dia_per_vcpu" ovf:type="string" ovf:userConfigurable="true" ovf:value="3"/>
+				<ovf:Property ovf:key="wp_no_vb_per_vcpu" ovf:type="string" ovf:userConfigurable="true" ovf:value="1"/>
+			</ovf:ProductSection>
+			<ovf:ProductSection ovf:class="com.sap.ovf.di.profile" ovf:instance="DI">
+				<ovf:Info>DI Profile</ovf:Info>
+				<ovf:Property ovf:key="rdisp/wp_no_vb2" ovf:type="string" ovf:userConfigurable="true" ovf:value="1"/>
+			</ovf:ProductSection>
+			<ovf:ProductSection ovf:class="system.nic0.ifcfg" ovf:instance="DI">
+				<Info>NIC0 Config</Info>
+				<ovf:Property ovf:key="bootproto" ovf:value="static" ovf:type="string"/>
+				<ovf:Property ovf:key="startmode" ovf:value="auto" ovf:type="string"/>
+				<ovf:Property ovf:key="ipaddr" rsrvr:cloudConfigurable="true" ovf:value="@IP(Private_Network)" ovf:type="string"/>
+				<ovf:Property ovf:key="netmask" rsrvr:cloudConfigurable="true" ovf:value="@Netmask(Private_Network)" ovf:type="string"/>
+				<ovf:Property ovf:key="usercontrol" ovf:value="no" ovf:type="string"/>
+			</ovf:ProductSection>
+			<ProductSection ovf:class="com.sap.ovf.ci">
+				<Info>Enhancement for com.sap.ovf.ci	</Info>
+				<Property ovf:type="string" ovf:key="privateip" rsrvr:cloudConfigurable="true" ovf:value="@PrecedentTierEntryPoint(Private_Network,CI)"/>
+			</ProductSection>
+			<ovf:ProductSection ovf:class="update.system.hosts.hostname" ovf:instance="DI">
+				<Info> Update the /etc/hosts with the proper NIC IP</Info>
+				<ovf:Property ovf:key="ipaddr" ovf:userConfigurable="true" ovf:value="eth0" ovf:type="string"/>
+			</ovf:ProductSection>
+			<!-- com.sap.ovf.servicerole.type allows backward compatibility with AE. The AE distinguishes CI from DI -->
+			<ovf:ProductSection ovf:class="com.sap.ovf.servicerole" ovf:instance="DI">
+				<Info> Service Role of VM</Info>
+				<ovf:Property ovf:key="type" ovf:userConfigurable="true" ovf:value="DI" ovf:type="string"/>
+			</ovf:ProductSection>
+		</ovf:VirtualSystem>
+<!-- NETMON IBM VAN APPLIANCE-->
+		<ovf:VirtualSystem ovf:id="NETMON" rsrvr:min="1" rsrvr:max="1" rsrvr:initial="1">
+			<ovf:Info>A virtual machine</ovf:Info>
+			<Name>Reservoir Net Monitor</Name>
+			<ovf:OperatingSystemSection ovf:id="85" ovf:version="10">
+				<ovf:Info>The kind of installed guest operating system</ovf:Info>
+				<ovf:Description>Suse Linux Enterprise Server 10 (64 bit)
+			</ovf:Description>
+			</ovf:OperatingSystemSection>
+			<ovf:VirtualHardwareSection>
+				<ovf:Info>Virtual hardware requirements</ovf:Info>
+				<ovf:System>
+					<vssd:ElementName>Virtual Hardware Family</vssd:ElementName>
+					<vssd:InstanceID>0</vssd:InstanceID>
+					<vssd:VirtualSystemIdentifier>ReservoirNetMonitor</vssd:VirtualSystemIdentifier>
+					<vssd:VirtualSystemType>kvm</vssd:VirtualSystemType>
+				</ovf:System>
+				<ovf:Item>
+					<rasd:AllocationUnits>hertz * 10^6</rasd:AllocationUnits>
+					<rasd:Description>Number of Virtual CPUs</rasd:Description>
+					<rasd:ElementName>1 virtual CPU(s)</rasd:ElementName>
+					<rasd:InstanceID>1</rasd:InstanceID>
+					<rasd:ResourceType>3</rasd:ResourceType>
+					<rasd:VirtualQuantity>1</rasd:VirtualQuantity>
+					<!--          <rasd:VirtualQuantityUnits>count</rasd:VirtualQuantityUnits>-->
+				</ovf:Item>
+				<ovf:Item>
+					<rasd:AllocationUnits>byte * 2^20</rasd:AllocationUnits>
+					<rasd:Description>Memory Size</rasd:Description>
+					<rasd:ElementName>512 MB of Memory</rasd:ElementName>
+					<rasd:InstanceID>2</rasd:InstanceID>
+					<rasd:ResourceType>4</rasd:ResourceType>
+					<rasd:VirtualQuantity>512</rasd:VirtualQuantity>
+					<!--          <rasd:VirtualQuantityUnits>byte * 2^20</rasd:VirtualQuantityUnits>-->
+				</ovf:Item>
+				<ovf:Item>
+					<!-- DIs ae connected to Public_Network only because of the load generator -->
+					<rasd:AutomaticAllocation>true</rasd:AutomaticAllocation>
+					<rasd:Connection>Private_Network</rasd:Connection>
+					<rasd:Description>E1000 ethernet adapter on "External Network"</rasd:Description>
+					<rasd:ElementName>Network Adapter 0</rasd:ElementName>
+					<rasd:InstanceID>7</rasd:InstanceID>
+					<rasd:ResourceSubType>E1000</rasd:ResourceSubType>
+					<rasd:ResourceType>10</rasd:ResourceType>
+				</ovf:Item>
+				<ovf:Item>
+					<rasd:AddressOnParent>7</rasd:AddressOnParent>
+					<rasd:AutomaticAllocation>true</rasd:AutomaticAllocation>
+					<rasd:Connection>External_Network</rasd:Connection>
+					<rasd:Description>E1000 ethernet adapter on "VM Network"</rasd:Description>
+					<rasd:ElementName>Network Adapter 1</rasd:ElementName>
+					<rasd:InstanceID>8</rasd:InstanceID>
+					<rasd:ResourceSubType>E1000</rasd:ResourceSubType>
+					<rasd:ResourceType>10</rasd:ResourceType>
+				</ovf:Item>
+				<ovf:Item>
+					<rasd:AddressOnParent>0</rasd:AddressOnParent>
+					<rasd:ElementName>Hard Disk 1</rasd:ElementName>
+					<rasd:HostResource>ovf://disk/NETMON_Disk</rasd:HostResource>
+					<rasd:InstanceID>9</rasd:InstanceID>
+					<rasd:Parent>3</rasd:Parent>
+					<rasd:ResourceType>17</rasd:ResourceType>
+				</ovf:Item>
+			</ovf:VirtualHardwareSection>
+			<!-- Availability section silver -->
+			<rsrvr:AvailabilitySection>
+				<Info>NETMON SLA</Info>
+				<rsrvr:Window unit="hour">168</rsrvr:Window>
+				<rsrvr:Percentile>99.9</rsrvr:Percentile>
+			</rsrvr:AvailabilitySection>
+			<!--start of NETMON Product Section-->
+			<ovf:ProductSection ovf:class="system" ovf:instance="NETMON">
+				<Info>Hostname of NETVAN</Info>
+				<ovf:Property ovf:key="hostname" rsrvr:cloudConfigurable="true" ovf:value="SAPVAN" ovf:type="string"/>
+			</ovf:ProductSection>
+			<ovf:ProductSection ovf:class="system.nic0.ifcfg" ovf:instance="NETMON">
+				<Info>NIC0 CONFIGURATION</Info>
+				<ovf:Property ovf:key="bootproto" ovf:value="dhcp" ovf:type="string"/>
+				<ovf:Property ovf:key="startmode" ovf:value="auto" ovf:type="string"/>
+				<ovf:Property ovf:key="usercontrol" ovf:value="no" ovf:type="string"/>
+			</ovf:ProductSection>
+			<ovf:ProductSection ovf:class="system.nic1.ifcfg" ovf:instance="NETMON">
+				<Info>NIC1 Config</Info>
+				<ovf:Property ovf:key="bootproto" ovf:value="static" ovf:type="string"/>
+				<ovf:Property ovf:key="startmode" ovf:value="auto" ovf:type="string"/>
+				<ovf:Property ovf:key="ipaddr" rsrvr:cloudConfigurable="true" ovf:value="@IP(Private_Network)" ovf:type="string"/>
+				<ovf:Property ovf:key="netmask" rsrvr:cloudConfigurable="true" ovf:value="@Netmask(Private_Network)" ovf:type="string"/>
+				<ovf:Property ovf:key="usercontrol" ovf:value="no" ovf:type="string"/>
+			</ovf:ProductSection>			
+		</ovf:VirtualSystem>
+	</ovf:VirtualSystemCollection>
+</Envelope>

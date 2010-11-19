@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ns1:Environment xmlns:ns2="http://schemas.dmtf.org/wbem/wscim/1/common" xmlns:ns1="http://schemas.dmtf.org/ovf/environment/1" ns1:id="Portail">
+	<ns1:PropertySection>
+		<ns1:Property ns1:value="Portail" ns1:key="com.thales.portail.TYPE"/>
+		<ns1:Property ns1:value="kjbossxp0" ns1:key="com.thales.portail.HOSTNAME"/>
+		<ns1:Property ns1:value="172.17.100.48 172.17.100.50" ns1:key="com.thales.portail.VIP1"/>
+		<ns1:Property ns1:value="172.17.10.22 172.17.10.51 172.17.10.52 172.17.10.53" ns1:key="com.thales.portail.LVSIP"/>
+		<ns1:Property ns1:value="172.17.10.23" ns1:key="com.thales.portail.DATABASEIP"/>
+		<ns1:Property ns1:value="klvsx" ns1:key="com.thales.GIS.LVSNAME"/>
+		<ns1:Property ns1:value="kmysqlx" ns1:key="com.thales.GIS.DATABASENAME"/>
+	</ns1:PropertySection>
+	<ns1:Entity ns1:id="Monitoring">
+		<ns1:PropertySection>
+			<ns1:Property ns1:value="kmonitoringx" ns1:key="com.thales.monitoring.HOSTNAME"/>
+			<ns1:Property ns1:value="" ns1:key="com.thales.monitoring.MONITORINGIP"/>
+			<ns1:Property ns1:value="" ns1:key="com.thales.monitoring.IPPUB"/>
+			<ns1:Property ns1:value="255.255.255.0" ns1:key="com.thales.monitoring.NETMASKPUB"/>
+			<ns1:Property ns1:value="172.17.100.1" ns1:key="com.thales.monitoring.GATEWAYPUB"/>
+		</ns1:PropertySection>
+	</ns1:Entity>
+	<ns1:Entity ns1:id="Load_Balancer">
+		<ns1:PropertySection>
+			<ns1:Property ns1:value="klvsx" ns1:key="com.thales.load_balancer.HOSTNAME"/>
+			<ns1:Property ns1:value="" ns1:key="com.thales.load_balancer.IPPUB"/>
+			<ns1:Property ns1:value="255.255.255.0" ns1:key="com.thales.load_balancer.NETMASKPUB"/>
+			<ns1:Property ns1:value="172.17.100.1" ns1:key="com.thales.load_balancer.GATEWAYPUB"/>
+			<ns1:Property ns1:value="" ns1:key="com.thales.load_balancer.VIP1"/>
+			<ns1:Property ns1:value="" ns1:key="com.thales.load_balancer.LVSIP"/>
+			<ns1:Property ns1:value="" ns1:key="com.thales.load_balancer.VIP2"/>
+			<ns1:Property ns1:value="" ns1:key="com.thales.load_balancer.VIP3"/>
+			<ns1:Property ns1:value="" ns1:key="com.thales.load_balancer.VIP4"/>
+			<ns1:Property ns1:value="172.17.10.23" ns1:key="com.thales.load_balancer.DATABASEIP"/>
+			<ns1:Property ns1:value="172.17.10.60" ns1:key="com.thales.load_balancer.MONITORINGIP"/>
+		</ns1:PropertySection>
+	</ns1:Entity>
+	<ns1:Entity ns1:id="Service_Reference">
+		<ns1:PropertySection>
+			<ns1:Property ns1:value="ServiceReference" ns1:key="com.thales.service_reference.TYPE"/>
+			<ns1:Property ns1:value="kjbossxsr0" ns1:key="com.thales.service_reference.HOSTNAME"/>
+			<ns1:Property ns1:value="172.17.10.22 172.17.10.51 172.17.10.52 172.17.10.53" ns1:key="com.thales.service_reference.VIP3"/>
+			<ns1:Property ns1:value="172.17.10.22 172.17.10.51 172.17.10.52 172.17.10.53" ns1:key="com.thales.service_reference.LVSIP"/>
+			<ns1:Property ns1:value="172.17.10.23" ns1:key="com.thales.service_reference.DATABASEIP"/>
+		</ns1:PropertySection>
+	</ns1:Entity>
+	<ns1:Entity ns1:id="Service_Portal">
+		<ns1:PropertySection>
+			<ns1:Property ns1:value="ServicePortal" ns1:key="com.thales.service_portal.TYPE"/>
+			<ns1:Property ns1:value="kjbossxsp0" ns1:key="com.thales.service_portal.HOSTNAME"/>
+			<ns1:Property ns1:value="172.17.10.22 172.17.10.51 172.17.10.52 172.17.10.53" ns1:key="com.thales.service_portal.VIP2"/>
+			<ns1:Property ns1:value="172.17.10.22 172.17.10.51 172.17.10.52 172.17.10.53" ns1:key="com.thales.service_portal.LVSIP"/>
+			<ns1:Property ns1:value="172.17.10.23" ns1:key="com.thales.service_portal.DATABASEIP"/>
+		</ns1:PropertySection>
+	</ns1:Entity>
+	<ns1:Entity ns1:id="Database">
+		<ns1:PropertySection>
+			<ns1:Property ns1:value="kmysqlx" ns1:key="com.thales.database.HOSTNAME"/>
+			<ns1:Property ns1:value="" ns1:key="com.thales.database.DATABASEIP"/>
+			<ns1:Property ns1:value="" ns1:key="com.thales.database.IPPUB"/>
+			<ns1:Property ns1:value="255.255.255.0" ns1:key="com.thales.database.NETMASKPUB"/>
+			<ns1:Property ns1:value="172.17.100.1" ns1:key="com.thales.database.GATEWAYPUB"/>
+		</ns1:PropertySection>
+	</ns1:Entity>
+	<ns1:Entity ns1:id="Service_Map">
+		<ns1:PropertySection>
+			<ns1:Property ns1:value="ServiceMap" ns1:key="com.thales.service_map.TYPE"/>
+			<ns1:Property ns1:value="kjbossxsm0" ns1:key="com.thales.service_map.HOSTNAME"/>
+			<ns1:Property ns1:value="172.17.10.22 172.17.10.51 172.17.10.52 172.17.10.53" ns1:key="com.thales.service_map.VIP4"/>
+			<ns1:Property ns1:value="172.17.10.22 172.17.10.51 172.17.10.52 172.17.10.53" ns1:key="com.thales.service_map.LVSIP"/>
+			<ns1:Property ns1:value="172.17.10.23" ns1:key="com.thales.service_map.DATABASEIP"/>
+		</ns1:PropertySection>
+	</ns1:Entity>
+</ns1:Environment>

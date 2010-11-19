@@ -1,0 +1,80 @@
+<assembly>
+  <id>environment</id>
+
+  <formats>
+    <format>dir</format>
+  </formats>
+
+  <baseDirectory>clotho</baseDirectory>
+  
+  <fileSets>
+    <fileSet>
+      <directory>${project.build.directory}</directory>
+      <includes>
+        <include>*.jar</include>
+      </includes>
+      <outputDirectory>/lib/</outputDirectory>
+      <fileMode>0644</fileMode>
+    </fileSet>
+    
+    <!-- Weird, but currently it seems to be the one way to create directories with
+     the assembly plugin -->
+    <fileSet>
+       <directory>target/</directory>
+       <outputDirectory>/repository/manifestBuffer</outputDirectory>
+       <directoryMode>0644</directoryMode>
+
+       <excludes>
+           <exclude>**/*</exclude>
+       </excludes>
+    </fileSet>
+    
+    <fileSet>
+       <directory>target/</directory>
+       <outputDirectory>/repository/manifestFiles</outputDirectory>
+       <directoryMode>0644</directoryMode>
+
+       <excludes>
+           <exclude>**/*</exclude>
+       </excludes>
+    </fileSet>
+    
+    <fileSet>
+       <directory>src/main/data</directory>
+       <outputDirectory>/lib/data</outputDirectory>
+       <directoryMode>0644</directoryMode>
+    </fileSet>
+
+  </fileSets>
+
+  <files>
+    <file>
+      <source>src/main/config/clotho</source>
+      <outputDirectory>/bin</outputDirectory>
+      <filtered>true</filtered>
+      <fileMode>0744</fileMode>
+    </file>
+    <file>
+      <source>src/main/config/sm.properties</source>
+      <outputDirectory>/conf</outputDirectory>
+      <filtered>true</filtered>
+      <fileMode>0644</fileMode>
+    </file>
+    <file>
+      <source>src/main/config/sca.drl</source>
+      <outputDirectory>/ruleHome</outputDirectory>
+      <filtered>true</filtered>
+      <fileMode>0644</fileMode>
+    </file>
+
+  </files>  
+
+  <dependencySets>
+    <dependencySet>
+      <unpack>false</unpack>
+      <scope>runtime</scope>
+      <outputDirectory>/lib</outputDirectory>
+    </dependencySet>
+  </dependencySets>
+
+</assembly>

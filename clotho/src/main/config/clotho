@@ -1,0 +1,56 @@
+#!/bin/bash
+
+###################################################################
+## Reservoir Service Manager
+###################################################################
+
+# Constant declarations
+ERROR_USAGE=1
+ERROR_JAVA_NOT_FOUND=2
+
+# Check that a Java Runtime Environment is in the PATH
+WICH_RESULT=$(which java);
+if [ $? == 1 ]; then
+
+        echo -e "Java command not found. Check there is a Java Runtime Environment present, and the executable is in the PATH\n";
+
+        exit $ERROR_JAVA_NOT_FOUND;
+fi
+
+
+# Run the Server class
+cd "`dirname $0`";
+cd ..;
+
+if [ $1 == "start" ]; then
+
+        # If the database does not exist, unzip a new version.
+	if [ ! -e ClaudiaDB ]; then
+		cp lib/data/ClaudiaDB.tar.gz .
+		gzip -d ClaudiaDB.tar.gz
+		tar xvf ClaudiaDB.tar
+		rm ClaudiaDB.tar 
+	fi
+
+	echo "Initiating Clotho";
+	java -jar lib/clotho-0.1.1.jar start;
+	
+	echo "Finishing Clotho";
+
+elif [ $1 == "cleandb" ]; then
+
+	if [ -e ClaudiaDB ]; then
+		rm -R ClaudiaDB > /dev/null
+	fi
+
+	cp lib/data/ClaudiaDB.tar.gz . > /dev/null
+       	gzip -d ClaudiaDB.tar.gz > /dev/null
+       	tar xvf ClaudiaDB.tar > /dev/null
+       	rm ClaudiaDB.tar > /dev/null
+
+else
+
+        java -jar lib/clotho-0.1.1.jar $@;
+
+fi
+
