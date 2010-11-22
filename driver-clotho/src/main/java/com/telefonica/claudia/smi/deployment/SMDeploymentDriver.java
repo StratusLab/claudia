@@ -365,9 +365,9 @@ public class SMDeploymentDriver implements DeploymentDriver {
 //		return -1;
 //	}
 
-public String  createVdc(String fqnCustomer, String vdc) throws IOException
+public long  createVdc(String fqnCustomer, String vdc) throws IOException
 {
-  return null;
+  return -1;
 }
 	
 	public String getOrg(String fqn) throws IOException {
