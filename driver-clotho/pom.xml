@@ -18,9 +18,9 @@
     </dependency>
 
     <dependency>
-		<groupId>es.tid.tcloud</groupId>
-		<artifactId>tcloud-server</artifactId>
-		<version>0.1.1</version>
+		 <groupId>com.telefonica.claudia</groupId>
+  		 <artifactId>tcloud-server</artifactId>
+ 		 <version>0.1.1</version>
 		<scope>provided</scope>
     </dependency>
 
