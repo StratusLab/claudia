@@ -1,0 +1,37 @@
+2010-05-20 - 0.1.4
+
++ New classes OVFGeneralUtils and EnvironmentMetaData
++ Implementing createEnvironments considering the posibility of  VirtualSystem without VirtualSystemCollection 
+  parent (including an simplified method override for that)
++ Method to generate the list of OVF Enviroments within a given VirtualSystemCollection
++ Added splitOvf method
++ Changed NOIP_TOKEN and NOPRECEDENTENTRYPOINT_TOKEN  to something more meaninfull for debuging
++ Refactoring the @ macro replacement logic in a new function macroReplacement in the new class `
+  OVFGeneralUtils (formerly in processListForEnvironment in OVFEnvironmentUtils). Method
+  inEnvolopeMacroReplacement implemented
+
+2010-04-07 - 0.1.3
+
++ Fixing problem with @PrecentTierEntryPoint in <Entities>
++ Optionally enabling the avoiding of OVF Environment <Entity>
+
+2010-02-24 - 0.1.2
+
++ Bugfix in OVFEnvironmentUtils: added AvailabilitySection, DeploymentSectich, PerformanceObjectiveSection 
+and AffinitySection in checkContentSection
+
+2010-02-10 - 0.1.1
+
++ Improvements in the TCloud_Reservoir.xsd XSD, including associated code
+in com.telefonica.claudia.ovf
+- 0 allowed for min and initial attributes
+- <Tolerance> tag is optional (minOccurs=0)
+- Percentage_Type allows decimal values (e.g. 99.99%)
+- added "day", "week" and "month" to window
++ Added new getRequiredIPByNetwork  function in OVFEnvelopeUtils
++ Modified createOVFEnvironment in OVFEnvironmentUtils, implementing the @IP(net,alias) functionality
++ Reintroduced exceptions NotEnoguthIPsInPoolException  and PoolNameNotFoundException
+
+2010-01-29 - 0.1.0 
+
++ Initial release

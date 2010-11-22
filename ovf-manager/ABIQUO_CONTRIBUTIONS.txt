@@ -1,0 +1,27 @@
+The following files has been modifed regarding the snapshot of code available
+on Abiquo SVN on July 17th 2009. The modification has been implemented in order
+to introduce enhacements and complete missing functionality, along with the
+processing of spcecific OVF extensions developed for Claudia.
+
+   src\main\java\com\abiquo\ovf\OVFBoundleUtils.java
+   src\main\java\com\abiquo\ovf\OVFEnvelopeUtils.java
+   src\main\java\com\abiquo\ovf\OVFEnvironmentUtils.java
+
+   src\main\java\com\abiquo\ovf\exceptions\AttributeException.java
+   src\main\java\com\abiquo\ovf\exceptions\EmptyEnvelopeException.java
+   src\main\java\com\abiquo\ovf\exceptions\IdAlreadyExistsException.java
+   src\main\java\com\abiquo\ovf\exceptions\IdNotFoundException.java
+   src\main\java\com\abiquo\ovf\exceptions\InvalidSectionException.java
+   src\main\java\com\abiquo\ovf\exceptions\RequiredAttributeException.java
+   src\main\java\com\abiquo\ovf\exceptions\SectionAlreadyPresentException.java
+   src\main\java\com\abiquo\ovf\exceptions\SectionException.java
+   src\main\java\com\abiquo\ovf\exceptions\SectionNotPresentException.java
+   src\main\java\com\abiquo\ovf\exceptions\XMLException.java
+
+   src\main\java\com\abiquo\ovf\section\OVFDiskUtils.java
+   src\main\java\com\abiquo\ovf\section\OVFInstallUtils.java
+
+   src\main\java\com\abiquo\ovf\xml\OVFSerializer.java
+
+Fora detailed description of the changes, please do a diff with the homonimous 
+file in the orignal Abiquo code.

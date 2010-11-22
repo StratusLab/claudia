@@ -1,0 +1,791 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:tcloud="http://schemas.telefonica.com/claudia/ovf" xmlns:ovf="http://schemas.dmtf.org/ovf/envelope/1" targetNamespace="http://schemas.telefonica.com/claudia/ovf" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<xs:import namespace="http://schemas.dmtf.org/ovf/envelope/1" schemaLocation="http://schemas.dmtf.org/ovf/envelope/1/dsp8023_1.0.0.xsd"/>
+	<!-- Describe a diskmapping section -->
+	<xs:element name="DiskMappingSection" type="tcloud:DiskMappingSection_Type" substitutionGroup="ovf:Section">
+		<xs:annotation>
+			<xs:documentation>DiskMapping description</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:complexType name="DiskMappingSection_Type">
+		<xs:complexContent>
+			<xs:extension base="ovf:Section_Type">
+				<xs:sequence>
+					<xs:element name="DiskMapping" type="tcloud:DiskMapping_Type" minOccurs="0" maxOccurs="unbounded"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="DiskMapping_Type">
+		<xs:sequence>
+			<xs:element name="MountPoint" type="tcloud:MountPoint_Type"/>
+			<xs:element name="LocalDevice" type="xs:positiveInteger"/>
+		</xs:sequence>
+		<xs:attribute name="mode" type="tcloud:DiskMappingMode_Type" use="optional" default="readwrite" />
+	</xs:complexType>	
+	<xs:complexType name="MountPoint_Type">
+		<xs:simpleContent>
+			<xs:extension base="xs:string">
+				<xs:attribute name="format" type="xs:string" use="required"/>
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+	<xs:simpleType name="DiskMappingMode_Type">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="readonly"/>
+			<xs:enumeration value="readwrite"/>			
+		</xs:restriction>
+	</xs:simpleType>
+	<!-- Describe a collection of firewall rules -->
+	<xs:element name="FirewallSection" type="tcloud:FirewallSection_Type" substitutionGroup="ovf:Section">
+		<xs:annotation>
+			<xs:documentation>Firewall rules description</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:complexType name="FirewallSection_Type">
+		<xs:complexContent>
+			<xs:extension base="ovf:Section_Type">
+				<xs:sequence>
+					<xs:element name="InternalInterface" type="xs:positiveInteger" />
+					<xs:element name="ExternalInterface" type="xs:positiveInteger" />
+					<xs:element name="DefaultPolicy" type="tcloud:FirewallPolicy_Type" minOccurs="0" maxOccurs="1"/>
+					<xs:element name="Rule" type="tcloud:FirewallRule_Type" minOccurs="0" maxOccurs="unbounded"/>
+					<xs:element name="Pool" type="tcloud:FirewallPool_Type" minOccurs="0" maxOccurs="unbounded"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="FirewallRule_Type">
+		<xs:sequence>
+			<xs:element name="ExternalIP" type="tcloud:IPAddress_Type"/>
+			<xs:element name="ExternalPortStart" type="tcloud:Port_Type" minOccurs="0"/>
+			<xs:element name="ExternalPortEnd" type="tcloud:Port_Type" minOccurs="0"/>
+			<xs:element name="Protocol" type="tcloud:Protocol_Type" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="InternalIP" type="tcloud:IPAddress_Type" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="InternalPortStart" type="tcloud:Port_Type" minOccurs="0"/>
+			<xs:element name="InternalPortEnd" type="tcloud:Port_Type" minOccurs="0"/>
+		</xs:sequence>
+		<xs:attribute name="policy" type="tcloud:FirewallPolicy_Type" use="required"/>
+		<xs:attribute name="timeout" type="xs:positiveInteger" use="optional"/>
+	</xs:complexType>
+	<xs:complexType name="FirewallPool_Type">
+		<xs:sequence>
+			<xs:element name="AddressIP" type="tcloud:IPAddress_Type" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="Netmask" type="tcloud:IPAddress_Type" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="Protocol" type="tcloud:Protocol_Type" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="ExternalPortStart" type="tcloud:Port_Type" minOccurs="0"/>
+			<xs:element name="ExternalPortEnd" type="tcloud:Port_Type" minOccurs="0"/>
+			<xs:element name="InternalPortStart" type="tcloud:Port_Type" minOccurs="0"/>
+			<xs:element name="InternalPortEnd" type="tcloud:Port_Type" minOccurs="0"/>
+		</xs:sequence>
+		<xs:attribute name="policy" type="tcloud:FirewallPolicy_Type" use="required"/>
+		<xs:attribute name="timeout" type="xs:positiveInteger" use="optional"/>
+	</xs:complexType>
+	<xs:simpleType name="FirewallPolicy_Type">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="deny"/>
+			<xs:enumeration value="allow"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<!-- Describe a collection of LoadBalancer entries	 -->
+	<xs:element name="LoadBalancerSection" type="tcloud:LoadBalancerSection_Type" substitutionGroup="ovf:Section">
+		<xs:annotation>
+			<xs:documentation>LoadBalancer description</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:complexType name="LoadBalancerSection_Type">
+		<xs:complexContent>
+			<xs:extension base="ovf:Section_Type">
+				<xs:sequence>
+					<xs:element name="Pool" type="tcloud:LoadBalancerPool_Type" minOccurs="0" maxOccurs="unbounded"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="LoadBalancerPool_Type">
+		<xs:sequence>
+			<xs:element name="VirtualPort" type="tcloud:Port_Type"/>
+			<xs:element name="Description" type="xs:string" minOccurs="0"/>
+			<xs:element name="HealthMonitor" minOccurs="0" maxOccurs="unbounded">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="MessageSend" type="xs:string" minOccurs="0"/>
+						<xs:element name="MessageReceive" type="xs:string" minOccurs="0"/>
+					</xs:sequence>
+					<xs:attribute name="method" type="tcloud:LBHealthMonitorMethod_Type" use="required"/>
+					<xs:attribute name="type" type="tcloud:Timeunit_Type" use="required"/>
+					<xs:attribute name="interval" type="xs:positiveInteger" use="required"/>
+					<xs:attribute name="timeout" type="xs:positiveInteger" use="required"/>
+					<xs:attribute name="username" type="xs:string" use="optional"/>
+					<xs:attribute name="password" type="xs:string" use="optional"/>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="Persistence" minOccurs="0">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="Method" type="tcloud:LBPersistenceMethod_Type"/>
+						<xs:element name="Expiration">
+							<xs:complexType>
+								<xs:attribute name="type" type="tcloud:Timeunit_Type" use="required"/>
+								<xs:attribute name="value" type="xs:positiveInteger" use="required"/>
+							</xs:complexType>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="Member" type="tcloud:LoadBalancerMember_Type" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+		<xs:attribute name="name" use="required"/>
+		<xs:attribute name="vnic" use="required"/>
+		<xs:attribute name="algorithm" type="tcloud:LBAlgorithm_Type" use="required" />		
+		<xs:attribute name="enableAddressTranslation" type="xs:boolean" use="optional"/>
+		<xs:attribute name="enablePortTranslation" type="xs:boolean" use="optional"/>
+	</xs:complexType>
+	<xs:simpleType name="LBAlgorithm_Type">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="Least"/>
+			<xs:enumeration value="Fastest"/>
+			<xs:enumeration value="RoundRobin"/>
+			<xs:enumeration value="WeightedRoundRobin"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="LBHealthMonitorMethod_Type">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="PingMonitoring"/>
+			<xs:enumeration value="TcpHandshake"/>
+			<xs:enumeration value="HttpGet"/>
+			<xs:enumeration value="HttpPost"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="LBPersistenceMethod_Type">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="CookieBased"/>
+			<xs:enumeration value="SourceIPBased"/>
+			<xs:enumeration value="QueryString"/>
+			<xs:enumeration value="HttpHeader"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:complexType name="LoadBalancerMember_Type">
+		<xs:sequence>
+			<xs:element name="Server" type="xs:string"/>
+			<xs:element name="ServicePort" type="tcloud:Port_Type"/>
+		</xs:sequence>
+		<xs:attribute name="priority" type="xs:boolean" use="optional"/>
+		<xs:attribute name="weigth" type="xs:positiveInteger" use="optional"/>
+	</xs:complexType>
+	<xs:element name="AspectsSection" type="tcloud:AspectsSection_Type" substitutionGroup="ovf:Section">
+		<xs:annotation>
+			<xs:documentation>LoadBalancer description</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:simpleType name="Port_Type">
+		<xs:annotation>
+			<xs:documentation/>
+		</xs:annotation>
+		<xs:restriction base="xs:integer">
+			<xs:minInclusive value="1"/>
+			<xs:maxInclusive value="65535"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="IPAddress_Type">
+		<xs:annotation>
+			<xs:documentation>IPv4 Adress format: [0-255].[0-255].[0-255].[0-255]</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:pattern value="((0|(1[0-9]{0,2})|(2(([0-4][0-9]?)|(5[0-5]?)|([6-9]?)))|([3-9][0-9]?))\.){3}(0|(1[0-9]{0,2})|(2(([0-4][0-9]?)|(5[0-5]?)|([6-9]?)))|([3-9][0-9]?))"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:complexType name="AspectsSection_Type">
+		<xs:complexContent>
+			<xs:extension base="ovf:Section_Type">
+				<xs:sequence>
+					<xs:element name="Stateless" minOccurs="0">
+						<xs:complexType>
+							<xs:attribute name="value" type="xs:boolean" use="required"/>
+						</xs:complexType>
+					</xs:element>
+					<xs:element name="FaultProtection" minOccurs="0">
+						<xs:complexType>
+							<xs:attribute name="type" use="required">
+								<xs:simpleType>
+									<xs:restriction base="xs:string">
+										<xs:enumeration value="ft"/>
+										<xs:enumeration value="ha"/>
+									</xs:restriction>
+								</xs:simpleType>
+							</xs:attribute>
+						</xs:complexType>
+					</xs:element>
+					<xs:choice>
+						<xs:element name="BackupCustom" minOccurs="0">
+							<xs:complexType>
+								<xs:attribute name="mode" use="required">
+									<xs:simpleType>
+										<xs:restriction base="xs:string">
+											<xs:enumeration value="complete"/>
+											<xs:enumeration value="incremental"/>
+										</xs:restriction>
+									</xs:simpleType>
+								</xs:attribute>
+								<xs:attribute name="periodicity" type="tcloud:Timeunit_Type" use="required"/>
+								<xs:attribute name="expiretime" type="xs:positiveInteger" use="required"/>
+							</xs:complexType>
+						</xs:element>
+						<xs:element name="Backup" type="tcloud:Backup_Type" minOccurs="0"/>
+					</xs:choice>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:simpleType name="Timeunit_Type">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="year"/>
+			<xs:enumeration value="month"/>
+			<xs:enumeration value="week"/>
+			<xs:enumeration value="day"/>			
+			<xs:enumeration value="hour"/>
+			<xs:enumeration value="minute"/>
+			<xs:enumeration value="second"/>
+			<xs:enumeration value="milisecond"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:complexType name="Backup_Type">
+		<xs:attribute name="type" use="required">
+			<xs:simpleType>
+				<xs:restriction base="xs:string">
+					<xs:enumeration value="gold"/>
+					<xs:enumeration value="silver"/>
+					<xs:enumeration value="bronze"/>
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:simpleType name="Protocol_Type">
+		<xs:annotation>
+			<xs:documentation/>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="udp"/>
+			<xs:enumeration value="tcp"/>
+			<xs:enumeration value="icmp"/>
+			<xs:enumeration value="any"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:attribute name="bandwidth" type="xs:positiveInteger">
+		<xs:annotation>
+			<xs:documentation>Bandwidth reserved of Network</xs:documentation>
+		</xs:annotation>
+	</xs:attribute>
+	<xs:attribute name="fileSystemType" type="xs:string">
+		<xs:annotation>
+			<xs:documentation>Identification of file system</xs:documentation>
+		</xs:annotation>
+	</xs:attribute>
+<!-- RESERVOIR extensions proposed to DMTF -->
+	<!-- KPISection -->
+	<xs:element name="KPISection" type="tcloud:KPISection_Type" substitutionGroup="ovf:Section">
+		<xs:annotation>
+			<xs:documentation>KPIs description</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:complexType name="KPISection_Type">
+		<xs:complexContent>
+			<xs:extension base="ovf:Section_Type">
+				<xs:sequence maxOccurs="unbounded">
+					<xs:element name="KPI">
+						<xs:complexType>
+							<xs:attribute name="KPIname" type="xs:string" use="required"/>
+						</xs:complexType>
+					</xs:element>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<!-- ElasticArraySection -->
+	<xs:element name="ElasticArraySection" type="tcloud:ElasticArraySection_Type" substitutionGroup="ovf:Section">
+		<xs:annotation>
+			<xs:documentation>Elastict array description</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:complexType name="ElasticArraySection_Type">
+		<xs:complexContent>
+			<xs:extension base="ovf:Section_Type">
+				<xs:sequence>
+					<xs:element name="Rule" type="tcloud:Rule_Type" maxOccurs="unbounded" />
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="Rule_Type">
+		<xs:sequence>
+			<xs:element name="KPIName" type="xs:string"/>
+			<xs:element name="Window" type="tcloud:Window_Type"/>
+			<xs:element name="Frequency" type="xs:positiveInteger"/>
+			<xs:element name="Quota" type="xs:positiveInteger"/>
+			<xs:element name="Tolerance" type="tcloud:PositiveDecimal_Type" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="Window_Type">
+		<xs:simpleContent>
+			<xs:extension base="xs:positiveInteger">
+				<xs:attribute name="unit" type="tcloud:WindowUnit_Type" use="optional" default="minute"/>
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+	<xs:simpleType name="WindowUnit_Type">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="second"/>
+			<xs:enumeration value="minute"/>
+			<xs:enumeration value="hour"/>
+			<xs:enumeration value="day"/>
+			<xs:enumeration value="week"/>
+			<xs:enumeration value="month"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="PositiveDecimal_Type">
+		<xs:restriction base="xs:decimal">
+			<xs:minExclusive value="0"/>
+		</xs:restriction>
+	</xs:simpleType>	
+	<!-- Elasticity bounds (intented for <VirtualSystem>) -->
+	<xs:attribute name="min" type="tcloud:nonNegativeInteger_Type"/>
+	<xs:attribute name="max" type="xs:positiveInteger"/>
+	<xs:attribute name="initial" type="tcloud:nonNegativeInteger_Type"/>
+	<xs:simpleType name="nonNegativeInteger_Type">
+		<xs:restriction base="xs:integer">
+			<xs:minInclusive value="0"/>
+		</xs:restriction>
+	</xs:simpleType>	
+	<!-- Cloud configurable (intended for <Property> -->
+	<xs:attribute name="cloudConfigurable" type="xs:boolean"/>
+	<!-- Public network (intended for <Network>) -->
+	<xs:attribute name="public" type="xs:boolean"/>
+	<!-- Deployment section -->
+	<xs:element name="DeploymentSection" type="tcloud:DeploymentSection_Type" substitutionGroup="ovf:Section">
+		<xs:annotation>
+			<xs:documentation>Deployment restrictions description</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:complexType name="DeploymentSection_Type">
+		<xs:complexContent>
+			<xs:extension base="ovf:Section_Type">
+				<xs:sequence>
+					<xs:element name="Restriction" type="tcloud:Restriction_Type" minOccurs="0" maxOccurs="unbounded"/>
+					<xs:element name="Balance" type="tcloud:Balance_Type" minOccurs="0" maxOccurs="unbounded"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="Restriction_Type">
+		<xs:sequence>
+			<xs:element name="Position" type="tcloud:Position_Type" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="Country" type="tcloud:Country_Type" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="Timezone" type="tcloud:Timezone_Type" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="Area" type="tcloud:Area_Type" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="Balance_Type">
+		<xs:sequence>
+			<xs:element name="Position" type="tcloud:Position_Type" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="Country" type="tcloud:Country_Type" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="Timezone" type="tcloud:Timezone_Type" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="Area" type="tcloud:Area_Type" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+		<xs:attribute name="prod" type="tcloud:Percentage_Type" use="required"/>
+	</xs:complexType>
+	<xs:simpleType name="Percentage_Type">
+		<xs:annotation>
+			<xs:documentation>Percent value in the range [0, 100].</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:decimal">
+			<xs:minInclusive value="0"/>
+			<xs:maxInclusive value="100"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:complexType name="Position_Type">
+		<xs:sequence>
+			<xs:element name="Location">
+				<xs:complexType>
+					<xs:attribute name="latitude" type="xs:string" use="required"/>
+					<xs:attribute name="longitude" type="xs:string" use="required"/>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="Distance">
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="xs:positiveInteger">
+							<xs:attribute name="unit" type="tcloud:DistanceUnit_Type" use="optional" default="km"/>
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+		<xs:attribute name="inside" type="xs:boolean" use="optional" default="true"/>
+	</xs:complexType>
+	<xs:simpleType name="DistanceUnit_Type">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="km"/>
+			<xs:enumeration value="m"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:complexType name="Country_Type">
+		<xs:simpleContent>
+			<xs:extension base="tcloud:ISO3166CountryCode_Type">
+				<xs:attribute name="inside" type="xs:boolean" use="optional" default="true"/>
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>	
+	<xs:simpleType name="ISO3166CountryCode_Type">
+		<xs:annotation>
+			<xs:documentation>
+        Two-letter (alpha-2) ISO 3166-1 code for one of the 243 countries.
+      </xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="AF"/>
+			<xs:enumeration value="AX"/>
+			<xs:enumeration value="AL"/>
+			<xs:enumeration value="DZ"/>
+			<xs:enumeration value="AS"/>
+			<xs:enumeration value="AD"/>
+			<xs:enumeration value="AO"/>
+			<xs:enumeration value="AI"/>
+			<xs:enumeration value="AQ"/>
+			<xs:enumeration value="AG"/>
+			<xs:enumeration value="AR"/>
+			<xs:enumeration value="AM"/>
+			<xs:enumeration value="AW"/>
+			<xs:enumeration value="AU"/>
+			<xs:enumeration value="AT"/>
+			<xs:enumeration value="AZ"/>
+			<xs:enumeration value="BS"/>
+			<xs:enumeration value="BH"/>
+			<xs:enumeration value="BD"/>
+			<xs:enumeration value="BB"/>
+			<xs:enumeration value="BY"/>
+			<xs:enumeration value="BE"/>
+			<xs:enumeration value="BZ"/>
+			<xs:enumeration value="BJ"/>
+			<xs:enumeration value="BM"/>
+			<xs:enumeration value="BT"/>
+			<xs:enumeration value="BO"/>
+			<xs:enumeration value="BA"/>
+			<xs:enumeration value="BW"/>
+			<xs:enumeration value="BV"/>
+			<xs:enumeration value="BR"/>
+			<xs:enumeration value="IO"/>
+			<xs:enumeration value="BN"/>
+			<xs:enumeration value="BG"/>
+			<xs:enumeration value="BF"/>
+			<xs:enumeration value="BI"/>
+			<xs:enumeration value="KH"/>
+			<xs:enumeration value="CM"/>
+			<xs:enumeration value="CA"/>
+			<xs:enumeration value="CV"/>
+			<xs:enumeration value="KY"/>
+			<xs:enumeration value="CF"/>
+			<xs:enumeration value="TD"/>
+			<xs:enumeration value="CL"/>
+			<xs:enumeration value="CN"/>
+			<xs:enumeration value="CX"/>
+			<xs:enumeration value="CC"/>
+			<xs:enumeration value="CO"/>
+			<xs:enumeration value="KM"/>
+			<xs:enumeration value="CG"/>
+			<xs:enumeration value="CD"/>
+			<xs:enumeration value="CK"/>
+			<xs:enumeration value="CR"/>
+			<xs:enumeration value="CI"/>
+			<xs:enumeration value="HR"/>
+			<xs:enumeration value="CU"/>
+			<xs:enumeration value="CY"/>
+			<xs:enumeration value="CZ"/>
+			<xs:enumeration value="DK"/>
+			<xs:enumeration value="DJ"/>
+			<xs:enumeration value="DM"/>
+			<xs:enumeration value="DO"/>
+			<xs:enumeration value="EC"/>
+			<xs:enumeration value="EG"/>
+			<xs:enumeration value="SV"/>
+			<xs:enumeration value="GQ"/>
+			<xs:enumeration value="ER"/>
+			<xs:enumeration value="EE"/>
+			<xs:enumeration value="ET"/>
+			<xs:enumeration value="FK"/>
+			<xs:enumeration value="FO"/>
+			<xs:enumeration value="FJ"/>
+			<xs:enumeration value="FI"/>
+			<xs:enumeration value="FR"/>
+			<xs:enumeration value="GF"/>
+			<xs:enumeration value="PF"/>
+			<xs:enumeration value="TF"/>
+			<xs:enumeration value="GA"/>
+			<xs:enumeration value="GM"/>
+			<xs:enumeration value="GE"/>
+			<xs:enumeration value="DE"/>
+			<xs:enumeration value="GH"/>
+			<xs:enumeration value="GI"/>
+			<xs:enumeration value="GR"/>
+			<xs:enumeration value="GL"/>
+			<xs:enumeration value="GD"/>
+			<xs:enumeration value="GP"/>
+			<xs:enumeration value="GU"/>
+			<xs:enumeration value="GT"/>
+			<xs:enumeration value="GG"/>
+			<xs:enumeration value="GN"/>
+			<xs:enumeration value="GW"/>
+			<xs:enumeration value="GY"/>
+			<xs:enumeration value="HT"/>
+			<xs:enumeration value="HM"/>
+			<xs:enumeration value="VA"/>
+			<xs:enumeration value="HN"/>
+			<xs:enumeration value="HK"/>
+			<xs:enumeration value="HU"/>
+			<xs:enumeration value="IS"/>
+			<xs:enumeration value="IN"/>
+			<xs:enumeration value="ID"/>
+			<xs:enumeration value="IR"/>
+			<xs:enumeration value="IQ"/>
+			<xs:enumeration value="IE"/>
+			<xs:enumeration value="IM"/>
+			<xs:enumeration value="IL"/>
+			<xs:enumeration value="IT"/>
+			<xs:enumeration value="JM"/>
+			<xs:enumeration value="JP"/>
+			<xs:enumeration value="JE"/>
+			<xs:enumeration value="JO"/>
+			<xs:enumeration value="KZ"/>
+			<xs:enumeration value="KE"/>
+			<xs:enumeration value="KI"/>
+			<xs:enumeration value="KP"/>
+			<xs:enumeration value="KR"/>
+			<xs:enumeration value="KW"/>
+			<xs:enumeration value="KG"/>
+			<xs:enumeration value="LA"/>
+			<xs:enumeration value="LV"/>
+			<xs:enumeration value="LB"/>
+			<xs:enumeration value="LS"/>
+			<xs:enumeration value="LR"/>
+			<xs:enumeration value="LY"/>
+			<xs:enumeration value="LI"/>
+			<xs:enumeration value="LT"/>
+			<xs:enumeration value="LU"/>
+			<xs:enumeration value="MO"/>
+			<xs:enumeration value="MK"/>
+			<xs:enumeration value="MG"/>
+			<xs:enumeration value="MW"/>
+			<xs:enumeration value="MY"/>
+			<xs:enumeration value="MV"/>
+			<xs:enumeration value="ML"/>
+			<xs:enumeration value="MT"/>
+			<xs:enumeration value="MH"/>
+			<xs:enumeration value="MQ"/>
+			<xs:enumeration value="MR"/>
+			<xs:enumeration value="MU"/>
+			<xs:enumeration value="YT"/>
+			<xs:enumeration value="MX"/>
+			<xs:enumeration value="FM"/>
+			<xs:enumeration value="MD"/>
+			<xs:enumeration value="MC"/>
+			<xs:enumeration value="MN"/>
+			<xs:enumeration value="MS"/>
+			<xs:enumeration value="MA"/>
+			<xs:enumeration value="MZ"/>
+			<xs:enumeration value="MM"/>
+			<xs:enumeration value="NA"/>
+			<xs:enumeration value="NR"/>
+			<xs:enumeration value="NP"/>
+			<xs:enumeration value="NL"/>
+			<xs:enumeration value="AN"/>
+			<xs:enumeration value="NC"/>
+			<xs:enumeration value="NZ"/>
+			<xs:enumeration value="NI"/>
+			<xs:enumeration value="NE"/>
+			<xs:enumeration value="NG"/>
+			<xs:enumeration value="NU"/>
+			<xs:enumeration value="NF"/>
+			<xs:enumeration value="MP"/>
+			<xs:enumeration value="NO"/>
+			<xs:enumeration value="OM"/>
+			<xs:enumeration value="PK"/>
+			<xs:enumeration value="PW"/>
+			<xs:enumeration value="PS"/>
+			<xs:enumeration value="PA"/>
+			<xs:enumeration value="PG"/>
+			<xs:enumeration value="PY"/>
+			<xs:enumeration value="PE"/>
+			<xs:enumeration value="PH"/>
+			<xs:enumeration value="PN"/>
+			<xs:enumeration value="PL"/>
+			<xs:enumeration value="PT"/>
+			<xs:enumeration value="PR"/>
+			<xs:enumeration value="QA"/>
+			<xs:enumeration value="RE"/>
+			<xs:enumeration value="RO"/>
+			<xs:enumeration value="RU"/>
+			<xs:enumeration value="RW"/>
+			<xs:enumeration value="SH"/>
+			<xs:enumeration value="KN"/>
+			<xs:enumeration value="LC"/>
+			<xs:enumeration value="PM"/>
+			<xs:enumeration value="VC"/>
+			<xs:enumeration value="WS"/>
+			<xs:enumeration value="SM"/>
+			<xs:enumeration value="ST"/>
+			<xs:enumeration value="SA"/>
+			<xs:enumeration value="SN"/>
+			<xs:enumeration value="CS"/>
+			<xs:enumeration value="SC"/>
+			<xs:enumeration value="SL"/>
+			<xs:enumeration value="SG"/>
+			<xs:enumeration value="SK"/>
+			<xs:enumeration value="SI"/>
+			<xs:enumeration value="SB"/>
+			<xs:enumeration value="SO"/>
+			<xs:enumeration value="ZA"/>
+			<xs:enumeration value="GS"/>
+			<xs:enumeration value="ES"/>
+			<xs:enumeration value="LK"/>
+			<xs:enumeration value="SD"/>
+			<xs:enumeration value="SR"/>
+			<xs:enumeration value="SJ"/>
+			<xs:enumeration value="SZ"/>
+			<xs:enumeration value="SE"/>
+			<xs:enumeration value="CH"/>
+			<xs:enumeration value="SY"/>
+			<xs:enumeration value="TW"/>
+			<xs:enumeration value="TJ"/>
+			<xs:enumeration value="TZ"/>
+			<xs:enumeration value="TH"/>
+			<xs:enumeration value="TL"/>
+			<xs:enumeration value="TG"/>
+			<xs:enumeration value="TK"/>
+			<xs:enumeration value="TO"/>
+			<xs:enumeration value="TT"/>
+			<xs:enumeration value="TN"/>
+			<xs:enumeration value="TR"/>
+			<xs:enumeration value="TM"/>
+			<xs:enumeration value="TC"/>
+			<xs:enumeration value="TV"/>
+			<xs:enumeration value="UG"/>
+			<xs:enumeration value="UA"/>
+			<xs:enumeration value="AE"/>
+			<xs:enumeration value="GB"/>
+			<xs:enumeration value="US"/>
+			<xs:enumeration value="UM"/>
+			<xs:enumeration value="UY"/>
+			<xs:enumeration value="UZ"/>
+			<xs:enumeration value="VU"/>
+			<xs:enumeration value="VE"/>
+			<xs:enumeration value="VN"/>
+			<xs:enumeration value="VG"/>
+			<xs:enumeration value="VI"/>
+			<xs:enumeration value="WF"/>
+			<xs:enumeration value="EH"/>
+			<xs:enumeration value="YE"/>
+			<xs:enumeration value="ZM"/>
+			<xs:enumeration value="ZW"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:complexType name="Timezone_Type">
+		<xs:simpleContent>
+			<xs:extension base="xs:string">
+				<xs:attribute name="inside" type="xs:boolean" use="optional" default="true"/>
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>	
+	<xs:complexType name="Area_Type">
+		<xs:simpleContent>
+			<xs:extension base="xs:string">
+				<xs:attribute name="inside" type="xs:boolean" use="optional" default="true"/>
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>	
+	<!-- Affinity section -->
+	<xs:element name="AffinitySection" type="tcloud:AffinitySection_Type" substitutionGroup="ovf:Section">
+		<xs:annotation>
+			<xs:documentation>Affinity description</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:complexType name="AffinitySection_Type">
+		<xs:complexContent>
+			<xs:extension base="ovf:Section_Type">
+				<xs:sequence>
+					<xs:element name="Affinity" type="tcloud:Affinity_Type"/>
+					<xs:element name="AntiAffinity" type="tcloud:AntiAffinity_Type"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="Affinity_Type">
+		<xs:sequence>
+			<xs:element name="VirtualSystemId" type="xs:string" minOccurs="2" maxOccurs="unbounded"/>
+		</xs:sequence>
+		<xs:attribute name="scope" type="tcloud:AffinityScope_Type" use="required"/>
+	</xs:complexType>
+	<xs:complexType name="AntiAffinity_Type">
+		<xs:sequence>
+			<xs:element name="VirtualSystemId" type="xs:string" minOccurs="2" maxOccurs="unbounded"/>
+		</xs:sequence>
+		<xs:attribute name="scope" type="tcloud:AffinityScope_Type" use="required"/>
+	</xs:complexType>
+	<xs:simpleType name="AffinityScope_Type">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="physical"/>
+			<xs:enumeration value="datacenter"/>
+			<xs:enumeration value="domain"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<!-- Other RESERVOIR extensions, not proposed to DMTF (yet) -->
+	<!-- digest (intended for <File>, see http://www.reservoir-fp7.eu/trac/ticket/46) -->
+	<xs:attribute name="digest" type="xs:string"/>
+	<!-- uuid  (intended for <VirtualSystem>, SAP use case) -->
+	<xs:attribute name="uuid" type="xs:anyURI"/>
+	<!-- Availability -->
+	<xs:element name="AvailabilitySection" type="tcloud:AvailabilitySection_Type" substitutionGroup="ovf:Section">
+		<xs:annotation>
+			<xs:documentation>Availability description</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:complexType name="AvailabilitySection_Type">
+		<xs:complexContent>
+			<xs:extension base="ovf:Section_Type">
+				<xs:sequence>
+					<xs:element name="Window" type="tcloud:Window_Type"/>
+					<xs:element name="Percentile" type="tcloud:Percentage_Type"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<!-- PerformanceObjectiveSection -->
+	<xs:element name="PerformanceObjectiveSection" type="tcloud:PerformanceObjectiveSection_Type" substitutionGroup="ovf:Section">
+		<xs:annotation>
+			<xs:documentation>Performance Objective Description</xs:documentation>
+		</xs:annotation>
+	</xs:element>	
+	<xs:complexType name="PerformanceObjectiveSection_Type">
+		<xs:complexContent>
+			<xs:extension base="ovf:Section_Type">
+				<xs:sequence>
+					<xs:element name="Constraint" type="tcloud:Constraint_Type"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>	
+	<xs:complexType name="Constraint_Type">
+		<xs:sequence>
+			<xs:element name="Name" type="xs:string"/>
+			<xs:element name="KPIName" type="xs:string"/>
+			<xs:element name="Window" type="tcloud:Window_Type"/>
+			<xs:element name="Range" type="tcloud:Range_Type"/>
+			<xs:element name="Percentage" type="tcloud:Percentage_Type"/>
+		</xs:sequence>
+	</xs:complexType>	
+	<xs:complexType name="Range_Type">
+		<xs:sequence>
+			<xs:element name="Min" type="xs:decimal"/>
+			<xs:element name="Max" type="xs:decimal"/>
+		</xs:sequence>
+		<xs:attribute name="unit" type="xs:string"></xs:attribute>
+	</xs:complexType>	
+</xs:schema>
