@@ -27,6 +27,16 @@
 					</excludes>
 				</configuration>
 			</plugin>
+ <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>2.0.2</version>
+	<configuration>
+		<source>1.6</source>
+		<target>1.6</target>
+	</configuration>
+      </plugin>
+
 		</plugins>
 
 	</build>
@@ -42,7 +52,7 @@
 				<dependency>
 					<groupId>javax.xml.bind</groupId>
 					<artifactId>jaxb-api</artifactId>
-					<version>${jaxb-api.version}</version>
+					<version>2.1</version>
 					<exclusions>
 						<exclusion>
 							<groupId>javax.xml.stream</groupId>
@@ -53,12 +63,12 @@
 				<dependency>
 					<groupId>stax</groupId>
 					<artifactId>stax-api</artifactId>
-					<version>${stax-api.version}</version>
+					<version>1.0</version>
 				</dependency>
 				<dependency>
 					<groupId>org.slf4j</groupId>
 					<artifactId>slf4j-api</artifactId>
-					<version>${slf4j.version}</version>
+					<version>1.5.6</version>
 				</dependency>
 			</dependencies>
 		</profile>
@@ -68,7 +78,7 @@
 				<dependency>
 					<groupId>javax.xml.bind</groupId>
 					<artifactId>jaxb-api</artifactId>
-					<version>${jaxb-api.version}</version>
+					<version>2.1</version>
 					<scope>provided</scope>
 					<exclusions>
 						<exclusion>
@@ -80,13 +90,13 @@
 				<dependency>
 					<groupId>stax</groupId>
 					<artifactId>stax-api</artifactId>
-					<version>${stax-api.version}</version>
+					<version>1.0</version>
 					<scope>provided</scope>
 				</dependency>
 				<dependency>
 					<groupId>org.slf4j</groupId>
 					<artifactId>slf4j-api</artifactId>
-					<version>${slf4j.version}</version>
+					<version>1.5.6</version>
 					<scope>provided</scope>
 				</dependency>
 			</dependencies>
@@ -140,7 +150,7 @@
 		<dependency>
 			<groupId>com.sun.xml.bind</groupId>
 			<artifactId>jaxb-impl</artifactId>
-			<version>${jaxb-impl.version}</version>
+			<version>2.1.5</version>
 			<exclusions>
 				<exclusion>
 					<groupId>javax.xml.bind</groupId>
@@ -152,13 +162,13 @@
 		<dependency>
 			<groupId>com.sun.xml.bind</groupId>
 			<artifactId>jaxb-xjc</artifactId>
-			<version>${jaxb-impl.version}</version>
+			<version>2.1.5</version>
 		</dependency>
 
 		<dependency>
 			<groupId>org.codehaus.woodstox</groupId>
 			<artifactId>woodstox-core-asl</artifactId>
-			<version>${woodstox-core-asl.version}</version>
+			<version>4.0.4</version>
 			<exclusions>
 				<exclusion>
 					<groupId>stax</groupId>
