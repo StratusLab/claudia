@@ -4,7 +4,7 @@
 	
 
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>es.tid.tcloud</groupId>
+	<groupId>com.telefonica.claudia</groupId>
 	<artifactId>ovf-manager</artifactId>
 	<packaging>jar</packaging>
 	<name>ovf-manager</name>
