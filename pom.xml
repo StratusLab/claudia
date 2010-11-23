@@ -14,89 +14,6 @@
 	<inceptionYear>2010</inceptionYear>
 
 
-	<build>
-		<plugins>
-			
-			<plugin>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<version>${maven-compiler-plugin.version}</version>
-				<configuration>
-					<source>1.6</source>
-					<target>1.6</target>
-					<encoding>UTF-8</encoding>
-				</configuration>
-			</plugin>
-
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-resources-plugin</artifactId>
-				<version>${maven-resources-plugin.version}</version>
-				<configuration>
-					<encoding>UTF-8</encoding>
-				</configuration>
-			</plugin>
-
-		</plugins>
-
-		<resources>
-			<resource>
-				<directory>src/main/resources</directory>
-				<excludes>
-					<exclude>.svn</exclude>
-					<exclude>**/.svn</exclude>
-					<exclude>**/.svn/**</exclude>
-					<exclude>data/**</exclude>
-					<exclude>conf/**</exclude>
-					<exclude>setup/**</exclude>
-					<exclude>META-INF/*.dbschema</exclude>
-				</excludes>
-				<filtering>true</filtering>
-			</resource>
-		</resources>
-
-		<pluginManagement>
-			<plugins>
-				<plugin>
-					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-site-plugin</artifactId>
-					<version>2.0</version>
-				</plugin>
- <plugin>
-        <artifactId>maven-assembly-plugin</artifactId>
-        <version>2.2-beta-5</version>
-        <configuration>
-        
-          <descriptorRefs>
-            <descriptorRef>project</descriptorRef>
-          </descriptorRefs>
-
-        </configuration>
-      </plugin>
-
-			</plugins>
-
-		</pluginManagement>
-	</build>
-
-
-	<developers>
-		<developer>
-			<name>David Perales Ferrera</name>
-			<email>perales@tid.es</email>
-			<organization>TID</organization>			
-		</developer>
-		<developer>
-			<name>Fermín Galán Márquez</name>
-			<email>fermin@tid.es</email>
-			<organization>TID</organization>			
-		</developer>
-	</developers>
-
-
-	<organization>
-		<name>TID</name>
-		<url>www.tid.es</url>
-	</organization>
 
 	<modules>
 		<module>ovf-manager</module>
@@ -107,45 +24,105 @@
 <module>driver-one</module>
 <module>claudia-client</module>
 
-
-
-
-
 	</modules>
-	<dependencies>
-		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<version>${junit.version}</version>
-			<scope>test</scope>
-		</dependency>
-	</dependencies>
 
 	<distributionManagement>
-		<!-- You have to change the url to the right ones in your development environment -->
-		<snapshotRepository>
-			<id>artifactory</id>
-			<name>artifactory-snapshots</name>
-			<url>http://192.168.8.29:8080/artifactory/libs-snapshots-local</url>
-		</snapshotRepository>
 		<repository>
-			<id>artifactory</id>
-			<name>artifactory-releases</name>
-			<url>http://192.168.8.29:8080/artifactory/libs-releases-local</url>
+			<id>stratuslab.snapshots</id>
+			<name>Snapshots</name>
+			<url>http://repo.stratuslab.eu:8081/content/repositories/snapshots/</url>
 		</repository>
 	</distributionManagement>
 
-	<properties>
-		<maven-compiler-plugin.version>2.0.2</maven-compiler-plugin.version>
-		<maven-resources-plugin.version>2.3</maven-resources-plugin.version>
-		<junit.version>4.5</junit.version>
-		<jaxb-impl.version>2.1.5</jaxb-impl.version>
-		<jaxb-api.version>2.1</jaxb-api.version>
-		<ovf-manager.version>0.1-SNAPSHOT</ovf-manager.version>
-		<slf4j.version>1.5.6</slf4j.version>
-		<stax-api.version>1.0</stax-api.version>
-		<stax2-api.version>3.0.0</stax2-api.version>
-		<woodstox-core-asl.version>4.0.4</woodstox-core-asl.version>
-	</properties>
+	<build>
+
+		<pluginManagement>
+			<plugins>
+
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-assembly-plugin</artifactId>
+					<version>2.2-beta-5</version>
+
+        			<configuration>
+          			<descriptors>
+            			<descriptor>assembly.xml</descriptor>
+          			</descriptors>
+          			<descriptorRefs>
+           		 <descriptorRef>project</descriptorRef>
+          		</descriptorRefs>
+
+        		</configuration>
+
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-clean-plugin</artifactId>
+					<version>2.4.1</version>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-dependency-plugin</artifactId>
+					<version>2.1</version>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-deploy-plugin</artifactId>
+					<version>2.5</version>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-install-plugin</artifactId>
+					<version>2.3.1</version>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-resources-plugin</artifactId>
+					<version>2.4.3</version>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-site-plugin</artifactId>
+					<version>2.1.1</version>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-scm-plugin</artifactId>
+					<version>1.3</version>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-patch-plugin</artifactId>
+					<version>1.1.1</version>
+				</plugin>
+
+				<plugin>
+					<groupId>org.codehaus.mojo</groupId>
+					<artifactId>build-helper-maven-plugin</artifactId>
+					<version>1.5</version>
+				</plugin>
+				<plugin>
+					<groupId>org.codehaus.mojo</groupId>
+					<artifactId>findbugs-maven-plugin</artifactId>
+					<version>2.3.1</version>
+				</plugin>
+				<plugin>
+					<groupId>org.codehaus.mojo</groupId>
+					<artifactId>rpm-maven-plugin</artifactId>
+					<version>2.1-alpha-1</version>
+				</plugin>
+				<plugin>
+					<groupId>org.codehaus.mojo</groupId>
+					<artifactId>exec-maven-plugin</artifactId>
+					<version>1.2</version>
+				</plugin>
+
+			</plugins>
+
+		</pluginManagement>
+
+	</build>
+
 	
 </project>
+
