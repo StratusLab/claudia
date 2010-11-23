@@ -1,0 +1,20 @@
+#!/bin/sh
+
+export HOSTNAME=`hostname`
+sed -i  "s/localhost/$HOSTNAME/g" /opt/claudia/conf/ACD.properties
+
+
+echo "Please, enter ACD Hostname: (usually localhost)";
+read -e ACDHOSTNAME
+
+sed -i  "s/ACDHOST/$ACDHOSTNAME/g" /opt/claudia/conf/ACD.properties
+
+
+cd /opt/claudia/bin
+cat ACD.sh | tr -d '\r' > ACD_2.sh
+mv ACD_2.sh ACD.sh
+chmod 755 ACD.sh
+
+mv /opt/claudia/etc/init.d/* /etc/init.d/
+rm -fr /opt/claudia/etc
+

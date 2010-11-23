@@ -1,0 +1,7 @@
+Package: stratuslab-claudia-client
+Version: 0.1.2
+Architecture: all
+Depends: stratuslab-claudia-lib (>= 0.1-1) 
+Maintainer: Diego Pérez Fabado <diegoperezw@gmail.com>
+Description: Claudia Client for Stratuslab. This package provide a command line client aimed to manage and test the other components. It integrates a simple TCloud API client for Service Deployment features and monitoring utilities.
+Architecture: all

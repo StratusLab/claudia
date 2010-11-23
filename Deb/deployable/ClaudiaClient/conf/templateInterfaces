@@ -1,0 +1,6 @@
+
+allow-hotplug @DEV
+iface @DEV inet static
+       address @IP
+       netmask @NETMASK
+       network @NETWORK

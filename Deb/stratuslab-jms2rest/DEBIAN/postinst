@@ -1,0 +1,3 @@
+#!/bin/sh
+export HOSTNAME=`hostname`
+sed -i  "s/localhost/$HOSTNAME/g" /opt/claudia/conf/jms2rest.properties

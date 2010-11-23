@@ -1,0 +1,7 @@
+Package: stratuslab-claudia
+Version: 0.1.2
+Architecture: all
+Depends: stratuslab-claudia-lib, stratuslab-clotho, stratuslab-acd-broker, stratuslab-claudia-client, stratuslab-driver-one, stratuslab-driver-wasup, stratuslab-ezweb, stratuslab-jms2rest, stratuslab-ovf-manager, stratuslab-tcloud-server,  stratuslab-wasup, stratuslab-driver-clotho  
+Maintainer: Diego Pérez Fabado <diegoperezw@gmail.com>
+Description: Metapackage for Claudia Stratuslab.
+Architecture: all

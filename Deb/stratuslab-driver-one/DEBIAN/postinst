@@ -1,0 +1,3 @@
+#!/bin/sh
+
+rm -fr /opt/claudia/driver/driver-one-0.1-1-deployable

@@ -1,0 +1,17 @@
+#!/bin/sh
+
+export HOSTNAME=`hostname`
+sed -i  "s/localhost/$HOSTNAME/g" /opt/claudia/conf/tcloud.properties
+
+rm -f /etc/apache2/sites-enabled/claudiaSharedFolder
+ln -s /etc/apache2/sites-available/claudiaSharedFolder /etc/apache2/sites-enabled/claudiaSharedFolder
+
+cat /etc/apache2/ports.conf |grep "Listen 18888"
+if [ $? == "1" ]
+then
+echo "Listen 18888" >> /etc/apache2/ports.conf
+fi
+
+apache2ctl graceful
+
+
