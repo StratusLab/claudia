@@ -8,6 +8,7 @@ cd  $CLAUDIAWORKDIR/clotho/target/
 rm -fr $CLAUDIAWORKDIR/Deb/stratuslab-clotho/opt/claudia/*
 
 mkdir -p $CLAUDIAWORKDIR/Deb/stratuslab-clotho/opt/claudia/
+ls  $CLAUDIAWORKDIR/clotho/target/
 cp -R $CLAUDIAWORKDIR/clotho/target/clotho-0.1.1-environment/clotho/* $CLAUDIAWORKDIR/Deb/stratuslab-clotho/opt/claudia/
 
 cd $CLAUDIAWORKDIR/Deb
