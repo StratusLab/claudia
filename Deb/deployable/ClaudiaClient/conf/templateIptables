@@ -1,3 +1,0 @@
-#!/bin/bash
-
-iptables -t nat -A POSTROUTING -j MASQUERADE -s @INTERNAL_NETWORK/@INTERNAL_MASK_BIT_NUMBER
