@@ -1,28 +1,18 @@
 #!/bin/sh
 echo "------------------------------------------"
-echo "Creando Claudia Client"
+echo "Creating Claudia Client Package"
 echo "------------------------------------------"
 
+cd  $CLAUDIAWORKDIR/claudia-client/target/
+rm -fr $CLAUDIAWORKDIR/Deb/stratuslab-claudia-client/opt/claudia/*
 
-cd /home/dperez/Documentos/StratusLabs/git/claudia/claudia-client
+mkdir -p $CLAUDIAWORKDIR/Deb/stratuslab-claudia-client/opt/claudia/
+cp -R $CLAUDIAWORKDIR/clotho/target/claudia-client--0.1.1-environment.dir/claudia-client/* $CLAUDIAWORKDIR/Deb/stratuslab-claudia-client/opt/claudia/
 
-mvn clean
-mvn assembly:assembly 
-
-cd  /home/dperez/Documentos/StratusLabs/git/claudia/claudia-client/target/
-cp -f /home/dperez/Documentos/StratusLabs/git/claudia/claudia-client/target/claudia-client-0.1.1-deployable.zip /home/dperez/Documentos/StratusLabs/Deb/deployable/claudia-client-0.1.1-deployable.zip  
-cd /home/dperez/Documentos/StratusLabs/Deb/deployable/
-rm -fr ClaudiaClient
-unzip claudia-client-0.1.1-deployable.zip
-cd ClaudiaClient
-rm -fr /home/dperez/Documentos/StratusLabs/Deb/stratuslab-claudia-client/opt/claudia/*
-cp -R * /home/dperez/Documentos/StratusLabs/Deb/stratuslab-claudia-client/opt/claudia/
-
-cd /home/dperez/Documentos/StratusLabs/Deb
-
-./compare.sh stratuslab-claudia-client/ stratuslab-claudia-lib/
+cd $CLAUDIAWORKDIR/Deb
+mv $CLAUDIAWORKDIR/Deb/stratuslab-claudia-client/opt/claudia/lib/* $CLAUDIAWORKDIR/Deb/stratuslab-claudia-lib/opt/claudia/lib/
 
 dpkg-deb --build stratuslab-claudia-client
-mv  stratuslab-claudia-client.deb finaldeb/stratuslab-claudia-client-0.1-2.deb
+mv  stratuslab-claudia-client.deb $CLAUDIADEBDIR/stratuslab-claudia-client-0.1-2.deb
 
 
