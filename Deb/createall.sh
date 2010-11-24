@@ -2,7 +2,7 @@
 
 rm -fr stratuslab-claudia-lib/opt/claudia/lib/*
 
-#dpkg-deb --build stratuslab-jms2rest
+# dpkg-deb --build stratuslab-jms2rest
 #dpkg-deb --build stratuslab-ovf-manager
 #dpkg-deb --build stratuslab-wasup
 #dpkg-deb --build stratuslab-ezweb
