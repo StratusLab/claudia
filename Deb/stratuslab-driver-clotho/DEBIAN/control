@@ -1,8 +1,0 @@
-Package: stratuslab-driver-clotho
-Version: 0.1.3
-Architecture: all
-Depends: stratuslab-claudia-lib (>= 0.1-1) 
-Maintainer: Diego Pérez Fabado <diegoperezw@gmail.com>
-Description: Clotho driver for Stratuslab. 
-
-Architecture: all

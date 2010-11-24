@@ -1,7 +1,0 @@
-Package: stratuslab-ovf-manager
-Version: 0.1.1
-Architecture: all
-Depends: stratuslab-claudia-lib (>= 0.1-1) 
-Maintainer: Diego Pérez Fabado <diegoperezw@gmail.com>
-Description: OVF Manager  for Stratuslab.
-Architecture: all

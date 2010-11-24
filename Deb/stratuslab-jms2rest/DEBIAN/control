@@ -1,7 +1,0 @@
-Package: stratuslab-jms2rest
-Version: 0.1.1
-Architecture: all
-Depends: stratuslab-claudia-lib (>= 0.1-1) 
-Maintainer: Diego Pérez Fabado <diegoperezw@gmail.com>
-Description: JMS2Rest for Stratuslab.
-Architecture: all
