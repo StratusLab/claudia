@@ -5,7 +5,7 @@ echo "------------------------------------------"
 
 
 cd  $CLAUDIAWORKDIR/clotho/target/
-cp -f $CLAUDIAWORKDIR/clotho/target/clotho-0.1.1-deployable.zip /home/dperez/Documentos/StratusLabs/Deb/deployable/clotho-0.2.1-deployable.zip  
+cp -f $CLAUDIAWORKDIR/clotho/target/clotho-0.1.1-deployable.zip $CLAUDIAWORKDIR/Deb/deployable/clotho-0.2.1-deployable.zip  
 cd $CLAUDIAWORKDIR/Deb/deployable/
 rm -fr Clotho
 unzip clotho-0.2.1-deployable.zip

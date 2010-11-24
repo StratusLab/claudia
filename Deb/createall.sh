@@ -28,3 +28,4 @@ dpkg-deb --build stratuslab-claudia-lib
 
 rm -fr stratuslab-clotho/opt
 rm -fr stratuslab-claudia-lib/opt/claudia/lib/*
+rm -fr deployable/*
