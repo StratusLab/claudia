@@ -5,14 +5,10 @@ echo "------------------------------------------"
 
 
 cd  $CLAUDIAWORKDIR/clotho/target/
-cp -f $CLAUDIAWORKDIR/clotho/target/clotho-0.1.1-deployable.zip $CLAUDIAWORKDIR/Deb/deployable/clotho-0.2.1-deployable.zip  
-cd $CLAUDIAWORKDIR/Deb/deployable/
-rm -fr Clotho
-unzip clotho-0.2.1-deployable.zip
-cd Clotho
 rm -fr $CLAUDIAWORKDIR/Deb/stratuslab-clotho/opt/claudia/*
+
 mkdir -p $CLAUDIAWORKDIR/Deb/stratuslab-clotho/opt/claudia/
-cp -R * $CLAUDIAWORKDIR/Deb/stratuslab-clotho/opt/claudia/
+cp -R $CLAUDIAWORKDIR/clotho/target/clotho-0.1.1-environment/clotho/* $CLAUDIAWORKDIR/Deb/stratuslab-clotho/opt/claudia/
 
 cd $CLAUDIAWORKDIR/Deb
 mv $CLAUDIAWORKDIR/Deb/stratuslab-clotho/opt/claudia/lib/* $CLAUDIAWORKDIR/Deb/stratuslab-claudia-lib/opt/claudia/lib/
