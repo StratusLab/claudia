@@ -22,3 +22,4 @@ dpkg-deb --build stratuslab-claudia
 rm -fr stratuslab-clotho/opt
 rm -fr stratuslab-claudia-lib/opt/claudia/lib/*
 rm -fr stratuslab-claudia-client/opt
+rm -fr stratuslab-tcloud-server/opt
