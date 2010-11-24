@@ -1,7 +1,7 @@
 #!/bin/sh
 
+rm -fr stratuslab-claudia-lib/opt/claudia/lib/*
 
-#dpkg-deb --build stratuslab-claudia-lib
 #dpkg-deb --build stratuslab-jms2rest
 #dpkg-deb --build stratuslab-ovf-manager
 #dpkg-deb --build stratuslab-wasup
@@ -22,3 +22,9 @@
 #./createclaudiac.sh
 
 #./createrpm.sh
+
+dpkg-deb --build stratuslab-claudia-lib
+
+
+rm -fr stratuslab-clotho/opt
+rm -fr stratuslab-claudia-lib/opt/claudia/lib/*

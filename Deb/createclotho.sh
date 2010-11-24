@@ -11,6 +11,7 @@ rm -fr Clotho
 unzip clotho-0.2.1-deployable.zip
 cd Clotho
 rm -fr $CLAUDIAWORKDIR/Deb/stratuslab-clotho/opt/claudia/*
+mkdir -p $CLAUDIAWORKDIR/Deb/stratuslab-clotho/opt/claudia/
 cp -R * $CLAUDIAWORKDIR/Deb/stratuslab-clotho/opt/claudia/
 
 cd $CLAUDIAWORKDIR/Deb
