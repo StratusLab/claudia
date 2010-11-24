@@ -11,7 +11,7 @@ rm -fr stratuslab-claudia-lib/opt/claudia/lib/*
 #mv  stratuslab-claudia.deb finaldeb/stratuslab-claudia-0.1-2.deb
 
 ./createclotho.sh
-#./createtcloud.sh
+./createtcloud.sh
 ./createclaudiac.sh
 
 #./createrpm.sh
