@@ -4,4 +4,3 @@ Architecture: all
 Depends: stratuslab-claudia-lib (>= 0.1-1) 
 Maintainer: Diego Pérez Fabado <diegoperezw@gmail.com>
 Description: TCloud Server for Stratuslab. TCloud Server implements a subset of the TCloud API, acting both as SMI and VMI for the SLM.
-Architecture: all
