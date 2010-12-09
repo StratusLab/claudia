@@ -375,7 +375,6 @@
                                                                 </source>
                                                         </sources>
                                                 </mapping>
-
                                                 <mapping>
                                                         <directory>${app.home}/logs</directory>
 
