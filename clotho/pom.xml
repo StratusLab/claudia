@@ -354,7 +354,7 @@
                                                         <directory>${app.home}/bin/</directory>
                                                         <sources>
                                                                 <source>
-                                                                <location>target/clotho-0.1.1-environment/clotho/bin</location>
+                                                                <location>target/clotho-0.1.1-environment.dir/clotho/bin</location>
                                                                 </source>
                                                         </sources>
                                                 </mapping>
@@ -363,7 +363,7 @@
                                                         <directory>${app.home}/lib/</directory>
                                                          <sources>
                                                                 <source>
-                                                                <location>target/clotho-0.1.1-environment/clotho/lib</location>
+                                                                <location>target/clotho-0.1.1-environment.dir/clotho/lib</location>
                                                                 </source>
                                                         </sources>
                                                 </mapping>
@@ -371,7 +371,7 @@
                                                         <directory>${app.home}/conf/</directory>
                                                          <sources>
                                                                 <source>
-                                                                <location>target/clotho-0.1.1-environment/clotho/conf</location>
+                                                                <location>target/clotho-0.1.1-environment.dir/clotho/conf</location>
                                                                 </source>
                                                         </sources>
                                                 </mapping>
