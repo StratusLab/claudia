@@ -230,7 +230,7 @@
                                                         <directory>${app.home}/driver/</directory>
                                                          <sources>
                                                                 <source>
-                                                                <location>../../driver-clotho/target/driver-clotho-0.1.1-deployable.zip</location>
+                                                                <location>../driver-clotho/target/driver-clotho-0.1.1-deployable.zip</location>
                                                                 </source>
                                                         </sources>
                                                 </mapping>
