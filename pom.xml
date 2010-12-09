@@ -14,16 +14,14 @@
 	<inceptionYear>2010</inceptionYear>
 
 
-
-	<modules>
-		<module>ovf-manager</module>
-<module>clotho</module>
+<modules>
+<module>ovf-manager</module>
 <module>claudia-commons</module>
-<module>tcloud-server</module>
 <module>driver-clotho</module>
 <module>driver-one</module>
 <module>claudia-client</module>
-
+<module>tcloud-server</module>
+<module>clotho</module>
 	</modules>
 
 	<distributionManagement>
