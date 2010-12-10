@@ -87,13 +87,12 @@
 
 	<modules>
 		<module>/ovf-manager</module>
-<module>/clotho</module>
 <module>/claudia-commons</module>
 <module>/driver-clotho</module>
 <module>/driver-one</module>
 <module>/tcloud-server</module>
 <module>/claudia-client</module>
-
+<module>/clotho</module>
 
 
 
