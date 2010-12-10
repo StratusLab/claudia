@@ -139,7 +139,7 @@
                                                         <directory>${app.home}/lib/</directory>
                                                          <sources>
                                                                 <source>
-                                                                <location>target/claudia-client-0.1.1-environment.dir/ClaudiaClient/lib</logation>
+                                                                <location>target/claudia-client-0.1.1-environment.dir/ClaudiaClient/lib</location>
                                                                 </source>
                                                         </sources>
                                                 </mapping>
