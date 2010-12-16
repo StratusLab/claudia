@@ -365,6 +365,9 @@
                                                                 <source>
                                                                 <location>target/clotho-0.1.1-environment.dir/clotho/lib</location>
                                                                 </source>
+                                    				<excludes>
+                                        			<exclude>ovf-manager-0.1-SNAPSHOT.jar</exclude>
+                                    				</excludes>
                                                         </sources>
                                                 </mapping>
                                                  <mapping>
