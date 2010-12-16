@@ -1,4 +1,4 @@
-#!/bin/sho
+#!/bin/sh
 
 DEST=$1
 
