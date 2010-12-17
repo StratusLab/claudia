@@ -355,6 +355,7 @@
                                                         <sources>
                                                                 <source>
                                                                 <location>target/clotho-0.1.1-environment.dir/clotho/bin</location>
+								 <filemode>755</filemode>
                                                                 </source>
                                                         </sources>
                                                 </mapping>
