@@ -25,12 +25,18 @@
 	</modules>
 
 	<distributionManagement>
-		<repository>
-			<id>stratuslab.snapshots</id>
-			<name>Snapshots</name>
-			<url>http://repo.stratuslab.eu:8081/content/repositories/snapshots/</url>
-		</repository>
-	</distributionManagement>
+    		<repository>
+      		<id>stratuslab.releases</id>
+     			<name>Releases</name>
+     			 <url>http://repo.stratuslab.eu:8081/content/repositories/releases/</url>
+   		 </repository>
+    		<snapshotRepository>
+      		<id>stratuslab.snapshots</id>
+      		<name>Snapshots</name>
+      		<url>http://repo.stratuslab.eu:8081/content/repositories/snapshots/</url>
+    		</snapshotRepository>
+  	</distributionManagement>
+
 
 	<build>
 
