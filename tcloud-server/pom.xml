@@ -204,6 +204,8 @@
                                                 <mapping>
                                                         <directory>${app.home}/bin/</directory>
                                                         <filemode>755</filemode>
+                                                        <username>root</username>
+                                                        <groupname>root</groupname>
                                                         <sources>
                                                                 <source>
                                                                 <location>target/tcloud-server-0.1.1-environment.dir/tcloud-server/bin</location>

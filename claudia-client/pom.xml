@@ -129,6 +129,8 @@
                                                 <mapping>
                                                         <directory>${app.home}/bin/</directory>
                                                         <filemode>755</filemode>
+                                                        <username>root</username>
+                                                        <groupname>root</groupname>
                                                         <sources>
                                                                 <source>
                                                                 <location>target/claudia-client-0.1.1-environment.dir/ClaudiaClient/bin</location>
