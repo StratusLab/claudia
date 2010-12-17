@@ -128,10 +128,10 @@
                                         <mappings>
                                                 <mapping>
                                                         <directory>${app.home}/bin/</directory>
+                                                        <filemode>755</filemode>
                                                         <sources>
                                                                 <source>
                                                                 <location>target/claudia-client-0.1.1-environment.dir/ClaudiaClient/bin</location>
-                                                                 <filemode>755</filemode>
                                                                 </source>
                                                         </sources>
                                                 </mapping>

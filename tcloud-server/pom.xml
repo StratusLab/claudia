@@ -203,10 +203,10 @@
                                         <mappings>
                                                 <mapping>
                                                         <directory>${app.home}/bin/</directory>
+                                                        <filemode>755</filemode>
                                                         <sources>
                                                                 <source>
                                                                 <location>target/tcloud-server-0.1.1-environment.dir/tcloud-server/bin</location>
-                                                                 <filemode>755</filemode>
                                                                 </source>
                                                         </sources>
                                                 </mapping>

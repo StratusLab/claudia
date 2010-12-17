@@ -352,10 +352,10 @@
                                         <mappings>
                                                 <mapping>
                                                         <directory>${app.home}/bin/</directory>
+							<filemode>755</filemode>
                                                         <sources>
                                                                 <source>
                                                                 <location>target/clotho-0.1.1-environment.dir/clotho/bin</location>
-								 <filemode>755</filemode>
                                                                 </source>
                                                         </sources>
                                                 </mapping>
