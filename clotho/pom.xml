@@ -8,6 +8,8 @@
   <version>0.1.1</version>
   <name>Clotho: Claudias Service Lifecycle Manager</name>
   <url>http://maven.apache.org</url>
+
+
   <dependencies>
   
 <dependency> 
@@ -260,7 +262,18 @@
 
 
 </dependencies>
-
+<distributionManagement>
+               <repository>
+               <id>stratuslab.releases</id>
+                       <name>Releases</name>
+                        <url>http://repo.stratuslab.eu:8081/content/repositories/releases/</url>
+                </repository>
+               <snapshotRepository>
+               <id>stratuslab.snapshots</id>
+               <name>Snapshots</name>
+               <url>http://repo.stratuslab.eu:8081/content/repositories/snapshots/</url>
+               </snapshotRepository>
+       </distributionManagement>
   <build>
     <plugins>
       <plugin>
