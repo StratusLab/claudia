@@ -262,7 +262,7 @@
 
 
 </dependencies>
-<distributionManagement>
+<!-- <distributionManagement>
                <repository>
                <id>stratuslab.releases</id>
                        <name>Releases</name>
@@ -273,7 +273,7 @@
                <name>Snapshots</name>
                <url>http://repo.stratuslab.eu:8081/content/repositories/snapshots/</url>
                </snapshotRepository>
-       </distributionManagement>
+       </distributionManagement>-->
   <build>
     <plugins>
       <plugin>
@@ -299,11 +299,11 @@
           </archive>
         </configuration>
       </plugin>
-        <plugin>
+      <!--  <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-deploy-plugin</artifactId>
           <version>2.5</version>
-        </plugin>
+        </plugin>-->
     <!--  <plugin>
         <artifactId>maven-assembly-plugin</artifactId>
         <version>2.2-beta-5</version>
