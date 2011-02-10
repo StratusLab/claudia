@@ -5,11 +5,11 @@
 
 
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>eu.stratuslab.pkgs.claudia</groupId>
+	<groupId>com.telefonica.claudia</groupId>
 	<artifactId>claudia</artifactId>
 	<packaging>pom</packaging>
 	<name>claudia</name>
-	<version>1.0-SNAPSHOT</version>
+	<version>1.0</version>
 	<url>http://claudia.morfeo-project.org</url>
 	<inceptionYear>2010</inceptionYear>
 

@@ -3,10 +3,10 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>eu.stratuslab.pkgs.claudia</groupId>
-  <artifactId>driver-clotho</artifactId>
-  <version>0.1.1-SNAPSHOT</version>
-  <name>TCloud driver for Clotho</name>
+  <groupId>com.telefonica.claudia</groupId>
+  <artifactId>claudia-commons</artifactId>
+  <version>0.1.1</version>
+  <name>Claudia Common libraries</name>
   <url>http://maven.apache.org</url>
   <dependencies>
   
@@ -15,25 +15,6 @@
 		<artifactId>junit</artifactId>
 		<version>3.8.1</version>
 		<scope>test</scope>
-    </dependency>
-
-    <dependency>
-		 <groupId>com.telefonica.claudia</groupId>
-  		 <artifactId>tcloud-server</artifactId>
- 		 <version>0.1.1</version>
-		<scope>provided</scope>
-    </dependency>
-
-    <dependency>
-          <groupId>com.telefonica.claudia</groupId>
-	  <artifactId>claudia-commons</artifactId>
-	  <version>0.1.1</version>
-    </dependency>
-
-    <dependency>
-	<groupId>org.apache.activemq</groupId>
-	<artifactId>activemq-core</artifactId>
-	<version>5.1.0</version>
     </dependency>
     	
   </dependencies>
@@ -48,6 +29,7 @@
        <skip>true</skip>
      </configuration>
    </plugin>
+
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
@@ -71,52 +53,24 @@
         </configuration>
       </plugin>
 
-     <!-- <plugin>
-        <artifactId>maven-assembly-plugin</artifactId>
-        <version>2.2-beta-5</version>
-        <configuration>
-          <descriptors>
-            <descriptor>src/main/assembly/src.xml</descriptor>
-          </descriptors>
-          <descriptorRefs>
-            <descriptorRef>project</descriptorRef>
-          </descriptorRefs>
-        </configuration>
-      </plugin>-->
-
-<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-assembly-plugin</artifactId>
-				<configuration>
-					<descriptors>
-            <descriptor>src/main/assembly/src.xml</descriptor>
-            
-          </descriptors>
-
-
-				</configuration>
-
-				<executions>
-
-					<execution>
-						<id>bundle</id>
-						<goals>
-							<goal>single</goal>
-						</goals>
-						<phase>package</phase>
-					</execution>
-
-				</executions>
-
-			</plugin>
-
-
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-javadoc-plugin</artifactId>
         <version>2.6.1</version>
       </plugin>
 
+
+      <plugin>
+        <artifactId>maven-assembly-plugin</artifactId>
+        <version>2.2-beta-5</version>
+        <configuration>
+
+          <descriptorRefs>
+            <descriptorRef>project</descriptorRef>
+          </descriptorRefs>
+
+        </configuration>
+      </plugin>
     </plugins>
   </build>
 

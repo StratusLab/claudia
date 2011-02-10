@@ -1,10 +1,10 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
-  <groupId>eu.stratuslab.pkgs.claudia</groupId>
+  <groupId>com.telefonica.claudia</groupId>
   <artifactId>claudia-client</artifactId>
   <packaging>jar</packaging>
-  <version>0.1.1-SNAPSHOT</version>
+  <version>0.1.1</version>
   <name>Claudia Client</name>
   <url>http://maven.apache.org</url>
   <dependencies>
@@ -140,7 +140,7 @@
                                                         <groupname>root</groupname>
                                                         <sources>
                                                                 <source>
-                                                                <location>target/claudia-client-0.1.1-SNAPSHOT-environment.dir/ClaudiaClient/bin</location>
+                                                                <location>target/claudia-client-0.1.1-environment.dir/ClaudiaClient/bin</location>
                                                                 </source>
                                                         </sources>
                                                 </mapping>
@@ -149,7 +149,7 @@
                                                         <directory>${app.home}/lib/</directory>
                                                          <sources>
                                                                 <source>
-                                                                <location>target/claudia-client-0.1.1-SNAPSHOT-environment.dir/ClaudiaClient/lib</location>
+                                                                <location>target/claudia-client-0.1.1-environment.dir/ClaudiaClient/lib</location>
                                                                 </source>
                                                         </sources>
                                                 </mapping>
@@ -157,7 +157,7 @@
                                                         <directory>${app.home}/conf/</directory>
                                                          <sources>
                                                                 <source>
-                                                                <location>target/claudia-client-0.1.1-SNAPSHOT-environment.dir/ClaudiaClient/conf</location>
+                                                                <location>target/claudia-client-0.1.1-environment.dir/ClaudiaClient/conf</location>
                                                                 </source>
                                                         </sources>
                                                 </mapping>
