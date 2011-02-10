@@ -3,9 +3,9 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>eu.stratuslab.pkgs.claudia</groupId>
+  <groupId>com.telefonica.claudia</groupId>
   <artifactId>tcloud-server</artifactId>
-  <version>0.1.1-SNAPSHOT</version>
+  <version>0.1.1</version>
   <name>TCloud Server</name>
   
   <dependencies>
@@ -229,7 +229,7 @@
                                                         <groupname>root</groupname>
                                                         <sources>
                                                                 <source>
-                                                                <location>target/tcloud-server-0.1.1-SNAPSHOT-environment.dir/tcloud-server/bin</location>
+                                                                <location>target/tcloud-server-0.1.1-environment.dir/tcloud-server/bin</location>
                                                                 </source>
                                                         </sources>
                                                 </mapping>
@@ -238,7 +238,7 @@
                                                         <directory>${app.home}/lib/</directory>
                                                          <sources>
                                                                 <source>
-                                                                <location>target/tcloud-server-0.1.1-SNAPSHOT-environment.dir/tcloud-server/lib</location>
+                                                                <location>target/tcloud-server-0.1.1-environment.dir/tcloud-server/lib</location>
                                                                 </source>
                                                         </sources>
                                                 </mapping>
@@ -246,7 +246,7 @@
                                                         <directory>${app.home}/conf/</directory>
                                                          <sources>
                                                                 <source>
-                                                                <location>target/tcloud-server-0.1.1-SNAPSHOT-environment.dir/tcloud-server/conf</location>
+                                                                <location>target/tcloud-server-0.1.1-environment.dir/tcloud-server/conf</location>
                                                                 </source>
                                                         </sources>
                                                 </mapping>
@@ -254,10 +254,10 @@
                                                         <directory>${app.home}/driver/</directory>
                                                          <sources>
                                                                 <source>
-                                                                <location>../driver-clotho/target/driver-clotho-0.1.1-SNAPSHOT-deployable.zip</location>
+                                                                <location>../driver-clotho/target/driver-clotho-0.1.1-deployable.zip</location>
                                                                 </source>
 								 <source>
-                                                                <location>../driver-one/target/driver-one-0.1-1-SNAPSHOT-deployable.zip</location>
+                                                                <location>../driver-one/target/driver-one-0.1-1-deployable.zip</location>
                                                                 </source>
                                                         </sources>
                                                 </mapping>
