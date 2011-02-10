@@ -18,6 +18,19 @@
     </dependency>
     	
   </dependencies>
+  <distributionManagement>
+   <repository>
+      <id>stratuslab.releases</id>
+      <name>Releases</name>
+      <url>http://repo.stratuslab.eu:8081/content/repositories/releases/</url>
+    </repository>
+    <snapshotRepository>
+      <id>stratuslab.snapshots</id>
+      <name>Snapshots</name>
+      <url>http://repo.stratuslab.eu:8081/content/repositories/snapshots/</url>
+    </snapshotRepository>
+  </distributionManagement>
+
 
   <build>
     <plugins>
@@ -25,9 +38,6 @@
      <groupId>org.apache.maven.plugins</groupId>
      <artifactId>maven-deploy-plugin</artifactId>
      <version>2.5</version>
-     <configuration>
-       <skip>true</skip>
-     </configuration>
    </plugin>
 
       <plugin>
