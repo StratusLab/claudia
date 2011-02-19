@@ -4,7 +4,7 @@
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>eu.stratuslab.pkgs.claudia</groupId>
-  <artifactId>tcloud-server</artifactId>
+  <artifactId>tcloud-server-rpm</artifactId>
   <version>0.1.1-SNAPSHOT</version>
   <name>TCloud Server RPM Package</name>
 
@@ -22,18 +22,24 @@
       <groupId>eu.stratuslab.pkgs.claudia</groupId>
       <artifactId>tcloud-server</artifactId>
       <version>0.1.1-SNAPSHOT</version>
+      <classifier>environment</classifier>
+      <type>zip</type>
     </dependency>
 
     <dependency>
       <groupId>eu.stratuslab.pkgs.claudia</groupId>
       <artifactId>driver-one</artifactId>
       <version>0.1.1-SNAPSHOT</version>
+      <classifier>deployable</classifier>
+      <type>zip</type>
     </dependency>
 
     <dependency>
       <groupId>eu.stratuslab.pkgs.claudia</groupId>
       <artifactId>driver-clotho</artifactId>
       <version>0.1.1-SNAPSHOT</version>
+      <classifier>deployable</classifier>
+      <type>zip</type>
     </dependency>
 
   </dependencies>
@@ -52,8 +58,59 @@
   </distributionManagement>
 
   <build>
+
     <plugins>
 
+      <plugin>
+	<groupId>org.apache.maven.plugins</groupId>
+	<artifactId>maven-dependency-plugin</artifactId>
+	
+	<executions>
+	  
+	  <execution>
+	    <id>unpack</id>
+	    <goals>
+	      <goal>unpack</goal>
+	    </goals>
+	    <configuration>
+	      <artifactItems>
+		<artifactItem>
+		  <groupId>eu.stratuslab.pkgs.claudia</groupId>
+		  <artifactId>tcloud-server</artifactId>
+		  <classifier>environment</classifier>
+		  <type>zip</type>
+		</artifactItem>
+	      </artifactItems>
+	    </configuration>
+	  </execution>
+
+	  <execution>
+	    <id>copy</id>
+	    <goals>
+	      <goal>copy</goal>
+	    </goals>
+	    <configuration>
+	      <artifactItems>
+		<artifactItem>
+		  <groupId>eu.stratuslab.pkgs.claudia</groupId>
+		  <artifactId>driver-clotho</artifactId>
+		  <classifier>deployable</classifier>
+		  <type>zip</type>
+		</artifactItem>
+		<artifactItem>
+		  <groupId>eu.stratuslab.pkgs.claudia</groupId>
+		  <artifactId>driver-one</artifactId>
+		  <classifier>deployable</classifier>
+		  <type>zip</type>
+		</artifactItem>
+	      </artifactItems>
+	    </configuration>
+	  </execution>
+
+	</executions>
+
+      </plugin>
+      
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-deploy-plugin</artifactId>
@@ -92,17 +149,16 @@
               <groupname>root</groupname>
               <sources>
                 <source>
-                  <location>target/tcloud-server-0.1.1-SNAPSHOT-environment.dir/tcloud-server/bin</location>
+                  <location>target/dependency/tcloud-server/bin</location>
                 </source>
               </sources>
             </mapping>
-
 
             <mapping>
               <directory>${app.home}/lib/</directory>
               <sources>
                 <source>
-                  <location>target/tcloud-server-0.1.1-SNAPSHOT-environment.dir/tcloud-server/lib</location>
+                  <location>target/dependency/tcloud-server/lib</location>
                 </source>
               </sources>
             </mapping>
@@ -111,7 +167,7 @@
               <directory>${app.home}/conf/</directory>
               <sources>
                 <source>
-                  <location>target/tcloud-server-0.1.1-SNAPSHOT-environment.dir/tcloud-server/conf</location>
+                  <location>target/dependency/tcloud-server/conf</location>
                 </source>
               </sources>
             </mapping>
@@ -120,10 +176,10 @@
               <directory>${app.home}/driver/</directory>
               <sources>
                 <source>
-                  <location>../driver-clotho/target/driver-clotho-0.1.1-SNAPSHOT-deployable.zip</location>
-                </source>
-                <source>
-                  <location>../driver-one/target/driver-one-0.1-1-SNAPSHOT-deployable.zip</location>
+		  <location>target/dependency</location>
+		  <includes>
+		    <include>driver*.zip</include>
+		  </includes>
                 </source>
               </sources>
             </mapping>

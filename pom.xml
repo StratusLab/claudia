@@ -24,6 +24,20 @@
 <module>clotho</module>
 	</modules>
 
+	<profiles>
+	  <profile>
+	    <id>build-rpm</id>
+	    <activation>
+	      <file>
+		<exists>/usr/bin/rpmbuild</exists>
+	      </file>
+	    </activation>
+	    <modules>
+	      <module>tcloud-server-rpm</module>
+	    </modules>
+	  </profile>
+	</profiles>
+
 	<distributionManagement>
     		<repository>
       		<id>stratuslab.releases</id>
