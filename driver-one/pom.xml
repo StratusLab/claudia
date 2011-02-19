@@ -5,7 +5,7 @@
 
   <groupId>eu.stratuslab.pkgs.claudia</groupId>
   <artifactId>driver-one</artifactId>
-  <version>0.1-1-SNAPSHOT</version>
+  <version>0.1.1-SNAPSHOT</version>
   <name>OpenNebula driver for TCloud</name>
   <url>http://maven.apache.org</url>
 
