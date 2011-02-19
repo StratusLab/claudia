@@ -18,14 +18,14 @@
     </dependency>
 
     <dependency>
-      <groupId>com.telefonica.claudia</groupId>
+      <groupId>eu.stratuslab.pkgs.claudia</groupId>
       <artifactId>tcloud-server</artifactId>
-      <version>0.1.1</version>
+      <version>0.1.1-SNAPSHOT</version>
       <scope>provided</scope>
     </dependency>
 
      <dependency>
-      <groupId>com.telefonica.claudia</groupId>
+      <groupId>eu.stratuslab.pkgs.claudia</groupId>
       <artifactId>ovf-manager</artifactId>
       <version>0.1-SNAPSHOT</version>
     </dependency>
