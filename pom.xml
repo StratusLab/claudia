@@ -34,6 +34,7 @@
 	    </activation>
 	    <modules>
 	      <module>tcloud-server-rpm</module>
+	      <module>claudia-client-rpm</module>
 	    </modules>
 	  </profile>
 	</profiles>

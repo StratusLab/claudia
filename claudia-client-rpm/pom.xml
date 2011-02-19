@@ -1,12 +1,12 @@
-<?xml version="1.0"?>
-<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>eu.stratuslab.pkgs.claudia</groupId>
-  <artifactId>tcloud-server-rpm</artifactId>
+  <artifactId>claudia-client-rpm</artifactId>
   <version>0.1.1-SNAPSHOT</version>
-  <name>TCloud Server RPM Package</name>
+  <name>Claudia Client</name>
   <packaging>pom</packaging>
 
   <repositories>
@@ -21,25 +21,9 @@
 
     <dependency>
       <groupId>eu.stratuslab.pkgs.claudia</groupId>
-      <artifactId>tcloud-server</artifactId>
+      <artifactId>claudia-client</artifactId>
       <version>0.1.1-SNAPSHOT</version>
       <classifier>environment</classifier>
-      <type>zip</type>
-    </dependency>
-
-    <dependency>
-      <groupId>eu.stratuslab.pkgs.claudia</groupId>
-      <artifactId>driver-one</artifactId>
-      <version>0.1.1-SNAPSHOT</version>
-      <classifier>deployable</classifier>
-      <type>zip</type>
-    </dependency>
-
-    <dependency>
-      <groupId>eu.stratuslab.pkgs.claudia</groupId>
-      <artifactId>driver-clotho</artifactId>
-      <version>0.1.1-SNAPSHOT</version>
-      <classifier>deployable</classifier>
       <type>zip</type>
     </dependency>
 
@@ -86,31 +70,8 @@
 	      <artifactItems>
 		<artifactItem>
 		  <groupId>eu.stratuslab.pkgs.claudia</groupId>
-		  <artifactId>tcloud-server</artifactId>
+		  <artifactId>claudia-client</artifactId>
 		  <classifier>environment</classifier>
-		  <type>zip</type>
-		</artifactItem>
-	      </artifactItems>
-	    </configuration>
-	  </execution>
-
-	  <execution>
-	    <id>copy</id>
-	    <goals>
-	      <goal>copy</goal>
-	    </goals>
-	    <configuration>
-	      <artifactItems>
-		<artifactItem>
-		  <groupId>eu.stratuslab.pkgs.claudia</groupId>
-		  <artifactId>driver-clotho</artifactId>
-		  <classifier>deployable</classifier>
-		  <type>zip</type>
-		</artifactItem>
-		<artifactItem>
-		  <groupId>eu.stratuslab.pkgs.claudia</groupId>
-		  <artifactId>driver-one</artifactId>
-		  <classifier>deployable</classifier>
 		  <type>zip</type>
 		</artifactItem>
 	      </artifactItems>
@@ -159,7 +120,7 @@
               <groupname>root</groupname>
               <sources>
                 <source>
-                  <location>target/dependency/tcloud-server/bin</location>
+                  <location>target/dependency/claudia-client/bin</location>
                 </source>
               </sources>
             </mapping>
@@ -168,7 +129,7 @@
               <directory>${app.home}/lib/</directory>
               <sources>
                 <source>
-                  <location>target/dependency/tcloud-server/lib</location>
+                  <location>target/dependency/claudia-client/lib</location>
                 </source>
               </sources>
             </mapping>
@@ -177,19 +138,7 @@
               <directory>${app.home}/conf/</directory>
               <sources>
                 <source>
-                  <location>target/dependency/tcloud-server/conf</location>
-                </source>
-              </sources>
-            </mapping>
-
-            <mapping>
-              <directory>${app.home}/driver/</directory>
-              <sources>
-                <source>
-		  <location>target/dependency</location>
-		  <includes>
-		    <include>driver*.zip</include>
-		  </includes>
+                  <location>target/dependency/claudia-client/conf</location>
                 </source>
               </sources>
             </mapping>
