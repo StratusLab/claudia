@@ -214,6 +214,7 @@
         <version>2.6.1</version>
       </plugin>
 
+<!--  ===== Removed because of circular dependency.  Packaging should be split into another module. =====
                         <plugin>
                                 <groupId>org.codehaus.mojo</groupId>
                                 <artifactId>rpm-maven-plugin</artifactId>
@@ -276,6 +277,7 @@
                                         </mappings>
                                 </configuration>
                         </plugin>
+--> 
     </plugins>
   </build>
 <properties>
