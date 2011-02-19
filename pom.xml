@@ -35,6 +35,7 @@
 	    <modules>
 	      <module>tcloud-server-rpm</module>
 	      <module>claudia-client-rpm</module>
+	      <module>clotho-rpm</module>
 	    </modules>
 	  </profile>
 	</profiles>

@@ -2,7 +2,7 @@
   <id>environment</id>
 
   <formats>
-    <format>dir</format>
+    <format>zip</format>
   </formats>
 
   <baseDirectory>clotho</baseDirectory>

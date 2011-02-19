@@ -7,7 +7,6 @@
   <artifactId>clotho</artifactId>
   <version>0.1.1-SNAPSHOT</version>
   <name>Clotho: Claudias Service Lifecycle Manager</name>
-  <url>http://maven.apache.org</url>
 
   <dependencies>
   
@@ -361,60 +360,7 @@
         <artifactId>maven-javadoc-plugin</artifactId>
         <version>2.6.1</version>
       </plugin>
-                        <plugin>
-                                <groupId>org.codehaus.mojo</groupId>
-                                <artifactId>rpm-maven-plugin</artifactId>
-                                <version>2.0.1</version>
-                                <executions>
-                                        <execution>
-                                                <goals>
-                                                        <goal>rpm</goal>
-                                                </goals>
-                                        </execution>
-                                </executions>
-                                <configuration>
-                                        <copyright>2010, NoBody</copyright>
-                                        <group>Development</group>
-                                        <description>Maven Recipe: RPM Package.</description>
-                                        <mappings>
-                                                <mapping>
-                                                        <directory>${app.home}/bin/</directory>
-							<filemode>755</filemode>
-                                                        <username>root</username>
-                                                        <groupname>root</groupname>
-                                                        <sources>
-                                                                <source>
-                                                                <location>target/clotho-0.1.1-SNAPSHOT-environment.dir/clotho/bin</location>
-                                                                </source>
-                                                        </sources>
-                                                </mapping>
 
-                                                <mapping>
-                                                        <directory>${app.home}/lib/</directory>
-                                                         <sources>
-                                                                <source>
-                                                                <location>target/clotho-0.1.1-SNAPSHOT-environment.dir/clotho/lib</location>
-                                    				<excludes>
-                                        			<exclude>ovf-manager-0.1-SNAPSHOT.jar</exclude>
-                                    				</excludes>
-                                                                </source>
-                                                        </sources>
-                                                </mapping>
-                                                 <mapping>
-                                                        <directory>${app.home}/conf/</directory>
-                                                         <sources>
-                                                                <source>
-                                                                <location>target/clotho-0.1.1-SNAPSHOT-environment.dir/clotho/conf</location>
-                                                                </source>
-                                                        </sources>
-                                                </mapping>
-                                                <mapping>
-                                                        <directory>${app.home}/logs</directory>
-
-                                                </mapping>
-                                        </mappings>
-                                </configuration>
-                        </plugin>  
     </plugins>
   </build>
 <properties>

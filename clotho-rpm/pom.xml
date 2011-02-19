@@ -4,9 +4,9 @@
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>eu.stratuslab.pkgs.claudia</groupId>
-  <artifactId>claudia-client-rpm</artifactId>
+  <artifactId>clotho-rpm</artifactId>
   <version>0.1.1-SNAPSHOT</version>
-  <name>Claudia Client RPM Packaging</name>
+  <name>Clotho RPM Packaging</name>
   <packaging>pom</packaging>
 
   <repositories>
@@ -21,7 +21,7 @@
 
     <dependency>
       <groupId>eu.stratuslab.pkgs.claudia</groupId>
-      <artifactId>claudia-client</artifactId>
+      <artifactId>clotho</artifactId>
       <version>0.1.1-SNAPSHOT</version>
       <classifier>environment</classifier>
       <type>zip</type>
@@ -70,7 +70,7 @@
 	      <artifactItems>
 		<artifactItem>
 		  <groupId>eu.stratuslab.pkgs.claudia</groupId>
-		  <artifactId>claudia-client</artifactId>
+		  <artifactId>clotho</artifactId>
 		  <classifier>environment</classifier>
 		  <type>zip</type>
 		</artifactItem>
@@ -120,7 +120,7 @@
               <groupname>root</groupname>
               <sources>
                 <source>
-                  <location>target/dependency/claudia-client/bin</location>
+                  <location>target/dependency/clotho/bin</location>
                 </source>
               </sources>
             </mapping>
@@ -129,7 +129,7 @@
               <directory>${app.home}/lib/</directory>
               <sources>
                 <source>
-                  <location>target/dependency/claudia-client/lib</location>
+                  <location>target/dependency/clotho/lib</location>
                 </source>
               </sources>
             </mapping>
@@ -138,7 +138,7 @@
               <directory>${app.home}/conf/</directory>
               <sources>
                 <source>
-                  <location>target/dependency/claudia-client/conf</location>
+                  <location>target/dependency/clotho/conf</location>
                 </source>
               </sources>
             </mapping>
