@@ -7,6 +7,15 @@
   <version>0.1.1-SNAPSHOT</version>
   <name>Claudia Client</name>
   <url>http://maven.apache.org</url>
+
+  <repositories>
+    <repository>  
+      <id>maven-restlet</id>  
+      <name>Public online Restlet repository</name>  
+      <url>http://maven.restlet.org</url>  
+    </repository>
+  </repositories>
+
   <dependencies>
     <dependency>
       <groupId>junit</groupId>

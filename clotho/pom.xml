@@ -9,7 +9,6 @@
   <name>Clotho: Claudias Service Lifecycle Manager</name>
   <url>http://maven.apache.org</url>
 
-
   <dependencies>
   
 <dependency> 
