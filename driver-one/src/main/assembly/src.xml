@@ -27,9 +27,6 @@
       <outputDirectory>/</outputDirectory>
       <directoryMode>0644</directoryMode>
       <useTransitiveDependencies>true</useTransitiveDependencies>
-      <excludes>
-        <exclude>eu.stratuslab.pkgs.claudia:tcloud-server</exclude>
-      </excludes>
     </dependencySet>
   </dependencySets>
 
