@@ -8,6 +8,13 @@
   <version>0.1.1-SNAPSHOT</version>
   <name>TCloud driver for Clotho</name>
   <url>http://maven.apache.org</url>
+
+  <parent>
+    <groupId>eu.stratuslab.pkgs.claudia</groupId>
+    <artifactId>claudia-parent</artifactId>
+    <version>1.0-SNAPSHOT</version>
+  </parent>
+
   <dependencies>
   
     <dependency>
