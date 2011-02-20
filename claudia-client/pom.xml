@@ -6,7 +6,6 @@
   <packaging>jar</packaging>
   <version>0.1.1-SNAPSHOT</version>
   <name>Claudia Client</name>
-  <url>http://maven.apache.org</url>
 
   <parent>
     <groupId>eu.stratuslab.pkgs.claudia</groupId>
