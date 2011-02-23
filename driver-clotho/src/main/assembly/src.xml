@@ -26,9 +26,6 @@
       <useTransitiveDependencies>true</useTransitiveDependencies>
       <outputDirectory>/</outputDirectory>
       <scope>runtime</scope>
-      <excludes>
-        <exclude>com.telefonica.claudia:tcloud-server</exclude>
-      </excludes>
       <directoryMode>0644</directoryMode>
     </dependencySet>
   </dependencySets>

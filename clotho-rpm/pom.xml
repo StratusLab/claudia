@@ -1,0 +1,168 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>eu.stratuslab.pkgs.claudia</groupId>
+  <artifactId>clotho-rpm</artifactId>
+  <version>0.1.1-SNAPSHOT</version>
+  <name>Clotho RPM Packaging</name>
+  <packaging>rpm</packaging>
+
+  <parent>
+    <groupId>eu.stratuslab.pkgs.claudia</groupId>
+    <artifactId>claudia-parent</artifactId>
+    <version>1.0-SNAPSHOT</version>
+  </parent>
+
+  <repositories>
+    <repository>  
+      <id>maven-restlet</id>  
+      <name>Public online Restlet repository</name>  
+      <url>http://maven.restlet.org</url>  
+    </repository>
+  </repositories>
+  
+  <dependencies>
+
+    <dependency>
+      <groupId>eu.stratuslab.pkgs.claudia</groupId>
+      <artifactId>clotho</artifactId>
+      <version>0.1.1-SNAPSHOT</version>
+      <classifier>environment</classifier>
+      <type>zip</type>
+    </dependency>
+
+  </dependencies>
+
+  <distributionManagement>
+    <repository>
+      <id>stratuslab.releases</id>
+      <name>Releases</name>
+      <url>http://repo.stratuslab.eu:8081/content/repositories/releases/</url>
+    </repository>
+    <snapshotRepository>
+      <id>stratuslab.snapshots</id>
+      <name>Snapshots</name>
+      <url>http://repo.stratuslab.eu:8081/content/repositories/snapshots/</url>
+    </snapshotRepository>
+  </distributionManagement>
+
+  <build>
+
+    <plugins>
+
+      <plugin>
+	<groupId>org.apache.maven.plugins</groupId>
+	<artifactId>maven-resources-plugin</artifactId>
+	<version>2.4.3</version>
+	<configuration>
+	  <encoding>UTF-8</encoding>
+	</configuration>
+      </plugin>
+
+      <plugin>
+	<groupId>org.apache.maven.plugins</groupId>
+	<artifactId>maven-dependency-plugin</artifactId>
+	
+	<executions>
+	  
+	  <execution>
+	    <id>unpack</id>
+	    <goals>
+	      <goal>unpack</goal>
+	    </goals>
+	    <configuration>
+	      <artifactItems>
+		<artifactItem>
+		  <groupId>eu.stratuslab.pkgs.claudia</groupId>
+		  <artifactId>clotho</artifactId>
+		  <classifier>environment</classifier>
+		  <type>zip</type>
+		</artifactItem>
+	      </artifactItems>
+	    </configuration>
+	  </execution>
+
+	</executions>
+
+      </plugin>
+      
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-deploy-plugin</artifactId>
+        <version>2.5</version>
+      </plugin>
+
+      <plugin>
+
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>rpm-maven-plugin</artifactId>
+        <version>2.0.1</version>
+	<extensions>true</extensions>
+
+        <executions>
+          <execution>
+            <goals>
+              <goal>attached-rpm</goal>
+            </goals>
+          </execution>
+        </executions>
+
+        <configuration>
+
+          <copyright>2010, NoBody</copyright>
+          <group>Development</group>
+          <description>Maven Recipe: RPM Package.</description>
+
+	  <release>1</release>
+
+          <mappings>
+
+            <mapping>
+              <directory>${app.home}/bin/</directory>
+              <filemode>755</filemode>
+              <username>root</username>
+              <groupname>root</groupname>
+              <sources>
+                <source>
+                  <location>target/dependency/clotho/bin</location>
+                </source>
+              </sources>
+            </mapping>
+
+            <mapping>
+              <directory>${app.home}/lib/</directory>
+              <sources>
+                <source>
+                  <location>target/dependency/clotho/lib</location>
+                </source>
+              </sources>
+            </mapping>
+
+            <mapping>
+              <directory>${app.home}/conf/</directory>
+              <sources>
+                <source>
+                  <location>target/dependency/clotho/conf</location>
+                </source>
+              </sources>
+            </mapping>
+
+            <mapping>
+              <directory>${app.home}/logs</directory>
+            </mapping>
+
+          </mappings>
+        </configuration>
+      </plugin>
+
+    </plugins>
+  </build>
+
+  <properties>
+    <app.home>/opt/claudia/</app.home>
+    <rpm.release>1</rpm.release>
+  </properties>
+
+</project>

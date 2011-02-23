@@ -2,10 +2,10 @@
   <id>environment</id>
 
   <formats>
-    <format>dir</format>
+    <format>zip</format>
   </formats>
 
-  <baseDirectory>/ClaudiaClient</baseDirectory>
+  <baseDirectory>claudia-client</baseDirectory>
   
   <fileSets>
     <fileSet>

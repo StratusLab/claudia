@@ -6,7 +6,21 @@
   <packaging>jar</packaging>
   <version>0.1.1-SNAPSHOT</version>
   <name>Claudia Client</name>
-  <url>http://maven.apache.org</url>
+
+  <parent>
+    <groupId>eu.stratuslab.pkgs.claudia</groupId>
+    <artifactId>claudia-parent</artifactId>
+    <version>1.0-SNAPSHOT</version>
+  </parent>
+
+  <repositories>
+    <repository>  
+      <id>maven-restlet</id>  
+      <name>Public online Restlet repository</name>  
+      <url>http://maven.restlet.org</url>  
+    </repository>
+  </repositories>
+
   <dependencies>
     <dependency>
       <groupId>junit</groupId>
@@ -51,6 +65,16 @@
   
   <build>
     <plugins>
+
+	<plugin>
+	  <groupId>org.apache.maven.plugins</groupId>
+	  <artifactId>maven-resources-plugin</artifactId>
+	  <version>2.4.3</version>
+	  <configuration>
+	    <encoding>UTF-8</encoding>
+	  </configuration>
+	</plugin>
+
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
@@ -127,57 +151,7 @@
         <artifactId>maven-javadoc-plugin</artifactId>
         <version>2.6.1</version>
       </plugin>
-                        <plugin>
-                                <groupId>org.codehaus.mojo</groupId>
-                                <artifactId>rpm-maven-plugin</artifactId>
-                                <version>2.0.1</version>
-                                <executions>
-                                        <execution>
-                                                <goals>
-                                                        <goal>rpm</goal>
-                                                </goals>
-                                        </execution>
-                                </executions>
-                                <configuration>
-                                        <copyright>2010, NoBody</copyright>
-                                        <group>Development</group>
-                                        <description>Maven Recipe: RPM Package.</description>
-                                        <mappings>
-                                                <mapping>
-                                                        <directory>${app.home}/bin/</directory>
-                                                        <filemode>755</filemode>
-                                                        <username>root</username>
-                                                        <groupname>root</groupname>
-                                                        <sources>
-                                                                <source>
-                                                                <location>target/claudia-client-0.1.1-SNAPSHOT-environment.dir/ClaudiaClient/bin</location>
-                                                                </source>
-                                                        </sources>
-                                                </mapping>
 
-                                                <mapping>
-                                                        <directory>${app.home}/lib/</directory>
-                                                         <sources>
-                                                                <source>
-                                                                <location>target/claudia-client-0.1.1-SNAPSHOT-environment.dir/ClaudiaClient/lib</location>
-                                                                </source>
-                                                        </sources>
-                                                </mapping>
-                                                 <mapping>
-                                                        <directory>${app.home}/conf/</directory>
-                                                         <sources>
-                                                                <source>
-                                                                <location>target/claudia-client-0.1.1-SNAPSHOT-environment.dir/ClaudiaClient/conf</location>
-                                                                </source>
-                                                        </sources>
-                                                </mapping>
-                                                <mapping>
-                                                        <directory>${app.home}/logs</directory>
-
-                                                </mapping>
-                                        </mappings>
-                                </configuration>
-                        </plugin>
     </plugins>
   </build>
 <properties>

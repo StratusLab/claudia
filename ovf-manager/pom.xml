@@ -9,6 +9,13 @@
 	<packaging>jar</packaging>
 	<name>ovf-manager</name>
 	<version>0.1-SNAPSHOT</version>
+
+  <parent>
+    <groupId>eu.stratuslab.pkgs.claudia</groupId>
+    <artifactId>claudia-parent</artifactId>
+    <version>1.0-SNAPSHOT</version>
+  </parent>
+
   <distributionManagement>
    <repository>
       <id>stratuslab.releases</id>
@@ -25,6 +32,16 @@
 	<build>
 		<defaultGoal>install</defaultGoal>
 		<plugins>
+
+	<plugin>
+	  <groupId>org.apache.maven.plugins</groupId>
+	  <artifactId>maven-resources-plugin</artifactId>
+	  <version>2.4.3</version>
+	  <configuration>
+	    <encoding>UTF-8</encoding>
+	  </configuration>
+	</plugin>
+
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-jar-plugin</artifactId>
