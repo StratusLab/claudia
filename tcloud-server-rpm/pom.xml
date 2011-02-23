@@ -1,18 +1,17 @@
 <?xml version="1.0"?>
-<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>eu.stratuslab.pkgs.claudia</groupId>
   <artifactId>tcloud-server-rpm</artifactId>
-  <version>0.1.1-SNAPSHOT</version>
+  <version>0.1.1</version>
   <name>TCloud Server RPM Package</name>
   <packaging>rpm</packaging>
 
   <parent>
     <groupId>eu.stratuslab.pkgs.claudia</groupId>
     <artifactId>claudia-parent</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.0</version>
   </parent>
 
   <repositories>
@@ -28,7 +27,7 @@
     <dependency>
       <groupId>eu.stratuslab.pkgs.claudia</groupId>
       <artifactId>tcloud-server</artifactId>
-      <version>0.1.1-SNAPSHOT</version>
+      <version>0.1.1</version>
       <classifier>environment</classifier>
       <type>zip</type>
     </dependency>
@@ -36,7 +35,7 @@
     <dependency>
       <groupId>eu.stratuslab.pkgs.claudia</groupId>
       <artifactId>driver-one</artifactId>
-      <version>0.1.1-SNAPSHOT</version>
+      <version>0.1.1</version>
       <classifier>deployable</classifier>
       <type>zip</type>
     </dependency>
@@ -44,7 +43,7 @@
     <dependency>
       <groupId>eu.stratuslab.pkgs.claudia</groupId>
       <artifactId>driver-clotho</artifactId>
-      <version>0.1.1-SNAPSHOT</version>
+      <version>0.1.1</version>
       <classifier>deployable</classifier>
       <type>zip</type>
     </dependency>
