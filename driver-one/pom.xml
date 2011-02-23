@@ -4,13 +4,13 @@
 
   <groupId>eu.stratuslab.pkgs.claudia</groupId>
   <artifactId>driver-one</artifactId>
-  <version>0.1.2-SNAPSHOT</version>
+  <version>0.1.2</version>
   <name>OpenNebula driver for TCloud</name>
 
   <parent>
     <groupId>eu.stratuslab.pkgs.claudia</groupId>
     <artifactId>claudia-parent</artifactId>
-    <version>1.1-SNAPSHOT</version>
+    <version>1.1</version>
   </parent>
 
   <dependencies>
@@ -24,14 +24,14 @@
     <dependency>
       <groupId>eu.stratuslab.pkgs.claudia</groupId>
       <artifactId>tcloud-server</artifactId>
-      <version>0.1.2-SNAPSHOT</version>
+      <version>0.1.2</version>
       <scope>provided</scope>
     </dependency>
 
      <dependency>
       <groupId>eu.stratuslab.pkgs.claudia</groupId>
       <artifactId>ovf-manager</artifactId>
-      <version>0.2-SNAPSHOT</version>
+      <version>0.2</version>
     </dependency>
 
 
@@ -62,7 +62,7 @@
     <dependency>
       <groupId>eu.stratuslab.pkgs.claudia</groupId>
 	  <artifactId>claudia-commons</artifactId>
-	  <version>0.1.2-SNAPSHOT</version>
+	  <version>0.1.2</version>
     </dependency>
     
   </dependencies>
