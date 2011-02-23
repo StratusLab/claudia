@@ -6,7 +6,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>eu.stratuslab.pkgs.claudia</groupId>
   <artifactId>claudia-parent</artifactId>
-  <version>1.0</version>
+  <version>1.1-SNAPSHOT</version>
   <name>claudia-parent</name>
 
   <url>http://claudia.morfeo-project.org</url>

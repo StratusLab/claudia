@@ -4,13 +4,13 @@
 
   <groupId>eu.stratuslab.pkgs.claudia</groupId>
   <artifactId>tcloud-server</artifactId>
-  <version>0.1.1</version>
+  <version>0.1.2-SNAPSHOT</version>
   <name>TCloud Server</name>
 
   <parent>
     <groupId>eu.stratuslab.pkgs.claudia</groupId>
     <artifactId>claudia-parent</artifactId>
-    <version>1.0</version>
+    <version>1.1-SNAPSHOT</version>
   </parent>
 
   <repositories>
@@ -54,13 +54,13 @@
     <dependency>
       <groupId>eu.stratuslab.pkgs.claudia</groupId>
       <artifactId>claudia-commons</artifactId>
-      <version>0.1.1</version>
+      <version>0.1.2-SNAPSHOT</version>
     </dependency>
     
     <dependency>
       <groupId>eu.stratuslab.pkgs.claudia</groupId>
       <artifactId>ovf-manager</artifactId>
-      <version>0.1</version>
+      <version>0.2-SNAPSHOT</version>
     </dependency>
     
     	<!-- OVF-dependencies; this should be changed  -->

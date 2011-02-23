@@ -4,13 +4,13 @@
 
   <groupId>eu.stratuslab.pkgs.claudia</groupId>
   <artifactId>driver-clotho</artifactId>
-  <version>0.1.1</version>
+  <version>0.1.2-SNAPSHOT</version>
   <name>TCloud driver for Clotho</name>
 
   <parent>
     <groupId>eu.stratuslab.pkgs.claudia</groupId>
     <artifactId>claudia-parent</artifactId>
-    <version>1.0</version>
+    <version>1.1-SNAPSHOT</version>
   </parent>
 
   <dependencies>
@@ -25,14 +25,14 @@
     <dependency>
 		 <groupId>eu.stratuslab.pkgs.claudia</groupId>
   		 <artifactId>tcloud-server</artifactId>
- 		 <version>0.1.1</version>
+ 		 <version>0.1.2-SNAPSHOT</version>
 		<scope>provided</scope>
     </dependency>
 
     <dependency>
           <groupId>eu.stratuslab.pkgs.claudia</groupId>
 	  <artifactId>claudia-commons</artifactId>
-	  <version>0.1.1</version>
+	  <version>0.1.2-SNAPSHOT</version>
     </dependency>
 
     <dependency>
