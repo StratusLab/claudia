@@ -1,6 +1,7 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
-	
+
 
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>eu.stratuslab.pkgs.claudia</groupId>
@@ -9,37 +10,37 @@
 	<name>ovf-manager</name>
 	<version>0.3-SNAPSHOT</version>
 
-  <parent>
-    <groupId>eu.stratuslab.pkgs.claudia</groupId>
-    <artifactId>claudia-parent</artifactId>
-    <version>1.2-SNAPSHOT</version>
-  </parent>
+	<parent>
+		<groupId>eu.stratuslab.pkgs.claudia</groupId>
+		<artifactId>claudia-parent</artifactId>
+		<version>1.2-SNAPSHOT</version>
+	</parent>
 
-  <distributionManagement>
-   <repository>
-      <id>stratuslab.releases</id>
-      <name>Releases</name>
-      <url>http://repo.stratuslab.eu:8081/content/repositories/releases/</url>
-    </repository>
-    <snapshotRepository>
-      <id>stratuslab.snapshots</id>
-      <name>Snapshots</name>
-      <url>http://repo.stratuslab.eu:8081/content/repositories/snapshots/</url>
-    </snapshotRepository>
-  </distributionManagement>
+	<distributionManagement>
+		<repository>
+			<id>stratuslab.releases</id>
+			<name>Releases</name>
+			<url>http://repo.stratuslab.eu:8081/content/repositories/releases/</url>
+		</repository>
+		<snapshotRepository>
+			<id>stratuslab.snapshots</id>
+			<name>Snapshots</name>
+			<url>http://repo.stratuslab.eu:8081/content/repositories/snapshots/</url>
+		</snapshotRepository>
+	</distributionManagement>
 
 	<build>
 		<defaultGoal>install</defaultGoal>
 		<plugins>
 
-	<plugin>
-	  <groupId>org.apache.maven.plugins</groupId>
-	  <artifactId>maven-resources-plugin</artifactId>
-	  <version>2.4.3</version>
-	  <configuration>
-	    <encoding>UTF-8</encoding>
-	  </configuration>
-	</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-resources-plugin</artifactId>
+				<version>2.4.3</version>
+				<configuration>
+					<encoding>UTF-8</encoding>
+				</configuration>
+			</plugin>
 
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -55,32 +56,32 @@
 					</excludes>
 				</configuration>
 			</plugin>
- <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-compiler-plugin</artifactId>
-        <version>2.0.2</version>
-	<configuration>
-		<source>1.6</source>
-		<target>1.6</target>
-	</configuration>
-      </plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>2.0.2</version>
+				<configuration>
+					<source>1.6</source>
+					<target>1.6</target>
+				</configuration>
+			</plugin>
 
- <plugin>
-        <artifactId>maven-assembly-plugin</artifactId>
-        <version>2.2-beta-5</version>
-        <configuration>
-         
-          <descriptorRefs>
-            <descriptorRef>project</descriptorRef>
-          </descriptorRefs>
-        </configuration>
-      </plugin>
+			<plugin>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<version>2.2-beta-5</version>
+				<configuration>
 
- <plugin>
-     <groupId>org.apache.maven.plugins</groupId>
-     <artifactId>maven-deploy-plugin</artifactId>
-     <version>2.5</version>
-   </plugin>
+					<descriptorRefs>
+						<descriptorRef>project</descriptorRef>
+					</descriptorRefs>
+				</configuration>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-deploy-plugin</artifactId>
+				<version>2.5</version>
+			</plugin>
 		</plugins>
 
 	</build>
@@ -93,126 +94,49 @@
 				<activeByDefault>true</activeByDefault>
 			</activation>
 			<dependencies>
-				<dependency>
-					<groupId>javax.xml.bind</groupId>
-					<artifactId>jaxb-api</artifactId>
-					<version>2.1</version>
-					<exclusions>
-						<exclusion>
-							<groupId>javax.xml.stream</groupId>
-							<artifactId>stax-api</artifactId>
-						</exclusion>
-					</exclusions>
-				</dependency>
+
 				<dependency>
 					<groupId>stax</groupId>
 					<artifactId>stax-api</artifactId>
-					<version>1.0</version>
 				</dependency>
 				<dependency>
 					<groupId>org.slf4j</groupId>
 					<artifactId>slf4j-api</artifactId>
-					<version>1.5.6</version>
 				</dependency>
 			</dependencies>
 		</profile>
 		<profile>
 			<id>jboss</id>
 			<dependencies>
-				<dependency>
-					<groupId>javax.xml.bind</groupId>
-					<artifactId>jaxb-api</artifactId>
-					<version>2.1</version>
-					<scope>provided</scope>
-					<exclusions>
-						<exclusion>
-							<groupId>javax.xml.stream</groupId>
-							<artifactId>stax-api</artifactId>
-						</exclusion>
-					</exclusions>
-				</dependency>
+
 				<dependency>
 					<groupId>stax</groupId>
 					<artifactId>stax-api</artifactId>
-					<version>1.0</version>
 					<scope>provided</scope>
 				</dependency>
 				<dependency>
 					<groupId>org.slf4j</groupId>
 					<artifactId>slf4j-api</artifactId>
-					<version>1.5.6</version>
 					<scope>provided</scope>
 				</dependency>
 			</dependencies>
 		</profile>
-		<!-- 
-		<profile>
-			<id>generate-sources</id>
-			<build>
-				<plugins>
-					<plugin>
-						<groupId>org.jvnet.jaxb2.maven2</groupId>
-						<artifactId>maven-jaxb2-plugin</artifactId>
-						<executions>
-							<execution>
-								<goals>
-									<goal>generate</goal>
-								</goals>
-							</execution>
-						</executions>
-					</plugin>
-					<plugin>
-						<groupId>org.codehaus.mojo</groupId>
-						<artifactId>build-helper-maven-plugin</artifactId>
-						<executions>
-							<execution>
-								<id>add-source</id>
-								<phase>generate-sources</phase>
-								<goals>
-									<goal>add-source</goal>
-								</goals>
-								<configuration>
-									<sources>
-										<source>${project.build.directory}/generated-sources/xjc</source>
-									</sources>
-								</configuration>
-							</execution>
-						</executions>
-					</plugin>								
-				</plugins>
-			</build>
-			<activation>
-				<file>
-					<missing>target/generated-sources/xjc</missing>
-				</file>
-			</activation>
-		</profile>
-		-->
+		<!-- <profile> <id>generate-sources</id> <build> <plugins> <plugin> <groupId>org.jvnet.jaxb2.maven2</groupId> 
+			<artifactId>maven-jaxb2-plugin</artifactId> <executions> <execution> <goals> 
+			<goal>generate</goal> </goals> </execution> </executions> </plugin> <plugin> 
+			<groupId>org.codehaus.mojo</groupId> <artifactId>build-helper-maven-plugin</artifactId> 
+			<executions> <execution> <id>add-source</id> <phase>generate-sources</phase> 
+			<goals> <goal>add-source</goal> </goals> <configuration> <sources> <source>${project.build.directory}/generated-sources/xjc</source> 
+			</sources> </configuration> </execution> </executions> </plugin> </plugins> 
+			</build> <activation> <file> <missing>target/generated-sources/xjc</missing> 
+			</file> </activation> </profile> -->
 	</profiles>
 
 	<dependencies>
-		<dependency>
-			<groupId>com.sun.xml.bind</groupId>
-			<artifactId>jaxb-impl</artifactId>
-			<version>2.1.5</version>
-			<exclusions>
-				<exclusion>
-					<groupId>javax.xml.bind</groupId>
-					<artifactId>jaxb-api</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-
-		<dependency>
-			<groupId>com.sun.xml.bind</groupId>
-			<artifactId>jaxb-xjc</artifactId>
-			<version>2.1.5</version>
-		</dependency>
 
 		<dependency>
 			<groupId>org.codehaus.woodstox</groupId>
 			<artifactId>woodstox-core-asl</artifactId>
-			<version>4.0.4</version>
 			<exclusions>
 				<exclusion>
 					<groupId>stax</groupId>
