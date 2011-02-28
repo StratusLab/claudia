@@ -12,6 +12,7 @@
   <url>http://claudia.morfeo-project.org</url>
   <inceptionYear>2010</inceptionYear>
 
+
   <description>
 StratusLab uses a proxy service to allow for flexible authentication
 for the cloud.  It currently allows authentication based on simple
