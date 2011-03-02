@@ -62,6 +62,12 @@
       <outputDirectory>/conf</outputDirectory>
       <filtered>true</filtered>
     </file>
+      <file>
+      <source>src/main/config/tcloudd</source>
+      <outputDirectory>/bin/daemon</outputDirectory>
+      <filtered>true</filtered>
+      <fileMode>0744</fileMode>
+    </file>
   </files>  
 
   <dependencySets>
