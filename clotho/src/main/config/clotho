@@ -22,35 +22,39 @@ fi
 cd "`dirname $0`";
 cd ..;
 
+clotholib=$(ls lib/clotho-*.jar)
+#echo $clotholib
+
 if [ $1 == "start" ]; then
 
         # If the database does not exist, unzip a new version.
-	if [ ! -e ClaudiaDB ]; then
-		cp lib/data/ClaudiaDB.tar.gz .
-		gzip -d ClaudiaDB.tar.gz
-		tar xvf ClaudiaDB.tar
-		rm ClaudiaDB.tar 
-	fi
+    if [ ! -e ClaudiaDB ]; then
+        cp lib/data/ClaudiaDB.tar.gz .
+        gzip -d ClaudiaDB.tar.gz
+        tar xvf ClaudiaDB.tar
+        rm ClaudiaDB.tar 
+    fi  
 
-	echo "Initiating Clotho";
-	java -jar lib/clotho-0.1.1.jar start;
-	
-	echo "Finishing Clotho";
+    echo "Initiating Clotho";
+    #java -jar lib/clotho-0.1.1.jar start;
+    java -jar $clotholib start;
+    
+    echo "Finishing Clotho";
 
 elif [ $1 == "cleandb" ]; then
 
-	if [ -e ClaudiaDB ]; then
-		rm -R ClaudiaDB > /dev/null
-	fi
+    if [ -e ClaudiaDB ]; then
+        rm -R ClaudiaDB > /dev/null
+    fi  
 
-	cp lib/data/ClaudiaDB.tar.gz . > /dev/null
-       	gzip -d ClaudiaDB.tar.gz > /dev/null
-       	tar xvf ClaudiaDB.tar > /dev/null
-       	rm ClaudiaDB.tar > /dev/null
+    cp lib/data/ClaudiaDB.tar.gz . > /dev/null
+        gzip -d ClaudiaDB.tar.gz > /dev/null
+        tar xvf ClaudiaDB.tar > /dev/null
+        rm ClaudiaDB.tar > /dev/null
 
 else
-
-        java -jar lib/clotho-0.1.1.jar $@;
-
+        #java -jar lib/clotho-0.1.1.jar $@;
+        java -jar $clotholib $@;
+        
 fi
 
