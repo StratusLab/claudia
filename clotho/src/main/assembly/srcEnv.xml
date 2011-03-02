@@ -66,6 +66,12 @@
       <filtered>true</filtered>
       <fileMode>0644</fileMode>
     </file>
+        <file>
+      <source>src/main/config/clothod</source>
+      <outputDirectory>/bin/daemon</outputDirectory>
+      <filtered>true</filtered>
+      <fileMode>0744</fileMode>
+    </file>
 
   </files>  
 
