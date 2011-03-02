@@ -1,0 +1,21 @@
+case "$1" in
+  start)
+        echo "Starting clotho daemon"
+
+        nohup /opt/claudia/bin/clotho $1 >& /var/log/clotho.log  &
+;;
+  stop)
+        echo "Stopping clotho daemon"
+        nohup /opt/claudia/bin/clotho $1 >& /var/log/clotho.log & 
+        ;;
+  restart)
+        echo "Stopping clotho daemon"
+        nohup /opt/claudia/bin/clotho stop  >& /var/log/clotho.log &
+        sleep 5
+        echo "Starting clotho daemon"
+        nohup /opt/claudia/bin/clotho start >& /var/log/clotho.log  &
+        sleep 5
+        ;;
+
+esac
+exit 0
