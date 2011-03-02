@@ -205,7 +205,7 @@
 						</mapping>
 
 						<mapping>
-							<directory>/etc/init.d</directory>
+							<directory>/etc/init.d/</directory>
 							<username>root</username>
 							<groupname>root</groupname>
 							<filemode>744</filemode>

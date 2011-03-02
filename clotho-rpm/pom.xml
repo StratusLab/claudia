@@ -154,14 +154,14 @@
 						</mapping>
 
 						<mapping>
-							<directory>/etc/init.d</directory>
+							<directory>/etc/init.d/</directory>
 							<username>root</username>
 							<groupname>root</groupname>
 							<filemode>744</filemode>
 							<directoryIncluded>false</directoryIncluded>
 							<sources>
 								<source>
-									<location>target/dependency/clotho/bin/daemon/</location>
+									<location>target/dependency/clotho/bin/daemon</location>
 									<includes>
 										<include>clothod</include>
 									</includes>
