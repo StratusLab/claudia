@@ -1,0 +1,24 @@
+#!/bin/bash
+
+
+case "$1" in
+  start)
+        echo "Starting tcloud daemon"
+
+        nohup /opt/claudia/bin/tcloud $1 >& /var/log/tcloud.log  &
+;;
+  stop)
+        echo "Stopping tcloud daemon"
+        nohup /opt/claudia/bin/tcloud $1  >& /var/log/tcloud.log  & 
+        ;;
+restart)
+        echo "Stopping tcloud daemon"
+        nohup /opt/claudia/bin/tcloud stop >& /var/log/tcloud.log  &
+        sleep 5
+        echo "Starting tcloud daemon"
+        nohup /opt/claudia/bin/tcloud start >& /var/log/tcloud.log  &
+        sleep 5
+
+;;
+esac
+exit 0
