@@ -163,7 +163,7 @@
 								<source>
 									<location>target/dependency/clotho/bin/daemon/</location>
 									<includes>
-										<include>*</include>
+										<include>clothod</include>
 									</includes>
 								</source>
 							</sources>
