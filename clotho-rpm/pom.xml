@@ -162,9 +162,6 @@
 							<sources>
 								<source>
 									<location>target/dependency/clotho/bin/daemon</location>
-									<includes>
-										<include>clothod</include>
-									</includes>
 								</source>
 							</sources>
 						</mapping>
