@@ -1021,7 +1021,7 @@
           <artifactId>maven-surefire-plugin</artifactId>
           <version>${maven-surefire-plugin-version}</version>
           <configuration>
-	<skipTests>true</skipTests>
+	<skipTests>false</skipTests>
             <redirectTestOutputToFile>true</redirectTestOutputToFile>
             <forkMode>once</forkMode>
             <argLine>-enableassertions</argLine>
