@@ -51,26 +51,6 @@
 	<groupId>org.apache.maven.plugins</groupId>
 	<artifactId>maven-dependency-plugin</artifactId>
 	
-	<executions>
-	  
-	  <execution>
-	    <id>unpack</id>
-	    <goals>
-	      <goal>unpack</goal>
-	    </goals>
-	    <configuration>
-	      <artifactItems>
-		<artifactItem>
-		  <groupId>eu.stratuslab.pkgs.claudia</groupId>
-		  <artifactId>claudia-client</artifactId>
-		  <classifier>environment</classifier>
-		  <type>zip</type>
-		</artifactItem>
-	      </artifactItems>
-	    </configuration>
-	  </execution>
-
-	</executions>
 
       </plugin>
       
@@ -104,10 +84,10 @@
           <mappings>
 
             <mapping>
-              <directory>${app.home}/</directory>
+              <directory>${app.home}</directory>
               <sources>
                 <source>
-                  <location>target/activemq/</location>
+                  <location>target/activemq</location>
                 </source>
               </sources>
             </mapping>
