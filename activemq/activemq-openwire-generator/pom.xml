@@ -20,14 +20,28 @@
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
-    <groupId>org.apache.activemq</groupId>
+    <groupId>eu.stratuslab.pkgs.activemq</groupId>
     <artifactId>activemq-parent</artifactId>
-    <version>5.4.2</version>
+    <version>5.4.2-SNAPSHOT</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
 
   <artifactId>activemq-openwire-generator</artifactId>
   <name>Openwire Generator</name>
+  <repositories>
+    <repository>
+        <id>com.springsource.repository.bundles.external</id>
+        <name>SpringSource Enterprise Bundle Repository - External Bundle Releases</name>
+        <url>http://repository.springsource.com/maven/bundles/external</url>
+    </repository>
+    <repository>
+      <id>apache.snapshots</id>
+      <url>https://repository.apache.org/content/repositories/snapshots/</url>
+      <releases>
+        <enabled>false</enabled>
+      </releases>
+    </repository>
+  </repositories>
 
   <dependencies>
     <dependency>
