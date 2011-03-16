@@ -20,7 +20,7 @@
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
-    <groupId>eu.stratuslab.pkgs.activemq</groupId>
+    <groupId>org.apache.activemq</groupId>
     <artifactId>activemq-parent</artifactId>
     <version>5.4.2-SNAPSHOT</version>
   </parent>
@@ -394,7 +394,7 @@
       <plugin>
         <artifactId>maven-surefire-plugin</artifactId>
         <configuration>
- <skipTests>true</skipTests>
+	<skipTests>true</skipTests>
           <forkMode>pertest</forkMode>
           <childDelegation>false</childDelegation>
           <useFile>true</useFile>
