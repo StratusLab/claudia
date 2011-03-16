@@ -58,6 +58,18 @@
     <activemq.osgi.dynamic.import>*</activemq.osgi.dynamic.import>
     <surefire.argLine>-Xmx512M</surefire.argLine>
   </properties>
+  <distributionManagement>
+   <repository>
+      <id>stratuslab.releases</id>
+      <name>Releases</name>
+      <url>http://repo.stratuslab.eu:8081/content/repositories/releases/</url>
+    </repository>
+    <snapshotRepository>
+      <id>stratuslab.snapshots</id>
+      <name>Snapshots</name>
+      <url>http://repo.stratuslab.eu:8081/content/repositories/snapshots/</url>
+    </snapshotRepository>
+  </distributionManagement>
   <dependencies>
 
     <!-- =============================== -->
@@ -376,20 +388,7 @@
       </plugin>
     </plugins>
     </reporting>
-     <distributionManagement>
-   <repository>
-      <id>stratuslab.releases</id>
-      <name>Releases</name>
-      <url>http://repo.stratuslab.eu:8081/content/repositories/releases/</url>
-    </repository>
-    <snapshotRepository>
-      <id>stratuslab.snapshots</id>
-      <name>Snapshots</name>
-      <url>http://repo.stratuslab.eu:8081/content/repositories/snapshots/</url>
-    </snapshotRepository>
-  </distributionManagement>
-
- 
+    
   <build>
     <plugins>
       <plugin>
@@ -406,7 +405,6 @@
       <plugin>
         <artifactId>maven-surefire-plugin</artifactId>
         <configuration>
-	<skipTests>true</skipTests>
           <forkMode>pertest</forkMode>
           <childDelegation>false</childDelegation>
           <useFile>true</useFile>
