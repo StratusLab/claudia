@@ -20,7 +20,7 @@
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
-    <groupId>org.apache.activemq</groupId>
+    <groupId>eu.stratuslab.pkgs.activemq</groupId>
     <artifactId>activemq-parent</artifactId>
     <version>5.4.2-SNAPSHOT</version>
   </parent>
