@@ -28,7 +28,7 @@ grid certificates, and VOMS proxies.
 		<module>claudia-client</module>
 		<module>tcloud-server</module>
 		<module>clotho</module>
-	        <module>activemq</module>
+<!--	        <module>activemq</module>-->
 	</modules>
 
 	<profiles>
