@@ -51,6 +51,12 @@ elif [ $1 == "cleandb" ]; then
         gzip -d ClaudiaDB.tar.gz > /dev/null
         tar xvf ClaudiaDB.tar > /dev/null
         rm ClaudiaDB.tar > /dev/null
+        
+elif [ $1 == "stop" ]; then 
+
+    # TODO: too hard way to kill a server. Pending solution.
+    ps -ef |grep $clotholib | grep -v grep |awk '{print $2}'|xargs -I '{}' kill -9 '{}'
+    echo "Stopping Clotho, please, wait";        
 
 else
         #java -jar lib/clotho-0.1.1.jar $@;
