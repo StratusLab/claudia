@@ -152,14 +152,14 @@
 						<mapping>
 							<directory>${app.home}/repository</directory>
 						</mapping>
-						<mapping>
 						
 						<mapping>
 							<directory>${app.home}/ruleHome</directory>
 						</mapping>
-						<mapping>						
+		
+						<mapping>
 
-						
+			
 							<directory>/etc/init.d/</directory>
 							<username>root</username>
 							<groupname>root</groupname>
