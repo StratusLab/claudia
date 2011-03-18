@@ -169,6 +169,7 @@ public class ONEProvisioningDriver implements ProvisioningDriver {
 	private String hypervisorKernel="";
 	private String customizationPort;
 	private String environmentRepositoryPath;
+	private static String networkBridge="";
 	
 	public static final String ASSIGNATION_SYMBOL = "=";
 	public static final String LINE_SEPARATOR = System.getProperty("line.separator");	
@@ -971,10 +972,9 @@ public class ONEProvisioningDriver implements ProvisioningDriver {
 			allParametersString.append(ONE_NET_NAME).append(ASSIGNATION_SYMBOL).append(fqn).append(LINE_SEPARATOR);
 			
 			// Add the net Type
-			networkbridge = (String) prop.get(NETWORK_BRIDGE);
 			
 			allParametersString.append(ONE_NET_TYPE).append(ASSIGNATION_SYMBOL).append("RANGED").append(LINE_SEPARATOR);
-			allParametersString.append(ONE_NET_BRIDGE).append(ASSIGNATION_SYMBOL).append(networkbridge).append(LINE_SEPARATOR);
+			allParametersString.append(ONE_NET_BRIDGE).append(ASSIGNATION_SYMBOL).append(networkBridge).append(LINE_SEPARATOR);
 			
 			log.debug("Network data sent:\n\n" + allParametersString.toString() + "\n\n");
 			
@@ -1210,6 +1210,10 @@ public class ONEProvisioningDriver implements ProvisioningDriver {
 	    
 	    if (prop.containsKey(ENVIRONMENT_PROPERTY)) {
 	    	environmentRepositoryPath = (String) prop.get(ENVIRONMENT_PROPERTY);
+	    }
+	    
+	    if (prop.containsKey(NETWORK_BRIDGE)) {
+	    	networkBridge = ((String) prop.get(NETWORK_BRIDGE));
 	    }
 	    
 	    try {
