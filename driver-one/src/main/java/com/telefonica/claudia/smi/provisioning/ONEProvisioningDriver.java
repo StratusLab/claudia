@@ -152,6 +152,8 @@ public class ONEProvisioningDriver implements ProvisioningDriver {
 	
 	private XmlRpcClient xmlRpcClient = null;
 	
+	private static final String NETWORK_BRIDGE = "oneNetworkBridge";
+	
 	/**
 	 * Collection containing the mapping from fqns to ids. This mapped is used as a cache
 	 * of the getVmId method (vm ids never change once assigned). 
@@ -969,8 +971,10 @@ public class ONEProvisioningDriver implements ProvisioningDriver {
 			allParametersString.append(ONE_NET_NAME).append(ASSIGNATION_SYMBOL).append(fqn).append(LINE_SEPARATOR);
 			
 			// Add the net Type
+			networkbridge = (String) prop.get(NETWORK_BRIDGE);
+			
 			allParametersString.append(ONE_NET_TYPE).append(ASSIGNATION_SYMBOL).append("RANGED").append(LINE_SEPARATOR);
-			allParametersString.append(ONE_NET_BRIDGE).append(ASSIGNATION_SYMBOL).append("xenbr2").append(LINE_SEPARATOR);
+			allParametersString.append(ONE_NET_BRIDGE).append(ASSIGNATION_SYMBOL).append(networkbridge).append(LINE_SEPARATOR);
 			
 			log.debug("Network data sent:\n\n" + allParametersString.toString() + "\n\n");
 			
