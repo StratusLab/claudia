@@ -148,8 +148,12 @@
 						<mapping>
 							<directory>${app.home}/logs</directory>
 						</mapping>
-
+						
 						<mapping>
+							<directory>${app.home}/repository</directory>
+						</mapping>
+						<mapping>
+						
 							<directory>/etc/init.d/</directory>
 							<username>root</username>
 							<groupname>root</groupname>
