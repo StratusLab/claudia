@@ -70,12 +70,6 @@
 		<fileMode>0644</fileMode>
 	</file>
 	<file>
-		<source>src/main/config/log4j.properties</source>
-		<outputDirectory>/conf</outputDirectory>
-		<filtered>true</filtered>
-		<fileMode>0644</fileMode>
-	</file>
-	<file>
 		<source>src/main/config/templateIptables</source>
 		<outputDirectory>/conf</outputDirectory>
 		<filtered>true</filtered>

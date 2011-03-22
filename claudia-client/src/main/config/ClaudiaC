@@ -49,6 +49,6 @@ claudiaClib=$(ls lib/claudia-client-*.jar)
 #echo $claudiaClib
 
 #java -Djava.security.policy=conf/server.policy -jar lib/claudia-client-0.1.1.jar $1 $2;
-#java -Djava.security.policy=conf/server.policy -jar $claudiaClib $1 $2;
-java -Djava.security.policy=conf/server.policy -jar -Djava.util.logging.config.file=conf/log4j.properties $claudiaClib $1 $2;
+java -Djava.security.policy=conf/server.policy -jar $claudiaClib $1 $2;
+#java -Djava.security.policy=conf/server.policy -jar -Djava.util.logging.config.file=conf/log4j.properties $claudiaClib $1 $2;
 
