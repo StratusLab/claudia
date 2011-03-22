@@ -298,15 +298,10 @@ public class ClaudiaClient {
 			if (respo==null)
 				System.out.println("\n There has been an error deploying the service. Check that the deployment parameters are ok and all the needed software is up.");
 			else
-			/*	if (!scriptmode)
-				    System.out.println("\n Service URI Task: " + respo);
-				else
-					System.out.println(respo);*/
-			 if (!scriptmode)
-                 System.out.println("\n Service URI Task: " + respo);
-             else
-                     System.out.println(respo);
-                     
+				if (!scriptmode)
+                    System.out.println("\n Service URI Task: " + respo);
+                else
+                        System.out.println("\nURI="+respo+"\n");
 			 
 		} else if (s.matches("info\\(.*\\)")) {
 
