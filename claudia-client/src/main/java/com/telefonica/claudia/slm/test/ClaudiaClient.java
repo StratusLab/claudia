@@ -136,6 +136,7 @@ public class ClaudiaClient {
 
 	private static Reference itemUri= null;
 	private static String customerName =null;
+	private static boolean scriptmode = false;
 	
 	public static void main(String[] args){
 
@@ -174,7 +175,9 @@ public class ClaudiaClient {
 
 		// If there are any parameters, the client will be executed in script mode.
 		if (args.length >0) {
-			System.out.println("Running in script mode");
+			scriptmode = true;
+			
+			//System.out.println("Running in script mode");
 			
 			String scriptCommand = "";
 			for (String com: args) {
@@ -223,6 +226,7 @@ public class ClaudiaClient {
 	}
 	 
 	private static void runCommand(String s) {
+		
 		if (s.equals("quit")) {
 			System.out.println("Exiting...");
 			System.exit(0);
@@ -231,12 +235,14 @@ public class ClaudiaClient {
 		
 		} else if (s.matches("history")) {
 			
+	
 			System.out.println("\n\nHistory\n--------------------------");
 			
 			for (int i=0; i < history.size(); i++) {
 				System.out.println("\t" + i + " - " + history.get(i));
 			}
 			
+
 			System.out.println("\n\n");
 			
 		} else if (s.matches("createCustomer\\(.*\\)")) {
@@ -255,6 +261,8 @@ public class ClaudiaClient {
 			try {Thread.sleep(serverTimeout);} catch (InterruptedException ie) {}
 			
 		} else if (s.matches("deploy\\(.*\\)")) {
+			
+			
 			
 			String[] params = getParams(s);
 			
@@ -278,20 +286,24 @@ public class ClaudiaClient {
 				System.out.println("Wrong service name.");
 				return;
 			}
-						
+			String respo = null;			
 			try {
-				itemUri = createServiceCommand(customerName, serviceName, ovfUrl);
+				 respo = createServiceCommand(customerName, serviceName, ovfUrl);
 			} catch(UnknownHostException uhe) {
 				System.out.println("Could not connect. Unknown host: " + prop.getProperty(HOST)+prop.getProperty(KEY_PORT));
 			} catch (IOException e) {
 				System.out.println("Unknown error: " + e.getMessage());
 			}
 			
-			if (itemUri==null)
+			if (respo==null)
 				System.out.println("\n There has been an error deploying the service. Check that the deployment parameters are ok and all the needed software is up.");
 			else
-				System.out.println("\n Service URI: " + itemUri.getPath());
-			
+				if (!scriptmode)
+				    System.out.println("\n Service URI Task: " + respo);
+				else
+					System.out.println(respo);
+			    
+			 
 		} else if (s.matches("info\\(.*\\)")) {
 
 			String[] params = getParams(s);
@@ -532,22 +544,23 @@ public class ClaudiaClient {
 		return new Reference(prop.getProperty(HOST)+prop.getProperty(KEY_PORT) + RESERVOIR_PATH + "/" + customerName + prop.getProperty(KEY_INSTANTIATE));
 	}
 	
-	public static Reference createServiceCommand(String customerName, String serviceName, String ovfUrl) throws IOException {
+	public static String createServiceCommand(String customerName, String serviceName, String ovfUrl) throws IOException {
 		
-		System.out.println("\nDeploying service [" + serviceName + "] for customer [" + customerName + "] defined in [" + ovfUrl + "]\n\n");
+		if (!scriptmode)
+		  System.out.println("\nDeploying service [" + serviceName + "] for customer [" + customerName + "] defined in [" + ovfUrl + "]\n\n");
 		
 		Reference serviceItemsUri= createServiceURI(customerName, serviceName);
 		
-		Reference itemUri=null;
+		String taskId =null;
    	    try {
-			itemUri = createServiceXML(serviceName, ovfUrl, client, serviceItemsUri);
+   	    	taskId = createServiceXML(serviceName, ovfUrl, client, serviceItemsUri);
 		} catch (SAXException e) {
 			System.out.println("XML error in service creation: " + e.getMessage());
 		} catch (ParserConfigurationException e) {
 			System.out.println("TEST ERROR: service not created");
 		}
 		
-		return itemUri;
+		return taskId;
 	}
 	
 	public static Reference getCustomerURI(String customerName) {
@@ -678,7 +691,7 @@ public class ClaudiaClient {
         return null;
     }
     
-    public static Reference createServiceXML(String serviceName, String ovf, Client client,
+    public static String createServiceXML(String serviceName, String ovf, Client client,
             Reference serviceItemsUri) throws IOException, SAXException, ParserConfigurationException {
     	
 		DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
@@ -727,7 +740,12 @@ public class ClaudiaClient {
         // Launch the request
         Response response = client.post(serviceItemsUri + "?serviceName=" + serviceName, domrep);
         if (response.getStatus().isSuccess()) {
-            return response.getEntity().getIdentifier();
+        	String text =  response.getEntity().getText();
+        	String idTask = text.substring(text.indexOf("href=\"")+"href=\"".length(),
+        			text.indexOf("\" startTime"));
+        	
+            return idTask;
+          
         }        
     	
     	return null;
