@@ -253,8 +253,10 @@ public class ServiceItemCollectionResource extends Resource {
 
 	            // Set the response's status and entity
 	            getResponse().setStatus(Status.SUCCESS_CREATED);
-	            DomRepresentation rep = new DomRepresentation(MediaType.APPLICATION_XML, TaskManager.getInstance().getTask(taskId).getXmlDescription());
-
+	            //DomRepresentation rep = new DomRepresentation(MediaType.APPLICATION_XML, TaskManager.getInstance().getTask(taskId).getXmlDescription());
+	           
+	            StringRepresentation rep = new StringRepresentation(TaskManager.getInstance().getTask(taskId).getStringDescription().replace("{org-id}", orgId).replace("{vdc-id}", vdcId), MediaType.TEXT_XML);
+				
 	            // Indicates where is located the new resource.
 	            rep.setIdentifier(URICreation.getFQN(orgId, vdcId, serviceName));
 
