@@ -305,7 +305,7 @@ public class ClaudiaClient {
 			 if (!scriptmode)
                  System.out.println("\n Service URI Task: " + respo);
              else
-                     System.out.println("\nURI="+respo+"\n");
+                     System.out.println(respo);
                      
 			 
 		} else if (s.matches("info\\(.*\\)")) {
