@@ -876,7 +876,8 @@ public class ONEProvisioningDriver implements ProvisioningDriver {
 							allParametersString.append(ONE_VM_NIC).append(ASSIGNATION_SYMBOL).append(MULT_CONF_LEFT_DELIMITER);
 							
 							allParametersString.append(ONE_VM_NIC_PARAM_NETWORK).append(ASSIGNATION_SYMBOL).append(fqnNet).append(MULT_CONF_SEPARATOR).
-								append(ONE_VM_NIC_PARAM_IP).append(ASSIGNATION_SYMBOL).append(ipOnNetworkMap.get(fqnNet)).
+								append(ONE_VM_NIC_PARAM_IP).append(ASSIGNATION_SYMBOL).append(ipOnNetworkMap.get(fqnNet)).append(MULT_CONF_SEPARATOR).
+								append(ONE_NET_BRIDGE).append(ASSIGNATION_SYMBOL).append(networkBridge).
 								append(MULT_CONF_RIGHT_DELIMITER).append(LINE_SEPARATOR);
 	
 							break;
