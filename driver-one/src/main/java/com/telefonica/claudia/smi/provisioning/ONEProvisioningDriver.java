@@ -63,6 +63,7 @@ import org.dmtf.schemas.ovf.envelope._1.VirtualSystemCollectionType;
 import org.dmtf.schemas.ovf.envelope._1.VirtualSystemType;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
@@ -215,6 +216,11 @@ public class ONEProvisioningDriver implements ProvisioningDriver {
 	public static final String ONE_NET_TYPE = "TYPE";
 	public static final String ONE_NET_ADDRESS = "NETWORK_ADDRESS";
 	public static final String ONE_NET_SIZE = "NETWORK_SIZE";
+	public static final String ONE_NET_LEASES = "LEASES";
+	public static final String ONE_NET_IP = "IP";
+	public static final String ONE_NET_MAC = "MAC";
+
+	
 	
 	public static final String ONE_DISK_ID = "ID";
 	public static final String ONE_DISK_NAME = "NAME";
@@ -920,6 +926,11 @@ public class ONEProvisioningDriver implements ProvisioningDriver {
 		    Element root = (Element) doc.getFirstChild();
 		    String fqn = root.getAttribute(TCloudConstants.ATTR_NETWORK_NAME);
 		    
+		    NodeList macEnabled = doc.getElementsByTagName(TCloudConstants.TAG_NETWORK_MAC_ENABLED);
+		  	Element firstmacenElement = (Element)macEnabled.item(0);
+			NodeList textMacenList = firstmacenElement.getChildNodes();
+			String macenabled= ((Node)textMacenList.item(0)).getNodeValue().trim();
+		    
 			NodeList netmaskList = doc.getElementsByTagName(TCloudConstants.TAG_NETWORK_NETMASK);
 			NodeList baseAddressList = doc.getElementsByTagName(TCloudConstants.TAG_NETWORK_BASE_ADDRESS);
 			
@@ -931,7 +942,9 @@ public class ONEProvisioningDriver implements ProvisioningDriver {
 			     privateNet =   "private";
 			    else
 			    	privateNet ="public";
-
+			    
+			    
+			
 			
 			// If there is a netmask, calculate the size of the net counting it's bits. 
 			if (netmaskList.getLength() >0) {
@@ -960,11 +973,12 @@ public class ONEProvisioningDriver implements ProvisioningDriver {
 					size = 8;
 				else
 					size -= 2;
-
+				if (macenabled.equals("false"))
 				allParametersString.append(ONE_NET_SIZE).append(ASSIGNATION_SYMBOL).append(size).append(LINE_SEPARATOR);
 			}
 			
 			if (baseAddressList.getLength()>0) {
+				if (macenabled.equals("false"))
 				allParametersString.append(ONE_NET_ADDRESS).append(ASSIGNATION_SYMBOL).append(baseAddressList.item(0).getTextContent()).append(LINE_SEPARATOR);
 			}
 			
@@ -972,9 +986,44 @@ public class ONEProvisioningDriver implements ProvisioningDriver {
 			allParametersString.append(ONE_NET_NAME).append(ASSIGNATION_SYMBOL).append(fqn).append(LINE_SEPARATOR);
 			
 			// Add the net Type
-			
+			if (macenabled.equals("false")) {
 			allParametersString.append(ONE_NET_TYPE).append(ASSIGNATION_SYMBOL).append("RANGED").append(LINE_SEPARATOR);
+			}
+			else {
+				allParametersString.append(ONE_NET_TYPE).append(ASSIGNATION_SYMBOL).append("FIXED").append(LINE_SEPARATOR);
+			}
 			allParametersString.append(ONE_NET_BRIDGE).append(ASSIGNATION_SYMBOL).append(networkBridge).append(LINE_SEPARATOR);
+			
+			
+			NodeList ipLeaseList = doc.getElementsByTagName(TCloudConstants.TAG_NETWORK_IPLEASES);
+
+			
+			for (int i=0; i<ipLeaseList .getLength(); i++){
+				
+				Node firstIpLeaseNode = ipLeaseList.item(i);
+				if (firstIpLeaseNode.getNodeType() == Node.ELEMENT_NODE){
+				
+					Element firstIpLeaseElement = (Element)firstIpLeaseNode;
+					NodeList ipList =firstIpLeaseElement.getElementsByTagName(TCloudConstants.TAG_NETWORK_IP);
+					Element firstIpElement = (Element)ipList.item(0);
+					NodeList textIpList = firstIpElement.getChildNodes();
+					String ipString = ("IP="+((Node)textIpList.item(0)).getNodeValue().trim());
+					
+					NodeList macList =firstIpLeaseElement.getElementsByTagName(TCloudConstants.TAG_NETWORK_MAC);
+					Element firstMacElement = (Element)macList.item(0);
+					NodeList textMacList = firstMacElement.getChildNodes();
+					String macString = ("MAC="+((Node)textMacList.item(0)).getNodeValue().trim());
+					
+					
+					allParametersString.append(ONE_NET_LEASES).append(ASSIGNATION_SYMBOL).append(MULT_CONF_LEFT_DELIMITER);
+					allParametersString.append(ipString).append(MULT_CONF_SEPARATOR).append(macString).append(MULT_CONF_RIGHT_DELIMITER).append(LINE_SEPARATOR);
+
+				}
+				
+			}
+			
+			
+			
 			
 			log.debug("Network data sent:\n\n" + allParametersString.toString() + "\n\n");
 			

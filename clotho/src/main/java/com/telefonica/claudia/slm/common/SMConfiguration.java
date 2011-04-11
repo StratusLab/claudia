@@ -74,6 +74,11 @@ public class SMConfiguration extends Properties {
 	// Network ranges available for virtual network creation
 	private static final String NETWORK_RANGES_AVAILABLE = "NetworkRanges";
 	
+	
+	// Network private MACS available for virtual network creation
+	private static final String NETWORK_MAC_LIST = "NetworkMacList";
+	private static final String NETWORK_MAC_ENABLE = "MacEnabled";
+	
 	// Server direction and port of the WASUP
 	private static final String WASUP_ACTIVE = "WASUPActive";
 	
@@ -141,6 +146,10 @@ public class SMConfiguration extends Properties {
 	
 	private String[] networkRanges = null;
 	
+	private String[] networkMacList = null;
+	
+	private String macEnabled = null;
+	
 	private boolean undeployOnServerStop = false;
 
 	private String smiHost;
@@ -195,6 +204,10 @@ public class SMConfiguration extends Properties {
 		smiPort = readPortInProperty(SMI_PORT_PROPERTY_NAME);
 		
 		networkRanges = readCollectionInProperty(NETWORK_RANGES_AVAILABLE);
+		
+		networkMacList = readCollectionInProperty(NETWORK_MAC_LIST);
+		
+		macEnabled = readProperty(NETWORK_MAC_ENABLE);
 		
 		try {
 			undeployOnServerStop = Boolean.parseBoolean(readProperty(UNDEPLOY_ON_SERVER_STOP));
@@ -384,6 +397,15 @@ public class SMConfiguration extends Properties {
 	
 	public String[] getNetworkRanges() {
 		return networkRanges;
+	}
+	
+	
+	public String[] getNetworkMacList() {
+		return networkMacList;
+	}
+	
+	public String getNetworkMacEnable() {
+		return macEnabled;
 	}
 	
 	private String[] readCollectionInProperty(String propertyName) throws Exception {

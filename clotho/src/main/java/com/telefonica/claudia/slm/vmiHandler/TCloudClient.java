@@ -51,6 +51,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
+import com.telefonica.claudia.slm.common.SMConfiguration;
 import com.telefonica.claudia.slm.deployment.ServiceApplication;
 import com.telefonica.claudia.slm.deployment.VEEReplica;
 import com.telefonica.claudia.slm.deployment.hwItems.NIC;
@@ -79,6 +80,7 @@ public class TCloudClient implements VMIHandler {
 		client = new Client(Protocol.HTTP);
 	}
 
+	   
 	private Document getTCloudNetworkParameters(Network networkConf) throws ParserConfigurationException {
 		
 	    DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
@@ -96,8 +98,68 @@ public class TCloudClient implements VMIHandler {
 	    Element netmask = doc.createElement(TCloudConstants.TAG_NETWORK_NETMASK);
 	    netmask.appendChild(doc.createTextNode(networkConf.getNetworkAddresses()[1]));
 	    root.appendChild(netmask);
-	    	    
+	    
+	
+	    
+	 	String macEnable = SMConfiguration.getInstance().getNetworkMacEnable();
+	
+	    if (macEnable.equals("true")){
+	 
+	    
+		logger.info("PONG Private: " +networkConf.getPrivateNet());
+		Boolean nettype=networkConf.getPrivateNet();
+		
+		
+	    if (nettype==false){
+			 
+			String[] networkAddresses = SMConfiguration.getInstance().getNetworkRanges();
+			String range = networkAddresses[0];
+			String[] networkMacAddresses = SMConfiguration.getInstance().getNetworkMacList();
+			String mac = networkMacAddresses[0];
+			logger.info("PONG MAC section: " + mac);
+	
+
+			int IPPos= range.indexOf("IP:");
+			String ip;
+			if (IPPos>0) {
+				ip = range.substring(IPPos+3, range.indexOf(";", IPPos)).trim();
+				logger.info("PONG IP section: " + ip);
+				if (ip.contains("/")) {
+					String[] ips = ip.split("/");
+					String[] macs = mac.split("/");
+					int i = 0;
+					for (String ipLease: ips){
+					    Element ipleases = doc.createElement(TCloudConstants.TAG_NETWORK_IPLEASES);
+						//    ipleases.appendChild(doc.createTextNode("prueba"));
+							
+						Element ipelem = doc.createElement(TCloudConstants.TAG_NETWORK_IP);
+						ipelem.appendChild(doc.createTextNode(ipLease));
+						ipleases.appendChild(ipelem);	 
+					//	logger.info("PONG IP: " + ipLease);
+						String macLease = macs[i];
+						Element macelem = doc.createElement(TCloudConstants.TAG_NETWORK_MAC);
+						macelem.appendChild(doc.createTextNode(macLease));
+						ipleases.appendChild(macelem);	
+					//	logger.info("PONG MAC: " + macLease);
+						i++;
+						 root.appendChild(ipleases);	   
+					}
+				}
+			}	
+	    	
+	    }
+	    else {
+	    	macEnable="false";
+	    }
+	  
+	    }
+	 	 
+        Element macenabled = doc.createElement(TCloudConstants.TAG_NETWORK_MAC_ENABLED);
+	    macenabled.appendChild(doc.createTextNode(macEnable));
+	    root.appendChild(macenabled);
+	    
 		return doc;
+		
 	}
 	
 	public void allocateNetwork(Set<Network> conf)

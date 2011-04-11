@@ -38,6 +38,11 @@ public abstract class TCloudConstants {
 	public static final String TAG_NETWORK_NETMASK = "Netmask";
 	public static final String TAG_NETWORK_BASE_ADDRESS = "BaseAddress";
 	
+	public static final String TAG_NETWORK_IPLEASES = "IPLease";
+	public static final String TAG_NETWORK_IP = "IP";
+	public static final String TAG_NETWORK_MAC = "MAC";
+	public static final String TAG_NETWORK_MAC_ENABLED = "MacEnabled";
+	
 	
 	
 	
