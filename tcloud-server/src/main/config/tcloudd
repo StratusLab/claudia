@@ -1,5 +1,12 @@
 #!/bin/bash
-
+#
+# tcloudd - tcloud  Daemon
+#
+# chkconfig: - 85 15
+# description: Tcloud component of claudia 
+# processname: tcloud 
+# config: /etc/claudia/conf/tcloud.properties
+#
 
 case "$1" in
   start)

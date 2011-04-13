@@ -1,4 +1,13 @@
 #!/bin/bash
+#
+# clothod - Clotho Daemon
+#
+# chkconfig: - 85 15
+# description: Clotho component of claudia 
+# processname: clotho
+# config: /etc/claudia/conf/sm.properties
+#
+
 case "$1" in
   start)
         echo "Starting clotho daemon"
