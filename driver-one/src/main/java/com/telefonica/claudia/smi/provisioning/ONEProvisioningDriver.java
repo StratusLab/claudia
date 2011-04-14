@@ -149,7 +149,11 @@ public class ONEProvisioningDriver implements ProvisioningDriver {
 	private static final String INITRD_PROPERTY = "oneInitrd";
 	private static final String ENVIRONMENT_PROPERTY = "oneEnvironmentPath";
 	
+	private final static String SSHKEY_PROPERTY = "oneSshKey";
+	
 	private String oneSession = "oneadmin:5baa61e4c9b93f3f0682250b6cf8331b7ee68fd8";
+	
+	
 	
 	private XmlRpcClient xmlRpcClient = null;
 	
@@ -171,6 +175,8 @@ public class ONEProvisioningDriver implements ProvisioningDriver {
 	private String customizationPort;
 	private String environmentRepositoryPath;
 	private static String networkBridge="";
+	private static String oneSshKey="";
+	
 	
 	public static final String ASSIGNATION_SYMBOL = "=";
 	public static final String LINE_SEPARATOR = System.getProperty("line.separator");	
@@ -708,6 +714,7 @@ public class ONEProvisioningDriver implements ProvisioningDriver {
 				allParametersString.append(ONE_VM_OS_PARAM_ROOT).append(ASSIGNATION_SYMBOL).append(diskRoot + "da1").append(MULT_CONF_RIGHT_DELIMITER).append(LINE_SEPARATOR);
 				
 				allParametersString.append(ONE_CONTEXT).append(ASSIGNATION_SYMBOL).append(MULT_CONF_LEFT_DELIMITER);
+				allParametersString.append("public_key").append(ASSIGNATION_SYMBOL).append(oneSshKey).append(MULT_CONF_SEPARATOR).append(LINE_SEPARATOR);
 				allParametersString.append("CustomizationUrl").append(ASSIGNATION_SYMBOL).append("\"" + Main.PROTOCOL + Main.serverHost + ":" + customizationPort + "/"+ replicaName+ "\"").append(MULT_CONF_SEPARATOR).append(LINE_SEPARATOR);
 				allParametersString.append("files").append(ASSIGNATION_SYMBOL).append("\"" + environmentRepositoryPath + "/"+ replicaName + "/ovf-env.xml" + "\"").append(MULT_CONF_SEPARATOR).append(LINE_SEPARATOR);
 				allParametersString.append("target").append(ASSIGNATION_SYMBOL).append("\"" + diskRoot + "dc"+ "\"").append(MULT_CONF_RIGHT_DELIMITER).append(LINE_SEPARATOR);
@@ -1265,6 +1272,11 @@ public class ONEProvisioningDriver implements ProvisioningDriver {
 	    if (prop.containsKey(NETWORK_BRIDGE)) {
 	    	networkBridge = ((String) prop.get(NETWORK_BRIDGE));
 	    }
+	    
+	    if (prop.containsKey(SSHKEY_PROPERTY)) {
+	    	oneSshKey = ((String) prop.get(SSHKEY_PROPERTY));
+	    }
+	    
 	    
 	    try {
 			config.setServerURL(new URL(oneURL));
