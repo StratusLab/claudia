@@ -74,4 +74,6 @@ public abstract class TCloudConstants {
 	public static final String TAG_TASKS="Tasks";
 	public static final String TAG_TASK="Task";
 	
+	public static enum StateType {initial, deploying, active, running, poweredOff, suspended, unactive, error, unknown};
+	
 }

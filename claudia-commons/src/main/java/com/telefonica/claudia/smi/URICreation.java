@@ -83,6 +83,7 @@ public class URICreation {
 	public static final String FQN_SEPARATOR_SERVICE = "services";
 	public static final String FQN_SEPARATOR_VDC = "customers";
 	public static final String FQN_SEPARATOR_NET = "networks";
+	public static final String FQN_SEPARATOR_HW = "hw";
 	
 	public static String getFQN(String org) {
 		return org.replace("_", ".");
@@ -245,4 +246,68 @@ public class URICreation {
         
 		return URI_NET_ADD.replace("{org-id}", org.replace(".", "_")).replace("{vdc-id}", customer).replace("{vapp-id}", service);
 	}
+	
+	public static String getVEE(String fqn) {
+		if (fqn.indexOf(FQN_SEPARATOR_VEE)<=0) {
+			throw new IllegalArgumentException("FQN not well formed or does not contain a vee");
+		}
+		
+        String vee = fqn.substring(fqn.indexOf(FQN_SEPARATOR_VEE));
+        String parts[] = vee.split("\\.");
+        vee = parts[1];
+        
+        String rest = fqn.substring(0, fqn.indexOf(FQN_SEPARATOR_VEE)-1);
+        
+		return rest + "." + FQN_SEPARATOR_VEE + "." + vee;
+	}
+	
+	
+	public static String getFQNFromURL(String url) {
+		String fqn = null;
+		if (url.indexOf(URI_API)>0){
+			url = url.substring(url.indexOf(URI_API)+URI_API.length()+1);
+		}
+		if (url.indexOf("?")>0){
+			url = url.substring(0,url.indexOf("?"));
+		}		
+		
+		String[] elemens = url.split("/");
+		String vm;
+		String vee;
+		String vapp;
+		String vdc;
+		String org;
+	
+		if (elemens.length ==2){
+			org = elemens[1];
+			fqn = getFQN(org);
+		}
+		else if (elemens.length ==4){
+			org = elemens[1];
+			vdc = elemens[3];
+			fqn = getFQN(org, vdc);
+		}	
+		else if (elemens.length ==6){
+			org = elemens[1];
+			vdc = elemens[3];			
+			vapp = elemens[5];
+			fqn = getFQN(org, vdc, vapp);
+		}		
+		else if (elemens.length ==7){
+			org = elemens[1];
+			vdc = elemens[3];			
+			vapp = elemens[5];			
+			vee = elemens[6];
+			fqn = getFQN(org, vdc, vapp, vee);
+		}
+		else if (elemens.length >=8){
+			org = elemens[1];
+			vdc = elemens[3];			
+			vapp = elemens[5];			
+			vee = elemens[6];			
+			vm = elemens[7];
+			fqn = getFQN(org, vdc, vapp, vee, vm);
+		}
+		return fqn;
+	}	
 }
