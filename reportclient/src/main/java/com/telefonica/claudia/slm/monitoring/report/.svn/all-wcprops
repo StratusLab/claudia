@@ -1,0 +1,59 @@
+K 25
+svn:wc:ra_dav:version-url
+V 116
+/repositorio/boi/!svn/ver/9901/claudia/trunk/reportClient/src/main/java/com/telefonica/claudia/slm/monitoring/report
+END
+test.java
+K 25
+svn:wc:ra_dav:version-url
+V 126
+/repositorio/boi/!svn/ver/9473/claudia/trunk/reportClient/src/main/java/com/telefonica/claudia/slm/monitoring/report/test.java
+END
+Utils.java
+K 25
+svn:wc:ra_dav:version-url
+V 127
+/repositorio/boi/!svn/ver/9473/claudia/trunk/reportClient/src/main/java/com/telefonica/claudia/slm/monitoring/report/Utils.java
+END
+MonitoringSampleData.java
+K 25
+svn:wc:ra_dav:version-url
+V 142
+/repositorio/boi/!svn/ver/9473/claudia/trunk/reportClient/src/main/java/com/telefonica/claudia/slm/monitoring/report/MonitoringSampleData.java
+END
+MonitoringRestClient.java
+K 25
+svn:wc:ra_dav:version-url
+V 142
+/repositorio/boi/!svn/ver/9901/claudia/trunk/reportClient/src/main/java/com/telefonica/claudia/slm/monitoring/report/MonitoringRestClient.java
+END
+ReportGenerator.java
+K 25
+svn:wc:ra_dav:version-url
+V 137
+/repositorio/boi/!svn/ver/9515/claudia/trunk/reportClient/src/main/java/com/telefonica/claudia/slm/monitoring/report/ReportGenerator.java
+END
+TypeEntityEnum.java
+K 25
+svn:wc:ra_dav:version-url
+V 136
+/repositorio/boi/!svn/ver/9732/claudia/trunk/reportClient/src/main/java/com/telefonica/claudia/slm/monitoring/report/TypeEntityEnum.java
+END
+OtherTypeEntityEnum.java
+K 25
+svn:wc:ra_dav:version-url
+V 141
+/repositorio/boi/!svn/ver/9901/claudia/trunk/reportClient/src/main/java/com/telefonica/claudia/slm/monitoring/report/OtherTypeEntityEnum.java
+END
+StringUtils.java
+K 25
+svn:wc:ra_dav:version-url
+V 133
+/repositorio/boi/!svn/ver/9473/claudia/trunk/reportClient/src/main/java/com/telefonica/claudia/slm/monitoring/report/StringUtils.java
+END
+BaseMonitoringData.java
+K 25
+svn:wc:ra_dav:version-url
+V 140
+/repositorio/boi/!svn/ver/9732/claudia/trunk/reportClient/src/main/java/com/telefonica/claudia/slm/monitoring/report/BaseMonitoringData.java
+END

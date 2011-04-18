@@ -1,0 +1,68 @@
+<assembly>
+  <id>environment</id>
+
+  <formats>
+    <format>dir</format>
+  </formats>
+
+  <baseDirectory>ReportClient</baseDirectory>
+  
+  <fileSets>
+    <fileSet>
+      <directory>${project.build.directory}</directory>
+      <includes>
+        <include>*.jar</include>
+      </includes>
+      <outputDirectory>/lib/</outputDirectory>
+      <fileMode>0644</fileMode>
+      <directoryMode>0755</directoryMode>
+    </fileSet>
+
+    <fileSet>
+       <directory>target/</directory>
+       <outputDirectory>/logs</outputDirectory>
+       <directoryMode>0755</directoryMode>
+
+       <excludes>
+           <exclude>**/*</exclude>
+       </excludes>
+    </fileSet>
+  </fileSets>
+
+  <files>
+    <file>
+      <source>src/main/config/monitorAllMonitoring</source>
+      <outputDirectory>/bin</outputDirectory>
+      <filtered>true</filtered>
+      <fileMode>0744</fileMode>
+    </file>
+    <file>
+      <source>src/main/config/monitorDiskUsage</source>
+      <outputDirectory>/bin</outputDirectory>
+      <filtered>true</filtered>
+      <fileMode>0744</fileMode>
+    </file>
+    <file>
+      <source>src/main/config/compactor</source>
+      <outputDirectory>/bin</outputDirectory>
+      <filtered>true</filtered>
+      <fileMode>0744</fileMode>
+    </file>      
+    <file>
+      <source>src/main/config/reportClient.properties</source>
+      <outputDirectory>/conf</outputDirectory>
+      <filtered>true</filtered>
+    </file>
+  </files>  
+
+  <dependencySets>
+    <dependencySet>
+      <unpack>false</unpack>
+      <scope>runtime</scope>
+      <outputDirectory>/lib</outputDirectory>
+      <directoryMode>0644</directoryMode>
+    </dependencySet>
+  </dependencySets>
+
+</assembly>
+

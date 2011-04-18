@@ -1,0 +1,47 @@
+K 25
+svn:wc:ra_dav:version-url
+V 110
+/repositorio/boi/!svn/ver/11138/claudia/trunk/reportClient/src/main/java/com/telefonica/claudia/slm/monitoring
+END
+ThreadMonitor.java
+K 25
+svn:wc:ra_dav:version-url
+V 128
+/repositorio/boi/!svn/ver/9785/claudia/trunk/reportClient/src/main/java/com/telefonica/claudia/slm/monitoring/ThreadMonitor.java
+END
+NICMonitor.java
+K 25
+svn:wc:ra_dav:version-url
+V 125
+/repositorio/boi/!svn/ver/9811/claudia/trunk/reportClient/src/main/java/com/telefonica/claudia/slm/monitoring/NICMonitor.java
+END
+PersistenceClient.java
+K 25
+svn:wc:ra_dav:version-url
+V 132
+/repositorio/boi/!svn/ver/9785/claudia/trunk/reportClient/src/main/java/com/telefonica/claudia/slm/monitoring/PersistenceClient.java
+END
+FrequencyEnum.java
+K 25
+svn:wc:ra_dav:version-url
+V 128
+/repositorio/boi/!svn/ver/9473/claudia/trunk/reportClient/src/main/java/com/telefonica/claudia/slm/monitoring/FrequencyEnum.java
+END
+DiskUsageMonitor.java
+K 25
+svn:wc:ra_dav:version-url
+V 131
+/repositorio/boi/!svn/ver/9901/claudia/trunk/reportClient/src/main/java/com/telefonica/claudia/slm/monitoring/DiskUsageMonitor.java
+END
+Monitor.java
+K 25
+svn:wc:ra_dav:version-url
+V 122
+/repositorio/boi/!svn/ver/9785/claudia/trunk/reportClient/src/main/java/com/telefonica/claudia/slm/monitoring/Monitor.java
+END
+NICMonitorThread.java
+K 25
+svn:wc:ra_dav:version-url
+V 131
+/repositorio/boi/!svn/ver/9812/claudia/trunk/reportClient/src/main/java/com/telefonica/claudia/slm/monitoring/NICMonitorThread.java
+END

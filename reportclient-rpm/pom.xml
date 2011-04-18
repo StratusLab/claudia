@@ -1,0 +1,193 @@
+<?xml version="1.0"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<groupId>eu.stratuslab.pkgs.claudia</groupId>
+	<artifactId>reportclient-rpm</artifactId>
+	<version>0.1.0-SNAPSHOT</version>
+	<name>Report client RPM Package</name>
+	<packaging>rpm</packaging>
+
+	<parent>
+		<groupId>eu.stratuslab.pkgs.claudia</groupId>
+		<artifactId>claudia-parent</artifactId>
+		<version>1.3-SNAPSHOT</version>
+	</parent>
+
+	<repositories>
+		<repository>
+			<id>maven-restlet</id>
+			<name>Public online Restlet repository</name>
+			<url>http://maven.restlet.org</url>
+		</repository>
+	</repositories>
+
+	<dependencies>
+
+		<dependency>
+			<groupId>eu.stratuslab.pkgs.claudia</groupId>
+			<artifactId>reportclient</artifactId>
+			<version>0.1.0-SNAPSHOT</version>
+			<classifier>environment</classifier>
+			<type>zip</type>
+		</dependency>
+
+	</dependencies>
+
+	<distributionManagement>
+		<repository>
+			<id>stratuslab.releases</id>
+			<name>Releases</name>
+			<url>http://repo.stratuslab.eu:8081/content/repositories/releases/</url>
+		</repository>
+		<snapshotRepository>
+			<id>stratuslab.snapshots</id>
+			<name>Snapshots</name>
+			<url>http://repo.stratuslab.eu:8081/content/repositories/snapshots/</url>
+		</snapshotRepository>
+	</distributionManagement>
+
+	<build>
+
+		<plugins>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-resources-plugin</artifactId>
+				<configuration>
+					<encoding>UTF-8</encoding>
+				</configuration>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-dependency-plugin</artifactId>
+
+				<executions>
+
+					<execution>
+						<id>unpack</id>
+						<goals>
+							<goal>unpack</goal>
+						</goals>
+						<configuration>
+							<artifactItems>
+								<artifactItem>
+									<groupId>eu.stratuslab.pkgs.claudia</groupId>
+									<artifactId>reportclient</artifactId>
+									<classifier>environment</classifier>
+									<type>zip</type>
+								</artifactItem>
+							</artifactItems>
+						</configuration>
+					</execution>
+
+				</executions>
+
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-deploy-plugin</artifactId>
+			</plugin>
+
+			<plugin>
+
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>rpm-maven-plugin</artifactId>
+				<extensions>true</extensions>
+
+				<executions>
+					<execution>
+						<goals>
+							<goal>attached-rpm</goal>
+						</goals>
+					</execution>
+				</executions>
+
+				<configuration>
+
+					<copyright>2010, NoBody</copyright>
+					<group>Development</group>
+					<description>Maven Recipe: RPM Package.</description>
+
+					<release>${RELEASE}</release>
+
+					<mappings>
+
+						<mapping>
+							<directory>${app.home}/bin/</directory>
+							<filemode>755</filemode>
+							<username>root</username>
+							<groupname>root</groupname>
+							<sources>
+								<source>
+									<location>target/dependency/reportclient/bin</location>
+								</source>
+							</sources>
+						</mapping>
+
+						<mapping>
+							<directory>${app.home}/lib/</directory>
+							<sources>
+								<source>
+									<location>target/dependency/reportclient/lib</location>
+								</source>
+							</sources>
+						</mapping>
+
+						<mapping>
+							<directory>${app.home}/conf/</directory>
+							<sources>
+								<source>
+									<location>target/dependency/reportclient/conf</location>
+								</source>
+							</sources>
+						</mapping>
+
+						<mapping>
+							<directory>${app.home}/driver/</directory>
+							<sources>
+								<source>
+									<location>target/dependency</location>
+									<includes>
+										<include>driver*.zip</include>
+									</includes>
+								</source>
+							</sources>
+						</mapping>
+
+						<mapping>
+							<directory>${app.home}/logs</directory>
+						</mapping>
+<!--
+						<mapping>
+							<directory>/etc/init.d/</directory>
+							<username>root</username>
+							<groupname>root</groupname>
+							<filemode>744</filemode>
+							<directoryIncluded>false</directoryIncluded>
+							<sources>
+								<source>
+									<location>target/dependency/tcloud-server/bin/daemon</location>
+									<includes>
+										<include>tcloudd</include>
+									</includes>
+								</source>
+							</sources>
+						</mapping>
+-->
+					</mappings>
+				</configuration>
+			</plugin>
+
+		</plugins>
+	</build>
+
+	<properties>
+		<app.home>/opt/claudia/</app.home>
+    <maven.build.timestamp.format>yyyyMMdd.HHmmss</maven.build.timestamp.format>
+    <RELEASE>0.${maven.build.timestamp}</RELEASE>
+	</properties>
+
+</project>
