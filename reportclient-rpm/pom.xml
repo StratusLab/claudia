@@ -145,17 +145,6 @@
 							</sources>
 						</mapping>
 
-						<mapping>
-							<directory>${app.home}/driver/</directory>
-							<sources>
-								<source>
-									<location>target/dependency</location>
-									<includes>
-										<include>driver*.zip</include>
-									</includes>
-								</source>
-							</sources>
-						</mapping>
 
 						<mapping>
 							<directory>${app.home}/logs</directory>

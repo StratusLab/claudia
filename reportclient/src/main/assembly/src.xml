@@ -5,7 +5,7 @@
     <format>zip</format>
   </formats>
 
-  <baseDirectory>/ReportClient</baseDirectory>
+  <baseDirectory>/Reportclient</baseDirectory>
   
   <fileSets>
     <fileSet>
