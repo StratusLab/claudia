@@ -9,11 +9,11 @@ import java.util.List;
 import java.util.Properties;
 import java.util.Set;
 
-import com.telefonica.claudia.slm.common.DbManager;
-import com.telefonica.claudia.slm.monitoring.FrequencyEnum;
-import com.telefonica.claudia.slm.monitoring.MonitoringSample;
-import com.telefonica.claudia.slm.monitoring.NodeDirectory;
-import com.telefonica.claudia.slm.monitoring.report.export.ExportException;
+//import com.telefonica.claudia.slm.common.DbManager;
+//import com.telefonica.claudia.slm.monitoring.FrequencyEnum;
+//import com.telefonica.claudia.slm.monitoring.MonitoringSample;
+//import com.telefonica.claudia.slm.monitoring.NodeDirectory;
+//import com.telefonica.claudia.slm.monitoring.report.export.ExportException;
 import com.telefonica.claudia.smi.URICreation;
 
 
@@ -24,7 +24,7 @@ public class test {
 	
 	public static void main3(String[] args) {
 		
-		try {
+/*		try {
 			//ReportGenerator.generateAllReports(FrequencyEnum.DAILY);
 			Calendar day = new GregorianCalendar();
 			ReportGenerator.generateReport(FrequencyEnum.DAILY, day, "http://10.95.129.34:8183/api/org/tid34/vdc/testing/vapp/tesging_ser/miguel/1");	
@@ -32,13 +32,13 @@ public class test {
 		} catch (ExportException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}
+		}*/
 
 	}
 	
 	public static void main2(String[] args) {
 
-		
+	/*	
 		DbManager dbManager = DbManager.createDbManager(URL, false,USER, PASSWORD);
 		List<NodeDirectory> list = dbManager.getList(NodeDirectory.class);
 		System.out.println("size():"+list.size());
@@ -53,11 +53,11 @@ public class test {
 				System.out.println("getURIVapp:"+URICreation.getURIVEEReplica(node.getFqnString()));		
 			}
 		
-		}
+		}*/
 	}
 	
 	public static void main(String[] args) {
-		DbManager dbManager = DbManager.createDbManager(URL, false,USER, PASSWORD);
+	//DbManager dbManager = DbManager.createDbManager(URL, false,USER, PASSWORD);
 
 		/*
 				List<MonitoringSample> list = dbManager.executeQueryList(MonitoringSample.class, "select max(datetime) from "+MonitoringSample.class.getName()+ " where associatedObject_internalId = 6 AND  measure_type ='cpuUsageMinimum'");
@@ -65,8 +65,8 @@ public class test {
 					System.out.println(list.get(j).getValue()+" "+list.get(j).getDatetime());
 				}
 */
-		Timestamp timestamp = (Timestamp) dbManager.executeQuery("select max(datetime) from "+MonitoringSample.class.getName()+ " where associatedObject_internalId = 6 AND  measure_type ='cpuUsageMinimum'");
+	/*	Timestamp timestamp = (Timestamp) dbManager.executeQuery("select max(datetime) from "+MonitoringSample.class.getName()+ " where associatedObject_internalId = 6 AND  measure_type ='cpuUsageMinimum'");
 		System.out.println("o2s "+timestamp.toString());
-		
+		*/
 	}
 }

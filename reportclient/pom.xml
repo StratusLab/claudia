@@ -61,13 +61,13 @@
       <artifactId>commons-logging</artifactId>
       <version>1.0.4</version>
     </dependency>
-       
+ <!-- 
     <dependency>
       <groupId>com.telefonica.claudia</groupId>
       <artifactId>claudia-model</artifactId>
       <version>[0.1.1,]</version>
     </dependency>  
-    
+-->
     <dependency>
       <groupId>jboss</groupId>
       <artifactId>jboss-archive-browsing</artifactId>

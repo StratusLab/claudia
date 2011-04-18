@@ -15,9 +15,9 @@ import java.util.TreeSet;
 
 import org.apache.log4j.Logger;
 
-import com.telefonica.claudia.slm.common.DbManager;
-import com.telefonica.claudia.slm.deployment.NIC;
-import com.telefonica.claudia.slm.deployment.VEEReplica;
+//import com.telefonica.claudia.slm.common.DbManager;
+//import com.telefonica.claudia.slm.deployment.NIC;
+//import com.telefonica.claudia.slm.deployment.VEEReplica;
 import com.telefonica.claudia.slm.monitoring.report.BaseMonitoringData;
 import com.telefonica.claudia.slm.monitoring.report.MonitoringSampleData;
 import com.telefonica.claudia.smi.URICreation;
@@ -26,9 +26,9 @@ public class PersistenceClient {
 	
 	private static final Logger logger = Logger.getLogger(PersistenceClient.class);
 	private final String TCloudServerURL;
-	private final String DB_URL;
+/*	private final String DB_URL;
 	private final String DB_USER;
-	private final String DB_PASSWORD;
+	private final String DB_PASSWORD;*/
 	
 	public static final String PATH_TO_PROPERTIES_FILE = "./conf/reportClient.properties";
 
@@ -38,10 +38,10 @@ public class PersistenceClient {
 		try {
 			properties.load(new FileInputStream(PATH_TO_PROPERTIES_FILE));
 			TCloudServerURL = properties.getProperty("TServer.url");
-			DB_URL = properties.getProperty("bd.url");
+		/*	DB_URL = properties.getProperty("bd.url");
 			DB_USER = properties.getProperty("bd.user");
 			DB_PASSWORD = properties.getProperty("bd.password");
-			DbManager dbManager = DbManager.createDbManager(DB_URL, false,DB_USER, DB_PASSWORD);
+			DbManager dbManager = DbManager.createDbManager(DB_URL, false,DB_USER, DB_PASSWORD);*/
 		} catch (IOException e) {
 			logger.error("Unable to load properties from " + PATH_TO_PROPERTIES_FILE);
 			throw new RuntimeException("Unable to load properties from " + PATH_TO_PROPERTIES_FILE);
@@ -50,7 +50,7 @@ public class PersistenceClient {
 	
 	public List<String> getVMs(){
 		ArrayList<String> result = new ArrayList<String>();
-		DbManager dbManager = DbManager.getDbManager();
+	/*	DbManager dbManager = DbManager.getDbManager();
 		List<NodeDirectory> list = dbManager.getList(NodeDirectory.class);
 		for (int i = 0; i < list.size(); i++) {
 			NodeDirectory node = list.get(i);
@@ -58,12 +58,12 @@ public class PersistenceClient {
 				String url = TCloudServerURL+URICreation.getURIVEEReplica(node.getFqnString());
 				result.add(url);
 			}
-		}
+		}*/
 		return result;
 	}
 	
 	public void export(BaseMonitoringData data){
-		DbManager dbManager = DbManager.getDbManager();
+	/*	DbManager dbManager = DbManager.getDbManager();
 		
 		NodeDirectory node = dbManager.get(NodeDirectory.class, data.getFQN());
 		Set<String> keys = data.keys();
@@ -91,12 +91,12 @@ public class PersistenceClient {
 				}
 			}
 			dbManager.save(samplesToPersist);
-		}
+		}*/
 	}
 	
 	public List<String> getNics(){
 		ArrayList<String> result = new ArrayList<String>();
-		DbManager dbManager = DbManager.getDbManager();
+	/*	DbManager dbManager = DbManager.getDbManager();
 		List<NodeDirectory> list = dbManager.getList(NodeDirectory.class);
 		for (int i = 0; i < list.size(); i++) {
 			NodeDirectory node = list.get(i);
@@ -116,7 +116,7 @@ public class PersistenceClient {
 			}catch (Exception e) {
 			// TODO: handle exception
 			}
-		}
+		}*/
 		return result;
 	}	
 	
@@ -125,7 +125,7 @@ public class PersistenceClient {
 		String fqnNIC = null;
 		String fqnVeeReplica = null; URICreation.getFQNFromURL(url);
 		int i = url.indexOf(HARDWARE_SEPARATOR);
-		DbManager dbManager = null;
+	/*	DbManager dbManager = null;
 		if (i > 0){
 			String nicInstanceId = url.substring(i+HARDWARE_SEPARATOR.length()+1);
 			nicInstanceId = nicInstanceId.substring(0,nicInstanceId.indexOf("/"));
@@ -142,7 +142,7 @@ public class PersistenceClient {
 					fqnNIC = nic.getFqnString();
 				}
 			}
-		}
+		}*/
 		return fqnNIC;
 	}	
 	
