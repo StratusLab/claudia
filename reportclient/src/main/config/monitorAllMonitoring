@@ -29,7 +29,7 @@ function start() {
 
 	fi
 
-	nohup java -Djava.net.preferIPv4Stack=true -jar lib/reportClient-0.1.0.jar AllMonitoring 2> logs/monitorAll-err.log > logs/monitorAll-out.log &
+	nohup java -Djava.net.preferIPv4Stack=true -jar lib/reportclient-0.1.0-SNAPSHOT.jar AllMonitoring 2> logs/monitorAll-err.log > logs/monitorAll-out.log &
 	
 	echo $! > logs/monitorAll.pid
 }
