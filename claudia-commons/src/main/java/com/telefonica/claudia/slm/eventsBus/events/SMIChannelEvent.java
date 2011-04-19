@@ -66,6 +66,10 @@ public class SMIChannelEvent extends Event implements Serializable {
     public static final String VEE_DESCRIPTION = "VeeDescription";
     public static final String CUSTOMER_DESCRIPTION = "CustomerDescription";
     public static final String ORG_DESCRIPTION = "OrgDescription";
+    public static final String SEQUENCE_NUMBER = "seqNumber";
+
+    
+
     public static final String FQN_ID = "fqnId";
     
     private SMIAction action;
