@@ -1,5 +1,7 @@
 package com.telefonica.claudia.slm.monitoring;
 
+import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.sql.Timestamp;
@@ -13,61 +15,196 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
-import org.apache.log4j.Logger;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
 
-//import com.telefonica.claudia.slm.common.DbManager;
+import org.apache.log4j.Logger;
+import org.restlet.Client;
+import org.restlet.data.Protocol;
+
+import com.telefonica.claudia.slm.common.DbManager;
+import com.telefonica.claudia.slm.deployment.ServiceApplication;
 //import com.telefonica.claudia.slm.deployment.NIC;
-//import com.telefonica.claudia.slm.deployment.VEEReplica;
+import com.telefonica.claudia.slm.deployment.VEEReplica;
 import com.telefonica.claudia.slm.monitoring.report.BaseMonitoringData;
 import com.telefonica.claudia.slm.monitoring.report.MonitoringSampleData;
 import com.telefonica.claudia.smi.URICreation;
+import org.restlet.Client;
+import org.restlet.data.Form;
+import org.restlet.data.MediaType;
+import org.restlet.data.Protocol;
+import org.restlet.data.Reference;
+import org.restlet.data.Response;
+import org.restlet.resource.DomRepresentation;
+import org.restlet.resource.Representation;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+
 
 public class PersistenceClient {
-	
+
 	private static final Logger logger = Logger.getLogger(PersistenceClient.class);
 	private final String TCloudServerURL;
-/*	private final String DB_URL;
+	/*	private final String DB_URL;
 	private final String DB_USER;
 	private final String DB_PASSWORD;*/
-	
+	private final String SITE_ROOT;
+
 	public static final String PATH_TO_PROPERTIES_FILE = "./conf/reportClient.properties";
 
 	private static final Properties properties = new Properties();	
-	
+
+	public static Client client;
+
 	public PersistenceClient() {		
 		try {
 			properties.load(new FileInputStream(PATH_TO_PROPERTIES_FILE));
 			TCloudServerURL = properties.getProperty("TServer.url");
-		/*	DB_URL = properties.getProperty("bd.url");
+			/*	DB_URL = properties.getProperty("bd.url");
 			DB_USER = properties.getProperty("bd.user");
 			DB_PASSWORD = properties.getProperty("bd.password");
 			DbManager dbManager = DbManager.createDbManager(DB_URL, false,DB_USER, DB_PASSWORD);*/
+			SITE_ROOT = properties.getProperty("SiteRoot");
 		} catch (IOException e) {
 			logger.error("Unable to load properties from " + PATH_TO_PROPERTIES_FILE);
 			throw new RuntimeException("Unable to load properties from " + PATH_TO_PROPERTIES_FILE);
 		}
 	}	
-	
-	public List<String> getVMs(){
-		ArrayList<String> result = new ArrayList<String>();
-	/*	DbManager dbManager = DbManager.getDbManager();
-		List<NodeDirectory> list = dbManager.getList(NodeDirectory.class);
-		for (int i = 0; i < list.size(); i++) {
-			NodeDirectory node = list.get(i);
-			if (node.getTipo()== NodeDirectory.TYPE_REPLICA){
-				String url = TCloudServerURL+URICreation.getURIVEEReplica(node.getFqnString());
-				result.add(url);
+
+
+
+	public static String get(Client client, Reference reference)
+	throws IOException {
+		Response response = client.get(reference);
+		if (response.getStatus().isSuccess()) {
+			if (response.isEntityAvailable()) {
+				return response.getEntity().getText();
+			} else {
+				return "No response from the server";
 			}
-		}*/
+		} else {
+			System.out.println("GET request didn't succeed");
+			return "ERROR";
+		}
+	}
+
+	public static ArrayList<String> findvdc(String getresponse){
+
+
+		ArrayList<String>vdcs = new ArrayList<String>();
+		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance ( );
+
+		try
+		{
+			DocumentBuilder builder = factory.newDocumentBuilder();
+			Document doc= builder.parse(new ByteArrayInputStream(getresponse.getBytes()));
+
+			NodeList vdcList = doc.getElementsByTagName("Link");
+
+			for (int i=0; i < vdcList.getLength(); i++) {
+
+				Node node = vdcList.item(i);
+				NamedNodeMap atributes = node.getAttributes(  );
+				Node typeAtribute = atributes.getNamedItem( "type" );
+				if (typeAtribute.getNodeValue().equals("application/vnd.telefonica.tcloud.vdc+xml")){
+					Node hrefAtribute = atributes.getNamedItem( "href" );
+					String fqn=hrefAtribute.getNodeValue();
+					vdcs.add(fqn);
+					logger.info("VDC found " + fqn); 
+				}
+			}
+		}
+		catch (Exception spe)
+		{
+			// Algún tipo de error: fichero no accesible, formato de XML incorrecto, etc.
+		}
+		return vdcs;
+	}
+
+	public static ArrayList<String> findvms(String getresponse){
+
+
+		ArrayList<String>vms = new ArrayList<String>();
+		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance ( );
+
+		try
+		{
+			DocumentBuilder builder = factory.newDocumentBuilder();
+			Document doc= builder.parse(new ByteArrayInputStream(getresponse.getBytes()));
+
+			NodeList vmList = doc.getElementsByTagName("Link");
+
+			for (int i=0; i < vmList.getLength(); i++) {
+
+				Node node = vmList.item(i);
+				NamedNodeMap atributes = node.getAttributes(  );
+				Node typeAtribute = atributes.getNamedItem( "type" );
+				if (typeAtribute.getNodeValue().equals("application/vnd.telefonica.tcloud.vapp+xml")){
+					Node hrefAtribute = atributes.getNamedItem( "href" );
+					String fqn=hrefAtribute.getNodeValue();
+					vms.add(fqn);
+					//	logger.info("PONG econtrada VM " + fqn); 
+				}
+			}
+		}
+		catch (Exception spe)
+		{
+			// Algún tipo de error: fichero no accesible, formato de XML incorrecto, etc.
+		}
+		return vms;
+	}
+
+
+	public List<String> getVMs() throws IOException{
+
+		ArrayList<String>vdcs = new ArrayList<String>();
+		ArrayList<String> result = new ArrayList<String>();
+
+		client = new Client(Protocol.HTTP);
+		Reference  TcloudURL  = new Reference(TCloudServerURL+"/api/org/"+SITE_ROOT);
+		String url=get(client,TcloudURL);
+
+		logger.info("Tcloud URL: " + TcloudURL); 
+		vdcs=findvdc(url);
+
+		for (Iterator iterator = vdcs.iterator(); iterator.hasNext();) {
+			String vdc = (String) iterator.next();		
+			ArrayList<String> vms = new ArrayList<String>();
+			int i = vdc.indexOf("/api");
+			String vdcfqn = TCloudServerURL+vdc.substring(i,vdc.length());
+			Reference  vdcURL  = new Reference(vdcfqn);
+			//	    logger.info("PONG VDC: " + vdcURL);
+			String vmurl=get(client,vdcURL);
+			//		logger.info("PONG GET VM: " + vmurl); 
+			vms=findvms(vmurl);
+
+			for (Iterator iterator2 = vms.iterator(); iterator2.hasNext();) {
+				String vm = (String) iterator2.next();	
+				int j = vm.indexOf("/api");
+				result.add(TCloudServerURL+vm.substring(i,vm.length()));
+			}
+
+		}
+
+		for (Iterator iterator = result.iterator(); iterator.hasNext();) {
+			String res = (String) iterator.next();	
+			logger.info("VMs found: " + res); 
+
+		}
+
+
 		return result;
 	}
-	
+
 	public void export(BaseMonitoringData data){
-	/*	DbManager dbManager = DbManager.getDbManager();
-		
+		/*	DbManager dbManager = DbManager.getDbManager();
+
 		NodeDirectory node = dbManager.get(NodeDirectory.class, data.getFQN());
 		Set<String> keys = data.keys();
-		
+
 		for (String measure : keys) {
 			MonitoringSampleData[] samples2 = data.get(measure);
 			SortedSet<MonitoringSampleData> samplesOrdered = new TreeSet<MonitoringSampleData>();			
@@ -76,7 +213,7 @@ public class PersistenceClient {
 			Set<MonitoringSample> samplesToPersist = new HashSet<MonitoringSample>();
 			while (iterator.hasNext()) {
 				MonitoringSampleData sample = (MonitoringSampleData) iterator.next();
-				
+
 				Timestamp timestamp = (Timestamp) dbManager.executeQuery("select max(datetime) from "+MonitoringSample.class.getName()+
 						" where associatedObject_internalId =" + node.getObjectId() +
 						" AND  measure_type ='"+measure+"'");
@@ -86,17 +223,17 @@ public class PersistenceClient {
 							measure,
 							sample.getValue(),
 							sample.getUnit());
-					
+
 					samplesToPersist.add(ms);					
 				}
 			}
 			dbManager.save(samplesToPersist);
 		}*/
 	}
-	
+
 	public List<String> getNics(){
 		ArrayList<String> result = new ArrayList<String>();
-	/*	DbManager dbManager = DbManager.getDbManager();
+		/*	DbManager dbManager = DbManager.getDbManager();
 		List<NodeDirectory> list = dbManager.getList(NodeDirectory.class);
 		for (int i = 0; i < list.size(); i++) {
 			NodeDirectory node = list.get(i);
@@ -119,17 +256,17 @@ public class PersistenceClient {
 		}*/
 		return result;
 	}	
-	
+
 	public String getFqnNIC(String url) {
 		String HARDWARE_SEPARATOR = "/hw";
 		String fqnNIC = null;
 		String fqnVeeReplica = null; URICreation.getFQNFromURL(url);
 		int i = url.indexOf(HARDWARE_SEPARATOR);
-	/*	DbManager dbManager = null;
+		/*	DbManager dbManager = null;
 		if (i > 0){
 			String nicInstanceId = url.substring(i+HARDWARE_SEPARATOR.length()+1);
 			nicInstanceId = nicInstanceId.substring(0,nicInstanceId.indexOf("/"));
-			
+
 			 dbManager = DbManager.getDbManager();
 
 			VEEReplica veeReplica = null; //dbManager.getVEEReplica(fqnVeeReplica);
@@ -145,12 +282,12 @@ public class PersistenceClient {
 		}*/
 		return fqnNIC;
 	}	
-	
+
 	public static void main(String[] args) {
-	//	PersistenceClient pc = new PersistenceClient();
+		//	PersistenceClient pc = new PersistenceClient();
 		//String fqn = pc.getFqnNIC("http://10.95.129.34:8183/api/org/tid34/vdc/joseldCPD/vapp/joseldServ/AnaVM1/1/hw/networks-4001/monitor/values?measures=netPacketstxSummation,netInput,netOutput,netPacketsrxSummation&from=2011-02-03T11:48:00Z&to=2011-02-03T12:18:00Z&interval=5m");
-	//	List<String> nics = pc.getNics();
-	//	System.out.println("Nic"+nics.size());
-		
+		//	List<String> nics = pc.getNics();
+		//	System.out.println("Nic"+nics.size());
+
 	}
 }

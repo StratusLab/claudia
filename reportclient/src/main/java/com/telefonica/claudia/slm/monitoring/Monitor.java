@@ -1,5 +1,6 @@
 package com.telefonica.claudia.slm.monitoring;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
@@ -47,7 +48,7 @@ public class Monitor extends Thread {
 		}
 	}
 
-	public static void generateAllReport() {
+	public static void generateAllReport() throws IOException {
 		long i1 = System.currentTimeMillis();
 		PersistenceClient pc = new PersistenceClient();
 		List<String> list = pc.getVMs();
@@ -81,15 +82,15 @@ public class Monitor extends Thread {
 		System.out.println("\t\tStart monitoring DiskUsage.\n");
 	}
 	
-	public static void main(String[] args) {
+	public static void main(String[] args) throws IOException {
 	 	if (args.length < 1) {
     		System.out.println("Command not recognized. \n");
     		showUsage();
     	}
 	 	else if (args.length==1){
 			if (args[0].toLowerCase().equals("allmonitoring") ){
-				NICMonitor nic = new NICMonitor();
-				nic.start();
+		/*		NICMonitor nic = new NICMonitor();
+				nic.start();*/
 				generateAllReport();
 			}
 			else if (args[0].toLowerCase().equals("diskusage") ){

@@ -49,7 +49,10 @@
       <groupId>eu.stratuslab.pkgs.claudia</groupId>
 	  <artifactId>claudia-commons</artifactId>
     </dependency>
-    
+      <dependency>
+      <groupId>eu.stratuslab.pkgs.claudia</groupId>
+          <artifactId>clotho</artifactId>
+    </dependency>
 
     <dependency>
       <groupId>commons-logging</groupId>

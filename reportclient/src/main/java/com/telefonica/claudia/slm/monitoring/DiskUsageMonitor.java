@@ -1,5 +1,6 @@
 package com.telefonica.claudia.slm.monitoring;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -49,7 +50,7 @@ public class DiskUsageMonitor extends Thread{
 		}		
 	}
 	
-	public static void generateAllDiskUsageReport() {
+	public static void generateAllDiskUsageReport() throws IOException {
 		long i1 = System.currentTimeMillis();			
 		PersistenceClient pc = new PersistenceClient();
 		List<String> list = pc.getVMs();
