@@ -855,6 +855,7 @@ public class LifecycleController  extends UnicastRemoteObject implements SMI, Se
     	
     	case GET_ORG:
     		
+    		System.out.println ("get org");
     		final String fqnOrgGet = event.get(SMIChannelEvent.FQN_ID);
     		final String seqNumberGetOrg = event.get(SMIChannelEvent.SEQUENCE_NUMBER);
     		

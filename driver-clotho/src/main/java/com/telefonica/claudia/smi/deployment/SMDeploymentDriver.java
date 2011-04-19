@@ -371,6 +371,8 @@ public long  createVdc(String fqnCustomer, String vdc) throws IOException
 }
 	
 	public String getOrg(String fqn) throws IOException {
+		
+		System.out.println ("Get Org " + fqn);
      SMIChannelEvent smi = new SMIChannelEvent(0, 0, SMIAction.GET_ORG);
 		
     	try {
