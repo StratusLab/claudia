@@ -68,6 +68,7 @@ import com.telefonica.claudia.slm.deployment.ProbeKPI;
 import com.telefonica.claudia.slm.deployment.ServiceApplication;
 import com.telefonica.claudia.slm.deployment.VEE;
 import com.telefonica.claudia.slm.deployment.ServiceKPI;
+import com.telefonica.claudia.slm.deployment.VEEReplica;
 import com.telefonica.claudia.slm.deployment.hwItems.CPU;
 import com.telefonica.claudia.slm.deployment.hwItems.Disk;
 import com.telefonica.claudia.slm.deployment.hwItems.Memory;
@@ -852,7 +853,37 @@ public class LifecycleController  extends UnicastRemoteObject implements SMI, Se
     	
     	switch(event.getAction()) {
     	
-	    	case DEPLOY:
+    	case GET_ORG:
+    		
+    		final String fqnOrgGet = event.get(SMIChannelEvent.FQN_ID);
+    		final String seqNumberGetOrg = event.get(SMIChannelEvent.SEQUENCE_NUMBER);
+    		
+			e = new SMIChannelEvent(System.currentTimeMillis(), 0, SMIAction.GET_ORG);
+			
+			List<Customer> customers =  DbManager.getDbManager().getList(Customer.class);
+			
+			doc = getOrganizationXML(customers);
+			
+			final String xmlOrgRepresentation = DataTypesUtils.serializeXML(doc);
+    		
+    		e.put(SMIChannelEvent.ORG_DESCRIPTION, xmlOrgRepresentation);
+    		e.setSuccess(true);
+    		
+	    	try {
+				busMediator.sendEvent(e,
+									  new HashMap<String, String>() {{
+										  put("org", fqnOrgGet);
+										  put("action", SMIAction.GET_ORG.toString());
+										  put(SMIChannelEvent.SEQUENCE_NUMBER, seqNumberGetOrg);
+									  }});
+				
+			} catch (JMSException e1) {
+				logger.error("Bus communication exception: " + e1.getMessage());
+			}	
+			
+    		break;
+
+    	     case DEPLOY:
 	    		try {
 	    			FQN name = deploy(event.get(SMIChannelEvent.OVF_DOCUMENT), event.get(SMIChannelEvent.CUSTOMER_NAME), event.get(SMIChannelEvent.SERVICE_NAME));
 	    		
@@ -1266,4 +1297,61 @@ public class LifecycleController  extends UnicastRemoteObject implements SMI, Se
     	logger.info("LCC finished"); 
     	System.exit(0);
     }
+    
+    public static Document getOrganizationXML(List<Customer> vdcList) {
+        DocumentBuilderFactory dbfac = DocumentBuilderFactory.newInstance();
+        DocumentBuilder docBuilder;
+        dbfac.setNamespaceAware(true);
+        
+        try {
+			docBuilder = dbfac.newDocumentBuilder();
+			
+			Document doc = docBuilder.newDocument();
+			
+	        Element r = doc.createElement("Org");
+	        doc.appendChild(r);
+	        
+	        r.setAttribute("name", getSiteRoot());
+	        //r.setAttribute("href", "http://" + SMConfiguration.getInstance().getSMIHost() + ":" + SMConfiguration.getInstance().getSMIPort() + URICreation.getURIOrg(siteRoot));
+	        r.setAttribute("href", "@HOSTNAME" + URICreation.getURIOrg(getSiteRoot()));
+	        
+	        for (Customer vDatacenter: vdcList) {
+	            Element link = (Element) doc.createElement("Link");
+	            link.setAttribute("rel", "down");
+	            link.setAttribute("type", "application/vnd.telefonica.tcloud.vdc+xml");
+	            link.setAttribute("href", "@HOSTNAME" + URICreation.getURIVDC(vDatacenter.getFQN().toString()));
+	            r.appendChild(link);
+	        }
+
+            Element vdcAddlink = (Element) doc.createElement("Link");
+            vdcAddlink.setAttribute("rel", "add");
+            vdcAddlink.setAttribute("type", "application/vnd.telefonica.tcloud.vdc+xml");
+            vdcAddlink.setAttribute("href", "@HOSTNAME" + URICreation.URI_VDC_ADD.replace("{org-id}", getSiteRoot().replace(".", "_")));
+            r.appendChild(vdcAddlink);
+	        
+            Element link = (Element) doc.createElement("Link");
+            link.setAttribute("rel", "tasks");
+            link.setAttribute("type", "application/vnd.telefonica.tcloud.tasklist+xml");
+            link.setAttribute("href", "@HOSTNAME" + URICreation.getURIOrg(getSiteRoot()) + "/task");
+            r.appendChild(link);
+            
+            return doc;
+	        
+		} catch (ParserConfigurationException e) {
+			
+			e.printStackTrace();
+			
+			return null;
+		}
+	}
+    
+    private static String getSiteRoot() {
+    	String siteRoot = null;
+		if (siteRoot == null) {
+			siteRoot = ReservoirDirectory.ROOT_NAME_SPACE;
+		}
+		return siteRoot;
+	}
+
+
 }
