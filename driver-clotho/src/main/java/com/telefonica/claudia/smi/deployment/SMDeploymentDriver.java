@@ -371,8 +371,35 @@ public long  createVdc(String fqnCustomer, String vdc) throws IOException
 }
 	
 	public String getOrg(String fqn) throws IOException {
-		//TODO: Must be implemented when clotho supports Orgs
-		return null;
+SMIChannelEvent smi = new SMIChannelEvent(0, 0, SMIAction.GET_ORG);
+		
+    	try {
+			smi.put(SMIChannelEvent.FQN_ID, fqn);
+
+			smiChannelProducer.send(session.createObjectMessage(smi));
+			
+			// Wait until the Service is deployed.
+			MessageConsumer messageConsumer = session.createConsumer(smiChannelReply, "customer = '" + fqn + "'");
+			ObjectMessage m = (ObjectMessage) messageConsumer.receive(EVENT_BUS_TIMEOUT);
+			
+			if (m==null) {
+				log.error("Timeout waiting for a server response. Try later.");
+				
+				throw new IOException("Timeout waiting for a server response. Try later.");
+			}
+			
+			smi = (SMIChannelEvent) m.getObject();
+			String serviceDescription= smi.get(SMIChannelEvent.ORG_DESCRIPTION);
+			
+			messageConsumer.close();
+			
+	        log.info("SMPlugin: Customer data retrieved");
+			return serviceDescription;
+			
+		} catch (JMSException e) {
+			log.error("SMDeploymentDriver: Communication error accessing the SLM. Impossible to retrieve customer data.",e);
+			throw new IOException("SMDeploymentDriver: Communication error accessing the SLM. Impossible to retrieve customer data." + e.getMessage());
+		}
 	}
 	
 	public String getVdc(String fqn) throws IOException {
