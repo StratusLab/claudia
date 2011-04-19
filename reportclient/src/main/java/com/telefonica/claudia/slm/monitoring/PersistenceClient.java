@@ -4,6 +4,7 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -18,14 +19,19 @@ import java.util.TreeSet;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
+import org.apache.commons.httpclient.HttpClient;
+import org.apache.commons.httpclient.HttpException;
+import org.apache.commons.httpclient.methods.PostMethod;
+import org.apache.commons.httpclient.methods.RequestEntity;
+import org.apache.commons.httpclient.methods.StringRequestEntity;
 import org.apache.log4j.Logger;
 import org.restlet.Client;
 import org.restlet.data.Protocol;
 
-import com.telefonica.claudia.slm.common.DbManager;
-import com.telefonica.claudia.slm.deployment.ServiceApplication;
+
+//import com.telefonica.claudia.slm.deployment.ServiceApplication;
 //import com.telefonica.claudia.slm.deployment.NIC;
-import com.telefonica.claudia.slm.deployment.VEEReplica;
+//import com.telefonica.claudia.slm.deployment.VEEReplica;
 import com.telefonica.claudia.slm.monitoring.report.BaseMonitoringData;
 import com.telefonica.claudia.slm.monitoring.report.MonitoringSampleData;
 import com.telefonica.claudia.smi.URICreation;
@@ -46,12 +52,30 @@ import org.w3c.dom.NodeList;
 
 public class PersistenceClient {
 
+
 	private static final Logger logger = Logger.getLogger(PersistenceClient.class);
 	private final String TCloudServerURL;
 	/*	private final String DB_URL;
 	private final String DB_USER;
 	private final String DB_PASSWORD;*/
 	private final String SITE_ROOT;
+
+	public static final String ROOT_MONITORING_TAG_NAME = "MonitoringInformation";
+	public static final String EVENT_TYPE_TAG_NAME = "EventType";
+	public static final String T_0_TAG_NAME = "EpochTimestamp";
+	public static final String T_DELTA_TAG_NAME = "TimeDelta";
+	public static final String FQN_TAG_NAME = "FQN";
+	public static final String VALUE_TAG_NAME = "Value";
+
+	private static String restPath;
+	private static String restServerPort;
+	private static String restServerHost;
+	private static String measurementTopicIdentifier;
+	private static String namingFactory;
+	private static String serverProviderUrl;
+	private static String connFactoryName;
+
+	private static HttpClient httpClient = new HttpClient();
 
 	public static final String PATH_TO_PROPERTIES_FILE = "./conf/reportClient.properties";
 
@@ -74,6 +98,46 @@ public class PersistenceClient {
 		}
 	}	
 
+	public static void sendRESTMessage(String eventType, long t_0, long delta_t, String fqn, double value) {
+
+		String message =	"<" + ROOT_MONITORING_TAG_NAME + ">" +
+		"<" + EVENT_TYPE_TAG_NAME + ">" + eventType +
+		"</" + EVENT_TYPE_TAG_NAME + ">" +
+		"<" + T_0_TAG_NAME + ">" + t_0 +
+		"</" + T_0_TAG_NAME + ">" +
+		"<" + T_DELTA_TAG_NAME + ">" + delta_t +
+		"</" + T_DELTA_TAG_NAME + ">" +
+		"<" + FQN_TAG_NAME + ">" + fqn +
+		"</" + FQN_TAG_NAME + ">" +
+		"<" + VALUE_TAG_NAME + ">" + value +
+		"</" + VALUE_TAG_NAME + ">" +
+		"</" + ROOT_MONITORING_TAG_NAME + ">" ;
+
+		PostMethod post = new PostMethod("http://" + restServerHost + ":" + restServerPort + restPath);
+
+		RequestEntity request = null;		
+		try {
+			request = new StringRequestEntity(message, "text/xml", null);
+		} catch (UnsupportedEncodingException ex) {
+			System.out.println("This should never happen? Cannot create a String request entity with null char encoding");
+			return;
+		}
+
+		post.setRequestEntity(request);
+
+		try {			
+			httpClient.executeMethod(post);
+			System.out.println("\n\tResult status: " + post.getStatusText() + "\n");
+		} catch (HttpException ex) {
+			System.out.println("HTTPException caught when trying to send POST message: " + ex.getMessage());
+			return;
+		} catch (IOException ex) {
+			System.out.println("IOException caught when trying to send POST message: " + ex.getMessage());
+			return;
+		} finally {
+			post.releaseConnection();
+		}
+	}
 
 
 	public static String get(Client client, Reference reference)
