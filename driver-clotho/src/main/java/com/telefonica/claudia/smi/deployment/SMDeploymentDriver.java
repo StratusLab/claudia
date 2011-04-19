@@ -373,6 +373,7 @@ public long  createVdc(String fqnCustomer, String vdc) throws IOException
 	public String getOrg(String fqn) throws IOException {
 		
 		System.out.println ("Get Org " + fqn);
+		String serviceDescription = null;
      SMIChannelEvent smi = new SMIChannelEvent(0, 0, SMIAction.GET_ORG);
 		
     	try {
@@ -381,7 +382,9 @@ public long  createVdc(String fqnCustomer, String vdc) throws IOException
 			smiChannelProducer.send(session.createObjectMessage(smi));
 			
 			// Wait until the Service is deployed.
-			MessageConsumer messageConsumer = session.createConsumer(smiChannelReply, "customer = '" + fqn + "'");
+			System.out.println ("event received");
+			MessageConsumer messageConsumer = session.createConsumer(smiChannelReply, "org = '" + fqn + "'");
+			System.out.println (messageConsumer);
 			ObjectMessage m = (ObjectMessage) messageConsumer.receive(EVENT_BUS_TIMEOUT);
 			
 			if (m==null) {
@@ -390,13 +393,28 @@ public long  createVdc(String fqnCustomer, String vdc) throws IOException
 				throw new IOException("Timeout waiting for a server response. Try later.");
 			}
 			
+			System.out.println (m);
 			smi = (SMIChannelEvent) m.getObject();
-			String serviceDescription= smi.get(SMIChannelEvent.ORG_DESCRIPTION);
+			System.out.println (smi);
+			if (smi.isSuccess()){
+				serviceDescription= smi.get(SMIChannelEvent.ORG_DESCRIPTION);
 			
-			messageConsumer.close();
+				log.info("SMPlugin: Organization data retrieved");
+				messageConsumer.close();
+				
+		        
+				return serviceDescription;
+			}
+			else{
+				System.out.println ("No object received correctly "); 
+				messageConsumer.close();
+				return null;
+			}
 			
-	        log.info("SMPlugin: Customer data retrieved");
-			return serviceDescription;
+		//	smi = (SMIChannelEvent) m.getObject();
+		//	String serviceDescription= smi.get(SMIChannelEvent.ORG_DESCRIPTION);
+			
+			
 			
 		} catch (JMSException e) {
 			log.error("SMDeploymentDriver: Communication error accessing the SLM. Impossible to retrieve customer data.",e);

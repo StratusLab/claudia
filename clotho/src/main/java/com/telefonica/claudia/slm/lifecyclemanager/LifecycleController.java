@@ -856,27 +856,48 @@ public class LifecycleController  extends UnicastRemoteObject implements SMI, Se
     	case GET_ORG:
     		
     		System.out.println ("get org");
+    		
     		final String fqnOrgGet = event.get(SMIChannelEvent.FQN_ID);
-    		final String seqNumberGetOrg = event.get(SMIChannelEvent.SEQUENCE_NUMBER);
+    		String org = URICreation.getOrg(fqnOrgGet);
+    		
+    		logger.info("Org obtained " + org);
+    		
+    		
+    		
+    		//final String seqNumberGetOrg = event.get(SMIChannelEvent.SEQUENCE_NUMBER);
     		
 			e = new SMIChannelEvent(System.currentTimeMillis(), 0, SMIAction.GET_ORG);
+			
+			if (!SMConfiguration.getInstance().getSiteRoot().equals(org))
+    		{
+    			logger.error("The Org id " + org + " does not belong to the site deployed ");
+        		e.setSuccess(false);
+    			
+    		}
+			else 
+			{	
 			
 			List<Customer> customers =  DbManager.getDbManager().getList(Customer.class);
 			
 			doc = getOrganizationXML(customers);
+
 			
 			final String xmlOrgRepresentation = DataTypesUtils.serializeXML(doc);
+			System.out.println ("xml file " + xmlOrgRepresentation);
+			
     		
     		e.put(SMIChannelEvent.ORG_DESCRIPTION, xmlOrgRepresentation);
     		e.setSuccess(true);
+			}
     		
 	    	try {
 				busMediator.sendEvent(e,
 									  new HashMap<String, String>() {{
 										  put("org", fqnOrgGet);
-										  put("action", SMIAction.GET_ORG.toString());
-										  put(SMIChannelEvent.SEQUENCE_NUMBER, seqNumberGetOrg);
+										  put("action", SMIAction.GET_VDC.toString());
+									//	  put(SMIChannelEvent.SEQUENCE_NUMBER, seqNumberGetOrg);
 									  }});
+				
 				
 			} catch (JMSException e1) {
 				logger.error("Bus communication exception: " + e1.getMessage());
