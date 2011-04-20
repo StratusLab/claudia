@@ -97,6 +97,9 @@ public class PersistenceClient {
 			throw new RuntimeException("Unable to load properties from " + PATH_TO_PROPERTIES_FILE);
 		}
 	}	
+	
+	
+
 
 	public static void sendRESTMessage(String eventType, long t_0, long delta_t, String fqn, double value) {
 

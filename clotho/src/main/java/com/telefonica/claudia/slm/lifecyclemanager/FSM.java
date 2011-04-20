@@ -48,6 +48,7 @@ import java.util.Set;
 import org.apache.log4j.Logger;
 import org.json.JSONException;
 
+import com.telefonica.claudia.configmanager.lb.LoadBalancerConfigurator;
 import com.telefonica.claudia.slm.common.DbManager;
 import com.telefonica.claudia.slm.common.SMConfiguration;
 import com.telefonica.claudia.slm.deployment.Customer;
@@ -240,6 +241,8 @@ public class FSM extends Thread implements Serializable {
 	 * TODO: this seems more appropiate as a local attribute in the getNextState method.
 	 */
 	private HashMap<String, String> replicaCustomInfo;
+
+	private LoadBalancerConfigurator lbConfigurator;
 
 	/**
 	 * Determines the kind of events permitted in each of the different FSM states. The key of the
@@ -1062,12 +1065,27 @@ public class FSM extends Thread implements Serializable {
 		}
 		
 		for (VEEReplica veeReplica: veeReplicasConfs) {
+			logger.info("**** Reviewing replica " + veeReplica.getFQN());
 			VEEReplicaAllocationResult allocResult = allocResults.get(veeReplica);
 			if (!allocResult.isSuccess()) {
 				abort("VIM reports error: "+ allocResult.getMessage());
 				return false;
 			}
+
+			// If replica is loadbalanced, balancer should be notified
+
+			VEE balancerVEE = veeReplica.getVEE().getBalancedBy();
+
+			if (balancerVEE!=null){
+				logger.info("Adding replica to LB");
+				addRegularReplicaToBalancer(veeReplica, balancerVEE);
+			}
+ else {
+				logger.info(veeReplica.getFQN() + " is not balanced");
+			}
+
 		}
+
 
 		// The allocation was successful and the replica is UP and Running
 		// update the rollback
@@ -1307,4 +1325,29 @@ public class FSM extends Thread implements Serializable {
 		
 		return replicas;
 	}
+	
+	private void addRegularReplicaToBalancer(VEEReplica veeReplica, VEE balancerVEE) {
+		logger.info("Adding regular replica to load balancer");
+		logger.info("Configuring loadbalancer for "
+				+ veeReplica.getVEE().getFQN());
+
+		String replicaIP = veeReplica.getNICs().iterator().next()
+				.getIPAddresses().iterator().next();
+
+		Set<VEEReplica> balancerReplicas = balancerVEE.getVEEReplicas();
+		for (VEEReplica balancer : balancerReplicas) {
+			Set<NIC> nics = balancer.getNICs();
+			for (NIC nic : nics) {
+				if (!nic.getNICConf().getNetwork().getPrivateNet()) {
+					List<String> addresses = nic.getIPAddresses();
+					for (String ip : addresses) {
+						this.lbConfigurator.addNode(ip, balancerVEE
+								.getLbManagementPort(), veeReplica.getFQN()
+								.toString(), replicaIP);
+					}
+				}
+			}
+		}
+	}
+
 }

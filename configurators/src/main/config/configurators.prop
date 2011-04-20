@@ -1,0 +1,11 @@
+com.telefonica.claudia.configmanager.lb.LoadBalancerConfigurator=com.telefonica.claudia.configmanager.lb.impl.LoadBalancerConfiguratorRESTImpl
+com.telefonica.claudia.configmanager.vjsc.VJSCConfigurator=com.telefonica.claudia.configmanager.vjsc.impl.local.VJSCConfiguratorLocalImpl
+OVFEnvironmentFilePath=/opt/reservoir/modules/vjsc/config/ovf-env.xml
+outputVJSCConfigFilePath=/opt/srv/jackrabbit/repository.xml
+outputVJSCBootFilePath=/opt/srv/jackrabbit/bootstrap.properties
+inputVJSCBootFilePath=/opt/reservoir/modules/vjsc/config/bootstrap.properties
+DatabaseIP=org.apache.jackrabbit.core.fs.db.DbFileSystem.IPdatabase
+DatabaseUser=org.apache.jackrabbit.core.fs.db.DbFileSystem.user
+DatabaseURL=org.apache.jackrabbit.core.fs.db.DbFileSystem.url
+DatabasePassword=org.apache.jackrabbit.core.fs.db.DbFileSystem.password
+DatabaseType=org.apache.jackrabbit.core.fs.db.DbFileSystem.schema
