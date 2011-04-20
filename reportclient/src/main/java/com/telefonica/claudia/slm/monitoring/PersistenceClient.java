@@ -223,11 +223,42 @@ public class PersistenceClient {
 		return vms;
 	}
 
+	public static ArrayList<String> findmeasures(String getresponse){
 
+
+		ArrayList<String>measures = new ArrayList<String>();
+		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance ( );
+
+		try
+		{
+			DocumentBuilder builder = factory.newDocumentBuilder();
+			Document doc= builder.parse(new ByteArrayInputStream(getresponse.getBytes()));
+
+			NodeList measureList = doc.getElementsByTagName("MeasureDescriptor");
+
+			for (int i=0; i < measureList.getLength(); i++) {
+
+				Node node = measureList.item(i);
+				NamedNodeMap atributes = node.getAttributes(  );
+				Node nameAtribute = atributes.getNamedItem( "name" );
+					String name=nameAtribute.getNodeValue();
+					measures.add(name);
+					logger.info("measure found " + name); 
+			}
+		}
+		catch (Exception spe)
+		{
+			// Algún tipo de error: fichero no accesible, formato de XML incorrecto, etc.
+		}
+		return measures;
+	}
+
+	
 	public List<String> getVMs() throws IOException{
 
 		ArrayList<String>vdcs = new ArrayList<String>();
 		ArrayList<String> result = new ArrayList<String>();
+		
 
 		client = new Client(Protocol.HTTP);
 		Reference  TcloudURL  = new Reference(TCloudServerURL+"/api/org/"+SITE_ROOT);
@@ -256,8 +287,10 @@ public class PersistenceClient {
 		}
 
 		for (Iterator iterator = result.iterator(); iterator.hasNext();) {
+			ArrayList<String> measures = new ArrayList<String>();
 			String res = (String) iterator.next();	
 			logger.info("VMs found: " + res); 
+			measures = findmeasures(res);
 
 		}
 
