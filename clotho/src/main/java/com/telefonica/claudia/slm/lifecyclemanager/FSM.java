@@ -398,6 +398,8 @@ public class FSM extends Thread implements Serializable {
 		logger.info("Reporting to Lifecycle Controler the FSM has been created for Service Application");
 		lcc.registerFSM(sap.getFQN(), this);
 
+		this.lcc.addCustomer(client);
+
 		rle.configure(this);
 		rle.claudiaRules2Drools();
 
