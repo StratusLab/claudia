@@ -528,7 +528,7 @@ public class OneMonitoringDriver implements MonitoringDriver {
 	   
 	    if (metric.indexOf(".")!=-1)
 	       metricaONE = metricsTemplateONe.get(metric.substring(0,metric.indexOf(".")));
-	    else
+	    else if (metric.indexOf(".")==-1)
 	    	metricaONE = metricsTemplateONe.get(metric);
 	   
 	    Object result [] = this.getOneInfoParams(elementId);
