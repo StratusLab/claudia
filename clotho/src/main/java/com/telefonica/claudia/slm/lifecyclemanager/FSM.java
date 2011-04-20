@@ -1074,7 +1074,7 @@ public class FSM extends Thread implements Serializable {
 
 			// If replica is loadbalanced, balancer should be notified
 
-			VEE balancerVEE = veeReplica.getVEE().getBalancedBy();
+	/*		VEE balancerVEE = veeReplica.getVEE().getBalancedBy();
 
 			if (balancerVEE!=null){
 				logger.info("Adding replica to LB");
@@ -1082,7 +1082,7 @@ public class FSM extends Thread implements Serializable {
 			}
  else {
 				logger.info(veeReplica.getFQN() + " is not balanced");
-			}
+			}*/
 
 		}
 
@@ -1335,7 +1335,7 @@ public class FSM extends Thread implements Serializable {
 				.getIPAddresses().iterator().next();
 
 		Set<VEEReplica> balancerReplicas = balancerVEE.getVEEReplicas();
-		for (VEEReplica balancer : balancerReplicas) {
+	/*	for (VEEReplica balancer : balancerReplicas) {
 			Set<NIC> nics = balancer.getNICs();
 			for (NIC nic : nics) {
 				if (!nic.getNICConf().getNetwork().getPrivateNet()) {
@@ -1347,7 +1347,7 @@ public class FSM extends Thread implements Serializable {
 					}
 				}
 			}
-		}
+		}*/
 	}
 
 }

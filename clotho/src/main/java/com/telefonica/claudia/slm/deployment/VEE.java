@@ -68,7 +68,7 @@ import com.telefonica.claudia.slm.naming.ReservoirDirectory;
 @SuppressWarnings("unchecked")
 public class VEE implements Comparable, DirectoryEntry {
     
-    public static enum VirtualizationTechnologyType {XEN, VMWARE, KVM, VJSC};
+    public static enum VirtualizationTechnologyType {XEN, VMWARE, KVM};
     
 	@Id
 	@GeneratedValue
@@ -97,27 +97,10 @@ public class VEE implements Comparable, DirectoryEntry {
     @OneToOne(cascade=CascadeType.ALL)
     private MemoryConf memoryConf = null;
     
-	@OneToOne(cascade = CascadeType.ALL)
-	private VEE balancedBy = null;
-
     private int lastReplicaId = 0;
     private int maxReplicas = 1;    
     private int minReplicas = 1;
-	private int lbManagementPort = 0;
-	private int initReplicas = minReplicas;
-	private boolean balancer = false;
-    
-    public boolean isBalancer() {
-		return balancer;
-	}
-
-	public void setBalancer(boolean balancer) {
-		this.balancer = balancer;
-	}
-
-	/* RESERVOIR CHANGE */
-    private String migrability = "cross-site";
-    private boolean vjsc = false;
+    private int initReplicas = minReplicas;
     private int currentReplicas= 0;
     private boolean hotMigrationAllowed = true;
     private boolean coldMigrationAllowed = true;
@@ -143,9 +126,7 @@ public class VEE implements Comparable, DirectoryEntry {
     // RESERVOIR attributes
     private String UUID=null;
     
-    /* MIGRABILITY RESERVOIR CHANGE */
     private boolean migratable;
-
     
     private double availabilityValue;
     
@@ -159,14 +140,6 @@ public class VEE implements Comparable, DirectoryEntry {
     
     public VEE() {}
     
-	public int getLbManagementPort() {
-		return lbManagementPort;
-	}
-
-	public void setLbManagementPort(int lbManagementPort) {
-		this.lbManagementPort = lbManagementPort;
-	}
-
     public String getUUID() {
     	return UUID;
     }
@@ -230,15 +203,7 @@ public class VEE implements Comparable, DirectoryEntry {
         return cpusConf;
     }
     
-	public VEE getBalancedBy() {
-		return balancedBy;
-	}
-
-	public void setBalancedBy(VEE balancedBy) {
-		this.balancedBy = balancedBy;
-	}
-
-	public void addNICConf(NICConf nicConf) {
+    public void addNICConf(NICConf nicConf) {
         nicsConf.add(nicConf);
     }
     
@@ -364,25 +329,6 @@ public class VEE implements Comparable, DirectoryEntry {
     public int getInitReplicas() {
         return initReplicas;
     }
-    
-    /* MIGRABILITY RESERVOIR CHANGE */
-    public void setMigrability (String migrability) {
-        this.migrability = migrability;
-    }
-    
-    public String getMigrability() {
-        return migrability;
-    }
-    
-    /* VJSC RESERVOIR CHANGE */
-    public void setVjsc (boolean migrability) {
-        this.vjsc = migrability;
-    }
-    
-    public boolean getVjsc() {
-        return vjsc;
-    }
-  
 
     public VirtualizationTechnologyType getVirtType() {
         return virtType;
@@ -506,7 +452,7 @@ public class VEE implements Comparable, DirectoryEntry {
 		    		veeElement.appendChild(monitorLink);
 		    		
 		    		monitorLink.setAttribute("rel", "monitor:measures");
-		    		monitorLink.setAttribute("type", "application/vnc.telefonica.tcloud.measureDescriptorList+xml");
+		    		monitorLink.setAttribute("type", "application/vnc.telefonica.tcloud. measureDescriptorList+xml");
 		    		monitorLink.setAttribute("href", "@HOSTNAME/api/org/" + organizationId + "/vdc/" + 
 		    				this.getServiceApplication().getCustomer().getCustomerName() + "/vapp/" + this.getServiceApplication().getSerAppName() + "/" + this.getVEEName() + "/monitor");
 		    		
@@ -524,15 +470,15 @@ public class VEE implements Comparable, DirectoryEntry {
 		    			veeReplicaElement.setAttribute("name", veeReplica.getFQN().toString());
 		    			
 		    			
-		    			veeReplicaElement.setAttribute("href", "@HOSTNAME/api/org/" + organizationId +"/vdc/" + this.getServiceApplication().getCustomer().getCustomerName() + "/vapp/" + this.getServiceApplication().getSerAppName() +
+		    			veeReplicaElement.setAttribute("href", "@HOSTNAME/api/org/reservoir/vdc/" + this.getServiceApplication().getCustomer().getCustomerName() + "/vapp/" + this.getServiceApplication().getSerAppName() +
 														"/" + getVEEName() + "/" + veeReplica.getId());
 		    			
 		    			Element linkVeeReplica = doc.createElement("Link");
 		    			veeReplicaElement.appendChild(linkVeeReplica);
 		    			
 		    			linkVeeReplica.setAttribute("rel", "monitor:measures");
-		    			linkVeeReplica.setAttribute("type", "application/vnc.telefonica.tcloud.measureDescriptorList+xml");
-		    			linkVeeReplica.setAttribute("href", "@HOSTNAME/api/org/" + organizationId +"/vdc/" + 
+		    			linkVeeReplica.setAttribute("type", "application/vnc.telefonica.tcloud. measureDescriptorList+xml");
+		    			linkVeeReplica.setAttribute("href", "@HOSTNAME/api/org/reservoir/vdc/" + 
 		    					this.getServiceApplication().getCustomer().getCustomerName() + "/vapp/" + this.getServiceApplication().getSerAppName() + "/" + getVEEName() + "/" + veeReplica.getId() + "/monitor");
 
 		    		}
