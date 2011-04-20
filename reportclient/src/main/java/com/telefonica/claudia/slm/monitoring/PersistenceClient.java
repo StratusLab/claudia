@@ -142,7 +142,9 @@ public class PersistenceClient {
 
 	public static String get(Client client, Reference reference)
 	throws IOException {
+		client = new Client(Protocol.HTTP);
 		Response response = client.get(reference);
+		System.out.println (" reference " + reference.getIdentifier());
 		if (response.getStatus().isSuccess()) {
 			if (response.isEntityAvailable()) {
 				return response.getEntity().getText();
@@ -172,8 +174,8 @@ public class PersistenceClient {
 
 				Node node = vdcList.item(i);
 				NamedNodeMap atributes = node.getAttributes(  );
-				Node typeAtribute = atributes.getNamedItem( "type" );
-				if (typeAtribute.getNodeValue().equals("application/vnd.telefonica.tcloud.vdc+xml")){
+				Node typeAtribute = atributes.getNamedItem( "rel" );
+				if (typeAtribute.getNodeValue().equals("down")){
 					Node hrefAtribute = atributes.getNamedItem( "href" );
 					String fqn=hrefAtribute.getNodeValue();
 					vdcs.add(fqn);

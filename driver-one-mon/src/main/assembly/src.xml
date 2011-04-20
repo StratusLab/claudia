@@ -1,0 +1,34 @@
+<assembly>
+  <id>deployable</id>
+
+  <formats>
+    <format>zip</format>
+  </formats>
+
+  <baseDirectory></baseDirectory>
+  
+  <fileSets>
+    <fileSet>
+      <directory>${project.build.directory}</directory>
+      <includes>
+        <include>*.jar</include>
+      </includes>
+      <outputDirectory>/</outputDirectory>
+      <fileMode>0644</fileMode>
+      <directoryMode>0644</directoryMode>
+    </fileSet>
+
+  </fileSets>
+
+  <dependencySets>
+    <dependencySet>
+      <unpack>false</unpack>
+      <scope>runtime</scope>
+      <outputDirectory>/</outputDirectory>
+      <directoryMode>0644</directoryMode>
+      <useTransitiveDependencies>true</useTransitiveDependencies>
+    </dependencySet>
+  </dependencySets>
+
+</assembly>
+
