@@ -1103,7 +1103,9 @@ public class LifecycleController  extends UnicastRemoteObject implements SMI, Se
 		                    Element link = (Element) doc.createElement("Link");
 		                    link.setAttribute("rel", "down");
 		                    link.setAttribute("type", "application/vnd.telefonica.tcloud.vapp+xml");
-		                    link.setAttribute("href", "http://" + SMConfiguration.getInstance().getSMIHost() + ":" + SMConfiguration.getInstance().getSMIPort()  + "/" + URICreation.getURIService(srvApp.getFQN().toString()));
+		                //    link.setAttribute("href", "http://" + SMConfiguration.getInstance().getSMIHost() + ":" + SMConfiguration.getInstance().getSMIPort()  + "/" + URICreation.getURIService(srvApp.getFQN().toString()));
+		                    
+		                    link.setAttribute("href", "@HOSTNAME" + URICreation.getURIService(srvApp.getFQN().toString()));
 		                    r.appendChild(link);
 		                    
 		                }
