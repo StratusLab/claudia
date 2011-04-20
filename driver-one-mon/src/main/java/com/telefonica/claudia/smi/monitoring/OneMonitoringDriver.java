@@ -583,8 +583,7 @@ public class OneMonitoringDriver implements MonitoringDriver {
 	        
 			mv.setRegisterDate(date);
 			mv.setUnit(md.getValueType());
-			mvl.add(mv);
-		
+			mvl.add(mv);	
 	    }
 
 		return mvl;
