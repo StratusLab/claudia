@@ -33,7 +33,7 @@ function start() {
 
 	fi
 
-	nohup java -Djava.net.preferIPv4Stack=true -jar $reportclientlib AllMonitoring 2> logs/monitorAll-err.log > logs/monitorAll-out.log &
+	nohup java -Djava.net.preferIPv4Stack=true -jar $reportclientlib AllMonitoring 2> logs/monitor-errors.log > logs/monitor-out.log &
 	
 	echo $! > logs/monitorAll.pid
 }
