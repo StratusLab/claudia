@@ -347,13 +347,16 @@ return valuexml;
 				Node valueAtribute = atributes.getNamedItem( "value" );
 				String value=valueAtribute.getNodeValue();
 				
+				logger.info(" values: " + unit+" "+timestamp+" "+ value); 
+				
+
 				String pattern = "yyyy-MM-dd'T'HH:mm:ss";
 				SimpleDateFormat sdf = new SimpleDateFormat(pattern);
 				Date date = sdf.parse(timestamp);
-				logger.info(" values: " + unit+" "+date+" "+ value); 
-			
+				logger.info(" date: " +date); 
 				MeasuredValue mv = new MeasuredValue(value,date,unit);
-
+			
+				
 				sendRESTMessage("AGENT", mv.getRegisterDate().getTime(), 4, monitorfqn, Double.parseDouble(mv.getValue()));
 			//	MeasuredValue(String value, Date registerDate, String unit) 
 			//	sendRESTMessage("AGENT", mv.getRegisterDate().getTime(), 4, fqn, Double.parseDouble(mv.getValue());

@@ -31,23 +31,11 @@
   
   <files>
     <file>
-      <source>src/main/config/monitorAllMonitoring</source>
+      <source>src/main/config/reportclient</source>
       <outputDirectory>/bin</outputDirectory>
       <filtered>true</filtered>
       <fileMode>0744</fileMode>
-    </file>
-    <file>
-      <source>src/main/config/monitorDiskUsage</source>
-      <outputDirectory>/bin</outputDirectory>
-      <filtered>true</filtered>
-      <fileMode>0744</fileMode>
-    </file>  
-    <file>
-      <source>src/main/config/compactor</source>
-      <outputDirectory>/bin</outputDirectory>
-      <filtered>true</filtered>
-      <fileMode>0744</fileMode>
-    </file>      
+    </file>   
     <file>
       <source>src/main/config/reportClient.properties</source>
       <outputDirectory>/conf</outputDirectory>
