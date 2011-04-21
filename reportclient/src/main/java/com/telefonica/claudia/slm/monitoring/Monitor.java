@@ -52,7 +52,23 @@ public class Monitor extends Thread {
 		long i1 = System.currentTimeMillis();
 		PersistenceClient pc = new PersistenceClient();
 		List<String> list = pc.getVMs();
-		List<Monitor> monitorThreads = new ArrayList<Monitor>();
+		ArrayList<String> monitorlist = pc.findmonitors(list);
+		
+
+		for (Iterator iterator = monitorlist.iterator(); iterator.hasNext();) {
+			String monitor = (String) iterator.next();	
+			ArrayList<String> measurelist = pc.findmeasures(monitor);
+			for (Iterator iterator2 = measurelist.iterator(); iterator2.hasNext();) {
+				String measure = (String) iterator2.next();	
+
+				String valuexml=pc.getmeasure(monitor, measure);
+				logger.info(" monitor values: " + monitor+ " "+measure); 
+				pc.sendvalue(valuexml);
+
+			}
+
+		}
+		/*	List<Monitor> monitorThreads = new ArrayList<Monitor>();
 		for (int i = 0; i < list.size(); i++) {
 			String vmUrl = list.get(i);			
 			logger.debug("VM Url:"+vmUrl);
@@ -67,12 +83,12 @@ public class Monitor extends Thread {
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
-		}
-		
+		}*/
+
 		long t1 = System.currentTimeMillis() - i1;
 		logger.debug("generateAllReport Total Time:" + t1 + " miliseg");					
 	}
-	
+
 	private static void showUsage() {
 		System.out.println("Usage:\n\nmonitor <monitorType> \n\n");
 		System.out.println("\t allmonitoring");

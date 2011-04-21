@@ -54,7 +54,7 @@ public class PersistenceClient {
 
 
 	private static final Logger logger = Logger.getLogger(PersistenceClient.class);
-	private final String TCloudServerURL;
+	private static String TCloudServerURL;
 	/*	private final String DB_URL;
 	private final String DB_USER;
 	private final String DB_PASSWORD;*/
@@ -92,6 +92,9 @@ public class PersistenceClient {
 			DB_PASSWORD = properties.getProperty("bd.password");
 			DbManager dbManager = DbManager.createDbManager(DB_URL, false,DB_USER, DB_PASSWORD);*/
 			SITE_ROOT = properties.getProperty("SiteRoot");
+			restPath=properties.getProperty("restPath");
+			restServerPort=properties.getProperty("restServerPort");
+			restServerHost=properties.getProperty("restServerHost");
 		} catch (IOException e) {
 			logger.error("Unable to load properties from " + PATH_TO_PROPERTIES_FILE);
 			throw new RuntimeException("Unable to load properties from " + PATH_TO_PROPERTIES_FILE);
@@ -190,6 +193,39 @@ public class PersistenceClient {
 		return vdcs;
 	}
 
+	public static ArrayList<String> findvapps(String getresponse){
+
+
+		ArrayList<String>vapps = new ArrayList<String>();
+		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance ( );
+
+		try
+		{
+			DocumentBuilder builder = factory.newDocumentBuilder();
+			Document doc= builder.parse(new ByteArrayInputStream(getresponse.getBytes()));
+
+			NodeList vappList = doc.getElementsByTagName("Link");
+
+			for (int i=0; i < vappList.getLength(); i++) {
+
+				Node node = vappList.item(i);
+				NamedNodeMap atributes = node.getAttributes(  );
+				Node typeAtribute = atributes.getNamedItem( "type" );
+				if (typeAtribute.getNodeValue().equals("application/vnd.telefonica.tcloud.vapp+xml")){
+					Node hrefAtribute = atributes.getNamedItem( "href" );
+					String fqn=hrefAtribute.getNodeValue();
+					vapps.add(fqn);
+					logger.info("Vapp found " + fqn); 
+				}
+			}
+		}
+		catch (Exception spe)
+		{
+			// Algún tipo de error: fichero no accesible, formato de XML incorrecto, etc.
+		}
+		return vapps;
+	}
+
 	public static ArrayList<String> findvms(String getresponse){
 
 
@@ -201,18 +237,17 @@ public class PersistenceClient {
 			DocumentBuilder builder = factory.newDocumentBuilder();
 			Document doc= builder.parse(new ByteArrayInputStream(getresponse.getBytes()));
 
-			NodeList vmList = doc.getElementsByTagName("Link");
+			NodeList vmList = doc.getElementsByTagName("VApp");
 
 			for (int i=0; i < vmList.getLength(); i++) {
 
 				Node node = vmList.item(i);
 				NamedNodeMap atributes = node.getAttributes(  );
-				Node typeAtribute = atributes.getNamedItem( "type" );
-				if (typeAtribute.getNodeValue().equals("application/vnd.telefonica.tcloud.vapp+xml")){
-					Node hrefAtribute = atributes.getNamedItem( "href" );
-					String fqn=hrefAtribute.getNodeValue();
+				Node hrefAtribute = atributes.getNamedItem( "href" );
+				String fqn=hrefAtribute.getNodeValue();
+				if (fqn.substring(fqn.length()-2,fqn.length()-1).equals("/")){
 					vms.add(fqn);
-					//	logger.info("PONG econtrada VM " + fqn); 
+					//logger.info(" VM found " + fqn); 
 				}
 			}
 		}
@@ -222,43 +257,114 @@ public class PersistenceClient {
 		}
 		return vms;
 	}
+	
+	public static ArrayList<String> findmeasures(String monitor) throws IOException{
 
-	public static ArrayList<String> findmeasures(String getresponse){
-
-
+		logger.info("Measures for monitor" + monitor); 
 		ArrayList<String>measures = new ArrayList<String>();
+		
+			int i = monitor.indexOf("/api");
+			Reference  monitorurl  = new Reference(monitor);
+			String monxml=get(client,monitorurl);
+			
+		//	logger.info(" monitor XML  " + monxml); 
+	
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance ( );
 
 		try
 		{
 			DocumentBuilder builder = factory.newDocumentBuilder();
-			Document doc= builder.parse(new ByteArrayInputStream(getresponse.getBytes()));
+			Document doc= builder.parse(new ByteArrayInputStream(monxml.getBytes()));
 
 			NodeList measureList = doc.getElementsByTagName("MeasureDescriptor");
 
-			for (int i=0; i < measureList.getLength(); i++) {
+			for (int j=0; j < measureList.getLength(); j++) {
 
-				Node node = measureList.item(i);
+				Node node = measureList.item(j);
 				NamedNodeMap atributes = node.getAttributes(  );
 				Node nameAtribute = atributes.getNamedItem( "name" );
-					String name=nameAtribute.getNodeValue();
-					measures.add(name);
-					logger.info("measure found " + name); 
+				String name=nameAtribute.getNodeValue();
+				measures.add(name);
+				logger.info(" measure found " + name); 
 			}
 		}
 		catch (Exception spe)
 		{
 			// Algún tipo de error: fichero no accesible, formato de XML incorrecto, etc.
 		}
-		return measures;
+
+
+	return measures;
+	}
+
+
+	public  ArrayList<String> findmonitors(List<String> list) throws IOException{
+
+
+		ArrayList<String>monitors = new ArrayList<String>();
+
+		for (Iterator iterator = list.iterator(); iterator.hasNext();) {
+			String vm = (String) iterator.next();	
+			int i = vm.indexOf("/api");
+			String monitorfqn =TCloudServerURL+(vm.substring(i,vm.length())+"/monitor");
+			
+			logger.info("Monitor found: " + monitorfqn); 
+			monitors.add(monitorfqn);
+
+		}
+
+		return monitors;
+	}
+	
+	public  String getmeasure(String monitor, String measure) throws IOException {
+
+		String value=null;
+		Reference  ValueURL  = new Reference(monitor+"/"+measure+"/"+"values");
+		String valuexml=get(client,ValueURL);
+
+
+return valuexml;
+	}
+	
+	public void  sendvalue(String valuexml)  {
+
+		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance ( );
+
+		try
+		{
+			DocumentBuilder builder = factory.newDocumentBuilder();
+			Document doc= builder.parse(new ByteArrayInputStream(valuexml.getBytes()));
+
+			NodeList valueList = doc.getElementsByTagName("Sample");
+
+			for (int i=0; i < valueList.getLength(); i++) {
+
+				Node node = valueList.item(i);
+				NamedNodeMap atributes = node.getAttributes(  );
+				Node unitAtribute = atributes.getNamedItem( "unit" );
+				String unit=unitAtribute.getNodeValue();
+				Node timestampAtribute = atributes.getNamedItem( "timestamp" );
+				String timestamp=timestampAtribute.getNodeValue();
+				Node valueAtribute = atributes.getNamedItem( "value" );
+				String value=valueAtribute.getNodeValue();
+				
+				logger.info(" values: " + unit+" "+timestamp+" "+ value); 
+			}
+		}
+		catch (Exception spe)
+		{
+			// Algún tipo de error: fichero no accesible, formato de XML incorrecto, etc.
+		}
 	}
 
 	
+
 	public List<String> getVMs() throws IOException{
 
+		ArrayList<String> result= new ArrayList<String>();
 		ArrayList<String>vdcs = new ArrayList<String>();
-		ArrayList<String> result = new ArrayList<String>();
-		
+
+
 
 		client = new Client(Protocol.HTTP);
 		Reference  TcloudURL  = new Reference(TCloudServerURL+"/api/org/"+SITE_ROOT);
@@ -269,28 +375,34 @@ public class PersistenceClient {
 
 		for (Iterator iterator = vdcs.iterator(); iterator.hasNext();) {
 			String vdc = (String) iterator.next();		
-			ArrayList<String> vms = new ArrayList<String>();
+			ArrayList<String> vapps = new ArrayList<String>();
 			int i = vdc.indexOf("/api");
 			String vdcfqn = TCloudServerURL+vdc.substring(i,vdc.length());
 			Reference  vdcURL  = new Reference(vdcfqn);
-			//	    logger.info("PONG VDC: " + vdcURL);
-			String vmurl=get(client,vdcURL);
-			//		logger.info("PONG GET VM: " + vmurl); 
-			vms=findvms(vmurl);
+			//	    logger.info(" VDC: " + vdcURL);
+			String vappxml=get(client,vdcURL);
+			//		logger.info(" GET VM: " + vmurl); 
+			vapps=findvapps(vappxml);
 
-			for (Iterator iterator2 = vms.iterator(); iterator2.hasNext();) {
-				String vm = (String) iterator2.next();	
-				int j = vm.indexOf("/api");
-				result.add(TCloudServerURL+vm.substring(i,vm.length()));
+			for (Iterator iterator2 = vapps.iterator(); iterator2.hasNext();) {
+				String vapp = (String) iterator2.next();	
+				ArrayList<String> vms = new ArrayList<String>();
+				int j = vapp.indexOf("/api");
+				String vappfqn =TCloudServerURL+vapp.substring(j,vapp.length());
+				Reference  vmurl  = new Reference(vappfqn);
+				String vmxml=get(client,vmurl);
+				vms=findvms(vmxml);
+
+				for (Iterator iterator3 = vms.iterator(); iterator3.hasNext();) {
+					String vm = (String) iterator3.next();	
+					int k = vm.indexOf("/api");
+					String vmfqn =TCloudServerURL+vm.substring(k,vm.length());
+					logger.info("VM found " + vmfqn); 
+					result.add(vmfqn);
+
+				}
+
 			}
-
-		}
-
-		for (Iterator iterator = result.iterator(); iterator.hasNext();) {
-			ArrayList<String> measures = new ArrayList<String>();
-			String res = (String) iterator.next();	
-			logger.info("VMs found: " + res); 
-			measures = findmeasures(res);
 
 		}
 
