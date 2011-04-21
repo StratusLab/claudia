@@ -3,16 +3,13 @@ package com.telefonica.claudia.slm.monitoring;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
+
 import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
 
 import org.apache.log4j.Logger;
 
-import com.telefonica.claudia.slm.monitoring.report.MonitoringRestClient;
-import com.telefonica.claudia.slm.monitoring.report.TypeEntityEnum;
 
 import edu.emory.mathcs.backport.java.util.concurrent.Executors;
 import edu.emory.mathcs.backport.java.util.concurrent.ScheduledExecutorService;
@@ -20,17 +17,17 @@ import edu.emory.mathcs.backport.java.util.concurrent.TimeUnit;
 
 public class Monitor extends Thread {
 
-	private static final MonitoringRestClient client = new MonitoringRestClient();
+
 	private static final Logger logger = Logger.getLogger(Monitor.class);
 	public static List<String> totalvmlist;
 	private String URL;
-	
+
 	public static final String PATH_TO_PROPERTIES_FILE = "./conf/reportClient.properties";
 	private static final Properties properties = new Properties();
 	private static long vmdiscoverdelay;
 	private static long monitoringdelay;
-	
-	
+
+
 	public Monitor(String url){
 		this.URL = url;
 	}
@@ -46,7 +43,7 @@ public class Monitor extends Thread {
 			}
 		}	
 	};
-	
+
 	static Runnable periodicGetMonValues= new Runnable(){
 		public void run() {
 			PersistenceClient pc = new PersistenceClient();
@@ -59,30 +56,6 @@ public class Monitor extends Thread {
 		}	
 	};
 
-	public void run() {
-		System.out.println("Starting for "+URL);
-		generateReport(URL);
-	}
-
-	private void generateReport(String baseUrl) {
-		Calendar day = new GregorianCalendar();
-		TypeEntityEnum[] typeEntities = TypeEntityEnum.values();
-		List<ThreadMonitor> monitorThreads = new ArrayList<ThreadMonitor>();
-		for (TypeEntityEnum typeEntity : typeEntities) {
-			String url = client.getMonitoringDataUrl(typeEntity, FrequencyEnum.REALTIME, day, baseUrl);
-			ThreadMonitor tm = new ThreadMonitor(url);
-			monitorThreads.add(tm);
-			tm.start();
-		}
-		for (Iterator iterator = monitorThreads.iterator(); iterator.hasNext();) {
-			ThreadMonitor threadMonitor = (ThreadMonitor) iterator.next();
-			try {
-				threadMonitor.join();
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-		}
-	}
 
 	public static void periodicMonitoring() throws IOException {
 
@@ -106,7 +79,7 @@ public class Monitor extends Thread {
 
 	}
 	public static void generateAllReport() throws IOException {
-		
+
 		try {
 			properties.load(new FileInputStream(PATH_TO_PROPERTIES_FILE));
 
@@ -115,19 +88,19 @@ public class Monitor extends Thread {
 		} catch (IOException e) {
 			throw new RuntimeException("Unable to load properties from " + PATH_TO_PROPERTIES_FILE);
 		}
-	
-	
+
+
 		//long i1 = System.currentTimeMillis();
 		PersistenceClient pc = new PersistenceClient();
 		totalvmlist = pc.getVMs();
 		periodicMonitoring();
-		
+
 		ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
 		executor.scheduleAtFixedRate(periodicGetVm,0,vmdiscoverdelay, TimeUnit.SECONDS);
-		
+
 		ScheduledExecutorService executor2 = Executors.newSingleThreadScheduledExecutor();
 		executor2.scheduleAtFixedRate(periodicGetMonValues,0,monitoringdelay, TimeUnit.SECONDS);
-		
+
 		//long t1 = System.currentTimeMillis() - i1;
 		//logger.debug("generateAllReport Total Time:" + t1 + " miliseg");					
 	}
@@ -148,8 +121,7 @@ public class Monitor extends Thread {
 		}
 		else if (args.length==1){
 			if (args[0].toLowerCase().equals("allmonitoring") ){
-				/*		NICMonitor nic = new NICMonitor();
-				nic.start();*/
+
 				generateAllReport();
 			}			
 		}
