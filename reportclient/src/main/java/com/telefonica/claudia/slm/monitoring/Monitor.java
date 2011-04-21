@@ -131,16 +131,10 @@ public class Monitor extends Thread {
 				/*		NICMonitor nic = new NICMonitor();
 				nic.start();*/
 				generateAllReport();
-			}
-			else if (args[0].toLowerCase().equals("diskusage") ){
-				DiskUsageMonitor.generateAllDiskUsageReport();
-			}
-			else{
-				System.out.println("It is needed the type of monitoring: (allmonitoring | diskusage)");
 			}			
 		}
 		else{
-			System.out.println("It is needed the type of monitoring: (allmonitoring | diskusage)");
+			System.out.println("It is needed the type of monitoring: (allmonitoring)");
 		}
 	}	
 }
