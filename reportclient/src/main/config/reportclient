@@ -1,0 +1,91 @@
+#!/bin/bash
+
+###################################################################
+## Monitoring Client
+###################################################################
+
+# Constants
+###################################################################
+ERROR_GENERIC=1
+ERROR_ARGUMENTS=2
+
+ERROR_STATUS_DEAD_WITH_PID=1
+ERROR_STATUS_NOT_RUNNING=3
+
+#CLAUDIA_DIR=/opt/claudia/tcloud-server-deployment/
+CLAUDIA_DIR=$(pwd)
+#CLAUDIA_DIR=/opt/claudia/ReportClient
+cd "`dirname $0`";
+cd ..
+CLAUDIA_DIR=$(pwd)
+reportclientlib=$(ls lib/reportclient-*.jar)
+
+# Function declarations
+###################################################################
+
+function start() {
+
+	echo "Starting Monitor AllMonitoring (Except DiskUsage)";
+
+	if [ -e logs/monitorAll.pid ]; then
+
+		ps -ef | grep -v grep | grep $(cat logs/monitorAll.pid) &> /dev/null
+
+	fi
+
+	nohup java -Djava.net.preferIPv4Stack=true -jar $reportclientlib AllMonitoring 2> logs/monitorAll-err.log > logs/monitorAll-out.log &
+	
+	echo $! > logs/monitorAll.pid
+}
+
+function stop() {
+
+	echo "Stopping Monitor AllMonitoring (Except DiskUsage)";
+
+	if [ -e logs/monitorAll.pid ]; then
+
+		ps -ef | grep -v grep |grep $(cat logs/monitorAll.pid)
+
+		if [[ $? == 0 ]]; then
+			echo "Terminating process"
+			kill -9 `cat logs/monitorAll.pid` &> /dev/null	
+		fi
+		
+		rm logs/monitorAll.pid &> /dev/null
+	fi
+}
+
+
+# Script code
+##################################################################
+
+# Check that a Java Runtime Environment is in the PATH
+WICH_RESULT=$(which java);
+if [[ $? == 1 ]]; then
+
+        echo -e "Java command not found. Check there is a Java Runtime Environment present, and the executable is in the PATH\n";
+
+        exit $ERROR_GENERIC;
+fi
+
+# Depending on the arguments start, or stop the server
+if [ $# -ne 1 ]; then
+
+	echo -e "Starts or stop the Monitoring daemon: \n";
+	echo -e "\t\t$0 {start|stop}\n";
+
+	exit $ERROR_ARGUMENTS;
+fi
+
+# Run the Server class
+cd $CLAUDIA_DIR;
+
+if [[ $1 == "start" ]]; then
+
+	start;
+
+elif [[ $1 == "stop" ]]; then
+	stop;
+fi
+
+exit 0;
