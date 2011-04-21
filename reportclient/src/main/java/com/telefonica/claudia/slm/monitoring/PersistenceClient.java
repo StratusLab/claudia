@@ -6,8 +6,10 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -323,7 +325,7 @@ public class PersistenceClient {
 return valuexml;
 	}
 	
-	public void  sendvalue(String valuexml)  {
+	public void  sendvalue(String valuexml, String monitorfqn)  {
 
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance ( );
 
@@ -345,7 +347,17 @@ return valuexml;
 				Node valueAtribute = atributes.getNamedItem( "value" );
 				String value=valueAtribute.getNodeValue();
 				
-				logger.info(" values: " + unit+" "+timestamp+" "+ value); 
+				String pattern = "yyyy-MM-dd'T'HH:mm:ss";
+				SimpleDateFormat sdf = new SimpleDateFormat(pattern);
+				Date date = sdf.parse(timestamp);
+				logger.info(" values: " + unit+" "+date+" "+ value); 
+			
+				MeasuredValue mv = new MeasuredValue(value,date,unit);
+
+				sendRESTMessage("AGENT", mv.getRegisterDate().getTime(), 4, monitorfqn, Double.parseDouble(mv.getValue()));
+			//	MeasuredValue(String value, Date registerDate, String unit) 
+			//	sendRESTMessage("AGENT", mv.getRegisterDate().getTime(), 4, fqn, Double.parseDouble(mv.getValue());
+			//	public static void sendRESTMessage(String eventType, long t_0, long delta_t, String fqn, double value) 
 			}
 		}
 		catch (Exception spe)
