@@ -1,0 +1,13 @@
+*.pyc
+.project
+.settings
+.classpath
+.pydevproject
+target
+bin
+*.deb
+*.svn
+.svn
+*~
+nbproject
+src/conf/stratuslab.cfg

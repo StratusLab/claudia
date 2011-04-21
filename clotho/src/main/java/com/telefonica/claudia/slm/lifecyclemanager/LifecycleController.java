@@ -157,6 +157,8 @@ public class LifecycleController  extends UnicastRemoteObject implements SMI, Se
     
     private enum LccStates {INIT, RUNNING, FINISHING};
     
+    List<Customer> customers= null;
+    
     /**
      * Time the SLM will wait for the FSM to undeploy and finish, until killing it explicitly.
      */
@@ -165,6 +167,9 @@ public class LifecycleController  extends UnicastRemoteObject implements SMI, Se
     private LccStates state= LccStates.INIT;
     
     public LifecycleController()  throws RemoteException, JMSException, NamingException{
+    	
+    	this.customers = new ArrayList<Customer>();
+
        
         bufferVector=new HashMap<String, ArrayBlockingQueue<SMControlEvent>>();
         ruleEngineVector=new HashMap<FQN, RulesEngine>();
@@ -877,9 +882,9 @@ public class LifecycleController  extends UnicastRemoteObject implements SMI, Se
 			else 
 			{	
 			
-			List<Customer> customers =  DbManager.getDbManager().getList(Customer.class);
+	//		List<Customer> customers =  DbManager.getDbManager().getList(Customer.class);
 			
-			doc = getOrganizationXML(customers);
+			doc = getOrganizationXML(this.customers);
 
 			
 			final String xmlOrgRepresentation = DataTypesUtils.serializeXML(doc);
@@ -967,6 +972,24 @@ public class LifecycleController  extends UnicastRemoteObject implements SMI, Se
 				} catch (JMSException e1) {
 					logger.error("Bus communication exception: " + e1.getMessage());
 				}
+				
+				FQN servFQN = new FQN(event.get(SMIChannelEvent.FQN_ID)); 
+				ServiceApplication serv = (ServiceApplication) ReservoirDirectory.getInstance().getObject(servFQN);
+				Customer cust = serv.getCustomer();
+				if (cust.isServiceRegistered(serv)){
+					cust.unregisterService(serv);
+				}
+				ReservoirDirectory.getInstance().removeMatchingNames(servFQN);
+				// Removes the customer if it has no more services
+				if (cust.getServices().isEmpty()){
+					ReservoirDirectory.getInstance().removeMatchingNames(cust.getFQN());
+					this.customers.remove(cust);
+				}
+				
+
+				
+				
+
 				
 	    		break;
 	    		
@@ -1083,7 +1106,7 @@ public class LifecycleController  extends UnicastRemoteObject implements SMI, Se
 	    	case GET_VDC:
 	    		
 				try {
-					Customer cust = ((Customer)ReservoirDirectory.getInstance().getObject(new FQN(event.get(SMIChannelEvent.FQN_ID))));
+					 cust = ((Customer)ReservoirDirectory.getInstance().getObject(new FQN(event.get(SMIChannelEvent.FQN_ID))));
 					e = new SMIChannelEvent(System.currentTimeMillis(), 0, SMIAction.GET_VDC);
 					
 		            DocumentBuilderFactory dbfac = DocumentBuilderFactory.newInstance();
@@ -1376,6 +1399,12 @@ public class LifecycleController  extends UnicastRemoteObject implements SMI, Se
 		}
 		return siteRoot;
 	}
+    
+	public void addCustomer(Customer client) {
+		this.customers.add(client);
+
+	}
+
 
 
 }

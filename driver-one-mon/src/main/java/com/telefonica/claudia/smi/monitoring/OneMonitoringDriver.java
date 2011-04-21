@@ -63,6 +63,8 @@ public class OneMonitoringDriver implements MonitoringDriver {
 	private final static String VM_GETINFO_COMMAND = "one.vm.info";
 	private static org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger("com.telefonica.claudia.smi.monitoring.ONEMonitoringDriver");
 	
+	HashMap<String,String> table = new HashMap ();
+	
 	/**
 	 * Collection containing the mapping from fqns to ids. This mapped is used as a cache
 	 * of the getVmId method (vm ids never change once assigned). 
@@ -71,13 +73,40 @@ public class OneMonitoringDriver implements MonitoringDriver {
 	
 	//------------------
 	public OneMonitoringDriver() {
+		XmlRpcClientConfigImpl config = new XmlRpcClientConfigImpl();
 		
+		log.info("Creating OpenNebula conector");
+
+	    	oneURL = "http://62.217.120.136:2633/RPC2";
+
+
+		
+
+	    	oneSession = "OCCIServer:42d9d2622f862cd803d4395be2c1edd362213525";
+	    	
+	    	try {
+				config.setServerURL(new URL(oneURL));
+			} catch (MalformedURLException e) { 
+				log.error("Malformed URL: " + oneURL);
+				throw new RuntimeException(e);
+			}
+		
+			xmlRpcClient = new XmlRpcClient();
+			log.info("XMLRPC client created"); 
+			xmlRpcClient.setConfig(config);
+			log.info("XMLRPC client configured");
+
 	}
 	
 	//------------------
 	
 	
 	public OneMonitoringDriver(Properties prop) {
+		
+		table.put("cpus", "CPU");
+		table.put("memory", "MEMORY");
+		table.put("disks", "DISK");
+		table.put("network", "NIC");
 		
 		XmlRpcClientConfigImpl config = new XmlRpcClientConfigImpl();
 		
@@ -335,6 +364,7 @@ public class OneMonitoringDriver implements MonitoringDriver {
 		if (completed) {
 			
 			String resultList = (String) result[1];
+			System.out.println (resultList);
 		
 			
 			//File f=new File("op.xml");
@@ -349,6 +379,8 @@ public class OneMonitoringDriver implements MonitoringDriver {
 				
 				
 				for (int i=0; i < nodes.getLength(); i++) {
+					
+					System.out.println (nodes.item(i).getNodeName());
 					int j=1;
 					
 					int longitud=nodes.item(i).getChildNodes().getLength();
@@ -386,7 +418,7 @@ public class OneMonitoringDriver implements MonitoringDriver {
 						MeasureDescriptor md2=new MeasureDescriptor();
 						md2.setDescription(""+elementId);
 						md2.setValueType("xs:decimal");
-						md2.setMaxValue("0");
+						md2.setMaxValue(size2);
 						md2.setMinValue("0");
 						md2.setName("networks."+i+1);
 						mdl.add(md2);
@@ -399,7 +431,7 @@ public class OneMonitoringDriver implements MonitoringDriver {
 						MeasureDescriptor md3=new MeasureDescriptor();
 						md3.setDescription(""+elementId);
 						md3.setValueType("xs:decimal");
-						md3.setMaxValue("0");
+						md3.setMaxValue(size2);
 						md3.setMinValue("0");
 						md3.setName("memory");
 						mdl.add(md3);
@@ -411,7 +443,7 @@ public class OneMonitoringDriver implements MonitoringDriver {
 						MeasureDescriptor md4=new MeasureDescriptor();
 						md4.setDescription(""+elementId);
 						md4.setValueType("xs:decimal");
-						md4.setMaxValue("0");
+						md4.setMaxValue(size2);
 						md4.setMinValue("0");
 						md4.setName("cpus."+i+1);
 						mdl.add(md4);
@@ -477,59 +509,72 @@ public class OneMonitoringDriver implements MonitoringDriver {
 	}
 
 
+
 	public MeasuredValueList getMeasuredValueList(MeasureDescriptor md,
 			int samples) throws MonitorException {
-		// TODO Auto-generated method stub
 		
 		MeasuredValueList mvl = new MeasuredValueList();
 		
 		int elementId =  Integer.parseInt(md.getDescription());
-	    String metrica = md.getName();
+	    String metric = md.getName();
 	    
-	    Object result [] = getOneInfoParams (elementId);
+	    HashMap <String, String >metricsTemplateONe = new HashMap();
+	    metricsTemplateONe.put("cpus", "/VM/CPU");
+	    metricsTemplateONe.put("memory", "/VM/MEMORY");
+	    metricsTemplateONe.put("disks", "/VM/TEMPLATE/DISK");
+	    metricsTemplateONe.put("networks", "/VM/NET_TX");
 	    
+	    String metricaONE  = null;
+	   
+	    if (metric.indexOf(".")!=-1)
+	       metricaONE = metricsTemplateONe.get(metric.substring(0,metric.indexOf(".")));
+	    else if (metric.indexOf(".")==-1)
+	    	metricaONE = metricsTemplateONe.get(metric);
+	   
+	    Object result [] = this.getOneInfoParams(elementId);
+	
 	    String value = "";
 	    
-	    if (Boolean.parseBoolean((String)result[0])) {
+		boolean completed = (Boolean) result[0];
+	    
+	    if (completed) {
 			
 			String resultList = (String) result[1];
+			//System.out.println (resultList);
 			
 			try {
 				DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 				DocumentBuilder builder = factory.newDocumentBuilder();
 				//Document doc = builder.parse(new File("1.xml"));
 				Document doc = builder.parse(new ByteArrayInputStream(resultList.getBytes()));
-				String expression = "/VM/TEMPLATE/DISK";      
+				String expression = metricaONE;      
 				XPath xpath=XPathFactory.newInstance().newXPath();
 				NodeList nodes = (NodeList) xpath.evaluate(expression, doc.getDocumentElement(), XPathConstants.NODESET);
 				
 				
 				for (int i=0; i < nodes.getLength(); i++) {
-					int j=1;
+					//int j=1;
 					
-					int longitud=nodes.item(i).getChildNodes().getLength();
-					String nombreNodo=nodes.item(i).getChildNodes().item(j).getNodeName();
-					
-					while (j < longitud && !nombreNodo.equals("SIZE")) {
-						j=j+1;
-						nombreNodo=nodes.item(i).getChildNodes().item(j).getNodeName();
+					if (nodes.item(i).getChildNodes().getLength()==1)
+						value = nodes.item(i).getChildNodes().item(0).getNodeValue();
+					else
+					{
+						for (int k=0; k < nodes.item(i).getChildNodes().getLength(); k++) 
+						{
+							if (nodes.item(i).getChildNodes().item(k).getNodeName().equals("SIZE"))
+							{
 							
+							  value = nodes.item(i).getChildNodes().item(k).getChildNodes().item(0).getNodeValue();
+
+							}
+						}
 					}
-					
-				    String size=nodes.item(i).getChildNodes().item(j).getTextContent();
-				    value ="";
-				    for (int x=0; x < size.length(); x++) 
-						  if (size.charAt(x) != ' ' && size.charAt(x) != '\n')
-							  value = value+size.charAt(x);
-				    
-				   
 				}
-				
 			}
 			catch (Exception e)
 			{
 				System.out.println (e.getMessage());
-				return null;
+				value="";
 			}
 			
 			MeasuredValue mv = new MeasuredValue();
@@ -538,13 +583,10 @@ public class OneMonitoringDriver implements MonitoringDriver {
 	        
 			mv.setRegisterDate(date);
 			mv.setUnit(md.getValueType());
-			mvl.add(mv);
-
-			
+			mvl.add(mv);	
 	    }
-	    
-	     	
-		return null;
+
+		return mvl;
 	}
 	
 	public Object[]  getOneInfoParams (int elementId)
@@ -558,6 +600,22 @@ public class OneMonitoringDriver implements MonitoringDriver {
 			result = (Object[])xmlRpcClient.execute(VM_GETINFO_COMMAND, rpcParams);
 		} catch (XmlRpcException ex) {
 			log.error("Connection error trying to get VM information: " + ex.getMessage());
+			
+		}
+		return result;
+	}
+	
+	public Object[]  getOneVmPoolInfoParams (int elementId)
+	{
+		List rpcParams = new ArrayList<String>();
+		rpcParams.add(oneSession);
+		rpcParams.add(elementId);
+		
+		Object[] result = null;
+		try {				
+			result = (Object[])xmlRpcClient.execute("one.vmpool.info", rpcParams);
+		} catch (XmlRpcException ex) {
+			System.out.println("Connection error trying to get VM information: " + ex.getMessage());
 			
 		}
 		return result;

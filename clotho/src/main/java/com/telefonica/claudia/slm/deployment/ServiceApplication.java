@@ -380,7 +380,7 @@ public class ServiceApplication implements DirectoryEntry {
 	    			veeChildren.appendChild(veeReplicaElement);
 	    			
 	    			veeReplicaElement.setAttribute("name", veeReplica.getFQN().toString());
-	    			veeReplicaElement.setAttribute("href", "@HOSTNAME/api/org/reservoir/vdc/" + getCustomer().getCustomerName() + "/vapp/" + getSerAppName() +
+	    			veeReplicaElement.setAttribute("href", "@HOSTNAME/api/org/" + organizationId + "/vdc/" + getCustomer().getCustomerName() + "/vapp/" + getSerAppName() +
 													"/" + vee.getVEEName() + "/" + veeReplica.getId());
 	    			
 	    			Element linkVeeReplica = doc.createElement("Link");
@@ -388,7 +388,7 @@ public class ServiceApplication implements DirectoryEntry {
 	    			
 	    			linkVeeReplica.setAttribute("rel", "monitor:measures");
 	    			linkVeeReplica.setAttribute("type", "application/vnc.telefonica.tcloud. measureDescriptorList+xml");
-	    			linkVeeReplica.setAttribute("href", "@HOSTNAME/api/org/reservoir/vdc/" + 
+	    			linkVeeReplica.setAttribute("href", "@HOSTNAME/api/org/" + organizationId + "/vdc/" + 
 	        				getCustomer().getCustomerName() + "/vapp/" + getSerAppName() + "/" + vee.getVEEName() + "/" + veeReplica.getId() + "/monitor");
 
 	    		}
