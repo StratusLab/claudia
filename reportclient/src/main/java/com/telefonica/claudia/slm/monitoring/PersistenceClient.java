@@ -101,8 +101,6 @@ public class PersistenceClient {
 		}
 	}	
 	
-	
-
 
 	public static void sendRESTMessage(String eventType, long t_0, long delta_t, String fqn, double value) {
 
@@ -271,7 +269,7 @@ public class PersistenceClient {
 			String monxml=get(client,monitorurl);
 			
 		//	logger.info(" monitor XML  " + monxml); 
-	
+			
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance ( );
 
 		try
@@ -296,7 +294,6 @@ public class PersistenceClient {
 			// Algún tipo de error: fichero no accesible, formato de XML incorrecto, etc.
 		}
 
-
 	return measures;
 	}
 
@@ -305,15 +302,12 @@ public class PersistenceClient {
 
 
 		ArrayList<String>monitors = new ArrayList<String>();
-
 		for (Iterator iterator = list.iterator(); iterator.hasNext();) {
 			String vm = (String) iterator.next();	
 			int i = vm.indexOf("/api");
 			String monitorfqn =TCloudServerURL+(vm.substring(i,vm.length())+"/monitor");
-			
 			logger.info("Monitor found: " + monitorfqn); 
 			monitors.add(monitorfqn);
-
 		}
 
 		return monitors;
@@ -366,8 +360,6 @@ return valuexml;
 
 		ArrayList<String> result= new ArrayList<String>();
 		ArrayList<String>vdcs = new ArrayList<String>();
-
-
 
 		client = new Client(Protocol.HTTP);
 		Reference  TcloudURL  = new Reference(TCloudServerURL+"/api/org/"+SITE_ROOT);
