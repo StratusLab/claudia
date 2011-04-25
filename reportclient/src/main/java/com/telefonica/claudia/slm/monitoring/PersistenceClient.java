@@ -372,7 +372,7 @@ public class PersistenceClient {
 				String monitor= SITE_ROOT+".customers."+customer+".services."+service+".kpis."+measure;
 				//logger.info("sending : " + monitor); 
 				
-				sendRESTMessage("HW", mv.getRegisterDate().getTime(), 4, monitor, Double.parseDouble(mv.getValue()));
+				sendRESTMessage("hw", mv.getRegisterDate().getTime(), 4, monitor, Double.parseDouble(mv.getValue()));
 				//sendRESTMessage("AGENT", mv.getRegisterDate().getTime(), 4, monitorfqn, Double.parseDouble(mv.getValue()));
 				logger.info(" monitor: " + monitor+ " "+measure); 
 				logger.info(" values: " + unit+" "+timestamp+" "+ value); 
