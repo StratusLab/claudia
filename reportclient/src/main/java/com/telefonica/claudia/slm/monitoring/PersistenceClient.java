@@ -370,7 +370,7 @@ public class PersistenceClient {
 				//logger.info("service : " + service); 
 
 				int m =  nthIndexOf(monitorfqn, '/', 11);
-				String replica = monitorfqn.substring(l+4,m);
+				String replica = monitorfqn.substring(l+1,m);
 			
 			//	logger.info("replica : " + replica); 
 				
