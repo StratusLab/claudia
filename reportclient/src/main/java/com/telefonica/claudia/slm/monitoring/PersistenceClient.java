@@ -368,8 +368,18 @@ public class PersistenceClient {
 				String service= monitorfqn.substring(k+5,l);
 				
 				//logger.info("service : " + service); 
+
+				int m =  nthIndexOf(monitorfqn, '/', 11);
+				String replica = monitorfqn.substring(l+4,m);
+			
+			//	logger.info("replica : " + replica); 
 				
-				String monitor= SITE_ROOT+".customers."+customer+".services."+service+".kpis."+measure;
+				int n =  nthIndexOf(monitorfqn, '/', 12);
+				String number = monitorfqn.substring(m+1,n);
+			
+			//	logger.info("number : " + number); 
+				
+				String monitor= SITE_ROOT+".customers."+customer+".services."+service+"."+replica+"."+number+".kpis."+measure;
 				//logger.info("sending : " + monitor); 
 				
 				sendRESTMessage("VEE_HW_MEASUREMENT", mv.getRegisterDate().getTime(), 4, monitor, Double.parseDouble(mv.getValue()));
