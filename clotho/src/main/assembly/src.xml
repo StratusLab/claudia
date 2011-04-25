@@ -1,94 +1,100 @@
 <assembly>
-  <id>deployable</id>
+	<id>deployable</id>
 
-  <formats>
-    <format>zip</format>
-  </formats>
+	<formats>
+		<format>zip</format>
+	</formats>
 
-  <baseDirectory>/Clotho</baseDirectory>
-  
-  <fileSets>
-    <fileSet>
-      <directory>${project.build.directory}</directory>
-      <includes>
-        <include>*.jar</include>
-      </includes>
-      <outputDirectory>/lib/</outputDirectory>
-      <fileMode>0644</fileMode>
-    </fileSet>
-    
-    <!-- Weird, but currently it seems to be the one way to create directories with
-     the assembly plugin -->
-    <fileSet>
-       <directory>target/</directory>
-       <outputDirectory>/repository/manifestBuffer</outputDirectory>
-       <directoryMode>0755</directoryMode>
+	<baseDirectory>/Clotho</baseDirectory>
 
-       <excludes>
-           <exclude>**/*</exclude>
-       </excludes>
-    </fileSet>
-    
-    <fileSet>
-       <directory>target/</directory>
-       <outputDirectory>/repository/manifestFiles</outputDirectory>
-       <directoryMode>0755</directoryMode>
+	<fileSets>
+		<fileSet>
+			<directory>${project.build.directory}</directory>
+			<includes>
+				<include>*.jar</include>
+			</includes>
+			<outputDirectory>/lib/</outputDirectory>
+			<fileMode>0644</fileMode>
+		</fileSet>
 
-       <excludes>
-           <exclude>**/*</exclude>
-       </excludes>
-    </fileSet>
+		<!-- Weird, but currently it seems to be the one way to create directories 
+			with the assembly plugin -->
+		<fileSet>
+			<directory>target/</directory>
+			<outputDirectory>/repository/manifestBuffer</outputDirectory>
+			<directoryMode>0755</directoryMode>
 
-    <fileSet>
-       <directory>src/main/data</directory>
-       <outputDirectory>/lib/data</outputDirectory>
-       <directoryMode>0755</directoryMode>
-    </fileSet>
+			<excludes>
+				<exclude>**/*</exclude>
+			</excludes>
+		</fileSet>
 
-  </fileSets>
+		<fileSet>
+			<directory>target/</directory>
+			<outputDirectory>/repository/manifestFiles</outputDirectory>
+			<directoryMode>0755</directoryMode>
 
-  <files>
-    <file>
-      <source>src/main/config/clotho</source>
-      <outputDirectory>/bin</outputDirectory>
-      <filtered>true</filtered>
-      <fileMode>0744</fileMode>
-    </file>
-    <file>
-      <source>src/main/config/sm.properties</source>
-      <outputDirectory>/conf</outputDirectory>
-      <filtered>true</filtered>
-      <fileMode>0644</fileMode>
-    </file>
-    <file>
-      <source>src/main/data/ClaudiaDB.tar.gz</source>
-      <outputDirectory>/lib/data</outputDirectory>
-      <filtered>true</filtered>
-      <fileMode>0644</fileMode>
-    </file>
-    <file>
-      <source>src/main/config/sca.drl</source>
-      <outputDirectory>/ruleHome</outputDirectory>
-      <filtered>true</filtered>
-      <fileMode>0644</fileMode>
-    </file>
-    <file>
-      <source>src/main/config/clothod</source>
-      <outputDirectory>/bin/daemon</outputDirectory>
-      <filtered>true</filtered>
-      <fileMode>0744</fileMode>
-    </file>
-    
+			<excludes>
+				<exclude>**/*</exclude>
+			</excludes>
+		</fileSet>
 
-  </files>  
+		<fileSet>
+			<directory>src/main/data</directory>
+			<outputDirectory>/lib/data</outputDirectory>
+			<directoryMode>0755</directoryMode>
+		</fileSet>
 
-  <dependencySets>
-    <dependencySet>
-      <unpack>false</unpack>
-      <scope>runtime</scope>
-      <outputDirectory>/lib</outputDirectory>
-    </dependencySet>
-  </dependencySets>
+	</fileSets>
+
+	<files>
+		<file>
+			<source>src/main/config/clotho</source>
+			<outputDirectory>/bin</outputDirectory>
+			<filtered>true</filtered>
+			<fileMode>0744</fileMode>
+		</file>
+		<file>
+			<source>src/main/config/claudia-startup.sh</source>
+			<outputDirectory>/bin</outputDirectory>
+			<filtered>true</filtered>
+			<fileMode>0744</fileMode>
+		</file>
+		<file>
+			<source>src/main/config/sm.properties</source>
+			<outputDirectory>/conf</outputDirectory>
+			<filtered>true</filtered>
+			<fileMode>0644</fileMode>
+		</file>
+		<file>
+			<source>src/main/data/ClaudiaDB.tar.gz</source>
+			<outputDirectory>/lib/data</outputDirectory>
+			<filtered>true</filtered>
+			<fileMode>0644</fileMode>
+		</file>
+		<file>
+			<source>src/main/config/sca.drl</source>
+			<outputDirectory>/ruleHome</outputDirectory>
+			<filtered>true</filtered>
+			<fileMode>0644</fileMode>
+		</file>
+		<file>
+			<source>src/main/config/clothod</source>
+			<outputDirectory>/bin/daemon</outputDirectory>
+			<filtered>true</filtered>
+			<fileMode>0744</fileMode>
+		</file>
+
+
+	</files>
+
+	<dependencySets>
+		<dependencySet>
+			<unpack>false</unpack>
+			<scope>runtime</scope>
+			<outputDirectory>/lib</outputDirectory>
+		</dependencySet>
+	</dependencySets>
 
 </assembly>
 

@@ -307,7 +307,24 @@ public class PersistenceClient {
 		return valuexml;
 	}
 
-	public void  sendvalue(String valuexml, String monitorfqn)  {
+	public static int nthIndexOf(String text, char needle, int n)
+	{
+	    for (int i = 0; i < text.length(); i++)
+	    {
+	        if (text.charAt(i) == needle)
+	        {
+	            n--;
+	            if (n == 0)
+	            {
+	                return i;
+	            }
+	        }
+	    }
+	    return -1;
+	}
+	
+	
+	public void  sendvalue(String valuexml, String monitorfqn, String measure)  {
 
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance ( );
 
@@ -329,20 +346,36 @@ public class PersistenceClient {
 				Node valueAtribute = atributes.getNamedItem( "value" );
 				String value=valueAtribute.getNodeValue();
 
-				logger.info(" values: " + unit+" "+timestamp+" "+ value); 
+				//logger.info(" values: " + unit+" "+timestamp+" "+ value); 
 
 
 				String pattern = "yyyy-MM-dd'T'HH:mm:ss";
 				SimpleDateFormat sdf = new SimpleDateFormat(pattern);
 				Date date = sdf.parse(timestamp);
-				logger.info(" date: " +date); 
+				//logger.info(" date: " +date); 
 				MeasuredValue mv = new MeasuredValue(value,date,unit);
 
+				int j = monitorfqn.indexOf("vdc");
+				int k = monitorfqn.indexOf("vapp");
+				String customer= monitorfqn.substring(j+4,k-1);
 
-				sendRESTMessage("AGENT", mv.getRegisterDate().getTime(), 4, monitorfqn, Double.parseDouble(mv.getValue()));
-				//	MeasuredValue(String value, Date registerDate, String unit) 
-				//	sendRESTMessage("AGENT", mv.getRegisterDate().getTime(), 4, fqn, Double.parseDouble(mv.getValue());
-				//	public static void sendRESTMessage(String eventType, long t_0, long delta_t, String fqn, double value) 
+				int l =  nthIndexOf(monitorfqn, '/', 10);
+				
+				//logger.info("k : " + k);
+				//logger.info("l : " + l); 
+				//logger.info("customer : " + customer); 
+
+				String service= monitorfqn.substring(k+5,l);
+				
+				//logger.info("service : " + service); 
+				
+				String monitor= SITE_ROOT+".customers."+customer+".services."+service+".kpis."+measure;
+				//logger.info("sending : " + monitor); 
+				
+				sendRESTMessage("HW", mv.getRegisterDate().getTime(), 4, monitor, Double.parseDouble(mv.getValue()));
+				//sendRESTMessage("AGENT", mv.getRegisterDate().getTime(), 4, monitorfqn, Double.parseDouble(mv.getValue()));
+				logger.info(" monitor: " + monitor+ " "+measure); 
+				logger.info(" values: " + unit+" "+timestamp+" "+ value); 
 			}
 		}
 		catch (Exception spe)

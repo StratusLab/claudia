@@ -70,8 +70,8 @@ public class Monitor extends Thread {
 
 				String valuexml=pc.getmeasure(monitor, measure);
 				String measurefqn = monitor+"/"+measure;
-				logger.info(" monitor values: " + monitor+ " "+measure); 
-				pc.sendvalue(valuexml,measurefqn);
+				//logger.info(" monitor values: " + monitor+ " "+measure); 
+				pc.sendvalue(valuexml,measurefqn,measure);
 
 			}
 
