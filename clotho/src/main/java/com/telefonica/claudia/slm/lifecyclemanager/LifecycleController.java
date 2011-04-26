@@ -715,6 +715,7 @@ public class LifecycleController  extends UnicastRemoteObject implements SMI, Se
                 }
                 
             break;
+
             case AGENT_MEASUREMENT:
             	AgentMeasureEvent agentEvent;
                 agentEvent=(AgentMeasureEvent)event;

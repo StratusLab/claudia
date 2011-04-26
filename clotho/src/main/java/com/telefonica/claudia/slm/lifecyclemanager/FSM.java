@@ -57,6 +57,8 @@ import com.telefonica.claudia.slm.deployment.ServiceApplication;
 import com.telefonica.claudia.slm.deployment.ServiceKPI;
 import com.telefonica.claudia.slm.deployment.VEE;
 import com.telefonica.claudia.slm.deployment.VEEReplica;
+import com.telefonica.claudia.slm.deployment.hwItems.CPU;
+import com.telefonica.claudia.slm.deployment.hwItems.Disk;
 import com.telefonica.claudia.slm.deployment.hwItems.DiskConf;
 import com.telefonica.claudia.slm.deployment.hwItems.NIC;
 import com.telefonica.claudia.slm.deployment.hwItems.NICConf;
@@ -1176,7 +1178,7 @@ public class FSM extends Thread implements Serializable {
 	@SuppressWarnings("unchecked")
 	private Set<VEEReplica> createReplica(VEE originalVEE, int replicaNumber) {
 		
-		Set<VEEReplica> replicas = new HashSet<VEEReplica>();
+	/*	Set<VEEReplica> replicas = new HashSet<VEEReplica>();
 		
 		for (int q=0; q < replicaNumber;q++) {
 			
@@ -1265,7 +1267,132 @@ public class FSM extends Thread implements Serializable {
 					ips.get(networkName).add(replicaIP);
 				}
 			}
-			
+			*/
+			 if (this.abort) {
+                        this.logger.error("Unable to deploy replicas. Service already aborted");
+                        return null;
+                }
+
+                Set<VEEReplica> replicas = new HashSet<VEEReplica>();
+
+                for (int q=0; q < replicaNumber;q++) {
+
+                        VEEReplica veeReplica = new VEEReplica(originalVEE);
+
+                        replicaCustomInfo = new HashMap<String, String>();
+
+                        logger.info("Deploying replica: "+ veeReplica.getFQN());
+                        veeReplica.registerHwElementsInResDir();
+
+                        ReservoirDirectory.getInstance().registerObject(veeReplica.getFQN(), veeReplica);
+
+                        ReservoirDirectory.getInstance().registerObject(veeReplica.getMemory().getFQN(), veeReplica.getMemory());
+
+                        Iterator iter = veeReplica.getDisks().iterator();
+
+                        while (iter.hasNext())
+                        {
+                                Disk disc = (Disk)iter.next();
+                                ReservoirDirectory.getInstance().registerObject(disc.getFQN(), disc);
+                                logger.info("PONG DISK FQN: " +disc.getFQN());
+                        }
+
+                         iter = veeReplica.getCPUs().iterator();
+
+                        while (iter.hasNext())
+                        {
+                                CPU cpu = (CPU)iter.next();
+                                ReservoirDirectory.getInstance().registerObject(cpu.getFQN(), cpu);
+                                logger.info("PONG CPU FQN: " + cpu.getFQN());
+                        }
+
+                         iter = veeReplica.getNICs().iterator();
+
+                                while (iter.hasNext())
+                                {
+                                        NIC nic = (NIC)iter.next();
+                                        ReservoirDirectory.getInstance().registerObject(nic.getFQN(), nic);
+                                        logger.info("PONG NIC FQN: " + nic.getFQN());
+                                }
+
+                        MonitoringRestBusConnector restBusConnector = MonitoringRestBusConnector.getInstance();
+                        List<String> restEndPoints = restBusConnector.getRestEndPoints();
+
+                        if ((restEndPoints != null) && (restEndPoints.size() > 0)) {
+                         logger.info("KPIMonitorEndPoint customization value: " + restBusConnector.getRestEndPoints().get(0));
+                                replicaCustomInfo.put("KPIMonitorEndPoint", restBusConnector.getRestEndPoints().get(0));
+                        }
+
+                        replicaCustomInfo.put("KPIQualifier", sap.getFQN().toString() + ".kpis");
+                        replicaCustomInfo.put("ReplicaName", veeReplica.getFQN().toString());
+                replicaCustomInfo.put("VEEid", String .valueOf(veeReplica.getId()));
+                replicaCustomInfo.put("ReplicaName", veeReplica.getFQN().toString());
+
+                        // call parser to complete the hashTable and update the
+                        // CustomizationInformation String in the VEEReplica
+                        // object
+                        logger.info("Customizing replica " + veeReplica.getId() + " del VEE " + originalVEE.getVEEName());
+                        if (replicaCustomInfo.isEmpty())
+                                logger.info("Empty custom information");
+                        else {
+                                Iterator keyIter = replicaCustomInfo.keySet().iterator();
+
+                                while (keyIter.hasNext()) {
+                                        String key = (String) keyIter.next();
+                                        logger.info("Key: " + key + "; Value: "+ replicaCustomInfo.get(key));
+                                }
+                        }
+
+                        // Get the networks for the VM Environment
+                        HashMap<String,String> masks = new HashMap<String,String>();
+                        HashMap<String,ArrayList<String>> ips = new HashMap<String,ArrayList<String>>();
+                        HashMap<String,String> dnss = new HashMap<String, String> ();
+                        HashMap<String,String> gateways = new HashMap<String, String> ();
+
+                        HashMap<String, Integer> ipsNeeded = parser.getNumberOfIpsPerNetwork(originalVEE.getVEEName());
+
+                        for (Network net: sap.getNetworks()) {
+                                masks.put(net.getName(), net.getNetworkAddresses()[1]);
+                                dnss.put(net.getName(), net.getNetworkAddresses()[2]);
+                                gateways.put(net.getName(), net.getNetworkAddresses()[3]);
+                        }
+
+                        for (NIC nic: veeReplica.getNICs()) {
+                                String networkName = nic.getNICConf().getNetwork().getName();
+
+                                if (ips.get(networkName)==null)
+                                        ips.put(networkName, new ArrayList<String>());
+
+                                Integer iterations = ipsNeeded.get(networkName);
+
+                                if (iterations == null || iterations == 0)
+                                        iterations = 1;
+
+                                for (int i=0; i < iterations; i++) {
+                                        String replicaIP = lcc.getHostAddress(nic.getNICConf().getNetwork().getNetworkAddresses()[0]);
+                                          if (replicaIP==null) {
+                                                abort("Lack of ip addresses");
+                                                return null;
+                                        }
+
+                                        // Put the IP in the entrypoint map for this network.
+                                        Map<String, String> entryPoint = nic.getNICConf().getNetwork().getEntryPoints();
+
+                                        if (entryPoint.containsKey(originalVEE.getVEEName())) {
+                                                String ipList= entryPoint.get(originalVEE.getVEEName());
+                                                entryPoint.put(originalVEE.getVEEName(), ipList + " " + replicaIP);
+                                        } else {
+                                                entryPoint.put(originalVEE.getVEEName(), replicaIP);
+                                        }
+
+                                        nic.addIPAddress(replicaIP);
+
+                                        ips.get(networkName).add(replicaIP);
+                                }
+                        }
+
+
+                     
 			HashMap<String, HashMap<String, String>> entryPoints = new HashMap<String, HashMap<String, String>>();
 			
 			for (Network net: sap.getNetworks())
