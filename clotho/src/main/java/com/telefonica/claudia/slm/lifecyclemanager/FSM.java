@@ -1288,6 +1288,8 @@ public class FSM extends Thread implements Serializable {
 
                         ReservoirDirectory.getInstance().registerObject(veeReplica.getMemory().getFQN(), veeReplica.getMemory());
 
+                        logger.info("PONG Memory FQN: " +veeReplica.getMemory());
+                        
                         Iterator iter = veeReplica.getDisks().iterator();
 
                         while (iter.hasNext())
