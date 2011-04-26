@@ -379,7 +379,7 @@ public class PersistenceClient {
 			
 			//	logger.info("number : " + number); 
 				
-				String monitor= SITE_ROOT+".customers."+customer+".services."+service+"."+replica+"."+number+".kpis."+measure;
+				String monitor= SITE_ROOT+".customers."+customer+".services."+service+".vees."+replica+".replicas."+number+".kpis."+measure;
 				//logger.info("sending : " + monitor); 
 				
 				sendRESTMessage("VEEHW", mv.getRegisterDate().getTime(), 4, monitor, Double.parseDouble(mv.getValue()));
