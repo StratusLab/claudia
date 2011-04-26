@@ -297,9 +297,9 @@ public class OneMonitoringDriver implements MonitoringDriver {
 			log.error("VM Info request failed: " + result[1]);
 			
 		}
-		//obtener de open nebula con el xmlrpcclient el xml de la máquina
+		//obtener de open nebula con el xmlrpcclient el xml de la mÃ¡quina
 		//leer de ese xml los datos q necesito
-		//crear un objeto MeasureDescriptor y llenarlo con esos datos (utilizando los métodos
+		//crear un objeto MeasureDescriptor y llenarlo con esos datos (utilizando los mÃ©todos
 		//implementados en esa clase)
 		//devolver el 
 		*/
@@ -407,7 +407,7 @@ public class OneMonitoringDriver implements MonitoringDriver {
 			    	md.setName("disks.sda");
 			     	mdl.add(md);
 			    	
-			    	log.debug("*******Acabo de añadir un measureDescriptor del disco");
+			    	log.debug("*******Acabo de aÃ±adir un measureDescriptor del disco");
 			   
 				    
 			    	//NIC
@@ -424,7 +424,7 @@ public class OneMonitoringDriver implements MonitoringDriver {
 						mdl.add(md2);
 					}
 					
-					log.debug("*********He añadido el measure descriptor de la red");
+					log.debug("*********He aÃ±adido el measure descriptor de la red");
 					expression = "/VM/MEMORY"; 
 					nodes=(NodeList)xpath.evaluate(expression, doc.getDocumentElement(), XPathConstants.NODESET);
 					for (i=0; i < nodes.getLength(); i++) {
@@ -436,7 +436,7 @@ public class OneMonitoringDriver implements MonitoringDriver {
 						md3.setName("memory");
 						mdl.add(md3);
 					}
-					log.debug("*********He añadido el measure descriptor de la memoria");
+					log.debug("*********He aÃ±adido el measure descriptor de la memoria");
 					expression = "/VM/CPU"; 
 					nodes=(NodeList)xpath.evaluate(expression, doc.getDocumentElement(), XPathConstants.NODESET);
 					for (i=0; i < nodes.getLength(); i++) {
@@ -448,7 +448,7 @@ public class OneMonitoringDriver implements MonitoringDriver {
 						md4.setName("cpus."+i+1);
 						mdl.add(md4);
 					}
-					log.debug("*********He añadido el measure descriptor de la cpu");
+					log.debug("*********He aÃ±adido el measure descriptor de la cpu");
 				}
 				
 				log.debug("Monitor request succeded");
