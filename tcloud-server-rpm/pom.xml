@@ -1,5 +1,6 @@
 <?xml version="1.0"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>eu.stratuslab.pkgs.claudia</groupId>
@@ -39,6 +40,14 @@
 			<classifier>deployable</classifier>
 			<type>zip</type>
 		</dependency>
+
+		<dependency>
+			<groupId>eu.stratuslab.pkgs.claudia</groupId>
+			<artifactId>driver-one-mon</artifactId>
+			<classifier>deployable</classifier>
+			<type>zip</type>
+		</dependency>
+
 
 		<dependency>
 			<groupId>eu.stratuslab.pkgs.claudia</groupId>
@@ -108,6 +117,12 @@
 								<artifactItem>
 									<groupId>eu.stratuslab.pkgs.claudia</groupId>
 									<artifactId>driver-clotho</artifactId>
+									<classifier>deployable</classifier>
+									<type>zip</type>
+								</artifactItem>
+								<artifactItem>
+									<groupId>eu.stratuslab.pkgs.claudia</groupId>
+									<artifactId>driver-one-mon</artifactId>
 									<classifier>deployable</classifier>
 									<type>zip</type>
 								</artifactItem>
@@ -225,8 +240,8 @@
 
 	<properties>
 		<app.home>/opt/claudia/</app.home>
-    <maven.build.timestamp.format>yyyyMMdd.HHmmss</maven.build.timestamp.format>
-    <RELEASE>0.${maven.build.timestamp}</RELEASE>
+		<maven.build.timestamp.format>yyyyMMdd.HHmmss</maven.build.timestamp.format>
+		<RELEASE>0.${maven.build.timestamp}</RELEASE>
 	</properties>
 
 </project>
