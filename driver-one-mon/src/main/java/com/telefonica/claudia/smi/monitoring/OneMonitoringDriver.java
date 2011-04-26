@@ -420,7 +420,8 @@ public class OneMonitoringDriver implements MonitoringDriver {
 						md2.setValueType("xs:decimal");
 						md2.setMaxValue(size2);
 						md2.setMinValue("0");
-						md2.setName("networks."+i+1);
+						int sum=i+1;
+						md2.setName("networks."+sum);
 						mdl.add(md2);
 					}
 					
@@ -445,7 +446,8 @@ public class OneMonitoringDriver implements MonitoringDriver {
 						md4.setValueType("xs:decimal");
 						md4.setMaxValue(size2);
 						md4.setMinValue("0");
-						md4.setName("cpus."+i+1);
+						int sum=i+1;
+						md4.setName("cpus."+sum);
 						mdl.add(md4);
 					}
 					log.debug("*********He añadido el measure descriptor de la cpu");

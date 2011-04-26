@@ -44,6 +44,7 @@
 		<dependency>
 			<groupId>eu.stratuslab.pkgs.claudia</groupId>
 			<artifactId>driver-one-mon</artifactId>
+			<version>0.1.4-SNAPSHOT</version>
 			<classifier>deployable</classifier>
 			<type>zip</type>
 		</dependency>
