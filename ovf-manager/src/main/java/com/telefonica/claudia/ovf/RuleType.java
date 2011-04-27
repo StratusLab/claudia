@@ -69,7 +69,8 @@ import javax.xml.bind.annotation.XmlType;
     "window",
     "frequency",
     "quota",
-    "tolerance"
+    "tolerance",
+    "kpitype"
 })
 public class RuleType {
 
@@ -85,6 +86,8 @@ public class RuleType {
     protected BigInteger quota;
     @XmlElement(name = "Tolerance")
     protected BigDecimal tolerance;
+    @XmlElement(name = "KPIType", required = true)
+    protected String kpiType;
 
     /**
      * Gets the value of the kpiName property.
@@ -204,6 +207,15 @@ public class RuleType {
      */
     public void setTolerance(BigDecimal value) {
         this.tolerance = value;
+    }
+    
+    public String getKPIType () {
+        return kpiType;
+    }
+
+
+    public void setKPIType(String value) {
+        this.kpiType = value;
     }
 
 }
