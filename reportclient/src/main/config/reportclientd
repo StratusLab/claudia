@@ -1,0 +1,31 @@
+#!/bin/bash
+#
+# reportclientd - ReportClient Daemon
+#
+# chkconfig: - 85 15
+# description: Reportclient component of claudia 
+# processname: reportclient
+# config: /etc/claudia/conf/reportClient.properties
+#
+
+case "$1" in
+  start)
+        echo "Starting reportclient daemon"
+
+        nohup /opt/claudia/bin/reportclient $1 >& /var/log/reportclient.log  &
+;;
+  stop)
+        echo "Stopping reportclient daemon"
+        nohup /opt/claudia/bin/reportclient $1 >& /var/log/reportclient.log & 
+        ;;
+  restart)
+        echo "Stopping reportclient daemon"
+        nohup /opt/claudia/bin/reportclient stop  >& /var/log/reportclient.log &
+        sleep 5
+        echo "Starting reportclient daemon"
+        nohup /opt/claudia/bin/reportclient start >& /var/log/reportclient.log  &
+        sleep 5
+        ;;
+
+esac
+exit 0

@@ -149,7 +149,7 @@
 						<mapping>
 							<directory>${app.home}/logs</directory>
 						</mapping>
-<!--
+						
 						<mapping>
 							<directory>/etc/init.d/</directory>
 							<username>root</username>
@@ -158,14 +158,14 @@
 							<directoryIncluded>false</directoryIncluded>
 							<sources>
 								<source>
-									<location>target/dependency/tcloud-server/bin/daemon</location>
+									<location>target/dependency/reportclient/bin/daemon</location>
 									<includes>
-										<include>tcloudd</include>
+										<include>reportclientd</include>
 									</includes>
 								</source>
 							</sources>
 						</mapping>
--->
+
 					</mappings>
 				</configuration>
 			</plugin>

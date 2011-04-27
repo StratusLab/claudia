@@ -1,56 +1,62 @@
 <assembly>
-  <id>environment</id>
+	<id>environment</id>
 
-  <formats>
-    <format>zip</format>
-  </formats>
+	<formats>
+		<format>zip</format>
+	</formats>
 
-  <baseDirectory>/reportclient</baseDirectory>
-  
-  <fileSets>
-    <fileSet>
-      <directory>${project.build.directory}</directory>
-      <includes>
-        <include>*.jar</include>
-      </includes>
-      <outputDirectory>/lib/</outputDirectory>
-      <fileMode>0644</fileMode>
-      <directoryMode>0755</directoryMode>
-    </fileSet>
+	<baseDirectory>/reportclient</baseDirectory>
 
-    <fileSet>
-       <directory>target/</directory>
-       <outputDirectory>/logs</outputDirectory>
-       <directoryMode>0755</directoryMode>
+	<fileSets>
+		<fileSet>
+			<directory>${project.build.directory}</directory>
+			<includes>
+				<include>*.jar</include>
+			</includes>
+			<outputDirectory>/lib/</outputDirectory>
+			<fileMode>0644</fileMode>
+			<directoryMode>0755</directoryMode>
+		</fileSet>
 
-       <excludes>
-           <exclude>**/*</exclude>
-       </excludes>
-    </fileSet>
-  </fileSets>
+		<fileSet>
+			<directory>target/</directory>
+			<outputDirectory>/logs</outputDirectory>
+			<directoryMode>0755</directoryMode>
 
-  <files>
-    <file>
-      <source>src/main/config/reportclient</source>
-      <outputDirectory>/bin</outputDirectory>
-      <filtered>true</filtered>
-      <fileMode>0744</fileMode>
-    </file>
-    <file>
-      <source>src/main/config/reportClient.properties</source>
-      <outputDirectory>/conf</outputDirectory>
-      <filtered>true</filtered>
-    </file>
-  </files>  
+			<excludes>
+				<exclude>**/*</exclude>
+			</excludes>
+		</fileSet>
+	</fileSets>
 
-  <dependencySets>
-    <dependencySet>
-      <unpack>false</unpack>
-      <scope>runtime</scope>
-      <outputDirectory>/lib</outputDirectory>
-      <directoryMode>0644</directoryMode>
-    </dependencySet>
-  </dependencySets>
+	<files>
+		<file>
+			<source>src/main/config/reportclient</source>
+			<outputDirectory>/bin</outputDirectory>
+			<filtered>true</filtered>
+			<fileMode>0744</fileMode>
+		</file>
+		<file>
+			<source>src/main/config/reportClient.properties</source>
+			<outputDirectory>/conf</outputDirectory>
+			<filtered>true</filtered>
+		</file>
+		<file>
+			<source>src/main/config/reportclientd</source>
+			<outputDirectory>/bin/daemon</outputDirectory>
+			<filtered>true</filtered>
+			<fileMode>0744</fileMode>
+		</file>
+	</files>
+
+	<dependencySets>
+		<dependencySet>
+			<unpack>false</unpack>
+			<scope>runtime</scope>
+			<outputDirectory>/lib</outputDirectory>
+			<directoryMode>0644</directoryMode>
+		</dependencySet>
+	</dependencySets>
 
 </assembly>
 
