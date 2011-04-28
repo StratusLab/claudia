@@ -29,6 +29,14 @@
 */
 package com.telefonica.claudia.slm.naming;
 
+import java.util.Iterator;
+import java.util.Set;
+
+import org.apache.log4j.ConsoleAppender;
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
+import org.apache.log4j.PatternLayout;
+
 import com.telefonica.claudia.slm.deployment.Customer;
 import com.telefonica.claudia.slm.deployment.ProbeKPI;
 import com.telefonica.claudia.slm.deployment.Rule;
@@ -41,10 +49,15 @@ import com.telefonica.claudia.slm.deployment.hwItems.Disk;
 import com.telefonica.claudia.slm.deployment.hwItems.Memory;
 import com.telefonica.claudia.slm.deployment.hwItems.NIC;
 import com.telefonica.claudia.slm.deployment.hwItems.Network;
+import com.telefonica.claudia.slm.maniParser.Parser;
 
 @SuppressWarnings("unchecked")
 public class ReservoirDirectory extends Directory {
     
+	/* Class logger */
+	private static Logger logger = Logger.getLogger(Parser.class);
+
+	
     private static ReservoirDirectory resDirInstance = null;
     
     // FIXME: make the following line work and avoid the hardwiring (quick fix during London F2F :)
@@ -64,6 +77,8 @@ public class ReservoirDirectory extends Directory {
     
     private ReservoirDirectory() {
         super(new FQN(ROOT_NAME_SPACE));
+        
+        
     }
     
     public static ReservoirDirectory getInstance() {
@@ -117,7 +132,20 @@ public class ReservoirDirectory extends Directory {
     }
     
     public FQN buildFQN(ServiceKPI serviceKPI) {
-    	return new FQN(buildFQN(serviceKPI.getServiceApplication()) + FQN.CONTEXT_SEPARATOR + SERVICE_KPIS_NAME_SPACE + FQN.CONTEXT_SEPARATOR + serviceKPI.getKPIName());
+    	
+    	
+    	String replicaname="workernode.replicas.1";
+    	
+    	/*  if (serviceKPI.getKPIType().equals("VEEHW")){
+  	logger.info("PONG buildFQN = " + serviceKPI.getServiceApplication()+ ".vees." + replicaname+ ".kpis." +  serviceKPI.getKPIName());
+ //   logger.info("PONG serviceKPI.getKPIType().equals(VEEHW)= " +serviceKPI.getKPIType().equals("VEEHW")); */
+    return new FQN(buildFQN(serviceKPI.getServiceApplication())+ ".vees." + replicaname+ ".kpis." +  serviceKPI.getKPIName());
+    /*	}
+    	else
+    //	logger.info("PONG buildFQN = " + serviceKPI.getServiceApplication() + FQN.CONTEXT_SEPARATOR + SERVICE_KPIS_NAME_SPACE + FQN.CONTEXT_SEPARATOR + serviceKPI.getKPIName());
+     return new FQN(buildFQN(serviceKPI.getServiceApplication()) + FQN.CONTEXT_SEPARATOR + SERVICE_KPIS_NAME_SPACE + FQN.CONTEXT_SEPARATOR + serviceKPI.getKPIName());
+    	//return new FQN(buildFQN(serviceKPI.getServiceApplication())+ ".vees." + replicaname+ ".kpis." +  serviceKPI.getKPIName());
+    	*/
     }
     
     public FQN buildFQN(ProbeKPI probeKPI) {

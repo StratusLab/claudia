@@ -53,6 +53,7 @@ public class ServiceKPI implements DirectoryEntry {
     private String kpiName = null;
     
     private double kpiValue = 0.0;
+    String kpiType;
     
     @OneToOne(cascade={CascadeType.REFRESH, CascadeType.MERGE, CascadeType.PERSIST})
     private FQN kpiFQN = null;
@@ -80,10 +81,24 @@ public class ServiceKPI implements DirectoryEntry {
     	return kpiValue;
     }
     
+    public void setKPIType(String kpiType) {
+    	this.kpiType= kpiType;
+    }
+    
+    public String getKPIType() {
+    	return kpiType;
+    }
+    
+    
     public ServiceApplication getServiceApplication() {
     	return serviceApplication;
     }
     
+ /*   public FQN getFQN(String kpitype, String auxname) {
+    	if(kpiFQN == null)
+    		kpiFQN = ReservoirDirectory.getInstance().buildFQN(this, kpitype, auxname);
+    	return kpiFQN;
+    }*/
     public FQN getFQN() {
     	if(kpiFQN == null)
     		kpiFQN = ReservoirDirectory.getInstance().buildFQN(this);

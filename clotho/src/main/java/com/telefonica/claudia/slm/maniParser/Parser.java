@@ -46,6 +46,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.StringTokenizer;
 
 import javax.xml.bind.JAXBException;
@@ -842,7 +843,19 @@ public class Parser {
 
 							if (rule.getKPIType().equals("VEEHW")){
 								sRule.setKPIName(sa + ".vees." + vs.getId()+ ".replicas.1"+ ".kpis." + rule.getKPIName());
-								sRule.setEventType("HwMeasureEvent");
+								sRule.setEventType("VeeHwMeasureEvent");
+
+								Set<ServiceKPI> kpis = sa.getServiceKPIs();
+
+								for (Iterator<ServiceKPI> iterator = kpis.iterator(); iterator.hasNext();) {
+									
+									ServiceKPI skpi = iterator.next();
+									if(skpi.getKPIName().equals(rule.getKPIName())){
+										logger.info("PONG found KPIName equal= " + rule.getKPIName());
+										skpi.setKPIType("VEEHW");
+									}
+									
+								}
 							}
 							else {
 								sRule.setKPIName(sa + ".kpis." + rule.getKPIName());
