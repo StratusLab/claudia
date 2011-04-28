@@ -70,7 +70,7 @@ import javax.xml.bind.annotation.XmlType;
     "frequency",
     "quota",
     "tolerance",
-    "kpitype"
+    "kpiType"
 })
 public class RuleType {
 

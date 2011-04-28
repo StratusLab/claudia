@@ -1,32 +1,32 @@
 /*
-* Claudia Project
-* http://claudia.morfeo-project.org
-*
-* (C) Copyright 2010 Telefonica Investigacion y Desarrollo
-* S.A.Unipersonal (Telefonica I+D)
-*
-* See CREDITS file for info about members and contributors.
-*
-* This program is free software; you can redistribute it and/or modify
-* it under the terms of the Affero GNU General Public License (AGPL) as 
-* published by the Free Software Foundation; either version 3 of the License, 
-* or (at your option) any later version.
-*
-* This program is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-* GNU General Public License for more details.
-*
-* You should have received a copy of the Affero GNU General Public License
-* along with this program; if not, write to the Free Software
-* Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
-*
-* If you want to use this software an plan to distribute a
-* proprietary application in any way, and you are not licensing and
-* distributing your source code under AGPL, you probably need to
-* purchase a commercial license of the product. Please contact
-* claudia-support@lists.morfeo-project.org for more information.
-*/
+ * Claudia Project
+ * http://claudia.morfeo-project.org
+ *
+ * (C) Copyright 2010 Telefonica Investigacion y Desarrollo
+ * S.A.Unipersonal (Telefonica I+D)
+ *
+ * See CREDITS file for info about members and contributors.
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the Affero GNU General Public License (AGPL) as 
+ * published by the Free Software Foundation; either version 3 of the License, 
+ * or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the Affero GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ *
+ * If you want to use this software an plan to distribute a
+ * proprietary application in any way, and you are not licensing and
+ * distributing your source code under AGPL, you probably need to
+ * purchase a commercial license of the product. Please contact
+ * claudia-support@lists.morfeo-project.org for more information.
+ */
 
 package com.telefonica.claudia.slm.maniParser;
 
@@ -153,7 +153,7 @@ public class Parser {
 			OVFSerializer ovfSerializer = OVFSerializer.getInstance();
 			ovfSerializer.setValidateXML(false);
 			envelope = ovfSerializer.readXMLEnvelope(new FileInputStream(xmlFile));
-			
+
 			sa = new ServiceApplication(serviceName, cus);
 			sa.setXmlFile(filename);
 
@@ -169,12 +169,12 @@ public class Parser {
 		}
 	}
 
-	
+
 	public boolean parse() throws ManiParserException {
-		
+
 		// Build networks
 		buildNetworks(sa);
-		
+
 		// Build the VEE vector
 		buildVEEVector(sa);
 
@@ -183,12 +183,12 @@ public class Parser {
 
 		// Build the rule vector
 		buildRuleVector(sa);
-		
+
 		return true;
 	}
-	
+
 	private void buildNetworks (ServiceApplication sa) {
-		
+
 		/* Parse the Network Section in the SManif in order to create the Network objects
 		 * associated to the ServiceApplication */
 		NetworkSectionType ns = null;
@@ -198,15 +198,15 @@ public class Parser {
 			for (Iterator<NetworkSectionType.Network> iteratorN = networks.iterator(); iteratorN.hasNext();) {
 				NetworkSectionType.Network netEl = (NetworkSectionType.Network) iteratorN.next();
 				Network net = new Network(netEl.getName(),sa);
-		
+
 				QName publicAtt = new QName("http://schemas.telefonica.com/claudia/ovf","public");
 				Map<QName, String> attributes = netEl.getOtherAttributes();
-				
+
 				net.setPrivateNet(!Boolean.parseBoolean(attributes.get(publicAtt)));
 				sa.registerNetwork(net);
-				
+
 				logger.debug("network: " + net.getName() + ", private: " + net.getPrivateNet());
-				
+
 			}
 		} catch (SectionNotPresentException e) {					
 			logger.error(e);
@@ -214,28 +214,28 @@ public class Parser {
 			logger.error(e);
 		}	
 	}
-	
+
 	public HashMap<String,Integer> getNumberOfIpsPerNetwork(String vsId)  {
 		VirtualSystemCollectionType topVsc;
 		try {
 			topVsc = (VirtualSystemCollectionType) OVFEnvelopeUtils.getTopLevelVirtualSystemContent(envelope);
 			VirtualSystemType vs = (VirtualSystemType) OVFEnvelopeUtils.getContentTypeByString(topVsc, vsId);
 			return OVFEnvelopeUtils.getRequiredIPByNetwork(envelope, vs);
-			
+
 		} catch (EmptyEnvelopeException e) {
 			logger.warn("Empty envelope detected, service deployment may not be completed.");
 		}
-		
+
 		return new HashMap<String, Integer>();
 	}
-	
+
 	public String generateEnvironments(String vsId, int contInstanceNumber, 
 			HashMap<String,ArrayList<String>> ips,
 			HashMap<String,String> netmask,
 			HashMap<String,String> dnsServers,
 			HashMap<String,String> gateways,
 			HashMap<String, HashMap<String, String>> eps) throws DeploymentException
-	{
+			{
 		ContentType entityInstance = null;
 		try {
 			entityInstance = OVFEnvelopeUtils.getTopLevelVirtualSystemContent(envelope);
@@ -246,10 +246,10 @@ public class Parser {
 			// TODO
 			return null;
 		} else if (entityInstance instanceof VirtualSystemCollectionType)  {
-			
+
 			//VirtualSystemCollectionType virtualSystemCollection = (VirtualSystemCollectionType) entityInstance;
 			//List<ProductSectionType> listProductSection = OVFEnvelopeUtils.getProductSections(virtualSystemCollection);
-			
+
 			/* Accordingly to the OVF Environment document production rules in DSP0243 1.0.0 lines 
 			 * 1322-1325, all the VirtualSystems in a given VirtualSystemCollection get the 
 			 * Properties defined in ProductSections placed *at parent* VirtualSystemCollection level: 
@@ -257,22 +257,22 @@ public class Parser {
 			 * in the OVF descriptor for the current virtual machine, as well as properties specified 
 			 * for the immediate parent VirtualSystemCollection, if one exists".
 			 */
-			
+
 			VirtualSystemCollectionType topVsc;
 			try {
 				topVsc = (VirtualSystemCollectionType)OVFEnvelopeUtils.getTopLevelVirtualSystemContent(envelope);
 				VirtualSystemType vs = (VirtualSystemType) OVFEnvelopeUtils.getContentTypeByString(topVsc, vsId);
-				
+
 				if (vs == null) 
 					throw new DeploymentException ("VirtualSystem " + vsId + " can not be found in SManif", vsId);
-				
+
 				/* Get the number of IPs */
 				HashMap<String,Integer> ipNumbers = OVFEnvelopeUtils.getRequiredIPByNetwork(envelope, vs);
 				for ( Iterator<String> i = ipNumbers.keySet().iterator(); i.hasNext() ; ) {
 					String net = i.next();
 					logger.debug("net '" + net + "' needs " + ipNumbers.get(net).toString() + " IP addresses in VEE type '" + vsId + "'");
 				}
-							
+
 				try {
 					ByteArrayOutputStream output = new ByteArrayOutputStream();
 					OVFEnvironmentUtils.createOVFEnvironment(topVsc, 
@@ -288,28 +288,28 @@ public class Parser {
 							eps,
 							output,
 							SMConfiguration.getInstance().isOvfEnvEntityGen());
-					
+
 					logger.debug("OVF Environment file for VEE [" + vsId + "] " + output.toString());
 					return output.toString();
-					
-//					ByteArrayOutputStream output = new ByteArrayOutputStream();
-//					OVFEnvelopeUtils.inEnvolopeMacroReplacement(envelope, 
-//							vs,
-//							contInstanceNumber,
-//							SMConfiguration.getInstance().getDomainName(),
-//							sa.getFQN().toString(),
-//							SMConfiguration.getInstance().getMonitoringAddress(), 
-//							ips,
-//							netmask,
-//							dnsServers,
-//							gateways,
-//							eps,
-//							output
-//					);
-//					
-//					logger.debug("OVF Envelope file for VEE [" + vsId + "] " + output.toString());
-//					return output.toString();
-										
+
+					//					ByteArrayOutputStream output = new ByteArrayOutputStream();
+					//					OVFEnvelopeUtils.inEnvolopeMacroReplacement(envelope, 
+					//							vs,
+					//							contInstanceNumber,
+					//							SMConfiguration.getInstance().getDomainName(),
+					//							sa.getFQN().toString(),
+					//							SMConfiguration.getInstance().getMonitoringAddress(), 
+					//							ips,
+					//							netmask,
+					//							dnsServers,
+					//							gateways,
+					//							eps,
+					//							output
+					//					);
+					//					
+					//					logger.debug("OVF Envelope file for VEE [" + vsId + "] " + output.toString());
+					//					return output.toString();
+
 				} catch (IPNotFoundException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -336,12 +336,12 @@ public class Parser {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
-			
+
 		}
-		
+
 		return null;
 
-	}
+			}
 
 	/**
 	 * builds the VEE vector
@@ -362,7 +362,7 @@ public class Parser {
 			logger.error("Could not split OVF due to the following error: " + e1.getMessage());
 			throw new ManiParserException("Could not split OVF due to the following error: " + e1.getMessage());
 		}
-		
+
 		ContentType entityInstance = null;
 		try {
 			entityInstance = OVFEnvelopeUtils.getTopLevelVirtualSystemContent(envelope);
@@ -370,7 +370,7 @@ public class Parser {
 			logger.error(e);
 		}
 		if (entityInstance instanceof VirtualSystemType) {
-			
+
 			//TODO
 
 		} else if (entityInstance instanceof VirtualSystemCollectionType) {
@@ -386,12 +386,12 @@ public class Parser {
 				} catch (InvalidSectionException e) {					
 					logger.error(e);
 				}
-				
+
 				VEE vee = new VEE(vs.getId(), sa);
 				logger.debug("creating VEE name: " + vs.getId());
 
 				vee.setOvfRepresentation(ovfDocuments.get(vs.getId()));
-				
+
 				/* Elasticity bounds and default instances value */
 				/*
 				 * FIXME: not able to access min, max or initial throguh
@@ -399,32 +399,32 @@ public class Parser {
 				 * (through getDomNode). Maybe the rsrvr:min, rsrvr:max,
 				 * rsrvr:init has not been defined in reservoir_manifest.xsd?
 				 */
-				
+
 				//TODO esta forma de recoger valores usando el otherattributes estoy por no usarlo
-	            // ya que puedes acceder directamente a vs.getMin() !!!!  
-				
-	            Map<QName, String> attributes = vs.getOtherAttributes();
-	           // rdPort = attributes.get(VirtualMachineConfiguration.remoteDesktopQname);
-	            QName minAtt = new QName("http://schemas.telefonica.com/claudia/ovf","min");
-	            QName maxAtt = new QName("http://schemas.telefonica.com/claudia/ovf","max");
-	            QName initialAtt = new QName("http://schemas.telefonica.com/claudia/ovf","initial");
-	            QName uuidAtt = new QName("http://schemas.telefonica.com/claudia/ovf","uuid");
-	            
-	            int min = Integer.parseInt(attributes.get(minAtt));
-	            int max = Integer.parseInt(attributes.get(maxAtt));
-	            int initial = Integer.parseInt(attributes.get(initialAtt));
-	            String uuid = attributes.get(uuidAtt);
-	        
-	            logger.debug("min= " + min + ", max= " + max + ", initial= " + initial);
-	            if (uuid != null) {
-	            	logger.debug("uuid = " + uuid);
-	            }
+				// ya que puedes acceder directamente a vs.getMin() !!!!  
+
+				Map<QName, String> attributes = vs.getOtherAttributes();
+				// rdPort = attributes.get(VirtualMachineConfiguration.remoteDesktopQname);
+				QName minAtt = new QName("http://schemas.telefonica.com/claudia/ovf","min");
+				QName maxAtt = new QName("http://schemas.telefonica.com/claudia/ovf","max");
+				QName initialAtt = new QName("http://schemas.telefonica.com/claudia/ovf","initial");
+				QName uuidAtt = new QName("http://schemas.telefonica.com/claudia/ovf","uuid");
+
+				int min = Integer.parseInt(attributes.get(minAtt));
+				int max = Integer.parseInt(attributes.get(maxAtt));
+				int initial = Integer.parseInt(attributes.get(initialAtt));
+				String uuid = attributes.get(uuidAtt);
+
+				logger.debug("min= " + min + ", max= " + max + ", initial= " + initial);
+				if (uuid != null) {
+					logger.debug("uuid = " + uuid);
+				}
 				vee.setInitReplicas(initial);
 				vee.setMinReplicas(min);
 				vee.setMaxReplicas(max);
 				vee.setUUID(uuid);
 
-				
+
 				/* Set deployment order */
 				StartupSectionType stup = null;
 				try {
@@ -565,7 +565,7 @@ public class Parser {
 
 									/* Using the capacity attribute in disk */
 									capacity = disk.getCapacity();
-									
+
 									break;
 								}
 							}
@@ -601,12 +601,12 @@ public class Parser {
 								if (capacity == null && fl.getSize() != null) {
 									capacity = fl.getSize().toString();
 								}
-								
+
 								/* Try to get the digest */
-					            Map<QName, String> attributesFile = fl.getOtherAttributes();
+								Map<QName, String> attributesFile = fl.getOtherAttributes();
 								QName digestAtt = new QName("http://schemas.telefonica.com/claudia/ovf","digest");
 								digest = attributesFile.get(digestAtt);
-			
+
 								break;
 							}
 						}
@@ -618,7 +618,7 @@ public class Parser {
 						if (url == null) {
 							throw new ManiParserException("url can not be set for disk " + hostRes);
 						}
-						
+
 						if (digest == null) {
 							logger.debug("md5sum digest was not found for disk " + hostRes);
 						}
@@ -627,16 +627,16 @@ public class Parser {
 						// OpenNebula way of doing
 						// FIXME: unit conversion to MB?
 						File filesystem = new File("sd" + sdaId++);
-						
+
 						String urlDisk = url.toString();
-						
+
 						if (urlDisk.contains("file:/"))
 							urlDisk = urlDisk.replace("file:/", "file:///");
-						
+
 						logger.debug("disk: capacity = " + toMB(capacity) + ", url = " + urlDisk + ", filesystem = " + filesystem + ", digest=" + digest);
 						DiskConf diskC = new DiskConf(toMB(capacity), url, filesystem);
 						diskC.setDigest(digest);
-						
+
 						vee.addDiskConf(diskC);
 
 						break;
@@ -658,11 +658,11 @@ public class Parser {
 					case OVFEnvelopeUtils.ResourceTypeNIC:
 
 						String netName = item.getConnection().get(0).getValue();
-						
+
 						Network net = sa.getNetworkByName(netName);
 
 						if (net != null) {
-			
+
 							NICConf nicC = new NICConf(net);
 
 							logger.debug("vnic: network: " + net.getName() + ", private: " + net.getPrivateNet());
@@ -676,16 +676,16 @@ public class Parser {
 						throw new ManiParserException("unknown hw type: " + rsType);
 					}
 				}
-				
+
 				try {
 					AvailabilitySectionType availabilitySec = OVFEnvelopeUtils.getSection(vs, AvailabilitySectionType.class);
-					
+
 					WindowUnitType wut = availabilitySec.getWindow().getUnit();
 					BigInteger big = availabilitySec.getWindow().getValue();
-					
+
 					vee.setAvailabilityWindow(wut.toString(), big.longValue());
 					vee.setAvailabilityValue(availabilitySec.getPercentile().doubleValue());
-					
+
 				} catch (SectionNotPresentException e) {
 					/* This is not actually a bug: it is just the case in which no
 					 * deployment restriction has been specified for that VM */
@@ -694,61 +694,61 @@ public class Parser {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-				
+
 				try {
 					DeploymentSectionType deploymentSec = OVFEnvelopeUtils.getSection(vs, DeploymentSectionType.class);
-					
+
 					for (RestrictionType restr: deploymentSec.getRestriction()) {
-						
+
 						GeographicDomain gd = new GeographicDomain();
-						
+
 						// Insert the areas in the Restriction section
 						for (AreaType at: restr.getArea()) {
 							gd.addAreas(at.getValue(), at.isInside());
 						}
-						
+
 						// Insert the countries in the Restrction section
 						for (CountryType ct :restr.getCountry()) {
 							gd.addCountries(ct.getValue().toString(), ct.isInside());
 						}
-						
+
 						// Insert the contries in the Restrction section
 						for (TimezoneType tz: restr.getTimezone()) {
 							gd.addTimezone(tz.getValue(), tz.isInside());
 						}
-							
+
 						// Insert the locations in the Restrction section
 						for (PositionType pos: restr.getPosition()) {
 							gd.addLocations(new GeographicDomain.Location(pos.getLocation().getLatitude(), pos.getLocation().getLongitude(), 
-											pos.getDistance().getUnit().toString(), pos.getDistance().getValue().longValue()), pos.isInside());
+									pos.getDistance().getUnit().toString(), pos.getDistance().getValue().longValue()), pos.isInside());
 						}
-						
+
 						vee.addAllowedDomain(gd);
 					}
-					
-					
+
+
 				} catch (SectionNotPresentException e) {
 					/* This is not actually a bug: it is just the case in which no
 					 * deployment restriction has been specified for that VM */
 					logger.debug("no DeploymentSection found");
-					
+
 				} catch (InvalidSectionException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-				
-				
+
+
 				try {
-					
+
 					AffinitySectionType affSec = OVFEnvelopeUtils.getSection(envelope, AffinitySectionType.class);
-					
+
 					affSec.getOtherAttributes();
-					
+
 					AffinityType afType= affSec.getAffinity();
 					AntiAffinityType antiAfType = affSec.getAntiAffinity();
-					
+
 					List<String> vees = afType.getVirtualSystemId();
-			
+
 					for (String veeAffinity: vees) {
 						if (!veeAffinity.equals(vee.getVEEName()))
 							if (afType.getScope().equals(AffinityScopeType.PHYSICAL))
@@ -758,9 +758,9 @@ public class Parser {
 							else if (afType.getScope().equals(AffinityScopeType.DOMAIN))
 								sa.addDomainAffinity(veeAffinity);
 					}
-					
+
 					vees = antiAfType.getVirtualSystemId();
-					
+
 					for (String veeAffinity: vees) {
 						if (!veeAffinity.equals(vee.getVEEName()))
 							if (antiAfType.getScope().equals(AffinityScopeType.PHYSICAL))
@@ -770,16 +770,16 @@ public class Parser {
 							else if (afType.getScope().equals(AffinityScopeType.DOMAIN))
 								sa.addDomainAntiAffinity(veeAffinity);						
 					}
-					
+
 				} catch (InvalidSectionException e) {
 					logger.debug("no Affinity Section found");
 				} catch (SectionNotPresentException e) {
 					logger.debug("no Affinity Section found");
 				}
-				
-				
+
+
 				/* Finally, register the vee */
- 		    	sa.registerVEE(vee);
+				sa.registerVEE(vee);
 			}//End for
 		} //End else-if
 
@@ -787,11 +787,11 @@ public class Parser {
 
 	/**
 	 * builds the rule vector
-    */
+	 */
 	private void buildRuleVector(ServiceApplication sa) {
-		
+
 		ElasticArraySectionType elastSec = null;
-			
+
 		ContentType entityInstance = null;
 		try {
 			entityInstance = OVFEnvelopeUtils.getTopLevelVirtualSystemContent(envelope);
@@ -800,7 +800,7 @@ public class Parser {
 			logger.error(e);
 		}
 		if (entityInstance instanceof VirtualSystemType) {
-			
+
 			//TODO
 
 		} else if (entityInstance instanceof VirtualSystemCollectionType) {
@@ -812,36 +812,52 @@ public class Parser {
 					elastSec = OVFEnvelopeUtils.getSection(vs, ElasticArraySectionType.class);
 
 					if (elastSec != null) {
-						
+
 						List<RuleType> rules = elastSec.getRule();
-						
+
 						for (RuleType rule: rules) {
 							Rule sRule = new Rule(sa);
-				
+
 							sRule.setName(rule.getKPIName());
-							
+
 							double frequency = rule.getFrequency().doubleValue();
 							logger.debug("rule-frequency = " + frequency);
 							sRule.setFrequency(frequency);
-				
+
 							double window = rule.getWindow().getValue().doubleValue();
 							logger.debug("rule-window = " + window);
 							sRule.setWindow(window);
-				
+
 							double quota = rule.getQuota().doubleValue();
 							logger.debug("rule-quota = " + quota);
 							sRule.setQuota(quota);
-							
+
 							BigDecimal toleranceBD = rule.getTolerance();
 							logger.debug("rule-tolerance = " + toleranceBD);
 							double tolerance=0.0;
 							if (toleranceBD!=null) tolerance = toleranceBD.doubleValue();
 							sRule.setTolerance(tolerance);
-							
-							sRule.setKPIName(sa + ".kpis." + rule.getKPIName());
+
+							logger.info("PONG rule.getKPIType = " + (rule.getKPIType()));
+
+							if (rule.getKPIType().equals("VEEHW")){
+								sRule.setKPIName(sa + ".vees." + vs.getId()+ ".replicas.1"+ ".kpis." + rule.getKPIName());
+								sRule.setEventType("HwMeasureEvent");
+							}
+							else {
+								sRule.setKPIName(sa + ".kpis." + rule.getKPIName());
+								sRule.setEventType("AgentMeasureEvent");
+							}
+							logger.info("PONG srule.getKPIName = " + (sRule.getKPIName()));
+
+
+							//sRule.setKPIName(sa + ".kpis." + rule.getKPIName());
+							//sRule.setEventType("AgentMeasureEvent");
+							sRule.setKPIType(rule.getKPIType());
 							sRule.setAssociatedVee(sa + ".vees." + vs.getId());
-							sRule.setEventType("AgentMeasureEvent");
+
 							sa.registerServiceRule(sRule);
+							// grnet.customers.tid.services.ds1.vees.workernode.replicas.1.kpis.memory
 						}
 					} else {
 						logger.info("no elasticity rules were defined");
@@ -880,28 +896,28 @@ public class Parser {
 		} catch (InvalidSectionException e) {
 			logger.error(e);
 		}
-		
+
 	}
-	
+
 	private static String getPropertyFromVirtualSystem(VirtualSystemType virtualSystem, String property)
-    {
-        String propValue = null;
+	{
+		String propValue = null;
 
-        ProductSectionType productSection;
-        try
-        {
-            productSection = OVFEnvelopeUtils.getSection(virtualSystem, ProductSectionType.class);
-            Property prop = OVFProductUtils.getProperty(productSection, property);
-            propValue = prop.getValue().toString();
-        }
-        catch (Exception e) 
-        {
-        	//TODO throw PropertyNotFoundException
-        	logger.error(e);
-        }
+		ProductSectionType productSection;
+		try
+		{
+			productSection = OVFEnvelopeUtils.getSection(virtualSystem, ProductSectionType.class);
+			Property prop = OVFProductUtils.getProperty(productSection, property);
+			propValue = prop.getValue().toString();
+		}
+		catch (Exception e) 
+		{
+			//TODO throw PropertyNotFoundException
+			logger.error(e);
+		}
 
-        return propValue;
-    }
+		return propValue;
+	}
 
 
 	/**
@@ -913,7 +929,7 @@ public class Parser {
 		return sa;
 	}
 
-	
+
 	public void setServiceApplication(ServiceApplication sa) {
 		this.sa= sa;
 	}
@@ -944,10 +960,10 @@ public class Parser {
 		} catch (InvalidSectionException e) {					
 			logger.error(e);
 		}	
-	
+
 		return false;
 	}
-	
+
 
 	/**
 	 * covert a size string (eg. '100GB') megabytes (MB). Supported suffix
@@ -965,33 +981,33 @@ public class Parser {
 			return Integer.parseInt(s);
 		}
 	}
-	
+
 	public HashMap<String, String> splitOvf() throws Exception {
-		
+
 		HashMap<String, String> results = new HashMap<String, String>();
 		HashMap<String, EnvelopeType> ovfEnvelopes = splitOvf(envelope);
-		
+
 		for (String vs: ovfEnvelopes.keySet()) {
-			
+
 			ByteArrayOutputStream sob = new ByteArrayOutputStream();
-			
+
 			try {
 				OVFSerializer.getInstance().writeXML(ovfEnvelopes.get(vs), sob);
 			} catch (XMLException e) {
 				logger.error("OVF could not be serialized: " + e.getMessage());
 				continue;
 			}
-			
+
 			try {
 				results.put(vs, sob.toString(Charset.defaultCharset().toString()));
 			} catch (UnsupportedEncodingException e) {
 				logger.error("Unsuported encoding...");
 			}
 		}
-		
+
 		return results;
 	}
-	
+
 	/**
 	 * Split the given Service OVF file into as many files as VirtualSystems are found in it. 
 	 * 
@@ -1003,9 +1019,9 @@ public class Parser {
 	 * @throws Exception 
 	 */
 	protected HashMap<String, EnvelopeType> splitOvf(EnvelopeType env) throws Exception {
-		
+
 		HashMap<String, EnvelopeType> results  = new HashMap<String, EnvelopeType>();
-		
+
 		ContentType entityInstance = null;
 		try {
 			entityInstance = OVFEnvelopeUtils.getTopLevelVirtualSystemContent(envelope);
@@ -1014,56 +1030,56 @@ public class Parser {
 			logger.error("Empty envelope found: " + e);
 		}
 		if (entityInstance instanceof VirtualSystemType) {
-			
+
 			// If the entity is already a VirtualSystem, return a list with the virtual system itself.
 			results.put(entityInstance.getId(), env);
 
 		} else if (entityInstance instanceof VirtualSystemCollectionType) {
 			VirtualSystemCollectionType virtualSystemCollectionType = (VirtualSystemCollectionType) entityInstance;
-			
+
 			List<ProductSectionType> productSections=null;
-			
+
 			productSections = OVFEnvelopeUtils.getProductSections(virtualSystemCollectionType);
-			
+
 			for (VirtualSystemType vs : OVFEnvelopeUtils.getVirtualSystems(virtualSystemCollectionType)) {
-				
+
 				// Create the envelope
 				ObjectFactory ovfFactory = new ObjectFactory();
 				EnvelopeType vsEnv = ovfFactory.createEnvelopeType();
-				
+
 				// Add the VirtualSystem to the envelope
 				try {
-	                ReferencesType references = ovfFactory.createReferencesType();
-	                vsEnv.setReferences(references);
-	                DiskSectionType diskSection = ovfFactory.createDiskSectionType();
-	                diskSection.setInfo(new MsgType());
-	                
-	                NetworkSectionType networkSection = ovfFactory.createNetworkSectionType();
-	                networkSection.setInfo(new MsgType());
+					ReferencesType references = ovfFactory.createReferencesType();
+					vsEnv.setReferences(references);
+					DiskSectionType diskSection = ovfFactory.createDiskSectionType();
+					diskSection.setInfo(new MsgType());
 
-	                if (productSections!=null)
-		                for (ProductSectionType ps: productSections) {
-		                	try {
-		                		OVFEnvelopeUtils.addSection(vs, ps);
-		                	} catch (Exception snpe) {
-		                		logger.warn("Product section not found: " + snpe.getMessage());
-		                	}
-		                }
-	                
-	                ProductSectionType restMonitoringURL = new ProductSectionType();
-	                
-	                OVFEnvelopeUtils.addSection(vs, restMonitoringURL);
-	                
-	                OVFEnvelopeUtils.addSection(vsEnv, diskSection);
-	                OVFEnvelopeUtils.addSection(vsEnv, networkSection);
-	                
+					NetworkSectionType networkSection = ovfFactory.createNetworkSectionType();
+					networkSection.setInfo(new MsgType());
+
+					if (productSections!=null)
+						for (ProductSectionType ps: productSections) {
+							try {
+								OVFEnvelopeUtils.addSection(vs, ps);
+							} catch (Exception snpe) {
+								logger.warn("Product section not found: " + snpe.getMessage());
+							}
+						}
+
+					ProductSectionType restMonitoringURL = new ProductSectionType();
+
+					OVFEnvelopeUtils.addSection(vs, restMonitoringURL);
+
+					OVFEnvelopeUtils.addSection(vsEnv, diskSection);
+					OVFEnvelopeUtils.addSection(vsEnv, networkSection);
+
 					// Search for the disks and add them to the DiskSection and ReferenceSection
 					// of the child VirtualSystem
 					VirtualHardwareSectionType vh = null;
-					
+
 					try {
 						vh = OVFEnvelopeUtils.getSection(vs, VirtualHardwareSectionType.class);
-					
+
 						List<RASDType> items = vh.getItem();
 						for (Iterator<RASDType> iteratorRASD = items.iterator(); iteratorRASD.hasNext();) {
 							RASDType item = (RASDType) iteratorRASD.next();
@@ -1073,81 +1089,81 @@ public class Parser {
 							logger.debug("hw type: " + rsType);
 
 							switch (rsType) {
-								case OVFEnvelopeUtils.ResourceTypeDISK:
-									String hostRes = item.getHostResource().get(0).getValue();
-									logger.debug("hostresource: " + hostRes);
-									StringTokenizer st = new StringTokenizer(hostRes, "/");
-									
-									if (st.countTokens() != 3) {
-										throw new Exception("malformed HostResource value (" + hostRes + ")");
+							case OVFEnvelopeUtils.ResourceTypeDISK:
+								String hostRes = item.getHostResource().get(0).getValue();
+								logger.debug("hostresource: " + hostRes);
+								StringTokenizer st = new StringTokenizer(hostRes, "/");
+
+								if (st.countTokens() != 3) {
+									throw new Exception("malformed HostResource value (" + hostRes + ")");
+								}
+								if (!(st.nextToken().equals("ovf:"))) {
+									throw new Exception("HostResource must start with ovf: (" + hostRes + ")");
+								}
+								String hostResType = st.nextToken();
+								if (!(hostResType.equals("disk") || hostResType.equals("file"))) {
+									throw new Exception("HostResource type must be either disk or file: (" + hostRes + ")");
+								}
+								String hostResId = st.nextToken();
+
+								if (hostResType.equals("disk")) {
+									/* This type involves an indirection level */
+									DiskSectionType ds = null;
+									String fileRef = null;
+
+									try {
+										ds = OVFEnvelopeUtils.getSection(envelope, DiskSectionType.class);
+									} catch (SectionNotPresentException e) {
+										logger.error(e);
+									} catch (InvalidSectionException e) {
+										logger.error(e);
 									}
-									if (!(st.nextToken().equals("ovf:"))) {
-										throw new Exception("HostResource must start with ovf: (" + hostRes + ")");
-									}
-									String hostResType = st.nextToken();
-									if (!(hostResType.equals("disk") || hostResType.equals("file"))) {
-										throw new Exception("HostResource type must be either disk or file: (" + hostRes + ")");
-									}
-									String hostResId = st.nextToken();
-									
-									if (hostResType.equals("disk")) {
-										/* This type involves an indirection level */
-										DiskSectionType ds = null;
-										String fileRef = null;
-										
-										try {
-											ds = OVFEnvelopeUtils.getSection(envelope, DiskSectionType.class);
-										} catch (SectionNotPresentException e) {
-											logger.error(e);
-										} catch (InvalidSectionException e) {
-											logger.error(e);
-										}
-										
-										// Fill the disk section
-										List<VirtualDiskDescType> disks = ds.getDisk();
-										for (Iterator<VirtualDiskDescType> iteratorDk = disks.iterator(); iteratorDk.hasNext();) {
-											VirtualDiskDescType disk = iteratorDk.next();
-											
-											fileRef = disk.getFileRef();
-											String diskId = disk.getDiskId();
-											if (diskId.equals(hostResId)) {
-												OVFDiskUtils.addDisk(diskSection, disk);
-												break;
-											}
-										}
-										
-										// Fille the Reference section
-										if (fileRef == null) {
-											throw new ManiParserException("File reference can not be found for disk: " + hostRes);
-										}
-										
-										ReferencesType ref = envelope.getReferences();
-										List<FileType> files = ref.getFile();
-										
-										for (Iterator<FileType> iteratorFl = files.iterator(); iteratorFl.hasNext();) {
-											FileType fl = iteratorFl.next();
-											if (fl.getId().equals(fileRef)) {
-												OVFReferenceUtils.addFile(references, fl);
-											}
+
+									// Fill the disk section
+									List<VirtualDiskDescType> disks = ds.getDisk();
+									for (Iterator<VirtualDiskDescType> iteratorDk = disks.iterator(); iteratorDk.hasNext();) {
+										VirtualDiskDescType disk = iteratorDk.next();
+
+										fileRef = disk.getFileRef();
+										String diskId = disk.getDiskId();
+										if (diskId.equals(hostResId)) {
+											OVFDiskUtils.addDisk(diskSection, disk);
+											break;
 										}
 									}
 
-									break;
-									
-								case OVFEnvelopeUtils.ResourceTypeNIC:
-
-									String netName = item.getConnection().get(0).getValue();
-
-									NetworkSectionType ns = OVFEnvelopeUtils.getSection(envelope, NetworkSectionType.class);
-									List<NetworkSectionType.Network> networks = ns.getNetwork();
-									for (Iterator<NetworkSectionType.Network> iteratorN = networks.iterator(); iteratorN.hasNext();) {
-										org.dmtf.schemas.ovf.envelope._1.NetworkSectionType.Network netInSection = iteratorN.next();
-										
-										if (netInSection.getName().equals(netName)) 
-											OVFNetworkUtils.addNetwork(networkSection, netInSection);
+									// Fille the Reference section
+									if (fileRef == null) {
+										throw new ManiParserException("File reference can not be found for disk: " + hostRes);
 									}
 
-									break;
+									ReferencesType ref = envelope.getReferences();
+									List<FileType> files = ref.getFile();
+
+									for (Iterator<FileType> iteratorFl = files.iterator(); iteratorFl.hasNext();) {
+										FileType fl = iteratorFl.next();
+										if (fl.getId().equals(fileRef)) {
+											OVFReferenceUtils.addFile(references, fl);
+										}
+									}
+								}
+
+								break;
+
+							case OVFEnvelopeUtils.ResourceTypeNIC:
+
+								String netName = item.getConnection().get(0).getValue();
+
+								NetworkSectionType ns = OVFEnvelopeUtils.getSection(envelope, NetworkSectionType.class);
+								List<NetworkSectionType.Network> networks = ns.getNetwork();
+								for (Iterator<NetworkSectionType.Network> iteratorN = networks.iterator(); iteratorN.hasNext();) {
+									org.dmtf.schemas.ovf.envelope._1.NetworkSectionType.Network netInSection = iteratorN.next();
+
+									if (netInSection.getName().equals(netName)) 
+										OVFNetworkUtils.addNetwork(networkSection, netInSection);
+								}
+
+								break;
 							}
 						}
 
@@ -1160,53 +1176,53 @@ public class Parser {
 					}
 
 					OVFEnvelopeUtils.addVirtualSystem(vsEnv, vs);
-					
+
 				} catch (IdAlreadyExistsException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}	
-				
+
 				// Add the new Envelope to the results list
 				results.put(vs.getId(), vsEnv);
 			}
 		}
-		
+
 		return results;
 	}
-	
+
 	public String inEnvolopeMacroReplacement(String ovf,    
-			 int instanceNumber, 
-			 String domain, 
-			 String serviceId, 
-			 String monitoringChannel, 
-			 HashMap<String,ArrayList<String>> ips, 
-			 HashMap<String, String> netmasks, 
-			 HashMap<String, String> dnsServers, 
-			 HashMap<String, String> gateways,
-			 HashMap<String, HashMap<String, String> > entryPoints) throws IOException {
-		
-		
+			int instanceNumber, 
+			String domain, 
+			String serviceId, 
+			String monitoringChannel, 
+			HashMap<String,ArrayList<String>> ips, 
+			HashMap<String, String> netmasks, 
+			HashMap<String, String> dnsServers, 
+			HashMap<String, String> gateways,
+			HashMap<String, HashMap<String, String> > entryPoints) throws IOException {
+
+
 		// Parse the ovf String
 		OVFSerializer ovfSerializer = OVFSerializer.getInstance();
 		try {
 			ovfSerializer.setValidateXML(false);
 
 			EnvelopeType envVee = ovfSerializer.readXMLEnvelope(new ByteArrayInputStream(ovf.getBytes()));
-			
+
 			ContentType entityInstance = null;
 			entityInstance = OVFEnvelopeUtils.getTopLevelVirtualSystemContent(envVee);
-			
+
 			if (entityInstance instanceof VirtualSystemCollectionType) {
 				return "";
 			} else if (entityInstance instanceof VirtualSystemType) {
-			
+
 				OVFEnvelopeUtils.inEnvolopeMacroReplacement(envVee, (VirtualSystemType) entityInstance, instanceNumber, domain, serviceId, monitoringChannel, ips,
-																	 netmasks, dnsServers, gateways, entryPoints);	
+						netmasks, dnsServers, gateways, entryPoints);	
 				// Serialize the ovf
 				ByteArrayOutputStream sob = new ByteArrayOutputStream();
-				
+
 				OVFSerializer.getInstance().writeXML(envVee, sob);
-				
+
 				return sob.toString(Charset.defaultCharset().toString());
 			} else {
 				throw new IllegalArgumentException("Virtual System not found.");

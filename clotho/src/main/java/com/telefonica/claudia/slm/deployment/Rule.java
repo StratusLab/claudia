@@ -56,6 +56,7 @@ public class Rule implements DirectoryEntry {
 	public long internalId;
 	
 	private String KPIName="";
+	private String KPIType="";
 	private String name="";
 	private String eventType="";
 	
@@ -258,6 +259,14 @@ public class Rule implements DirectoryEntry {
 
 	public void setKPIName(String kPIName) {
 		KPIName = kPIName;
+	}
+	
+    public String getKPIType() {
+		return KPIType;
+	}
+
+	public void setKPIType(String kPIType) {
+		KPIType = kPIType;
 	}
     
     public void setName(String name){this.name=name;}
