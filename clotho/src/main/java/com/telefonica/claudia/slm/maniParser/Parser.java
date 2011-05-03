@@ -897,8 +897,13 @@ public class Parser {
 				for (Iterator<KPI> iterator = kpis.iterator(); iterator.hasNext();) {
 					KPI kpi = iterator.next();
 					String id = kpi.getKPIname();
+					String type = kpi.getKPItype();
+					String name = kpi.getKPIVmname();
 					logger.debug("kpi-name = " + id);
 					ServiceKPI skpi = new ServiceKPI(sa, id);
+					skpi.setKPIType(type);
+					skpi.setKPIVmname(name);
+					
 					sa.registerServiceKPI(skpi);
 				}
 			} else {

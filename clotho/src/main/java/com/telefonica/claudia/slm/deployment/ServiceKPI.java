@@ -54,6 +54,7 @@ public class ServiceKPI implements DirectoryEntry {
     
     private double kpiValue = 0.0;
     String kpiType;
+    String kpiVmname;
     
     @OneToOne(cascade={CascadeType.REFRESH, CascadeType.MERGE, CascadeType.PERSIST})
     private FQN kpiFQN = null;
@@ -87,6 +88,14 @@ public class ServiceKPI implements DirectoryEntry {
     
     public String getKPIType() {
     	return kpiType;
+    }
+    
+    public void setKPIVmname(String kpiVmname) {
+    	this.kpiVmname= kpiVmname;
+    }
+    
+    public String getKPIVmname() {
+    	return kpiVmname;
     }
     
     
