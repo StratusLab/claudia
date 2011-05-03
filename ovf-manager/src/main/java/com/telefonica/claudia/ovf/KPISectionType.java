@@ -133,6 +133,10 @@ public class KPISectionType
 
         @XmlAttribute(name = "KPIname", required = true)
         protected String kpIname;
+        @XmlAttribute(name = "KPItype", required = true)
+        protected String KPItype;
+        @XmlAttribute(name = "VmName", required = true)
+        protected String VmName;
 
         /**
          * Gets the value of the kpIname property.
@@ -157,7 +161,23 @@ public class KPISectionType
         public void setKPIname(String value) {
             this.kpIname = value;
         }
+        
+        
+        public String getKPItype() {
+            return KPItype;
+        }
 
+        public void setKPItype(String value) {
+            this.KPItype = value;
+        }
+
+        public String getVmName() {
+            return VmName;
+        }
+
+        public void setVmName(String value) {
+            this.VmName = value;
+        }
     }
 
 }
