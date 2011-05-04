@@ -227,6 +227,10 @@ public class VEE implements Comparable, DirectoryEntry {
         return ++lastReplicaId;             
     }
     
+    public int VEELastReplicaId() {        
+        return lastReplicaId;             
+    }
+    
     public Set<VEEReplica> getVEEReplicas() {
         return activeReplicas;
     }
