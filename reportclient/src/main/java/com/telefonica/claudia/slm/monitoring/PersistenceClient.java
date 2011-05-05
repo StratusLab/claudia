@@ -61,6 +61,8 @@ public class PersistenceClient {
     private static String namingFactory;
     private static String serverProviderUrl;
     private static String connFactoryName;
+    private static String vmMonName;
+    private static String monitorName;
 
     private static HttpClient httpClient = new HttpClient();
 
@@ -78,6 +80,8 @@ public class PersistenceClient {
             restPath = properties.getProperty("restPath");
             restServerPort = properties.getProperty("restServerPort");
             restServerHost = properties.getProperty("restServerHost");
+            vmMonName = properties.getProperty("vmMonName");
+            monitorName = properties.getProperty("monitorName");
         } catch (IOException e) {
             logger.error("Unable to load properties from "
                     + PATH_TO_PROPERTIES_FILE);
@@ -377,12 +381,19 @@ public class PersistenceClient {
                         + ".replicas." + number + ".kpis." + measure;
                 // logger.info("sending : " + monitor);
 
+                String replicanamelimit=replica + ".replicas." + number;
+                String monitornamelimit=measure;
+
+                if ((replicanamelimit.equals(vmMonName) || vmMonName.equals("all"))
+                        && (monitornamelimit.equals(monitorName) || monitorName.equals("all"))){
+
                 sendRESTMessage("VEEHW", mv.getRegisterDate().getTime(), 4,
                         monitor, Double.parseDouble(mv.getValue()));
                 // sendRESTMessage("AGENT", mv.getRegisterDate().getTime(), 4,
                 // monitorfqn, Double.parseDouble(mv.getValue()));
                 logger.info(" monitor: " + monitor + " " + measure);
                 logger.info(" values: " + unit + " " + timestamp + " " + value);
+                }
             }
         } catch (Exception spe) {
             // Algún tipo de error: fichero no accesible, formato de XML
