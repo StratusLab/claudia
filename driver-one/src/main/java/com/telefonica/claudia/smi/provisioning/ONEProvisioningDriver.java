@@ -479,7 +479,7 @@ public class ONEProvisioningDriver implements ProvisioningDriver {
         public boolean deleteVirtualMachine(String id) throws IOException {
             List rpcParams = new ArrayList ();
 
-            ControlActionType controlAction = ControlActionType.shutdown;
+            ControlActionType controlAction = ControlActionType.finalize;
             log.info("PONG deleteVirtualMachine id: "+ id);
             rpcParams.add(oneSession);
             rpcParams.add(controlAction.toString());

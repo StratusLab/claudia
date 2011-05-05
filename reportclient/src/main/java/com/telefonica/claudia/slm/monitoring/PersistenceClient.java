@@ -392,7 +392,7 @@ public class PersistenceClient {
                 // sendRESTMessage("AGENT", mv.getRegisterDate().getTime(), 4,
                 // monitorfqn, Double.parseDouble(mv.getValue()));
                 logger.info(" monitor: " + monitor + " " + measure);
-                logger.info(" values: " + unit + " " + timestamp + " " + value);
+                logger.info("Sending values: " + unit + " " + timestamp + " " + value);
                 }
             }
         } catch (Exception spe) {
