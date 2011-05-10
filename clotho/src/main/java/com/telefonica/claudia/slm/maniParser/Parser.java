@@ -229,6 +229,25 @@ public class Parser {
 
 		return new HashMap<String, Integer>();
 	}
+	
+	public String getStaticIpProperty(String vsId)  {
+		VirtualSystemCollectionType topVsc;
+		try {
+			topVsc = (VirtualSystemCollectionType) OVFEnvelopeUtils.getTopLevelVirtualSystemContent(envelope);
+			VirtualSystemType vs = (VirtualSystemType) OVFEnvelopeUtils.getContentTypeByString(topVsc, vsId);
+			
+			//return OVFEnvelopeUtils.getRequiredIPByNetwork(envelope, vs);
+			
+			String staticip = getPropertyFromVirtualSystem(vs, "STATIC_IP");
+			return staticip;
+
+		} catch (EmptyEnvelopeException e) {
+			logger.warn("Empty envelope detected, service deployment may not be completed.");
+		}
+
+		return null;
+	}
+	
 
 	public String generateEnvironments(String vsId, int contInstanceNumber, 
 			HashMap<String,ArrayList<String>> ips,

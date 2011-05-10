@@ -74,6 +74,8 @@ public class SMConfiguration extends Properties {
 	// Network ranges available for virtual network creation
 	private static final String NETWORK_RANGES_AVAILABLE = "NetworkRanges";
 	
+	// Network ranges available for virtual network creation
+	private static final String STATIC_IP_LIST = "StaticIpList";
 	
 	// Network private MACS available for virtual network creation
 	private static final String NETWORK_MAC_LIST = "NetworkMacList";
@@ -146,6 +148,8 @@ public class SMConfiguration extends Properties {
 	
 	private String[] networkRanges = null;
 	
+	private String[] networkStaticList = null;
+	
 	private String[] networkMacList = null;
 	
 	private String macEnabled = null;
@@ -206,6 +210,8 @@ public class SMConfiguration extends Properties {
 		networkRanges = readCollectionInProperty(NETWORK_RANGES_AVAILABLE);
 		
 		networkMacList = readCollectionInProperty(NETWORK_MAC_LIST);
+		
+		networkStaticList = readCollectionInProperty(STATIC_IP_LIST);
 		
 		macEnabled = readProperty(NETWORK_MAC_ENABLE);
 		
@@ -397,6 +403,10 @@ public class SMConfiguration extends Properties {
 	
 	public String[] getNetworkRanges() {
 		return networkRanges;
+	}
+	
+	public String[] getNetworkStaticList() {
+		return networkStaticList;
 	}
 	
 	

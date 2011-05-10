@@ -46,6 +46,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
+import org.dmtf.schemas.ovf.envelope._1.VirtualSystemType;
 import org.json.JSONException;
 
 import com.telefonica.claudia.configmanager.lb.LoadBalancerConfigurator;
@@ -1511,13 +1512,21 @@ public class FSM extends Thread implements Serializable {
                 if (iterations == null || iterations == 0)
                     iterations = 1;
 
+                String staticIpProp = parser.getStaticIpProperty(originalVEE.getVEEName());
+                
                 for (int i = 0; i < iterations; i++) {
+
+                	 logger.info("PONG static ip property: "+ staticIpProp);
+                	
                     String replicaIP = lcc.getHostAddress(nic.getNICConf()
-                            .getNetwork().getNetworkAddresses()[0]);
+                            .getNetwork().getNetworkAddresses()[0],staticIpProp);
+                    staticIpProp=null;
                     if (replicaIP == null) {
                         abort("Lack of ip addresses");
                         return null;
                     }
+                    
+                    
 
                     // Put the IP in the entrypoint map for this network.
                     Map<String, String> entryPoint = nic.getNICConf()
