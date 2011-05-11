@@ -694,10 +694,13 @@ public class ONEProvisioningDriver implements ProvisioningDriver {
                 // Migrability ....
 
                 allParametersString.append(ONE_VM_NAME).append(ASSIGNATION_SYMBOL).append(replicaName).append(LINE_SEPARATOR);
-                String migrability = getAtributeVirtualSystem (vs, "migrability");
-                if (migrability==null || migrability.equals(""))
-                    migrability="none";
-                allParametersString.append("MIGRABILITY").append(ASSIGNATION_SYMBOL).append(text_migrability.get(migrability)).append(LINE_SEPARATOR);
+                
+                if (virtualizationType.toLowerCase().equals("kvm")) {
+                    
+                    allParametersString.append("REQUIREMENTS").append(ASSIGNATION_SYMBOL).append("\"HYPERVISOR=\\\"kvm\\\"\"").append(LINE_SEPARATOR);
+                } else if (virtualizationType.toLowerCase().equals("xen")) {
+                	allParametersString.append("REQUIREMENTS").append(ASSIGNATION_SYMBOL).append("\"HYPERVISOR=\\\"xen\\\"\"").append(LINE_SEPARATOR);
+                }
                 allParametersString.append(ONE_VM_OS).append(ASSIGNATION_SYMBOL).append(MULT_CONF_LEFT_DELIMITER);
 
 
@@ -710,6 +713,10 @@ public class ONEProvisioningDriver implements ProvisioningDriver {
                     allParametersString.append(ONE_VM_OS_PARAM_INITRD).append(ASSIGNATION_SYMBOL).append(hypervisorInitrd).append(MULT_CONF_SEPARATOR).append(LINE_SEPARATOR);
                     allParametersString.append(ONE_VM_OS_PARAM_KERNEL).append(ASSIGNATION_SYMBOL).append(hypervisorKernel).append(MULT_CONF_SEPARATOR).append(LINE_SEPARATOR);
                 }
+                
+              
+                
+          
 
                 allParametersString.append(ONE_VM_OS_PARAM_ROOT).append(ASSIGNATION_SYMBOL).append(diskRoot + "da1").append(MULT_CONF_RIGHT_DELIMITER).append(LINE_SEPARATOR);
 
@@ -927,7 +934,8 @@ public class ONEProvisioningDriver implements ProvisioningDriver {
 
     protected static String TCloud2ONENet(String xml) throws Exception {
 
-        try {
+      
+    	try {
             DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
             Document doc = builder.parse(new ByteArrayInputStream(xml.getBytes()));
 
