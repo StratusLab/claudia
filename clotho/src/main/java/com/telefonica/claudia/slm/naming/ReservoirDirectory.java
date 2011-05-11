@@ -136,7 +136,10 @@ public class ReservoirDirectory extends Directory {
 		logger.info("PONG serviceKPI.getKPIType() " + serviceKPI.getKPIType());
 		logger.info("PONG serviceKPI.getKPIVmname() " + serviceKPI.getKPIVmname());
 
-		if (serviceKPI.getKPIType().equals("VEEHW") && !(serviceKPI.getKPIType().equals("null")) && !(serviceKPI.getKPIVmname().equals("null"))){
+		if (serviceKPI.getKPIType()==null){
+			serviceKPI.setKPIType("AGENT");
+		}
+		if (serviceKPI.getKPIType().equals("VEEHW") && serviceKPI.getKPIVmname()!=null){
 			logger.info("PONG buildFQN = " + serviceKPI.getServiceApplication()+ ".vees." + serviceKPI.getKPIVmname()+ ".kpis." +  serviceKPI.getKPIName());
 			return new FQN(buildFQN(serviceKPI.getServiceApplication())+ ".vees." + serviceKPI.getKPIVmname() + ".kpis." +  serviceKPI.getKPIName());
 		}
