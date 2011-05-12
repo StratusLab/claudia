@@ -860,6 +860,10 @@ public class Parser {
 
 							logger.info("PONG rule.getKPIType = " + (rule.getKPIType()));
 
+							if (rule.getKPIType()==null){
+								rule.setKPIType("AGENT");
+							}
+							
 							if (rule.getKPIType().equals("VEEHW")){
 								sRule.setKPIName(sa + ".vees." + vs.getId()+ ".replicas.1"+ ".kpis." + rule.getKPIName());
 								sRule.setEventType("VeeHwMeasureEvent");
