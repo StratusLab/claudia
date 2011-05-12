@@ -386,7 +386,36 @@ public class NetworkRange {
 	}
 
 	public String getNetworkAddress (String networkAddress, String staticIpProp) {
-		return null;
+
+		int maskNumber = byteArrayToNumber(subnetLeases.get(networkAddress));
+		int ipNumber = byteArrayToNumber(string2Ip(networkAddress));
+
+		if (ip2String(subnetLeases.get(networkAddress)).equals("255.255.255.255")) {
+
+			if (subnetLeases.containsKey(networkAddress)) {
+				return null;
+			} else {
+				return networkAddress;
+			}
+
+		} else {
+			int lastMaskBit = Integer.toBinaryString(maskNumber).indexOf('0');
+			int solutionSize = (int) Math.pow(2, 32 - lastMaskBit);
+
+			Set<String> actualLeases = addressLeases.get(networkAddress);
+
+			for (int i=1; i < solutionSize; i++) {
+
+				String ipSolution = ip2String(numberToByteArray((i  & ~maskNumber) ^ ipNumber)); 
+
+				if (!actualLeases.contains(ipSolution)) {
+					actualLeases.add(ipSolution);
+					return ipSolution;
+				}
+
+			}
+			return null;
+		}
 	}
 
 
