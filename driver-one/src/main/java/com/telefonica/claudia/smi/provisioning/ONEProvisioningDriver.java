@@ -158,6 +158,8 @@ public class ONEProvisioningDriver implements ProvisioningDriver {
     private XmlRpcClient xmlRpcClient = null;
 
     private static final String NETWORK_BRIDGE = "oneNetworkBridge";
+    private static final String XEN_DISK = "xendisk";
+    
 
     /**
      * Collection containing the mapping from fqns to ids. This mapped is used as a cache
@@ -175,6 +177,7 @@ public class ONEProvisioningDriver implements ProvisioningDriver {
     private String customizationPort;
     private String environmentRepositoryPath;
     private static String networkBridge="";
+    private static String xendisk="";
     private static String oneSshKey="";
 
 
@@ -709,7 +712,7 @@ public class ONEProvisioningDriver implements ProvisioningDriver {
                     diskRoot = "h";
                     allParametersString.append(ONE_VM_OS_PARAM_BOOT).append(ASSIGNATION_SYMBOL).append("hd").append(MULT_CONF_SEPARATOR).append(LINE_SEPARATOR);
                 } else {
-                    diskRoot = "s";
+                    diskRoot = xendisk;
                     allParametersString.append(ONE_VM_OS_PARAM_INITRD).append(ASSIGNATION_SYMBOL).append(hypervisorInitrd).append(MULT_CONF_SEPARATOR).append(LINE_SEPARATOR);
                     allParametersString.append(ONE_VM_OS_PARAM_KERNEL).append(ASSIGNATION_SYMBOL).append(hypervisorKernel).append(MULT_CONF_SEPARATOR).append(LINE_SEPARATOR);
                 }
@@ -1279,6 +1282,10 @@ public class ONEProvisioningDriver implements ProvisioningDriver {
 
         if (prop.containsKey(NETWORK_BRIDGE)) {
             networkBridge = ((String) prop.get(NETWORK_BRIDGE));
+        }
+        
+        if (prop.containsKey(XEN_DISK)) {
+        	xendisk = ((String) prop.get(XEN_DISK));
         }
 
         if (prop.containsKey(SSHKEY_PROPERTY)) {
