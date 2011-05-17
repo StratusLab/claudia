@@ -97,6 +97,10 @@ public class VEE implements Comparable, DirectoryEntry {
     @OneToOne(cascade=CascadeType.ALL)
     private MemoryConf memoryConf = null;
     
+    @OneToOne(cascade = CascadeType.ALL)
+    private VEE balancedBy = null;
+
+    
     private int lastReplicaId = 0;
     private int maxReplicas = 1;    
     private int minReplicas = 1;
@@ -202,6 +206,14 @@ public class VEE implements Comparable, DirectoryEntry {
     public List<CPUConf> getCPUsConf() {
         return cpusConf;
     }
+    
+    public VEE getBalancedBy() {
+        return balancedBy;
+}
+
+public void setBalancedBy(VEE balancedBy) {
+        this.balancedBy = balancedBy;
+}
     
     public void addNICConf(NICConf nicConf) {
         nicsConf.add(nicConf);

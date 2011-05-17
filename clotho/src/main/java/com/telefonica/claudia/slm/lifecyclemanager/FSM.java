@@ -1192,32 +1192,46 @@ public class FSM extends Thread implements Serializable {
             return false;
         }
 
-        for (VEEReplica veeReplica : veeReplicasConfs) {
-            logger.info("**** Reviewing replica " + veeReplica.getFQN());
-            VEEReplicaAllocationResult allocResult = allocResults
-            .get(veeReplica);
-            if (!allocResult.isSuccess()) {
-                abort("VIM reports error: " + allocResult.getMessage());
-                return false;
-            }
+        for (VEEReplica veeReplica: veeReplicasConfs) {
+			logger.info("**** Reviewing replica " + veeReplica.getFQN());
+			VEEReplicaAllocationResult allocResult = allocResults.get(veeReplica);
+			if (!allocResult.isSuccess()) {
+				abort("VIM reports error: "+ allocResult.getMessage());
+				return false;
+			}
 
-            // If replica is loadbalanced, balancer should be notified
+			// If replica is loadbalanced, balancer should be notified
 
-            /*
-             * VEE balancerVEE = veeReplica.getVEE().getBalancedBy();
-             *
-             * if (balancerVEE!=null){ logger.info("Adding replica to LB");
-             * addRegularReplicaToBalancer(veeReplica, balancerVEE); } else {
-             * logger.info(veeReplica.getFQN() + " is not balanced"); }
-             */
+			VEE balancerVEE = veeReplica.getVEE().getBalancedBy();
 
-        }
+			if (balancerVEE!=null){
+				logger.info("Adding replica to LB");
+				addReplicaToLoadBalancer(veeReplica, balancerVEE);
+			}
+ else {
+				logger.info(veeReplica.getFQN() + " is not balanced");
+			}
 
-        // The allocation was successful and the replica is UP and Running
-        // update the rollback
-        veesRollBack.addAll(veeReplicasConfs);
-        return true;
+		}
+
+		// The allocation was successful and the replica is UP and Running
+		// update the rollback
+		veesRollBack.addAll(veeReplicasConfs);
+		return true;
+	
     }
+
+
+    /**
+     * @param veeReplica
+     * @param balancerVEE
+     */
+   private void addReplicaToLoadBalancer(VEEReplica veeReplica, VEE balancerVEE) {
+            
+                    addRegularReplicaToBalancer(veeReplica, balancerVEE);
+            
+    }
+
 
     /**
      * Creates a customization image for the VEEReplica passed as a parameter,
