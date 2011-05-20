@@ -55,12 +55,14 @@ import org.dmtf.schemas.ovf.envelope._1.ContentType;
 import org.dmtf.schemas.ovf.envelope._1.DiskSectionType;
 import org.dmtf.schemas.ovf.envelope._1.EnvelopeType;
 import org.dmtf.schemas.ovf.envelope._1.FileType;
+import org.dmtf.schemas.ovf.envelope._1.ProductSectionType;
 import org.dmtf.schemas.ovf.envelope._1.RASDType;
 import org.dmtf.schemas.ovf.envelope._1.ReferencesType;
 import org.dmtf.schemas.ovf.envelope._1.VirtualDiskDescType;
 import org.dmtf.schemas.ovf.envelope._1.VirtualHardwareSectionType;
 import org.dmtf.schemas.ovf.envelope._1.VirtualSystemCollectionType;
 import org.dmtf.schemas.ovf.envelope._1.VirtualSystemType;
+import org.dmtf.schemas.ovf.envelope._1.ProductSectionType.Property;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -69,6 +71,7 @@ import org.xml.sax.SAXException;
 
 import com.abiquo.ovf.OVFEnvelopeUtils;
 import com.abiquo.ovf.exceptions.EmptyEnvelopeException;
+import com.abiquo.ovf.section.OVFProductUtils;
 import com.abiquo.ovf.xml.OVFSerializer;
 import com.telefonica.claudia.smi.DataTypesUtils;
 import com.telefonica.claudia.smi.Main;
@@ -150,6 +153,8 @@ public class ONEProvisioningDriver implements ProvisioningDriver {
     private static final String ENVIRONMENT_PROPERTY = "oneEnvironmentPath";
 
     private final static String SSHKEY_PROPERTY = "oneSshKey";
+    
+    private final static String SCRIPTPATH_PROPERTY = "oneScriptPath";
 
     private String oneSession = "oneadmin:5baa61e4c9b93f3f0682250b6cf8331b7ee68fd8";
 
@@ -179,7 +184,7 @@ public class ONEProvisioningDriver implements ProvisioningDriver {
     private static String networkBridge="";
     private static String xendisk="";
     private static String oneSshKey="";
-
+    private static String oneScriptPath="";
 
     public static final String ASSIGNATION_SYMBOL = "=";
     public static final String LINE_SEPARATOR = System.getProperty("line.separator");
@@ -692,6 +697,30 @@ public class ONEProvisioningDriver implements ProvisioningDriver {
                 VirtualHardwareSectionType vh = OVFEnvelopeUtils.getSection(vs, VirtualHardwareSectionType.class);
                 String virtualizationType = vh.getSystem().getVirtualSystemType().getValue();
 
+                
+                String scriptListProp = null;
+
+        		ProductSectionType productSection;
+        		try
+        		{
+        			productSection = OVFEnvelopeUtils.getSection(vs, ProductSectionType.class);
+        			Property prop = OVFProductUtils.getProperty(productSection, "SCRIPT_LIST");
+        			scriptListProp = prop.getValue().toString();
+        		}
+        		catch (Exception e) 
+        		{
+        			//TODO throw PropertyNotFoundException
+        			//logger.error(e);
+        		}
+        		String[] scriptList = scriptListProp.split("/");
+
+        		String scriptListTemplate = "";
+        		
+        		for (String scrt: scriptList){
+        			
+        			scriptListTemplate = scriptListTemplate + " "+oneScriptPath+"/"+scrt;
+					}
+                
                 StringBuffer allParametersString  = new StringBuffer();
 
                 // Migrability ....
@@ -726,7 +755,7 @@ public class ONEProvisioningDriver implements ProvisioningDriver {
                 allParametersString.append(ONE_CONTEXT).append(ASSIGNATION_SYMBOL).append(MULT_CONF_LEFT_DELIMITER);
                 allParametersString.append("public_key").append(ASSIGNATION_SYMBOL).append(oneSshKey).append(MULT_CONF_SEPARATOR).append(LINE_SEPARATOR);
                 allParametersString.append("CustomizationUrl").append(ASSIGNATION_SYMBOL).append("\"" + Main.PROTOCOL + Main.serverHost + ":" + customizationPort + "/"+ replicaName+ "\"").append(MULT_CONF_SEPARATOR).append(LINE_SEPARATOR);
-                allParametersString.append("files").append(ASSIGNATION_SYMBOL).append("\"" + environmentRepositoryPath + "/"+ replicaName + "/ovf-env.xml" + "\"").append(MULT_CONF_SEPARATOR).append(LINE_SEPARATOR);
+                allParametersString.append("files").append(ASSIGNATION_SYMBOL).append("\"" + environmentRepositoryPath + "/"+ replicaName + "/ovf-env.xml" +scriptListTemplate+ "\"").append(MULT_CONF_SEPARATOR).append(LINE_SEPARATOR);
                 allParametersString.append("target").append(ASSIGNATION_SYMBOL).append("\"" + diskRoot + "dc"+ "\"").append(MULT_CONF_RIGHT_DELIMITER).append(LINE_SEPARATOR);
 
                 if (vh.getSystem() != null && vh.getSystem().getVirtualSystemType()!= null &&
@@ -1290,6 +1319,10 @@ public class ONEProvisioningDriver implements ProvisioningDriver {
 
         if (prop.containsKey(SSHKEY_PROPERTY)) {
             oneSshKey = ((String) prop.get(SSHKEY_PROPERTY));
+        }
+
+        if (prop.containsKey(SCRIPTPATH_PROPERTY)) {
+        	oneScriptPath = ((String) prop.get(SCRIPTPATH_PROPERTY));
         }
 
 

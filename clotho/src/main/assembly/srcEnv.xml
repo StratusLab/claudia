@@ -38,7 +38,15 @@
 				<exclude>**/*</exclude>
 			</excludes>
 		</fileSet>
+        <fileSet>
+            <directory>target/</directory>
+            <outputDirectory>/contextFiles</outputDirectory>
+            <directoryMode>0755</directoryMode>
 
+            <excludes>
+                <exclude>**/*</exclude>
+            </excludes>
+        </fileSet>
 		<fileSet>
 			<directory>src/main/data</directory>
 			<outputDirectory>/lib/data</outputDirectory>

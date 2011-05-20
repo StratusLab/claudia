@@ -248,6 +248,25 @@ public class Parser {
 		return null;
 	}
 	
+	public String getScriptListProperty(String vsId)  {
+		VirtualSystemCollectionType topVsc;
+		try {
+			topVsc = (VirtualSystemCollectionType) OVFEnvelopeUtils.getTopLevelVirtualSystemContent(envelope);
+			VirtualSystemType vs = (VirtualSystemType) OVFEnvelopeUtils.getContentTypeByString(topVsc, vsId);
+			
+
+			
+			String scriptlist = getPropertyFromVirtualSystem(vs, "SCRIPT_LIST");
+			return scriptlist;
+
+		} catch (EmptyEnvelopeException e) {
+			logger.warn("Empty envelope detected, service deployment may not be completed.");
+		}
+
+		return null;
+	}
+	
+
 
 	public String generateEnvironments(String vsId, int contInstanceNumber, 
 			HashMap<String,ArrayList<String>> ips,
