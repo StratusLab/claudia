@@ -699,13 +699,25 @@ public class ONEProvisioningDriver implements ProvisioningDriver {
 
                 
                 String scriptListProp = null;
-
+                String scriptListTemplate = "";
+                
         		ProductSectionType productSection;
         		try
         		{
         			productSection = OVFEnvelopeUtils.getSection(vs, ProductSectionType.class);
         			Property prop = OVFProductUtils.getProperty(productSection, "SCRIPT_LIST");     			
         			scriptListProp = prop.getValue().toString();
+        			
+        	   		String[] scriptList = scriptListProp.split("/");
+
+            		
+            		scriptListTemplate = "";
+            		
+            		for (String scrt: scriptList){
+            			
+            			scriptListTemplate = scriptListTemplate + " "+oneScriptPath+"/"+scrt;
+    					}
+            		
 
         		}
         		catch (Exception e) 
@@ -713,15 +725,9 @@ public class ONEProvisioningDriver implements ProvisioningDriver {
         			//TODO throw PropertyNotFoundException
         			//logger.error(e);
         			scriptListProp="";
+        			scriptListTemplate = "";
         		}
-        		String[] scriptList = scriptListProp.split("/");
-
-        		String scriptListTemplate = "";
-        		
-        		for (String scrt: scriptList){
-        			
-        			scriptListTemplate = scriptListTemplate + " "+oneScriptPath+"/"+scrt;
-					}
+     
                 
                 StringBuffer allParametersString  = new StringBuffer();
 
