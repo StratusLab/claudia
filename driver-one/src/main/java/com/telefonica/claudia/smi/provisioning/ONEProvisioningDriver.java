@@ -704,13 +704,15 @@ public class ONEProvisioningDriver implements ProvisioningDriver {
         		try
         		{
         			productSection = OVFEnvelopeUtils.getSection(vs, ProductSectionType.class);
-        			Property prop = OVFProductUtils.getProperty(productSection, "SCRIPT_LIST");
+        			Property prop = OVFProductUtils.getProperty(productSection, "SCRIPT_LIST");     			
         			scriptListProp = prop.getValue().toString();
+
         		}
         		catch (Exception e) 
         		{
         			//TODO throw PropertyNotFoundException
         			//logger.error(e);
+        			scriptListProp="";
         		}
         		String[] scriptList = scriptListProp.split("/");
 
