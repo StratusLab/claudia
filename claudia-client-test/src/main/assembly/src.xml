@@ -1,0 +1,97 @@
+<assembly>
+  <id>deployable</id>
+
+  <formats>
+    <format>zip</format>
+  </formats>
+
+  <baseDirectory>/ClaudiaClient</baseDirectory>
+  
+  <fileSets>
+    <fileSet>
+      <directory>${project.build.directory}</directory>
+      <includes>
+        <include>*.jar</include>
+      </includes>
+      <outputDirectory>/lib/</outputDirectory>
+      <fileMode>0644</fileMode>
+    </fileSet>
+  </fileSets>
+
+  <files>
+    <file>
+      <source>src/main/config/ClaudiaC</source>
+      <outputDirectory>/bin</outputDirectory>
+      <filtered>true</filtered>
+      <fileMode>0744</fileMode>
+    </file>
+    <file>
+      <source>src/main/config/ClaudiaConfig</source>
+      <outputDirectory>/bin</outputDirectory>
+      <filtered>true</filtered>
+      <fileMode>0744</fileMode>
+    </file>
+    <file>
+      <source>src/main/config/awkProg</source>
+      <outputDirectory>/bin</outputDirectory>
+      <filtered>true</filtered>
+      <fileMode>0744</fileMode>
+    </file>
+    <file>
+      <source>src/main/config/ClaudiaConfigClient</source>
+      <outputDirectory>/bin</outputDirectory>
+      <filtered>true</filtered>
+      <fileMode>0744</fileMode>
+    </file>
+    <file>
+      <source>src/main/config/ClaudiaConfigServer</source>
+      <outputDirectory>/bin</outputDirectory>
+      <filtered>true</filtered>
+      <fileMode>0744</fileMode>
+    </file>
+    <file>
+      <source>src/main/config/UpdateHostList</source>
+      <outputDirectory>/bin</outputDirectory>
+      <filtered>true</filtered>
+      <fileMode>0744</fileMode>
+    </file>
+    <file>
+      <source>src/main/config/UpdateHostList.awk</source>
+      <outputDirectory>/bin</outputDirectory>
+      <filtered>true</filtered>
+      <fileMode>0744</fileMode>
+    </file>
+
+
+
+	<file>
+		<source>src/main/config/claudiaClient.properties</source>
+		<outputDirectory>/conf</outputDirectory>
+		<filtered>true</filtered>
+		<fileMode>0644</fileMode>
+	</file>
+	<file>
+		<source>src/main/config/templateInterfaces</source>
+		<outputDirectory>/conf</outputDirectory>
+		<filtered>true</filtered>
+		<fileMode>0644</fileMode>
+	</file>
+    <file>
+      <source>src/main/config/templateIptables</source>
+      <outputDirectory>/conf</outputDirectory>
+      <filtered>true</filtered>
+      <fileMode>0644</fileMode>
+    </file>
+
+  </files>  
+
+  <dependencySets>
+    <dependencySet>
+      <unpack>false</unpack>
+      <scope>runtime</scope>
+      <outputDirectory>/lib</outputDirectory>
+    </dependencySet>
+  </dependencySets>
+
+</assembly>
+
