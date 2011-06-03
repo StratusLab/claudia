@@ -1,0 +1,287 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Envelope xmlns:ovf="http://schemas.dmtf.org/ovf/envelope/1" 
+xmlns="http://schemas.dmtf.org/ovf/envelope/1"
+ xmlns:rsrvr="http://schemas.telefonica.com/claudia/ovf" 
+ xmlns:vssd="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_VirtualSystemSettingData" 
+ xmlns:rasd="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.telefonica.com/claudia/ovf reservoir.xsd">
+	<References>
+	  <!--  The images  -->
+		<File ovf:id="storageelement" ovf:href="http://appliances.stratuslab.eu/images/grid/se/sl-5.5-x86_64-grid.se/2.0/sl-5.5-x86_64-grid.se-2.0.img.gz"
+		 rsrvr:digest="3ee3e25a1e1fc1fe780a0b9d13213a6a"/>
+		<File ovf:id="workernode" ovf:href="http://appliances.stratuslab.eu/images/grid/wn/sl-5.5-x86_64-grid.wn/1.0/sl-5.5-x86_64-grid.wn-1.0.img.gz"
+		 rsrvr:digest="328aeb5810878836dd833bedd1d069ae2f95118a"/>
+		<File ovf:id="computingelement" ovf:href="http://appliances.stratuslab.eu/images/grid/ce/sl-5.5-x86_64-grid.ce/1.0/sl-5.5-x86_64-grid.ce-1.0.img.gz" 
+		rsrvr:digest="20d1ca460819581b995bd17ac4d2fd0b"/>
+	</References>
+	<DiskSection>
+		<Info>The glite site is composed by a storage element,  a computing element and a worker node </Info>
+		<Disk ovf:diskId="storageelement" ovf:fileRef="storageelement" ovf:capacity="1536MB" ovf:format="http://www.gnome.org/~markmc/qcow-image-format.html"/>
+		<Disk ovf:diskId="computingelement" ovf:fileRef="computingelement" ovf:capacity="1024MB" ovf:format="http://www.gnome.org/~markmc/qcow-image-format.html"/>
+		<Disk ovf:diskId="workernode" ovf:fileRef="workernode" ovf:capacity="1536MB" ovf:format="http://www.gnome.org/~markmc/qcow-image-format.html"/>
+	</DiskSection>
+	<NetworkSection>
+		<Info>Network information</Info>
+		<Network ovf:name="glite_public" rsrvr:public="true">
+			<Description>Public Network</Description>
+		</Network>
+	</NetworkSection>
+	<rsrvr:KPISection>
+ 	<Info>For starting, it can be the CPU in the worker node</Info>
+	 <rsrvr:KPI KPIname="jobqueue"/> 
+	</rsrvr:KPISection>
+	<!--  VM descriptions -->
+	<VirtualSystemCollection ovf:id="gLiteSite">
+		<Info>The glite site is composed by a storage element,  a computing element and a worker node </Info>
+		<StartupSection>
+			<Info> </Info>
+			<Item ovf:id="computingelement" ovf:order="0" ovf:waitingForGuest="true"/>
+			<Item ovf:id="workernode" ovf:order="1"/>
+			<Item ovf:id="storageelement" ovf:order="2"/>
+		</StartupSection>		   
+	<VirtualSystem ovf:id="workernode" rsrvr:min="1" rsrvr:max="2" rsrvr:initial="1" rsrvr:balanced="computingelement" rsrvr:lbmanagedport="5555">
+			<Info>Worker Node VM</Info>
+			<!--  Master daemon configuration parameters -->
+           <rsrvr:ElasticArraySection>
+		<Info>
+		There are two elasticity rules, to scale up and down VEEExecutor components
+		</Info>
+		<rsrvr:Rule>
+			<rsrvr:KPIName>jobqueue</rsrvr:KPIName>
+			<rsrvr:Window unit="minute">5</rsrvr:Window>
+			<rsrvr:Frequency>20</rsrvr:Frequency>
+			<rsrvr:Quota>15</rsrvr:Quota>
+			<rsrvr:Tolerance>55.55</rsrvr:Tolerance>
+		</rsrvr:Rule>
+        	</rsrvr:ElasticArraySection>
+
+			<ProductSection ovf:class="stratus.glite.grid.wn">
+				<Info>The gLite 3.2 packages for the Worker Node have been installed in this image along with the glite-MPI_utils metapackage providing support for OPENMPI and MPICH2.</Info>
+				<Product>gLite 3.2</Product>
+				<Version>1.0</Version>				
+				<Property ovf:key="VO" ovf:type="string" rsrvr:cloudConfigurable="true" ovf:value="vo.stratuslab.eu"/>
+				<Property ovf:key="DPM_HOST" ovf:type="string" rsrvr:cloudConfigurable="true" ovf:value="vm038.one.ypepth.grnet.gr"/>
+				<Property ovf:key="CE_HOST" ovf:type="string" rsrvr:cloudConfigurable="true" ovf:value="vm037.one.ypepth.grnet.gr"/>
+                        <Property ovf:key="SITE_OTHER_GRID" ovf:type="string" rsrvr:cloudConfigurable="true" ovf:value="EGI"/>
+ 				<Property ovf:key="SITE_OTHER_EGEE_ROC" ovf:type="string" rsrvr:cloudConfigurable="true" ovf:value="NGI_GRNET"/>
+				<Property ovf:key="BDII_REGIONS" ovf:type="string" rsrvr:cloudConfigurable="true" ovf:value="CE SE"/>
+				<Property ovf:key="SITE_DESC" ovf:type="string" rsrvr:cloudConfigurable="true" ovf:value="StratusLab Grid Site"/>
+				<Property ovf:key="SITE_SUPPORT_EMAIL" ovf:type="string" rsrvr:cloudConfigurable="true" ovf:value="support@stratuslab.eu"/>
+				<Property ovf:key="SITE_SECURITY_EMAIL" ovf:type="string" rsrvr:cloudConfigurable="true" ovf:value="security@stratuslab.eu"/>
+				<Property ovf:key="SITE_LOC" ovf:type="string" rsrvr:cloudConfigurable="true" ovf:value="Athens,Greece"/>
+				<Property ovf:key="SITE_WEB" ovf:type="string" rsrvr:cloudConfigurable="true" ovf:value="http://www.stratuslab.eu"/>
+				<Property ovf:key="DB_PASSWD" ovf:type="string" rsrvr:cloudConfigurable="true" ovf:value="stratuslab"/>
+				<Property ovf:key="SITENAME" ovf:type="string" rsrvr:cloudConfigurable="true" ovf:value="GRID-01-STRATUSLAB"/>
+				<Property ovf:key="SITE_LAT" ovf:type="string" rsrvr:cloudConfigurable="true" ovf:value="38.02"/>
+				<Property ovf:key="SITE_LONG" ovf:type="string" rsrvr:cloudConfigurable="true" ovf:value="23.47"/>
+				<Property ovf:key="CPUSPEED" ovf:type="string" rsrvr:cloudConfigurable="true" ovf:value="2266"/>
+				<Property ovf:key="OSARCH" ovf:type="string" rsrvr:cloudConfigurable="true" ovf:value="x86_64"/>
+				<Property ovf:key="MINPHYSMEM" ovf:type="string" rsrvr:cloudConfigurable="true" ovf:value="4096"/>
+				<Property ovf:key="MINVIRTMEM" ovf:type="string" rsrvr:cloudConfigurable="true" ovf:value="2048"/>
+				<Property ovf:key="PHYSCPU" ovf:type="string" rsrvr:cloudConfigurable="true" ovf:value="8"/>
+				<Property ovf:key="LOGCPU" ovf:type="string" rsrvr:cloudConfigurable="true" ovf:value="16"/>
+				<Property ovf:key="SMPSIZE" ovf:type="string" rsrvr:cloudConfigurable="true" ovf:value="2"/>
+				<Property ovf:key="SI00" ovf:type="string" rsrvr:cloudConfigurable="true" ovf:value="3325"/>
+				<Property ovf:key="HEP-SPEC" ovf:type="string" rsrvr:cloudConfigurable="true" ovf:value="Cores=2,Benchmark=13.30-HEP-SPEC06"/>
+				<Property ovf:key="apel.HOSTNAME" ovf:type="string" rsrvr:cloudConfigurable="true" ovf:value="vm047.one.ypepth.grnet.gr"/>
+				<Property ovf:key="BDII_HOST" ovf:type="string" rsrvr:cloudConfigurable="true" ovf:value="bdii.isabella.grnet.gr"/>
+
+
+			</ProductSection>
+			
+			<VirtualHardwareSection>
+				<Info>Virtual Hardware Requirements: 512Mb, 2 CPU, 1 disk, 2 nic</Info>
+				<System>
+					<vssd:ElementName>Virtual Hardware Family</vssd:ElementName>
+					<vssd:InstanceID>0</vssd:InstanceID>
+					<vssd:VirtualSystemType>kvm</vssd:VirtualSystemType>
+				</System>
+				<Item>
+					<rasd:Description>Number of virtual CPUs</rasd:Description>
+					<rasd:ElementName>1 virtual CPU</rasd:ElementName>
+					<rasd:InstanceID>1</rasd:InstanceID>
+					<rasd:ResourceType>3</rasd:ResourceType>
+					<rasd:VirtualQuantity>1</rasd:VirtualQuantity>
+				</Item>
+				<Item>
+					<rasd:AllocationUnits>MegaBytes</rasd:AllocationUnits>
+					<rasd:Description>Memory Size</rasd:Description>
+					<rasd:ElementName>512 MB of memory</rasd:ElementName>
+					<rasd:InstanceID>2</rasd:InstanceID>
+					<rasd:ResourceType>4</rasd:ResourceType>
+					<rasd:VirtualQuantity>512</rasd:VirtualQuantity>
+				</Item>
+				<Item>
+					<rasd:AutomaticAllocation>true</rasd:AutomaticAllocation>
+					<rasd:Connection>glite_public</rasd:Connection>
+					<rasd:ElementName>Ethernet adapter on glite_public network</rasd:ElementName>
+					<rasd:InstanceID>3</rasd:InstanceID>
+					<rasd:ResourceType>10</rasd:ResourceType>
+				</Item>
+				<Item>
+					<rasd:ElementName>Harddisk 1</rasd:ElementName>
+					<rasd:HostResource>ovf://disk/workernode</rasd:HostResource>
+					<rasd:InstanceID>4</rasd:InstanceID>
+					<rasd:Parent>4</rasd:Parent>
+					<rasd:ResourceType>17</rasd:ResourceType>
+				</Item>
+			</VirtualHardwareSection>
+		</VirtualSystem>
+		<VirtualSystem ovf:id="storageelement" rsrvr:min="1" rsrvr:max="1" rsrvr:initial="1">
+			<Info>Storage Element VM</Info>
+			<!--  Master daemon configuration parameters -->
+			<ProductSection ovf:class="stratus.glite.grid.se">
+				<Info>gLite 3.2 packages for Storage Element </Info>
+				<Product>Storage Element gLite 3.2</Product>
+				<Version>1.0</Version>				
+				<Property ovf:key="VO" ovf:type="string" rsrvr:cloudConfigurable="true" ovf:value="vo.stratuslab.eu"/>
+				<Property ovf:key="DPM_HOST" ovf:type="string" rsrvr:cloudConfigurable="true" ovf:value="vm038.one.ypepth.grnet.gr"/>
+				<Property ovf:key="CE_HOST" ovf:type="string" rsrvr:cloudConfigurable="true" ovf:value="vm037.one.ypepth.grnet.gr"/>
+                        <Property ovf:key="SITE_OTHER_GRID" ovf:type="string" rsrvr:cloudConfigurable="true" ovf:value="EGI"/>
+ 				<Property ovf:key="SITE_OTHER_EGEE_ROC" ovf:type="string" rsrvr:cloudConfigurable="true" ovf:value="NGI_GRNET"/>
+				<Property ovf:key="BDII_REGIONS" ovf:type="string" rsrvr:cloudConfigurable="true" ovf:value="CE SE"/>
+				<Property ovf:key="SITE_DESC" ovf:type="string" rsrvr:cloudConfigurable="true" ovf:value="StratusLab Grid Site"/>
+				<Property ovf:key="SITE_SUPPORT_EMAIL" ovf:type="string" rsrvr:cloudConfigurable="true" ovf:value="support@stratuslab.eu"/>
+				<Property ovf:key="SITE_SECURITY_EMAIL" ovf:type="string" rsrvr:cloudConfigurable="true" ovf:value="security@stratuslab.eu"/>
+				<Property ovf:key="SITE_LOC" ovf:type="string" rsrvr:cloudConfigurable="true" ovf:value="Athens,Greece"/>
+				<Property ovf:key="SITE_WEB" ovf:type="string" rsrvr:cloudConfigurable="true" ovf:value="http://www.stratuslab.eu"/>
+				<Property ovf:key="DB_PASSWD" ovf:type="string" rsrvr:cloudConfigurable="true" ovf:value="stratuslab"/>
+				<Property ovf:key="SITENAME" ovf:type="string" rsrvr:cloudConfigurable="true" ovf:value="GRID-01-STRATUSLAB"/>
+				<Property ovf:key="SITE_LAT" ovf:type="string" rsrvr:cloudConfigurable="true" ovf:value="38.02"/>
+				<Property ovf:key="SITE_LONG" ovf:type="string" rsrvr:cloudConfigurable="true" ovf:value="23.47"/>
+				<Property ovf:key="CPUSPEED" ovf:type="string" rsrvr:cloudConfigurable="true" ovf:value="2266"/>
+				<Property ovf:key="OSARCH" ovf:type="string" rsrvr:cloudConfigurable="true" ovf:value="x86_64"/>
+				<Property ovf:key="MINPHYSMEM" ovf:type="string" rsrvr:cloudConfigurable="true" ovf:value="4096"/>
+				<Property ovf:key="MINVIRTMEM" ovf:type="string" rsrvr:cloudConfigurable="true" ovf:value="2048"/>
+				<Property ovf:key="PHYSCPU" ovf:type="string" rsrvr:cloudConfigurable="true" ovf:value="8"/>
+				<Property ovf:key="LOGCPU" ovf:type="string" rsrvr:cloudConfigurable="true" ovf:value="16"/>
+				<Property ovf:key="SMPSIZE" ovf:type="string" rsrvr:cloudConfigurable="true" ovf:value="2"/>
+				<Property ovf:key="SI00" ovf:type="string" rsrvr:cloudConfigurable="true" ovf:value="3325"/>
+				<Property ovf:key="HEP-SPEC" ovf:type="string" rsrvr:cloudConfigurable="true" ovf:value="Cores=2,Benchmark=13.30-HEP-SPEC06"/>
+				<Property ovf:key="HOSTNAME" ovf:type="string" rsrvr:cloudConfigurable="true" ovf:value="vm047.one.ypepth.grnet.gr"/>
+				<Property ovf:key="BDII_HOST" ovf:type="string" rsrvr:cloudConfigurable="true" ovf:value="bdii.isabella.grnet.gr"/>
+				<Property ovf:key="apel.HOSTNAME" ovf:type="string" rsrvr:cloudConfigurable="true" ovf:value="vm047.one.ypepth.grnet.gr"/>
+
+			</ProductSection>
+			
+			<VirtualHardwareSection>
+				<Info>Virtual Hardware Requirements: 512Mb, 2 CPU, 1 disk, 1 nic</Info>
+				<System>
+					<vssd:ElementName>Virtual Hardware Family</vssd:ElementName>
+					<vssd:InstanceID>0</vssd:InstanceID>
+					<vssd:VirtualSystemType>kvm</vssd:VirtualSystemType>
+				</System>
+				<Item>
+					<rasd:Description>Number of virtual CPUs</rasd:Description>
+					<rasd:ElementName>4 virtual CPU</rasd:ElementName>
+					<rasd:InstanceID>1</rasd:InstanceID>
+					<rasd:ResourceType>3</rasd:ResourceType>
+					<rasd:VirtualQuantity>4</rasd:VirtualQuantity>
+				</Item>
+				<Item>
+					<rasd:AllocationUnits>MegaBytes</rasd:AllocationUnits>
+					<rasd:Description>Memory Size</rasd:Description>
+					<rasd:ElementName>2048 MB of memory</rasd:ElementName>
+					<rasd:InstanceID>2</rasd:InstanceID>
+					<rasd:ResourceType>4</rasd:ResourceType>
+					<rasd:VirtualQuantity>2048</rasd:VirtualQuantity>
+				</Item>
+				<Item>
+					<rasd:AutomaticAllocation>true</rasd:AutomaticAllocation>
+					<rasd:Connection>glite_public</rasd:Connection>
+					<rasd:ElementName>Ethernet adapter on glite_public network</rasd:ElementName>
+					<rasd:InstanceID>3</rasd:InstanceID>
+					<rasd:ResourceType>10</rasd:ResourceType>
+				</Item>
+				
+				<Item>
+					<rasd:ElementName>Harddisk 1</rasd:ElementName>
+					<rasd:HostResource>ovf://disk/storageelement</rasd:HostResource>
+					<rasd:InstanceID>4</rasd:InstanceID>
+					<rasd:Parent>4</rasd:Parent>
+					<rasd:ResourceType>17</rasd:ResourceType>
+				</Item>
+			</VirtualHardwareSection>
+		</VirtualSystem>
+		<VirtualSystem ovf:id="computingelement" rsrvr:min="1" rsrvr:max="1" rsrvr:initial="1" rsrvr:balancer="true" rsrvr:lbport="8080">
+			<Info>Computing Element VM</Info>
+			<!--  Master daemon configuration parameters -->
+			<ProductSection ovf:class="stratus.glite.grid.ce">
+				<Info>The gLite 3.2 packages for CREAM Computing Element (CREAM CE) have been installed in this image along with the glite-MPI_utils metapackage providing support for OPENMPI and MPICH2</Info>
+				<Product>gLite 3.2</Product>
+				<Version>1.0</Version>		
+
+				<Property ovf:key="fqnkpi" ovf:type="string" rsrvr:cloudConfigurable="true" ovf:value="@ServiceId.kpis.jobqueue"/>
+				<Property ovf:key="ipmonitoring" ovf:type="string" rsrvr:cloudConfigurable="true" ovf:value="@MonitoringChannel"/>
+				<Property ovf:key="VO" ovf:type="string" rsrvr:cloudConfigurable="true" ovf:value="vo.stratuslab.eu"/>
+				<Property ovf:key="DPM_HOST" ovf:type="string" rsrvr:cloudConfigurable="true" ovf:value="vm038.one.ypepth.grnet.gr"/>
+				<Property ovf:key="CE_HOST" ovf:type="string" rsrvr:cloudConfigurable="true" ovf:value="vm037.one.ypepth.grnet.gr"/>
+                        <Property ovf:key="SITE_OTHER_GRID" ovf:type="string" rsrvr:cloudConfigurable="true" ovf:value="EGI"/>
+ 				<Property ovf:key="SITE_OTHER_EGEE_ROC" ovf:type="string" rsrvr:cloudConfigurable="true" ovf:value="NGI_GRNET"/>
+				<Property ovf:key="BDII_REGIONS" ovf:type="string" rsrvr:cloudConfigurable="true" ovf:value="CE SE"/>
+				<Property ovf:key="SITE_DESC" ovf:type="string" rsrvr:cloudConfigurable="true" ovf:value="StratusLab Grid Site"/>
+				<Property ovf:key="SITE_SUPPORT_EMAIL" ovf:type="string" rsrvr:cloudConfigurable="true" ovf:value="support@stratuslab.eu"/>
+				<Property ovf:key="SITE_SECURITY_EMAIL" ovf:type="string" rsrvr:cloudConfigurable="true" ovf:value="security@stratuslab.eu"/>
+				<Property ovf:key="SITE_LOC" ovf:type="string" rsrvr:cloudConfigurable="true" ovf:value="Athens,Greece"/>
+				<Property ovf:key="SITE_WEB" ovf:type="string" rsrvr:cloudConfigurable="true" ovf:value="http://www.stratuslab.eu"/>
+				<Property ovf:key="DB_PASSWD" ovf:type="string" rsrvr:cloudConfigurable="true" ovf:value="stratuslab"/>
+				<Property ovf:key="SITENAME" ovf:type="string" rsrvr:cloudConfigurable="true" ovf:value="GRID-01-STRATUSLAB"/>
+				<Property ovf:key="SITE_LAT" ovf:type="string" rsrvr:cloudConfigurable="true" ovf:value="38.02"/>
+				<Property ovf:key="SITE_LONG" ovf:type="string" rsrvr:cloudConfigurable="true" ovf:value="23.47"/>
+				<Property ovf:key="CPUSPEED" ovf:type="string" rsrvr:cloudConfigurable="true" ovf:value="2266"/>
+				<Property ovf:key="OSARCH" ovf:type="string" rsrvr:cloudConfigurable="true" ovf:value="x86_64"/>
+				<Property ovf:key="MINPHYSMEM" ovf:type="string" rsrvr:cloudConfigurable="true" ovf:value="4096"/>
+				<Property ovf:key="MINVIRTMEM" ovf:type="string" rsrvr:cloudConfigurable="true" ovf:value="2048"/>
+				<Property ovf:key="PHYSCPU" ovf:type="string" rsrvr:cloudConfigurable="true" ovf:value="8"/>
+				<Property ovf:key="LOGCPU" ovf:type="string" rsrvr:cloudConfigurable="true" ovf:value="16"/>
+				<Property ovf:key="SMPSIZE" ovf:type="string" rsrvr:cloudConfigurable="true" ovf:value="2"/>
+				<Property ovf:key="SI00" ovf:type="string" rsrvr:cloudConfigurable="true" ovf:value="3325"/>
+				<Property ovf:key="HEP-SPEC" ovf:type="string" rsrvr:cloudConfigurable="true" ovf:value="Cores=2,Benchmark=13.30-HEP-SPEC06"/>
+				<Property ovf:key="HOSTNAME" ovf:type="string" rsrvr:cloudConfigurable="true" ovf:value="vm037.one.ypepth.grnet.gr"/>
+				<Property ovf:key="BDII_HOST" ovf:type="string" rsrvr:cloudConfigurable="true" ovf:value="bdii.isabella.grnet.gr"/>
+				<Property ovf:key="apel.HOSTNAME" ovf:type="string" rsrvr:cloudConfigurable="true" ovf:value="vm047.one.ypepth.grnet.gr"/>
+				<Property ovf:key="STATIC_IP" ovf:type="string" rsrvr:cloudConfigurable="true" ovf:value="62.217.120.166"/>
+				<Property ovf:key="SCRIPT_LIST" ovf:type="string" rsrvr:cloudConfigurable="true" ovf:value="OVFParser.py"/>
+			</ProductSection>
+			
+			<VirtualHardwareSection>
+				<Info>Virtual Hardware Requirements: 512Mb, 2 CPU, 1 disk, 1 nic</Info>
+				<System>
+					<vssd:ElementName>Virtual Hardware Family</vssd:ElementName>
+					<vssd:InstanceID>0</vssd:InstanceID>
+					<vssd:VirtualSystemType>kvm</vssd:VirtualSystemType>
+				</System>
+				<Item>
+					<rasd:Description>Number of virtual CPUs</rasd:Description>
+					<rasd:ElementName>4 virtual CPU</rasd:ElementName>
+					<rasd:InstanceID>1</rasd:InstanceID>
+					<rasd:ResourceType>3</rasd:ResourceType>
+					<rasd:VirtualQuantity>4</rasd:VirtualQuantity>
+				</Item>
+				<Item>
+					<rasd:AllocationUnits>MegaBytes</rasd:AllocationUnits>
+					<rasd:Description>Memory Size</rasd:Description>
+					<rasd:ElementName>2048 MB of memory</rasd:ElementName>
+					<rasd:InstanceID>2</rasd:InstanceID>
+					<rasd:ResourceType>4</rasd:ResourceType>
+					<rasd:VirtualQuantity>2048</rasd:VirtualQuantity>
+				</Item>
+				<Item>
+					<rasd:AutomaticAllocation>true</rasd:AutomaticAllocation>
+					<rasd:Connection>glite_public</rasd:Connection>
+					<rasd:ElementName>Ethernet adapter on glite_public network</rasd:ElementName>
+					<rasd:InstanceID>3</rasd:InstanceID>
+					<rasd:ResourceType>10</rasd:ResourceType>
+				</Item>
+				
+				<Item>
+					<rasd:ElementName>Harddisk 1</rasd:ElementName>
+					<rasd:HostResource>ovf://disk/computingelement</rasd:HostResource>
+					<rasd:InstanceID>4</rasd:InstanceID>
+					<rasd:Parent>4</rasd:Parent>
+					<rasd:ResourceType>17</rasd:ResourceType>
+				</Item>
+			</VirtualHardwareSection>
+		</VirtualSystem>
+	</VirtualSystemCollection>
+</Envelope>
