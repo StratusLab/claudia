@@ -760,7 +760,7 @@ public class ONEProvisioningDriver implements ProvisioningDriver {
                 }
 
                 if(arch.length()>0)
-                allParametersString.append("ARCH").append(ASSIGNATION_SYMBOL).append(arch).append(MULT_CONF_SEPARATOR).append(LINE_SEPARATOR);
+                allParametersString.append("ARCH").append(ASSIGNATION_SYMBOL).append("\"").append(arch).append("\"").append(MULT_CONF_SEPARATOR).append(LINE_SEPARATOR);
                 allParametersString.append(ONE_VM_OS_PARAM_ROOT).append(ASSIGNATION_SYMBOL).append(diskRoot + "da1").append(MULT_CONF_RIGHT_DELIMITER).append(LINE_SEPARATOR);
 
                 allParametersString.append(ONE_CONTEXT).append(ASSIGNATION_SYMBOL).append(MULT_CONF_LEFT_DELIMITER);
