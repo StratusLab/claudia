@@ -34,18 +34,6 @@
 
   </dependencies>
 
-  <distributionManagement>
-    <repository>
-      <id>stratuslab.releases</id>
-      <name>Releases</name>
-      <url>http://repo.stratuslab.eu:8081/content/repositories/${nexus.release.repository.name}</url>
-    </repository>
-    <snapshotRepository>
-      <id>stratuslab.snapshots</id>
-      <name>Snapshots</name>
-      <url>http://repo.stratuslab.eu:8081/content/repositories/${nexus.snapshot.repository.name}</url>
-    </snapshotRepository>
-  </distributionManagement>
 
   <build>
 
