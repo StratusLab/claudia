@@ -794,10 +794,10 @@ public class ONEProvisioningDriver implements ProvisioningDriver {
                     switch (rsType) {
                         case ResourceTypeCPU:
 
-                            for (int k = 0; k < quantity; k++) {
+                          //  for (int k = 0; k < quantity; k++) {
                                 allParametersString.append(ONE_VM_CPU).append(ASSIGNATION_SYMBOL).append(quantity).append(LINE_SEPARATOR);
                                 allParametersString.append(ONE_VM_VCPU).append(ASSIGNATION_SYMBOL).append(quantity).append(LINE_SEPARATOR);
-                            }
+                          //  }
 
                             break;
 
