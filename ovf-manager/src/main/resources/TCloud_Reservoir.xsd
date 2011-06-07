@@ -323,6 +323,7 @@
 			<xs:element name="Frequency" type="xs:positiveInteger"/>
 			<xs:element name="Quota" type="xs:positiveInteger"/>
 			<xs:element name="Tolerance" type="tcloud:PositiveDecimal_Type" minOccurs="0"/>
+			<xs:element name="KPIType" type="xs:string"/>
 		</xs:sequence>
 	</xs:complexType>
 	<xs:complexType name="Window_Type">

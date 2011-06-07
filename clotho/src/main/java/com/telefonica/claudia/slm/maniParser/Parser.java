@@ -614,7 +614,8 @@ public class Parser {
 
 						/* Throw exceptions in the case of missing information */
 						if (fileRef == null) {
-							throw new ManiParserException("file reference can not be found for disk: " + hostRes);
+							//throw new ManiParserException("file reference can not be found for disk: " + hostRes);
+							logger.warn("file ref is null");
 						}
 
 						URL url = null;
@@ -622,7 +623,8 @@ public class Parser {
 
 						ReferencesType ref = envelope.getReferences();
 						List<FileType> files = ref.getFile();
-
+ 
+						if (fileRef != null) {
 						for (Iterator<FileType> iteratorFl = files.iterator(); iteratorFl.hasNext();) {
 							FileType fl = iteratorFl.next();
 							if (fl.getId().equals(fileRef)) {
@@ -648,6 +650,7 @@ public class Parser {
 
 								break;
 							}
+						}
 						}
 
 						/* Throw exceptions in the case of missing information */
@@ -1194,17 +1197,21 @@ public class Parser {
 
 									// Fille the Reference section
 									if (fileRef == null) {
-										throw new ManiParserException("File reference can not be found for disk: " + hostRes);
+										//throw new ManiParserException("File reference can not be found for disk: " + hostRes);
+										logger.warn("File reference can not be found for disk: " + hostRes);
 									}
 
 									ReferencesType ref = envelope.getReferences();
 									List<FileType> files = ref.getFile();
 
+									if (fileRef!=null)
+									{
 									for (Iterator<FileType> iteratorFl = files.iterator(); iteratorFl.hasNext();) {
 										FileType fl = iteratorFl.next();
 										if (fl.getId().equals(fileRef)) {
 											OVFReferenceUtils.addFile(references, fl);
 										}
+									}
 									}
 								}
 
