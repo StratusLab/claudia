@@ -150,6 +150,7 @@ public class ONEProvisioningDriver implements ProvisioningDriver {
 
     private static final String KERNEL_PROPERTY = "oneKernel";
     private static final String INITRD_PROPERTY = "oneInitrd";
+    private static final String ARCH_PROPERTY = "arch";
     private static final String ENVIRONMENT_PROPERTY = "oneEnvironmentPath";
 
     private final static String SSHKEY_PROPERTY = "oneSshKey";
@@ -178,6 +179,7 @@ public class ONEProvisioningDriver implements ProvisioningDriver {
      */
     private Map<String, Integer> idNetMap = new HashMap<String, Integer>();
     private String hypervisorInitrd="";
+    private String arch="";
     private String hypervisorKernel="";
     private String customizationPort;
     private String environmentRepositoryPath;
@@ -218,6 +220,9 @@ public class ONEProvisioningDriver implements ProvisioningDriver {
     public static final String ONE_VM_DISK_PARAM_SIZE = "size";
     public static final String ONE_VM_DISK_PARAM_TARGET = "target";
     public static final String ONE_VM_DISK_PARAM_DIGEST = "digest";
+    public static final String ONE_VM_DISK_PARAM_TYPE = "type";
+    public static final String ONE_VM_DISK_PARAM_DRIVER = "driver";
+    
 
     public static final String ONE_VM_NIC_COLLECTION = "NICS";
     public static final String ONE_VM_NIC = "NIC";
@@ -753,11 +758,9 @@ public class ONEProvisioningDriver implements ProvisioningDriver {
                     allParametersString.append(ONE_VM_OS_PARAM_INITRD).append(ASSIGNATION_SYMBOL).append(hypervisorInitrd).append(MULT_CONF_SEPARATOR).append(LINE_SEPARATOR);
                     allParametersString.append(ONE_VM_OS_PARAM_KERNEL).append(ASSIGNATION_SYMBOL).append(hypervisorKernel).append(MULT_CONF_SEPARATOR).append(LINE_SEPARATOR);
                 }
-                
-              
-                
-          
 
+                if(arch.length()>0)
+                allParametersString.append("ARCH").append(ASSIGNATION_SYMBOL).append("\"").append(arch).append("\"").append(MULT_CONF_SEPARATOR).append(LINE_SEPARATOR);
                 allParametersString.append(ONE_VM_OS_PARAM_ROOT).append(ASSIGNATION_SYMBOL).append(diskRoot + "da1").append(MULT_CONF_RIGHT_DELIMITER).append(LINE_SEPARATOR);
 
                 allParametersString.append(ONE_CONTEXT).append(ASSIGNATION_SYMBOL).append(MULT_CONF_LEFT_DELIMITER);
@@ -826,6 +829,7 @@ public class ONEProvisioningDriver implements ProvisioningDriver {
 
                             String fileRef = null;
                             String capacity = null;
+                            String format = null;
                             if (hostResType.equals("disk")) {
                                 /* This type involves an indirection level */
                                 DiskSectionType ds = null;
@@ -840,6 +844,7 @@ public class ONEProvisioningDriver implements ProvisioningDriver {
 
                                         fileRef = disk.getFileRef();
                                         capacity = disk.getCapacity();
+                                        format = disk.getFormat();
 
                                         break;
                                     }
@@ -856,6 +861,7 @@ public class ONEProvisioningDriver implements ProvisioningDriver {
 
                             URL url = null;
                             String digest = null;
+                            String driver = null;
 
                             ReferencesType ref = envelope.getReferences();
                             List<FileType> files = ref.getFile();
@@ -882,7 +888,12 @@ public class ONEProvisioningDriver implements ProvisioningDriver {
                                     Map<QName, String> attributesFile = fl.getOtherAttributes();
                                     QName digestAtt = new QName("http://schemas.telefonica.com/claudia/ovf","digest");
                                     digest = attributesFile.get(digestAtt);
-
+                                    
+                                    Map<QName, String> attributesFile2 = fl.getOtherAttributes();
+                                    QName driverAtt = new QName("http://schemas.telefonica.com/claudia/ovf","driver");
+                                    driver = attributesFile.get(driverAtt);
+                                    
+                                   
                                     break;
                                 }
                             }
@@ -914,8 +925,25 @@ public class ONEProvisioningDriver implements ProvisioningDriver {
                                 allParametersString.append(ONE_VM_DISK_PARAM_TARGET).append(ASSIGNATION_SYMBOL).append(diskRoot + "d" + sdaId).append(MULT_CONF_SEPARATOR);
                             } else
                                 allParametersString.append(ONE_VM_DISK_PARAM_TARGET).append(ASSIGNATION_SYMBOL).append(filesystem.getAbsolutePath()).append(MULT_CONF_SEPARATOR);
-                            allParametersString.append(ONE_VM_DISK_PARAM_SIZE).append(ASSIGNATION_SYMBOL).append(capacity).append(MULT_CONF_SEPARATOR);
-                            allParametersString.append(ONE_VM_DISK_PARAM_DIGEST).append(ASSIGNATION_SYMBOL).append(digest);
+                            
+                            if (format!=null)
+                            {
+                                  
+                                   if (format.equals("ext3"))
+                                   {
+                                	   allParametersString.append(ONE_VM_DISK_PARAM_TYPE).append(ASSIGNATION_SYMBOL).append("fs").append(MULT_CONF_SEPARATOR); 
+                                   }
+                                   allParametersString.append(ONE_VM_DISK_PARAM_FORMAT).append(ASSIGNATION_SYMBOL).append(format).append(MULT_CONF_SEPARATOR);
+                            }
+                            if (driver!=null)
+                                allParametersString.append(ONE_VM_DISK_PARAM_DRIVER).append(ASSIGNATION_SYMBOL).append(driver).append(MULT_CONF_SEPARATOR);
+                                	
+                          
+                            
+                            
+                            if (digest!=null)
+                            allParametersString.append(ONE_VM_DISK_PARAM_DIGEST).append(ASSIGNATION_SYMBOL).append(digest).append(MULT_CONF_SEPARATOR);
+                            allParametersString.append(ONE_VM_DISK_PARAM_SIZE).append(ASSIGNATION_SYMBOL).append(capacity);
                             allParametersString.append(MULT_CONF_RIGHT_DELIMITER).append(LINE_SEPARATOR);
 
                             sdaId++;
@@ -1307,6 +1335,10 @@ public class ONEProvisioningDriver implements ProvisioningDriver {
 
         if (prop.containsKey(INITRD_PROPERTY)) {
             hypervisorInitrd = ((String) prop.get(INITRD_PROPERTY));
+        }
+        
+        if (prop.containsKey(ARCH_PROPERTY)) {
+            arch = ((String) prop.get(ARCH_PROPERTY));
         }
 
         if (prop.containsKey(Main.CUSTOMIZATION_PORT_PROPERTY)) {
