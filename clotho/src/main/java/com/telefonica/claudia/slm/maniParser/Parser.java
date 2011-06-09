@@ -394,6 +394,7 @@ public class Parser {
 
 		// First of all, get the OVF Documents of its child VS to add them to the
 		// VEEs
+		VEE balancer = null;
 		HashMap<String, String> ovfDocuments=null;
 		try {
 			ovfDocuments = splitOvf();
@@ -448,11 +449,16 @@ public class Parser {
 				QName maxAtt = new QName("http://schemas.telefonica.com/claudia/ovf","max");
 				QName initialAtt = new QName("http://schemas.telefonica.com/claudia/ovf","initial");
 				QName uuidAtt = new QName("http://schemas.telefonica.com/claudia/ovf","uuid");
-
+				
+				
 				int min = Integer.parseInt(attributes.get(minAtt));
 				int max = Integer.parseInt(attributes.get(maxAtt));
 				int initial = Integer.parseInt(attributes.get(initialAtt));
 				String uuid = attributes.get(uuidAtt);
+				
+				
+				
+				
 
 				logger.debug("min= " + min + ", max= " + max + ", initial= " + initial);
 				if (uuid != null) {
@@ -816,6 +822,30 @@ public class Parser {
 					logger.debug("no Affinity Section found");
 				}
 
+				QName balancerAtt = new QName("http://schemas.telefonica.com/claudia/ovf","balancer");
+				QName lbportAtt = new QName("http://schemas.telefonica.com/claudia/ovf","lbport");
+				QName balancedReplica = new QName("http://schemas.telefonica.com/claudia/ovf","balanced");
+				
+				if (balancedReplica!= null)
+				{
+					if (balancer==null)
+					{
+					  logger.error("No balancer fro replica " + vee.getVEEName());
+					  return;
+					}
+					vee.setBalancedBy(balancer);
+				}
+				if (balancerAtt!=null)
+				{
+				  boolean bBalancer = Boolean.parseBoolean(attributes.get(balancerAtt));
+				  if (lbportAtt!=null)
+				  {
+				    int lbPort = Integer.parseInt(attributes.get(lbportAtt));
+				    vee.setLbManagementPort(lbPort);
+				    balancer = vee;
+				    
+				  }
+				}
 
 				/* Finally, register the vee */
 				sa.registerVEE(vee);

@@ -99,6 +99,8 @@ public class VEE implements Comparable, DirectoryEntry {
     
     @OneToOne(cascade = CascadeType.ALL)
     private VEE balancedBy = null;
+    
+    private int lbManagementPort = 0;
 
     
     private int lastReplicaId = 0;
@@ -508,4 +510,14 @@ public void setBalancedBy(VEE balancedBy) {
 
 	        return null;
 	    }
+	   
+		public void setLbManagementPort(int lbManagementPort)
+		{
+			this.lbManagementPort = lbManagementPort;
+		}
+		
+		public int getLbManagementPort()
+		{
+			return this.lbManagementPort;
+		}
 }
