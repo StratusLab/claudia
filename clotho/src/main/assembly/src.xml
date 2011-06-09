@@ -37,15 +37,15 @@
 				<exclude>**/*</exclude>
 			</excludes>
 		</fileSet>
-        <fileSet>
-            <directory>target/</directory>
-            <outputDirectory>/extraFiles</outputDirectory>
-            <directoryMode>0644</directoryMode>
+		<fileSet>
+			<directory>target/</directory>
+			<outputDirectory>/extraFiles</outputDirectory>
+			<directoryMode>0644</directoryMode>
 
-            <excludes>
-                <exclude>**/*</exclude>
-            </excludes>
-        </fileSet>
+			<excludes>
+				<exclude>**/*</exclude>
+			</excludes>
+		</fileSet>
 		<fileSet>
 			<directory>src/main/data</directory>
 			<outputDirectory>/lib/data</outputDirectory>
@@ -99,6 +99,12 @@
 		</file>
 		<file>
 			<source>src/main/config/torqueProbe.py</source>
+			<outputDirectory>/extraFiles</outputDirectory>
+			<filtered>true</filtered>
+			<fileMode>0777</fileMode>
+		</file>
+		<file>
+			<source>src/main/config/restful-server.py</source>
 			<outputDirectory>/extraFiles</outputDirectory>
 			<filtered>true</filtered>
 			<fileMode>0777</fileMode>

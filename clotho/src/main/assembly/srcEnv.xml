@@ -97,6 +97,12 @@
 			<filtered>true</filtered>
 			<fileMode>0777</fileMode>
 		</file>
+		<file>
+			<source>src/main/config/restful-server.py</source>
+			<outputDirectory>/extraFiles</outputDirectory>
+			<filtered>true</filtered>
+			<fileMode>0777</fileMode>
+		</file>
 
 	</files>
 
