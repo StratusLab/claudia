@@ -40,7 +40,7 @@
 		</fileSet>
         <fileSet>
             <directory>target/</directory>
-            <outputDirectory>/contextFiles</outputDirectory>
+            <outputDirectory>/extraFiles</outputDirectory>
             <directoryMode>0755</directoryMode>
 
             <excludes>
@@ -92,7 +92,18 @@
 			<filtered>true</filtered>
 			<fileMode>0744</fileMode>
 		</file>
-
+		<file>
+			<source>src/main/config/OVFParser.py</source>
+			<outputDirectory>/extraFiles</outputDirectory>
+			<filtered>true</filtered>
+			<fileMode>0744</fileMode>
+		</file>
+		<file>
+			<source>src/main/config/torqueProbe.py</source>
+			<outputDirectory>/extraFiles</outputDirectory>
+			<filtered>true</filtered>
+			<fileMode>0744</fileMode>
+		</file>
 
 	</files>
 

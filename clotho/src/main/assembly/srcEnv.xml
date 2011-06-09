@@ -38,15 +38,14 @@
 				<exclude>**/*</exclude>
 			</excludes>
 		</fileSet>
-        <fileSet>
-            <directory>target/</directory>
-            <outputDirectory>/contextFiles</outputDirectory>
-            <directoryMode>0755</directoryMode>
-
-            <excludes>
-                <exclude>**/*</exclude>
-            </excludes>
-        </fileSet>
+		<fileSet>
+			<directory>target/</directory>
+			<outputDirectory>/extraFiles</outputDirectory>
+			<directoryMode>0755</directoryMode>
+			<excludes>
+				<exclude>**/*</exclude>
+			</excludes>
+		</fileSet>
 		<fileSet>
 			<directory>src/main/data</directory>
 			<outputDirectory>/lib/data</outputDirectory>
@@ -83,6 +82,18 @@
 		<file>
 			<source>src/main/config/clothod</source>
 			<outputDirectory>/bin/daemon</outputDirectory>
+			<filtered>true</filtered>
+			<fileMode>0744</fileMode>
+		</file>
+		<file>
+			<source>src/main/config/OVFParser.py</source>
+			<outputDirectory>/extraFiles</outputDirectory>
+			<filtered>true</filtered>
+			<fileMode>0744</fileMode>
+		</file>
+		<file>
+			<source>src/main/config/torqueProbe.py</source>
+			<outputDirectory>/extraFiles</outputDirectory>
 			<filtered>true</filtered>
 			<fileMode>0744</fileMode>
 		</file>
