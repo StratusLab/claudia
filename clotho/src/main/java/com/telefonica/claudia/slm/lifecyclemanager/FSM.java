@@ -1629,14 +1629,19 @@ public class FSM extends Thread implements Serializable {
         .getIPAddresses().iterator().next();
 
         Set<VEEReplica> balancerReplicas = balancerVEE.getVEEReplicas();
-        /*
-         * for (VEEReplica balancer : balancerReplicas) { Set<NIC> nics =
-         * balancer.getNICs(); for (NIC nic : nics) { if
-         * (!nic.getNICConf().getNetwork().getPrivateNet()) { List<String>
-         * addresses = nic.getIPAddresses(); for (String ip : addresses) {
-         * this.lbConfigurator.addNode(ip, balancerVEE .getLbManagementPort(),
-         * veeReplica.getFQN() .toString(), replicaIP); } } } }
-         */
+        
+         for (VEEReplica balancer : balancerReplicas) { Set<NIC> nics =
+         balancer.getNICs(); for (NIC nic : nics) { if
+         (!nic.getNICConf().getNetwork().getPrivateNet()) { List<String>
+         addresses = nic.getIPAddresses(); for (String ip : addresses) {
+        	 if (balancerVEE.getLbManagementPort()==0)
+        	 {
+        		 logger.error("No management port for the balancer"); 
+        		 return;
+        	 }
+         this.lbConfigurator.addNode(ip, balancerVEE.getLbManagementPort(),
+         veeReplica.getFQN() .toString(), replicaIP); } } } }
+         
     }
 
 }

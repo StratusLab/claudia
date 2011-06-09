@@ -394,6 +394,7 @@ public class Parser {
 
 		// First of all, get the OVF Documents of its child VS to add them to the
 		// VEEs
+		VEE balancer = null;
 		HashMap<String, String> ovfDocuments=null;
 		try {
 			ovfDocuments = splitOvf();
@@ -414,9 +415,11 @@ public class Parser {
 
 		} else if (entityInstance instanceof VirtualSystemCollectionType) {
 			VirtualSystemCollectionType virtualSystemCollectionType = (VirtualSystemCollectionType) entityInstance;
+			Map<String, String> balancedVEEs = new HashMap<String, String>();
 
 			for (VirtualSystemType vs : OVFEnvelopeUtils.getVirtualSystems(virtualSystemCollectionType)) {
 
+				
 				VirtualHardwareSectionType vh = null;
 				try {
 					vh = OVFEnvelopeUtils.getSection(vs, VirtualHardwareSectionType.class);
@@ -448,11 +451,80 @@ public class Parser {
 				QName maxAtt = new QName("http://schemas.telefonica.com/claudia/ovf","max");
 				QName initialAtt = new QName("http://schemas.telefonica.com/claudia/ovf","initial");
 				QName uuidAtt = new QName("http://schemas.telefonica.com/claudia/ovf","uuid");
-
+				
+				
 				int min = Integer.parseInt(attributes.get(minAtt));
 				int max = Integer.parseInt(attributes.get(maxAtt));
 				int initial = Integer.parseInt(attributes.get(initialAtt));
 				String uuid = attributes.get(uuidAtt);
+				QName balancerAtt = new QName("http://schemas.telefonica.com/claudia/ovf","balancer");
+				QName lbManagementPortAtt = new QName("http://schemas.telefonica.com/claudia/ovf","lbport");
+				QName balancedAtt = new QName("http://schemas.telefonica.com/claudia/ovf","balanced");
+				
+                int lbManagementPort = 0;
+				
+				boolean isBalancer = Boolean.parseBoolean(attributes
+						.get(balancerAtt));
+				String balanced = attributes.get(balancedAtt);
+				
+				logger.info(" is balanceador " + isBalancer + " port " + lbManagementPort + " " + balanced);
+				if(isBalancer){
+					try {
+						lbManagementPort = Integer.parseInt(attributes.get(lbManagementPortAtt));
+						vee.setLbManagementPort(lbManagementPort);
+						balancer = vee;
+						logger.info("Balancer " + vee.getVEEName() + " " + vee.getLbManagementPort()  );
+					} catch (NumberFormatException e1) {
+						logger
+								.error(
+										"When a Load Balancer is declared, management port must be provided",
+										e1);
+					}
+				}
+				
+				
+				
+				if (balanced != null && balanced != "")
+				{
+					
+				   vee.setBalancedBy(balancer);
+					logger.info("Replica balanced " + vee.getVEEName() + " by " + vee.getBalancedBy().getVEEName());
+				}
+				
+				
+			/*	logger.info("balancerAtt " + balancerAtt + "lbportAtt " + lbportAtt + " balancedReplica " + balancedReplica);
+				if (balancedReplica!= null)
+				{
+					if (balancer==null)
+					{
+					  logger.error("No balancer fro replica " + vee.getVEEName());
+					  return;
+					}
+					vee.setBalancedBy(balancer);
+				}
+				if (balancerAtt!=null)
+				{
+				  boolean bBalancer = Boolean.parseBoolean(attributes.get(balancerAtt));
+				  if (lbportAtt!=null)
+				  {
+				    int lbPort = Integer.parseInt(attributes.get(lbportAtt));
+				    vee.setLbManagementPort(lbPort);
+				    balancer = vee;
+				    
+				  }
+				}*/
+	        
+				// Adds balancer for current vee in local map so at the end of
+				// the method, real VEEs can be updated
+				if (balanced != null && balanced != "") {
+					balancedVEEs.put(vs.getId(), balanced);
+				}
+
+
+				
+				
+				
+				
 
 				logger.debug("min= " + min + ", max= " + max + ", initial= " + initial);
 				if (uuid != null) {
@@ -816,6 +888,7 @@ public class Parser {
 					logger.debug("no Affinity Section found");
 				}
 
+				
 
 				/* Finally, register the vee */
 				sa.registerVEE(vee);

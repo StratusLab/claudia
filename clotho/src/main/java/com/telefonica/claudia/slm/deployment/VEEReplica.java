@@ -111,6 +111,8 @@ public class VEEReplica implements DirectoryEntry {
     @Enumerated(EnumType.STRING)
 	private activeSubStateType subState = null;    
     
+    private String lbManagementPort = null;
+    
     /**
      * The FQN of each component shouldn't be deleted when the VEEReplica is deleted,
      * due to the cycles in the Class diagram between the FQN hierarchy and the data model
@@ -366,4 +368,6 @@ public class VEEReplica implements DirectoryEntry {
 	public String getOvfRepresentation() {
 		return ovfRepresentation;
 	}
+	
+
 }
