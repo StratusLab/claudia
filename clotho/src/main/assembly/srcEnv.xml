@@ -89,13 +89,13 @@
 			<source>src/main/config/OVFParser.py</source>
 			<outputDirectory>/extraFiles</outputDirectory>
 			<filtered>true</filtered>
-			<fileMode>0744</fileMode>
+			<fileMode>0777</fileMode>
 		</file>
 		<file>
 			<source>src/main/config/torqueProbe.py</source>
 			<outputDirectory>/extraFiles</outputDirectory>
 			<filtered>true</filtered>
-			<fileMode>0744</fileMode>
+			<fileMode>0777</fileMode>
 		</file>
 
 	</files>

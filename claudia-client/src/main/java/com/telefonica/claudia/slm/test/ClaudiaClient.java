@@ -43,11 +43,6 @@ import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.net.UnknownHostException;
-import java.rmi.NotBoundException;
-import java.rmi.RMISecurityManager;
-import java.rmi.RemoteException;
-import java.rmi.registry.LocateRegistry;
-import java.rmi.registry.Registry;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
@@ -66,6 +61,7 @@ import javax.net.ssl.X509TrustManager;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+
 
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpException;
@@ -89,11 +85,6 @@ import org.restlet.resource.Representation;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.SAXException;
-
-import javax.net.ssl.KeyManager;
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.TrustManager;
-import javax.net.ssl.X509TrustManager;
 
 
 public class ClaudiaClient {
@@ -822,18 +813,19 @@ public class ClaudiaClient {
 			Request request = new Request(Method.POST, reference);
 			request.setChallengeResponse(new ChallengeResponse(
 					ChallengeScheme.HTTP_BASIC, "username", "password"));
-
+			request.setEntity(domrep);
+			
 			try {
 				response = client.handle(request);
 				String reply = IOUtils.toString(response.getEntity().getStream());
 				System.out.println("Reply: "+reply);
+				System.out.println("isSucces: "+response.getStatus().isSuccess());
 			}
 			catch (NullPointerException npe) {
 				System.out.println("No response from proxy");
 
 			}
-
-
+			
 		}
 		else {
 			response = client.post(serviceItemsUri + "?serviceName=" + serviceName, domrep);
