@@ -32,6 +32,7 @@ package com.telefonica.claudia.slm.lifecyclemanager;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InvalidClassException;
 import java.io.PrintWriter;
 import java.io.Serializable;
 import java.net.MalformedURLException;
@@ -49,6 +50,7 @@ import org.apache.log4j.Logger;
 import org.dmtf.schemas.ovf.envelope._1.VirtualSystemType;
 import org.json.JSONException;
 
+import com.telefonica.claudia.configmanager.ConfiguratorFactory;
 import com.telefonica.claudia.configmanager.lb.LoadBalancerConfigurator;
 import com.telefonica.claudia.slm.common.DbManager;
 import com.telefonica.claudia.slm.common.SMConfiguration;
@@ -285,6 +287,13 @@ public class FSM extends Thread implements Serializable {
         this.lcc = lcc;
         currentState = NONE;
         nextState = currentState;
+        
+        try {
+			this.lbConfigurator = ConfiguratorFactory.getInstance()
+					.createConfigManager(LoadBalancerConfigurator.class);
+		} catch (InvalidClassException e) {
+			logger.fatal("Invalid Configurator", e);
+		}
     }
 
     public int getCurrentState() {
@@ -1623,7 +1632,7 @@ public class FSM extends Thread implements Serializable {
             VEE balancerVEE) {
         logger.info("Adding regular replica to load balancer");
         logger.info("Configuring loadbalancer for "
-                + veeReplica.getVEE().getFQN());
+                + veeReplica.getVEE().getFQN() + " ");
 
         String replicaIP = veeReplica.getNICs().iterator().next()
         .getIPAddresses().iterator().next();
@@ -1639,8 +1648,20 @@ public class FSM extends Thread implements Serializable {
         		 logger.error("No management port for the balancer"); 
         		 return;
         	 }
+       
+         try
+         {
          this.lbConfigurator.addNode(ip, balancerVEE.getLbManagementPort(),
-         veeReplica.getFQN() .toString(), replicaIP); } } } }
+        		          veeReplica.getFQN() .toString(), replicaIP);
+         }
+         catch (Exception e)
+         {
+        	 logger.error("It was impossible to send the load balancer " + balancerVEE.getVEEName() + " " +
+        			 ip+" : "+balancerVEE.getLbManagementPort()+" the IP information " + replicaIP);
+         }
+         
+         
+         } } } }
          
     }
 
