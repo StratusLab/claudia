@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
 	<modelVersion>4.0.0</modelVersion>
 
@@ -136,18 +137,22 @@
 						<mapping>
 							<directory>${app.home}/logs</directory>
 						</mapping>
-						
+
 						<mapping>
 							<directory>${app.home}/repository</directory>
 						</mapping>
-						
+
 						<mapping>
 							<directory>${app.home}/ruleHome</directory>
 						</mapping>
-		
+
+						<mapping>
+							<directory>${app.home}/extraFilese</directory>
+						</mapping>
+
 						<mapping>
 
-			
+
 							<directory>/etc/init.d/</directory>
 							<username>root</username>
 							<groupname>root</groupname>
@@ -170,8 +175,8 @@
 	<properties>
 		<app.home>/opt/claudia/</app.home>
 		<rpm.release>1</rpm.release>
-    <maven.build.timestamp.format>yyyyMMdd.HHmmss</maven.build.timestamp.format>
-    <RELEASE>0.${maven.build.timestamp}</RELEASE>
+		<maven.build.timestamp.format>yyyyMMdd.HHmmss</maven.build.timestamp.format>
+		<RELEASE>0.${maven.build.timestamp}</RELEASE>
 	</properties>
 
 </project>

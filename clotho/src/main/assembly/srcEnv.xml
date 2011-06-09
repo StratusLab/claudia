@@ -41,7 +41,7 @@
 		<fileSet>
 			<directory>target/</directory>
 			<outputDirectory>/extraFiles</outputDirectory>
-			<directoryMode>0755</directoryMode>
+			<directoryMode>0644</directoryMode>
 			<excludes>
 				<exclude>**/*</exclude>
 			</excludes>
