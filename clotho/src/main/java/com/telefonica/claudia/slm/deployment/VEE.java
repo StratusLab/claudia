@@ -100,7 +100,7 @@ public class VEE implements Comparable, DirectoryEntry {
     @OneToOne(cascade = CascadeType.ALL)
     private VEE balancedBy = null;
     
-    private int lbManagementPort = 0;
+   
 
     
     private int lastReplicaId = 0;
@@ -111,6 +111,8 @@ public class VEE implements Comparable, DirectoryEntry {
     private boolean hotMigrationAllowed = true;
     private boolean coldMigrationAllowed = true;
     private int deploymentOrder = -1;
+    private int lbManagementPort = 0;
+    private boolean isBalancer = false;
     
     @OneToMany(cascade=CascadeType.ALL)
     @JoinTable(name="ALLOWED_DOMAINS")
@@ -135,6 +137,8 @@ public class VEE implements Comparable, DirectoryEntry {
     private boolean migratable;
     
     private double availabilityValue;
+    
+    
     
 	/**
 	 * OVF document that describe the VEE template that will be used to generate virtual machine templates.
@@ -519,5 +523,15 @@ public void setBalancedBy(VEE balancedBy) {
 		public int getLbManagementPort()
 		{
 			return this.lbManagementPort;
+		}
+		
+		public void setBalancer(boolean isBalancer)
+		{
+			this.isBalancer= isBalancer;
+		}
+		
+		public boolean getBalancer()
+		{
+			return this.isBalancer;
 		}
 }
