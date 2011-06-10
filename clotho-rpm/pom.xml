@@ -147,7 +147,7 @@
 						</mapping>
 
 						<mapping>
-							<directory>${app.home}/extraFilese</directory>
+							<directory>${app.home}/extraFiles</directory>
 						</mapping>
 
 						<mapping>
