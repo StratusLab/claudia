@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 '''
 Created on 06 May 2011
 
@@ -304,17 +303,37 @@ I2G_MPI_START=/opt/i2g/bin/mpi-start''')
         if self.service == 'ce':
             self.creategliteBdii()
             self.createCreamCE()
-            os.system("/root/gLite3_2ConfigCE.sh")
+	    config = open('/root/gLite3_2ConfigCE.sh','w')
+       	    config.write('''/opt/glite/yaim/bin/yaim -c -s /opt/glite/yaim/etc/siteinfo/site-info.def -n MPI_CE -n creamCE -n TORQUE_server -n TORQUE_utils -n BDII_site
+/etc/init.d/pbs_server restart
+/etc/init.d/iptables stop''')
+	    config.close()
+	    os.system("chmod +x gLite3_2ConfigCE.sh")
+            os.system("./gLite3_2ConfigCE.sh")
         if self.service == 'se':
             self.createSeDpmDisk()
             self.createSeDpmMysql()
-            os.system("/root/gLite3_2ConfigSE.sh")
+            config = open('/root/gLite3_2ConfigSE.sh','w')
+       	    config.write('''/opt/glite/yaim/bin/yaim -c -s /opt/glite/yaim/etc/siteinfo/site-info.def -n SE_dpm_mysql''')
+	    config.close()
+	    os.system("chmod +x gLite3_2ConfigSE.sh")
+            os.system("./gLite3_2ConfigSE.sh")
         if self.service == 'wn':
             #self.creategliteBdii()
             #self.createCreamCE()
+            config = open('/root/gLite3_2ConfigWN.sh','w')
+       	    config.write('''/opt/glite/yaim/bin/yaim -c -s /opt/glite/yaim/etc/siteinfo/site-info.def -n MPI_WN -n WN -n TORQUE_client
+/etc/init.d/iptables stop
+chkconfig iptables off''')
+	    config.close()
+	    os.system("chmod +x gLite3_2ConfigWN.sh")
             os.system("hostname >> /opt/glite/yaim/etc/wn-list.conf ")
-            os.system("/root/gLite3_2ConfigWN.sh")
-            
+            os.system("./gLite3_2ConfigWN.sh")
+        if self.service == 'apel':
+	     os.system("./gLite3_2ConfigAPEL.sh")
+
+
+
 # Executing the functions to create configuration files
 
 myParser = OVFParser()
