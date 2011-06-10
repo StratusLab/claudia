@@ -1636,8 +1636,18 @@ public class FSM extends Thread implements Serializable {
 
         String replicaIP = veeReplica.getNICs().iterator().next()
         .getIPAddresses().iterator().next();
+        
+        logger.info("Replica IP " + replicaIP);
 
         Set<VEEReplica> balancerReplicas = balancerVEE.getVEEReplicas();
+        
+        if (balancerVEE == null)
+        {
+        	logger.error("There is not any balancer"); 
+   		     return;
+        }
+        
+       logger.info("Number of replicas balanced " + balancerReplicas.size());
         
          for (VEEReplica balancer : balancerReplicas) { Set<NIC> nics =
          balancer.getNICs(); for (NIC nic : nics) { if
@@ -1651,7 +1661,7 @@ public class FSM extends Thread implements Serializable {
        
          try
          {
-         this.lbConfigurator.addNode(ip, balancerVEE.getLbManagementPort(),
+          int result = this.lbConfigurator.addNode(ip, balancerVEE.getLbManagementPort(),
         		          veeReplica.getFQN() .toString(), replicaIP);
          }
          catch (Exception e)
