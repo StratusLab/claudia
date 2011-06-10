@@ -5,7 +5,7 @@ from xml.dom.minidom import parse
 
 FQN_XML_KEY = "stratus.glite.grid.ce.fqnkpi"
 CLOTHO_URL="stratus.glite.grid.ce.ipmonitoring"
-LOG_FILE = "/var/log/torqueProbe/out.log"
+LOG_FILE = "/var/log/torqueProbe.log"
 ROOT_MONITORING_TAG_NAME = "MonitoringInformation"
 EVENT_TYPE_TAG_NAME = "EventType"
 T_0_TAG_NAME = "EpochTimestamp"
@@ -114,10 +114,9 @@ def main():
     
     #parse ovf
     ovf = parserXML("/mnt/ovf-env.xml")
-    url = "http://"+ ovf[CLOTHO_URL] +"1114/vmi"
+    url = "http://"+ ovf[CLOTHO_URL] +":1114/vmi"
     fqn = ovf[FQN_XML_KEY]
     
-    o,_ = call_command('mkdir /var/log/torqueProbe')
     logging.info("Claudia monitoring REST uri: " + url)
     logging.info("Sending KPI to Claudia every 30  seconds.")
     logging.info("Ctrl+C to stop\n")
