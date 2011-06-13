@@ -818,6 +818,7 @@ public class ClaudiaClient {
 			try {
 				response = client.handle(request);
 				String reply = IOUtils.toString(response.getEntity().getStream());
+				System.out.println("Status: "+response.getStatus());
 				System.out.println("Reply: "+reply);
 				System.out.println("isSucces: "+response.getStatus().isSuccess());
 			}
