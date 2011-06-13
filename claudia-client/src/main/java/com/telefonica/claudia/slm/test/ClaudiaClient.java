@@ -148,7 +148,7 @@ public class ClaudiaClient {
 	private static String claudiaCertpath;
 	private static String claudiaCert;
 	private static String claudiaCertType;
-	
+
 
 
 
@@ -226,7 +226,7 @@ public class ClaudiaClient {
 					keystoreFile.getAbsolutePath());
 			System.setProperty("javax.net.ssl.trustStorePassword",
 			"changeit");
-		    System.setProperty("javax.net.ssl.keyStoreType", claudiaCertType);
+			System.setProperty("javax.net.ssl.keyStoreType", claudiaCertType);
 			System.setProperty("javax.net.ssl.keyStore",
 					keystoreFile.getAbsolutePath());
 			System.setProperty("javax.net.ssl.keyStorePassword",
@@ -814,7 +814,7 @@ public class ClaudiaClient {
 			request.setChallengeResponse(new ChallengeResponse(
 					ChallengeScheme.HTTP_BASIC, "username", "password"));
 			request.setEntity(domrep);
-			
+
 			try {
 				response = client.handle(request);
 				String reply = IOUtils.toString(response.getEntity().getStream());
@@ -825,28 +825,26 @@ public class ClaudiaClient {
 				System.out.println("No response from proxy");
 
 			}
-			
+
 		}
 		else {
 			response = client.post(serviceItemsUri + "?serviceName=" + serviceName, domrep);
 
+		}
+		
+		try {
+			if (response.getStatus().isSuccess()) {
+				String text =  response.getEntity().getText();
+				String idTask = text.substring(text.indexOf("href=\"")+"href=\"".length(),
+						text.indexOf("\" startTime"));
 
-			try {
-				if (response.getStatus().isSuccess()) {
-					String text =  response.getEntity().getText();
-					String idTask = text.substring(text.indexOf("href=\"")+"href=\"".length(),
-							text.indexOf("\" startTime"));
-
-					return idTask;
-				}
+				return idTask;
 			}
-			catch (NullPointerException npe) {
-				System.out.println("No response from proxy");
+		}
+		catch (NullPointerException npe) {
+			System.out.println("No response from proxy");
 
-			}
-
-
-		}        
+		}
 
 		return null;
 	}
