@@ -73,6 +73,12 @@ public class DiskConf {
         this.capacity = capacity;
     }
     
+    public DiskConf(int capacity, File fileSystem) {
+        this.fileSystem = fileSystem;
+        this.fileSystemPath = fileSystem.getPath();
+        this.capacity = capacity;
+    }
+    
     @PostLoad
     public void prepareDiskConf() {
     	if (fileSystemPath!= null)

@@ -10,6 +10,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
 import org.restlet.Client;
 import org.restlet.data.ClientInfo;
 import org.restlet.data.Form;
@@ -29,6 +31,7 @@ import com.telefonica.claudia.configmanager.lb.LoadBalancerConfigurator;
 public class LoadBalancerConfiguratorRESTImpl implements LoadBalancerConfigurator {
 
 
+	
 	private Properties properties;
 
 	public LoadBalancerConfiguratorRESTImpl() {
@@ -48,6 +51,7 @@ public class LoadBalancerConfiguratorRESTImpl implements LoadBalancerConfigurato
 		newNodeForm.add("fqn", fqnNode);
 		newNodeForm.add("ip", ipNode);
 		Representation representation = newNodeForm.getWebRepresentation();
+	//	System.out.println (representation.getText());
 		
 		// Make the post operation sending the form an get the response
 		Response response = client.post(lbUri, representation);

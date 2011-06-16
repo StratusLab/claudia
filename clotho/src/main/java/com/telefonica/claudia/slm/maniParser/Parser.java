@@ -729,7 +729,7 @@ public class Parser {
 						if (capacity == null) {
 							throw new ManiParserException("capacity can not be set for disk " + hostRes);
 						}
-						if (url == null) {
+						if (url == null && fileRef != null) {
 							throw new ManiParserException("url can not be set for disk " + hostRes);
 						}
 
@@ -737,21 +737,35 @@ public class Parser {
 							logger.debug("md5sum digest was not found for disk " + hostRes);
 						}
 
+						try
+						{
 						// FIXME: assuming a "hardwired" disk pattern, due to
 						// OpenNebula way of doing
 						// FIXME: unit conversion to MB?
 						File filesystem = new File("sd" + sdaId++);
+						String urlDisk = null;
+						if (url!=null)
+						{
 
-						String urlDisk = url.toString();
+						 urlDisk = url.toString();
 
 						if (urlDisk.contains("file:/"))
 							urlDisk = urlDisk.replace("file:/", "file:///");
-
+						}
 						logger.debug("disk: capacity = " + toMB(capacity) + ", url = " + urlDisk + ", filesystem = " + filesystem + ", digest=" + digest);
-						DiskConf diskC = new DiskConf(toMB(capacity), url, filesystem);
+						DiskConf diskC  = null;
+						if (url != null)
+						 diskC = new DiskConf(toMB(capacity), url, filesystem);
+						else
+							 diskC = new DiskConf(toMB(capacity),  filesystem);
 						diskC.setDigest(digest);
 
 						vee.addDiskConf(diskC);
+						}
+						catch (Exception e)
+						{
+							e.printStackTrace();
+						}
 
 						break;
 					case OVFEnvelopeUtils.ResourceTypeMEMORY:

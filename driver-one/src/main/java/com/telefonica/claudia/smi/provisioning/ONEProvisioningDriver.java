@@ -855,7 +855,7 @@ public class ONEProvisioningDriver implements ProvisioningDriver {
 
                             /* Throw exceptions in the case of missing information */
                             if (fileRef == null) {
-                                throw new IllegalArgumentException("file reference can not be found for disk: " + hostRes);
+                                log.warn("file reference can not be found for disk: " + hostRes);
                             }
 
 
@@ -865,15 +865,21 @@ public class ONEProvisioningDriver implements ProvisioningDriver {
 
                             ReferencesType ref = envelope.getReferences();
                             List<FileType> files = ref.getFile();
+                            
+                         
 
                             for (Iterator<FileType> iteratorFl = files.iterator(); iteratorFl.hasNext();) {
-                                FileType fl = iteratorFl.next();
+                            	 FileType fl = iteratorFl.next();
+                            	   if (fileRef!=null)
+                                   {
+                               
                                 if (fl.getId().equals(fileRef)) {
                                     try {
                                         url = new URL(fl.getHref());
                                     } catch (MalformedURLException e) {
                                         throw new IllegalArgumentException("problems parsing disk href: " + e.getMessage());
                                     }
+                                }
 
                                     /*
                                      * If capacity was not set using ovf:capacity in
@@ -902,7 +908,7 @@ public class ONEProvisioningDriver implements ProvisioningDriver {
                             if (capacity == null) {
                                 throw new IllegalArgumentException("capacity can not be set for disk " + hostRes);
                             }
-                            if (url == null) {
+                            if (url == null && fileRef!=null) {
                                 throw new IllegalArgumentException("url can not be set for disk " + hostRes);
                             }
 
