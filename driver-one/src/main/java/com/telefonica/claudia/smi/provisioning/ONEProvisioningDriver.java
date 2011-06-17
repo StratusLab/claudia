@@ -348,6 +348,7 @@ public class ONEProvisioningDriver implements ProvisioningDriver {
 
                 this.status = TaskStatus.ERROR;
                 this.endTime = System.currentTimeMillis();
+                e.printStackTrace();
                 return;
             }
         }
@@ -859,7 +860,7 @@ public class ONEProvisioningDriver implements ProvisioningDriver {
                             }
 
 
-                            URL url = null;
+                           URL url = null;
                             String digest = null;
                             String driver = null;
 
@@ -916,15 +917,21 @@ public class ONEProvisioningDriver implements ProvisioningDriver {
                                 log.debug("md5sum digest was not found for disk " + hostRes);
                             }
 
-                            String urlDisk = url.toString();
+                          
+                            String urlDisk = null;
+                        	   
+                            if (url != null)  
+                            {
+                            urlDisk = url.toString();
 
                             if (urlDisk.contains("file:/"))
                                 urlDisk = urlDisk.replace("file:/", "file:///");
-
+                            }
 
                             File filesystem = new File("/dev/" + diskRoot + "d" + sdaId);
 
                             allParametersString.append(ONE_VM_DISK).append(ASSIGNATION_SYMBOL).append(MULT_CONF_LEFT_DELIMITER);
+                            if (urlDisk!= null)
                             allParametersString.append(ONE_VM_DISK_PARAM_IMAGE).append(ASSIGNATION_SYMBOL).append(urlDisk).append(MULT_CONF_SEPARATOR);
 
                             if (virtualizationType.toLowerCase().equals("kvm")) {
