@@ -703,6 +703,7 @@ public class ONEProvisioningDriver implements ProvisioningDriver {
                 VirtualHardwareSectionType vh = OVFEnvelopeUtils.getSection(vs, VirtualHardwareSectionType.class);
                 String virtualizationType = vh.getSystem().getVirtualSystemType().getValue();
 
+            	String netcontext=getNetContext(vh, veeFqn,xml);
                 
                 String scriptListProp = null;
                 String scriptListTemplate = "";
@@ -765,6 +766,7 @@ public class ONEProvisioningDriver implements ProvisioningDriver {
                 allParametersString.append(ONE_VM_OS_PARAM_ROOT).append(ASSIGNATION_SYMBOL).append(diskRoot + "da1").append(MULT_CONF_RIGHT_DELIMITER).append(LINE_SEPARATOR);
 
                 allParametersString.append(ONE_CONTEXT).append(ASSIGNATION_SYMBOL).append(MULT_CONF_LEFT_DELIMITER);
+			    allParametersString.append(netcontext);
                 allParametersString.append("public_key").append(ASSIGNATION_SYMBOL).append(oneSshKey).append(MULT_CONF_SEPARATOR).append(LINE_SEPARATOR);
                 allParametersString.append("CustomizationUrl").append(ASSIGNATION_SYMBOL).append("\"" + Main.PROTOCOL + Main.serverHost + ":" + customizationPort + "/"+ replicaName+ "\"").append(MULT_CONF_SEPARATOR).append(LINE_SEPARATOR);
                 allParametersString.append("files").append(ASSIGNATION_SYMBOL).append("\"" + environmentRepositoryPath + "/"+ replicaName + "/ovf-env.xml" +scriptListTemplate+ "\"").append(MULT_CONF_SEPARATOR).append(LINE_SEPARATOR);
@@ -1013,6 +1015,42 @@ public class ONEProvisioningDriver implements ProvisioningDriver {
         return "";
     }
 
+	protected static String getNetContext(VirtualHardwareSectionType vh, String veeFqn,String xml) throws Exception {
+
+
+		StringBuffer allParametersString  = new StringBuffer();
+
+		List<RASDType> items = vh.getItem();
+		int i=0;
+		for (Iterator<RASDType> iteratorRASD = items.iterator(); iteratorRASD.hasNext();) {
+			RASDType item = (RASDType) iteratorRASD.next();
+
+			/* Get the resource type and process it accordingly */
+			int rsType = new Integer(item.getResourceType().getValue());
+
+			int quantity = 1;
+			if (item.getVirtualQuantity() != null) {
+				quantity = item.getVirtualQuantity().getValue().intValue();
+			}
+
+			switch (rsType) {
+			case ResourceTypeNIC:
+				String fqnNet = URICreation.getService(veeFqn) + ".networks." + item.getConnection().get(0).getValue();
+
+				allParametersString.append("ip_eth"+i).append(ASSIGNATION_SYMBOL).append("\"$NIC[IP, NETWORK=\\\""+fqnNet+"\\\"]\"").append(MULT_CONF_SEPARATOR).append(LINE_SEPARATOR);
+				i++;
+
+				break;
+			default:
+				//throw new IllegalArgumentException("unknown hw type: " + rsType);
+			}
+
+		}
+
+		return allParametersString.toString();
+
+	}
+	
     protected static String TCloud2ONENet(String xml) throws Exception {
 
       

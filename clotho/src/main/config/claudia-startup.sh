@@ -6,5 +6,5 @@ sleep 5
  rm -fr /opt/claudia/ClaudiaDB/
 /etc/init.d/clothod start
 /etc/init.d/tcloudd start
-sleep 7
+sleep 15
 
