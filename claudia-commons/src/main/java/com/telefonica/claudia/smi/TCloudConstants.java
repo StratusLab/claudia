@@ -42,7 +42,8 @@ public abstract class TCloudConstants {
 	public static final String TAG_NETWORK_IP = "IP";
 	public static final String TAG_NETWORK_MAC = "MAC";
 	public static final String TAG_NETWORK_MAC_ENABLED = "MacEnabled";
-	
+	public static final String TAG_NETWORK_GATEWAY = "Gateway";
+	public static final String TAG_NETWORK_DNS = "DNS";
 	
 	
 	

@@ -1038,7 +1038,9 @@ public class ONEProvisioningDriver implements ProvisioningDriver {
 
 
 		StringBuffer allParametersString  = new StringBuffer();
+		
 
+			
 		List<RASDType> items = vh.getItem();
 		int i=0;
 		for (Iterator<RASDType> iteratorRASD = items.iterator(); iteratorRASD.hasNext();) {
@@ -1054,11 +1056,36 @@ public class ONEProvisioningDriver implements ProvisioningDriver {
 
 			switch (rsType) {
 			case ResourceTypeNIC:
-				String fqnNet = URICreation.getService(veeFqn) + ".networks." + item.getConnection().get(0).getValue();
+				
+				try {
+					DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+					Document doc = builder.parse(new ByteArrayInputStream(xml.getBytes()));
 
-				allParametersString.append("ip_eth"+i).append(ASSIGNATION_SYMBOL).append("\"$NIC[IP, NETWORK=\\\""+fqnNet+"\\\"]\"").append(MULT_CONF_SEPARATOR).append(LINE_SEPARATOR);
-				//		allParametersString.append("dns_eth"+i).append(ASSIGNATION_SYMBOL).append("\"$NETWORK[DNS, NAME=\\\""+fqnNet+"\\\"]\"").append(MULT_CONF_SEPARATOR).append(LINE_SEPARATOR);
-				i++;
+					Element root = (Element) doc.getFirstChild();
+					String dns = root.getAttribute(TCloudConstants.TAG_NETWORK_DNS);
+					String gateway = root.getAttribute(TCloudConstants.TAG_NETWORK_GATEWAY);
+					
+					String fqnNet = URICreation.getService(veeFqn) + ".networks." + item.getConnection().get(0).getValue();
+
+					allParametersString.append("ip_eth"+i).append(ASSIGNATION_SYMBOL).append("\"$NIC[IP, NETWORK=\\\""+fqnNet+"\\\"]\"").append(MULT_CONF_SEPARATOR).append(LINE_SEPARATOR);
+					allParametersString.append("dns_eth"+i).append(ASSIGNATION_SYMBOL).append(dns).append(MULT_CONF_SEPARATOR).append(LINE_SEPARATOR);
+					allParametersString.append("gateway_eth"+i).append(ASSIGNATION_SYMBOL).append(gateway).append(MULT_CONF_SEPARATOR).append(LINE_SEPARATOR);
+					i++;
+
+					
+				} catch (IOException e1) {
+					log.error("OVF of the virtual machine was not well formed or it contained some errors.");
+					throw new Exception("OVF of the virtual machine was not well formed or it contained some errors: " + e1.getMessage());
+				} catch (ParserConfigurationException e) {
+					log.error("Error configuring parser: " + e.getMessage());
+					throw new Exception("Error configuring parser: " + e.getMessage());
+				} catch (FactoryConfigurationError e) {
+					log.error("Error retrieving parser: " + e.getMessage());
+					throw new Exception("Error retrieving parser: " + e.getMessage());
+				} catch (Exception e) {
+					log.error("Error configuring a XML Builder.");
+					throw new Exception("Error configuring a XML Builder: " + e.getMessage());
+				}
 
 				break;
 			default:

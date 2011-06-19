@@ -98,6 +98,17 @@ public class TCloudClient implements VMIHandler {
         Element netmask = doc.createElement(TCloudConstants.TAG_NETWORK_NETMASK);
         netmask.appendChild(doc.createTextNode(networkConf.getNetworkAddresses()[1]));
         root.appendChild(netmask);
+        
+        Element dns = doc.createElement(TCloudConstants.TAG_NETWORK_DNS);
+        dns.appendChild(doc.createTextNode(networkConf.getNetworkAddresses()[2]));
+        root.appendChild(dns);
+      //  logger.info("PONG DNS section: " + networkConf.getNetworkAddresses()[2]);
+        
+        Element gateway = doc.createElement(TCloudConstants.TAG_NETWORK_GATEWAY);
+        gateway.appendChild(doc.createTextNode(networkConf.getNetworkAddresses()[3]));
+        root.appendChild(gateway);
+      //  logger.info("PONG DNS section: " + networkConf.getNetworkAddresses()[3]);
+
 
 
 
