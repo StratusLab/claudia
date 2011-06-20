@@ -1065,29 +1065,20 @@ public class ONEProvisioningDriver implements ProvisioningDriver {
 					String fqn = root.getAttribute(TCloudConstants.ATTR_NETWORK_NAME);
 					String dns = root.getAttribute(TCloudConstants.TAG_NETWORK_DNS);
 					String gateway = root.getAttribute(TCloudConstants.TAG_NETWORK_GATEWAY);
-
-			
-//
-//					Element root = (Element) doc.getFirstChild();
-//				//	String dns = root.getAttribute(TCloudConstants.TAG_NETWORK_DNS);
-//				//	String gateway = root.getAttribute(TCloudConstants.TAG_NETWORK_GATEWAY);
-//
-//					NodeList dnss = doc.getElementsByTagName(TCloudConstants.TAG_NETWORK_DNS);
-//					Element firstdnsElement = (Element)dnss.item(0);
-//					NodeList textdnsList = firstdnsElement.getChildNodes();
-//					String dns= ((Node)textdnsList.item(0)).getNodeValue().trim();
-//					
-//					NodeList gw = doc.getElementsByTagName(TCloudConstants.TAG_NETWORK_GATEWAY);
-//					Element firstgwElement = (Element)gw.item(0);
-//					NodeList textgwList = firstgwElement.getChildNodes();
-//					String gateway= ((Node)textgwList.item(0)).getNodeValue().trim();
 //					
 					
 					String fqnNet = URICreation.getService(veeFqn) + ".networks." + item.getConnection().get(0).getValue();
 
 					allParametersString.append("ip_eth"+i).append(ASSIGNATION_SYMBOL).append("\"$NIC[IP, NETWORK=\\\""+fqnNet+"\\\"]\"").append(MULT_CONF_SEPARATOR).append(LINE_SEPARATOR);
+					if(dns.length()>0)
+					{
 					allParametersString.append("dns_eth"+i).append(ASSIGNATION_SYMBOL).append(dns).append(MULT_CONF_SEPARATOR).append(LINE_SEPARATOR);
+					}
+					if(gateway.length()>0)
+					{
 					allParametersString.append("gateway_eth"+i).append(ASSIGNATION_SYMBOL).append(gateway).append(MULT_CONF_SEPARATOR).append(LINE_SEPARATOR);
+					}
+
 					i++;
 
 					
