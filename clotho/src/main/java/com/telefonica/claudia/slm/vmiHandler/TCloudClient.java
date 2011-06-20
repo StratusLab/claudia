@@ -86,8 +86,28 @@ public class TCloudClient implements VMIHandler {
         DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
         Document doc = builder.newDocument();
 
+        
+        String[] networkAddresses2 = SMConfiguration.getInstance().getNetworkRanges();
+        String range2 = networkAddresses2[0];
+        
+        int DNSPos= range2.indexOf("DNS:");
+        String dns = null;
+        if (DNSPos>0) {
+            dns = range2.substring(DNSPos+4, range2.indexOf(";", DNSPos)).trim();
+        }
+        logger.info("PONG DNS section: " + dns);
+        
+        int GWPos= range2.indexOf("Gateway:");
+        String gw = null;
+        if (GWPos>0) {
+            gw = range2.substring(GWPos+8, range2.indexOf(";", GWPos)).trim();
+        }
+        logger.info("PONG Gateway section: " + gw);
+        
         Element root = doc.createElement(TCloudConstants.TAG_NETWORK_ROOT);
         root.setAttribute(TCloudConstants.ATTR_NETWORK_NAME, networkConf.getFQN().toString());
+        root.setAttribute(TCloudConstants.TAG_NETWORK_DNS, dns);
+        root.setAttribute(TCloudConstants.TAG_NETWORK_GATEWAY,gw);
         doc.appendChild(root);
 
         Element baseAddress = doc.createElement(TCloudConstants.TAG_NETWORK_BASE_ADDRESS);
@@ -99,16 +119,20 @@ public class TCloudClient implements VMIHandler {
         netmask.appendChild(doc.createTextNode(networkConf.getNetworkAddresses()[1]));
         root.appendChild(netmask);
         
-        Element dns = doc.createElement(TCloudConstants.TAG_NETWORK_DNS);
-        dns.appendChild(doc.createTextNode(networkConf.getNetworkAddresses()[2]));
-        root.appendChild(dns);
-      //  logger.info("PONG DNS section: " + networkConf.getNetworkAddresses()[2]);
         
-        Element gateway = doc.createElement(TCloudConstants.TAG_NETWORK_GATEWAY);
-        gateway.appendChild(doc.createTextNode(networkConf.getNetworkAddresses()[3]));
-        root.appendChild(gateway);
-      //  logger.info("PONG DNS section: " + networkConf.getNetworkAddresses()[3]);
 
+//        Element dns = doc.createElement(TCloudConstants.TAG_NETWORK_DNS);
+//        dns.appendChild(doc.createTextNode(dnss));
+//        root.appendChild(dns);
+//      //  logger.info("PONG DNS section: " + networkConf.getNetworkAddresses()[2]);
+//        logger.info("PONG DNS section: " + dnss);
+//        
+//
+//        Element gateway = doc.createElement(TCloudConstants.TAG_NETWORK_GATEWAY);
+//        gateway.appendChild(doc.createTextNode(gw));
+//        root.appendChild(gateway);
+//      //  logger.info("PONG DNS section: " + networkConf.getNetworkAddresses()[3]);
+//        logger.info("PONG Gateway section: " + gw);
 
 
 

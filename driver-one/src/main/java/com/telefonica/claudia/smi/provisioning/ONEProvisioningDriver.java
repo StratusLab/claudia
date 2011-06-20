@@ -1062,8 +1062,26 @@ public class ONEProvisioningDriver implements ProvisioningDriver {
 					Document doc = builder.parse(new ByteArrayInputStream(xml.getBytes()));
 
 					Element root = (Element) doc.getFirstChild();
+					String fqn = root.getAttribute(TCloudConstants.ATTR_NETWORK_NAME);
 					String dns = root.getAttribute(TCloudConstants.TAG_NETWORK_DNS);
 					String gateway = root.getAttribute(TCloudConstants.TAG_NETWORK_GATEWAY);
+
+			
+//
+//					Element root = (Element) doc.getFirstChild();
+//				//	String dns = root.getAttribute(TCloudConstants.TAG_NETWORK_DNS);
+//				//	String gateway = root.getAttribute(TCloudConstants.TAG_NETWORK_GATEWAY);
+//
+//					NodeList dnss = doc.getElementsByTagName(TCloudConstants.TAG_NETWORK_DNS);
+//					Element firstdnsElement = (Element)dnss.item(0);
+//					NodeList textdnsList = firstdnsElement.getChildNodes();
+//					String dns= ((Node)textdnsList.item(0)).getNodeValue().trim();
+//					
+//					NodeList gw = doc.getElementsByTagName(TCloudConstants.TAG_NETWORK_GATEWAY);
+//					Element firstgwElement = (Element)gw.item(0);
+//					NodeList textgwList = firstgwElement.getChildNodes();
+//					String gateway= ((Node)textgwList.item(0)).getNodeValue().trim();
+//					
 					
 					String fqnNet = URICreation.getService(veeFqn) + ".networks." + item.getConnection().get(0).getValue();
 
