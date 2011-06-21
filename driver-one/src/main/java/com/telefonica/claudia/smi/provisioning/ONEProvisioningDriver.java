@@ -156,6 +156,11 @@ public class ONEProvisioningDriver implements ProvisioningDriver {
 	private final static String SSHKEY_PROPERTY = "oneSshKey";
 
 	private final static String SCRIPTPATH_PROPERTY = "oneScriptPath";
+	
+	private final static String ETH0_GATEWAY_PROPERTY = "eth0Gateway";
+	private final static String ETH0_DNS_PROPERTY = "eth0Dns";
+	private final static String ETH1_GATEWAY_PROPERTY = "eth1Gateway";
+	private final static String ETH1_DNS_PROPERTY = "eth1Dns";
 
 	private String oneSession = "oneadmin:5baa61e4c9b93f3f0682250b6cf8331b7ee68fd8";
 
@@ -187,6 +192,10 @@ public class ONEProvisioningDriver implements ProvisioningDriver {
 	private static String xendisk="";
 	private static String oneSshKey="";
 	private static String oneScriptPath="";
+	private static String eth0Gateway="";
+	private static String eth1Gateway="";
+	private static String eth0Dns="";
+	private static String eth1Dns="";
 
 	public static final String ASSIGNATION_SYMBOL = "=";
 	public static final String LINE_SEPARATOR = System.getProperty("line.separator");
@@ -1036,7 +1045,8 @@ public class ONEProvisioningDriver implements ProvisioningDriver {
 
 	protected static String getNetContext(VirtualHardwareSectionType vh, String veeFqn,String xml) throws Exception {
 
-
+	//	log.debug("PONG2 xml" +xml+ "\n");
+		
 		StringBuffer allParametersString  = new StringBuffer();
 		
 
@@ -1058,36 +1068,66 @@ public class ONEProvisioningDriver implements ProvisioningDriver {
 			case ResourceTypeNIC:
 				
 				try {
-					DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-					Document doc = builder.parse(new ByteArrayInputStream(xml.getBytes()));
-
-					Element root = (Element) doc.getFirstChild();
-					String fqn = root.getAttribute(TCloudConstants.ATTR_NETWORK_NAME);
-					String dns = root.getAttribute(TCloudConstants.TAG_NETWORK_DNS);
-					String gateway = root.getAttribute(TCloudConstants.TAG_NETWORK_GATEWAY);
 //					
+//					DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+//					Document doc = builder.parse(new ByteArrayInputStream(xml.getBytes()));
+//
+//					
+//					log.debug("PONG2 doc" +doc.getTextContent()+ "\n");
+//					
+//					Element root = (Element) doc.getFirstChild();
+//					String fqn = root.getAttribute(TCloudConstants.ATTR_NETWORK_NAME);
+				//	String dns = root.getAttribute(TCloudConstants.TAG_NETWORK_DNS);
+				//	String gateway = root.getAttribute(TCloudConstants.TAG_NETWORK_GATEWAY);
+					
+//					NodeList gw = doc.getElementsByTagName(TCloudConstants.TAG_NETWORK_GATEWAY);
+//					Element firstgwElement = (Element)gw.item(0);
+//					NodeList textgwList = firstgwElement.getChildNodes();
+//					String gateway= ((Node)textgwList.item(0)).getNodeValue().trim();
+//					
+//					NodeList dnss = doc.getElementsByTagName(TCloudConstants.TAG_NETWORK_DNS);
+//					Element firstdnsElement = (Element)dnss.item(0);
+//					NodeList textdnsList = firstdnsElement.getChildNodes();
+//					String dns= ((Node)textdnsList.item(0)).getNodeValue().trim();
+					
+//					
+//					log.debug("PONG2 eth0Dns" + eth0Dns + "\n");
+//					log.debug("PONG2 dns" + dns + "\n");
+//					log.debug("PONG2 gateway: " + gateway + "\n");
+					
+					
+					log.debug("PONG eth0Dns" + eth0Dns + "\n");
+					log.debug("PONG eth0Gateway" + eth0Gateway + "\n");
+					log.debug("PONG eth1Dns" + eth1Dns + "\n");
+					log.debug("PONG eth1Gateway" + eth1Gateway + "\n");
+					
 					
 					String fqnNet = URICreation.getService(veeFqn) + ".networks." + item.getConnection().get(0).getValue();
 
 					allParametersString.append("ip_eth"+i).append(ASSIGNATION_SYMBOL).append("\"$NIC[IP, NETWORK=\\\""+fqnNet+"\\\"]\"").append(MULT_CONF_SEPARATOR).append(LINE_SEPARATOR);
-					if(dns.length()>0)
-					{
-					allParametersString.append("dns_eth"+i).append(ASSIGNATION_SYMBOL).append(dns).append(MULT_CONF_SEPARATOR).append(LINE_SEPARATOR);
+					String dns="";
+					String gateway="";
+					if(i==0){
+						dns=eth0Dns;
+						gateway=eth0Gateway;
 					}
-					if(gateway.length()>0)
-					{
-					allParametersString.append("gateway_eth"+i).append(ASSIGNATION_SYMBOL).append(gateway).append(MULT_CONF_SEPARATOR).append(LINE_SEPARATOR);
+					if(i==1){
+						dns=eth1Dns;
+						gateway=eth1Gateway;
 					}
+		
+						if(dns.length()>0)
+						{
+						allParametersString.append("dns_eth"+i).append(ASSIGNATION_SYMBOL).append(dns).append(MULT_CONF_SEPARATOR).append(LINE_SEPARATOR);
+						}
+						if(gateway.length()>0)
+						{
+						allParametersString.append("gateway_eth"+i).append(ASSIGNATION_SYMBOL).append(gateway).append(MULT_CONF_SEPARATOR).append(LINE_SEPARATOR);
+						}
 
 					i++;
 
 					
-				} catch (IOException e1) {
-					log.error("OVF of the virtual machine was not well formed or it contained some errors.");
-					throw new Exception("OVF of the virtual machine was not well formed or it contained some errors: " + e1.getMessage());
-				} catch (ParserConfigurationException e) {
-					log.error("Error configuring parser: " + e.getMessage());
-					throw new Exception("Error configuring parser: " + e.getMessage());
 				} catch (FactoryConfigurationError e) {
 					log.error("Error retrieving parser: " + e.getMessage());
 					throw new Exception("Error retrieving parser: " + e.getMessage());
@@ -1114,9 +1154,12 @@ public class ONEProvisioningDriver implements ProvisioningDriver {
 			DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
 			Document doc = builder.parse(new ByteArrayInputStream(xml.getBytes()));
 
+		//	log.debug("PONG3 doc" +doc.getTextContent()+ "\n");
+			
 			Element root = (Element) doc.getFirstChild();
 			String fqn = root.getAttribute(TCloudConstants.ATTR_NETWORK_NAME);
-
+		//	log.debug("PONG3 fqn" + fqn + "\n");
+			
 			NodeList macEnabled = doc.getElementsByTagName(TCloudConstants.TAG_NETWORK_MAC_ENABLED);
 			Element firstmacenElement = (Element)macEnabled.item(0);
 			NodeList textMacenList = firstmacenElement.getChildNodes();
@@ -1470,6 +1513,19 @@ public class ONEProvisioningDriver implements ProvisioningDriver {
 
 		if (prop.containsKey(SCRIPTPATH_PROPERTY)) {
 			oneScriptPath = ((String) prop.get(SCRIPTPATH_PROPERTY));
+		}
+		
+		if (prop.containsKey(ETH0_GATEWAY_PROPERTY)) {
+			eth0Gateway= ((String) prop.get(ETH0_GATEWAY_PROPERTY));
+		}
+		if (prop.containsKey(ETH0_DNS_PROPERTY)) {
+			eth0Dns = ((String) prop.get(ETH0_DNS_PROPERTY));
+		}
+		if (prop.containsKey(ETH1_GATEWAY_PROPERTY)) {
+			eth1Gateway = ((String) prop.get(ETH1_GATEWAY_PROPERTY));
+		}
+		if (prop.containsKey(ETH1_DNS_PROPERTY)) {
+			eth1Dns = ((String) prop.get(ETH1_DNS_PROPERTY));
 		}
 
 
