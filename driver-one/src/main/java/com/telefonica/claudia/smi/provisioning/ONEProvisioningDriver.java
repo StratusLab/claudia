@@ -161,6 +161,8 @@ public class ONEProvisioningDriver implements ProvisioningDriver {
 	private final static String ETH0_DNS_PROPERTY = "eth0Dns";
 	private final static String ETH1_GATEWAY_PROPERTY = "eth1Gateway";
 	private final static String ETH1_DNS_PROPERTY = "eth1Dns";
+	
+	private final static String NET_INIT_SCRIPT = "netInitScript";
 
 	private String oneSession = "oneadmin:5baa61e4c9b93f3f0682250b6cf8331b7ee68fd8";
 
@@ -196,6 +198,7 @@ public class ONEProvisioningDriver implements ProvisioningDriver {
 	private static String eth1Gateway="";
 	private static String eth0Dns="";
 	private static String eth1Dns="";
+	private static String netInitScript="";
 
 	public static final String ASSIGNATION_SYMBOL = "=";
 	public static final String LINE_SEPARATOR = System.getProperty("line.separator");
@@ -798,6 +801,10 @@ public class ONEProvisioningDriver implements ProvisioningDriver {
 				allParametersString.append("public_key").append(ASSIGNATION_SYMBOL).append(oneSshKey).append(MULT_CONF_SEPARATOR).append(LINE_SEPARATOR);
 				allParametersString.append("CustomizationUrl").append(ASSIGNATION_SYMBOL).append("\"" + Main.PROTOCOL + Main.serverHost + ":" + customizationPort + "/"+ replicaName+ "\"").append(MULT_CONF_SEPARATOR).append(LINE_SEPARATOR);
 				allParametersString.append("files").append(ASSIGNATION_SYMBOL).append("\"" + environmentRepositoryPath + "/"+ replicaName + "/ovf-env.xml" +scriptListTemplate+ "\"").append(MULT_CONF_SEPARATOR).append(LINE_SEPARATOR);
+				
+				if(netInitScript.length()>0) {
+				allParametersString.append("SCRIPT_EXEC="+netInitScript).append(MULT_CONF_SEPARATOR).append(LINE_SEPARATOR);
+				}
 				allParametersString.append("target").append(ASSIGNATION_SYMBOL).append("\"" + diskRoot + "dc"+ "\"").append(MULT_CONF_RIGHT_DELIMITER).append(LINE_SEPARATOR);
 
 				if (vh.getSystem() != null && vh.getSystem().getVirtualSystemType()!= null &&
@@ -1514,7 +1521,6 @@ public class ONEProvisioningDriver implements ProvisioningDriver {
 		if (prop.containsKey(SCRIPTPATH_PROPERTY)) {
 			oneScriptPath = ((String) prop.get(SCRIPTPATH_PROPERTY));
 		}
-		
 		if (prop.containsKey(ETH0_GATEWAY_PROPERTY)) {
 			eth0Gateway= ((String) prop.get(ETH0_GATEWAY_PROPERTY));
 		}
@@ -1527,7 +1533,9 @@ public class ONEProvisioningDriver implements ProvisioningDriver {
 		if (prop.containsKey(ETH1_DNS_PROPERTY)) {
 			eth1Dns = ((String) prop.get(ETH1_DNS_PROPERTY));
 		}
-
+		if (prop.containsKey(NET_INIT_SCRIPT)) {
+			netInitScript = ((String) prop.get(NET_INIT_SCRIPT));
+		}
 
 		try {
 			config.setServerURL(new URL(oneURL));
