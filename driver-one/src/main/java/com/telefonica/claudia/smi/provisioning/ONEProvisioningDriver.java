@@ -156,13 +156,14 @@ public class ONEProvisioningDriver implements ProvisioningDriver {
 	private final static String SSHKEY_PROPERTY = "oneSshKey";
 
 	private final static String SCRIPTPATH_PROPERTY = "oneScriptPath";
-	
+
 	private final static String ETH0_GATEWAY_PROPERTY = "eth0Gateway";
 	private final static String ETH0_DNS_PROPERTY = "eth0Dns";
 	private final static String ETH1_GATEWAY_PROPERTY = "eth1Gateway";
 	private final static String ETH1_DNS_PROPERTY = "eth1Dns";
-	
-	private final static String NET_INIT_SCRIPT = "netInitScript";
+
+	private final static String NET_INIT_SCRIPT0 = "netInitScript0";
+	private final static String NET_INIT_SCRIPT1 = "netInitScript1";
 
 	private String oneSession = "oneadmin:5baa61e4c9b93f3f0682250b6cf8331b7ee68fd8";
 
@@ -198,7 +199,8 @@ public class ONEProvisioningDriver implements ProvisioningDriver {
 	private static String eth1Gateway="";
 	private static String eth0Dns="";
 	private static String eth1Dns="";
-	private static String netInitScript="";
+	private static String netInitScript0="";
+	private static String netInitScript1="";
 
 	public static final String ASSIGNATION_SYMBOL = "=";
 	public static final String LINE_SEPARATOR = System.getProperty("line.separator");
@@ -793,18 +795,15 @@ public class ONEProvisioningDriver implements ProvisioningDriver {
 				allParametersString.append(ONE_VM_OS_PARAM_ROOT).append(ASSIGNATION_SYMBOL).append(diskRoot + "da1").append(MULT_CONF_RIGHT_DELIMITER).append(LINE_SEPARATOR);
 
 				allParametersString.append(ONE_CONTEXT).append(ASSIGNATION_SYMBOL).append(MULT_CONF_LEFT_DELIMITER);
-				
+
 				if(hostname.length()>0) {
-				allParametersString.append("hostname  = \""+hostname+"\"").append(MULT_CONF_SEPARATOR).append(LINE_SEPARATOR);
+					allParametersString.append("hostname  = \""+hostname+"\"").append(MULT_CONF_SEPARATOR).append(LINE_SEPARATOR);
 				}
 				allParametersString.append(netcontext);
 				allParametersString.append("public_key").append(ASSIGNATION_SYMBOL).append(oneSshKey).append(MULT_CONF_SEPARATOR).append(LINE_SEPARATOR);
 				allParametersString.append("CustomizationUrl").append(ASSIGNATION_SYMBOL).append("\"" + Main.PROTOCOL + Main.serverHost + ":" + customizationPort + "/"+ replicaName+ "\"").append(MULT_CONF_SEPARATOR).append(LINE_SEPARATOR);
 				allParametersString.append("files").append(ASSIGNATION_SYMBOL).append("\"" + environmentRepositoryPath + "/"+ replicaName + "/ovf-env.xml" +scriptListTemplate+ "\"").append(MULT_CONF_SEPARATOR).append(LINE_SEPARATOR);
-				
-				if(netInitScript.length()>0) {
-				allParametersString.append("SCRIPT_EXEC="+netInitScript).append(MULT_CONF_SEPARATOR).append(LINE_SEPARATOR);
-				}
+
 				allParametersString.append("target").append(ASSIGNATION_SYMBOL).append("\"" + diskRoot + "dc"+ "\"").append(MULT_CONF_RIGHT_DELIMITER).append(LINE_SEPARATOR);
 
 				if (vh.getSystem() != null && vh.getSystem().getVirtualSystemType()!= null &&
@@ -833,11 +832,11 @@ public class ONEProvisioningDriver implements ProvisioningDriver {
 					case ResourceTypeCPU:
 
 						//  for (int k = 0; k < quantity; k++) {
-							allParametersString.append(ONE_VM_CPU).append(ASSIGNATION_SYMBOL).append(quantity).append(LINE_SEPARATOR);
-							allParametersString.append(ONE_VM_VCPU).append(ASSIGNATION_SYMBOL).append(quantity).append(LINE_SEPARATOR);
-							//  }
+						allParametersString.append(ONE_VM_CPU).append(ASSIGNATION_SYMBOL).append(quantity).append(LINE_SEPARATOR);
+						allParametersString.append(ONE_VM_VCPU).append(ASSIGNATION_SYMBOL).append(quantity).append(LINE_SEPARATOR);
+						//  }
 
-							break;
+						break;
 
 					case ResourceTypeDISK:
 
@@ -924,21 +923,21 @@ public class ONEProvisioningDriver implements ProvisioningDriver {
 								 * <Disk>, try to get it know frm <File>
 								 * ovf:size
 								 */
-								 if (capacity == null && fl.getSize() != null) {
-									 capacity = fl.getSize().toString();
-								 }
+								if (capacity == null && fl.getSize() != null) {
+									capacity = fl.getSize().toString();
+								}
 
 								/* Try to get the digest */
-								 Map<QName, String> attributesFile = fl.getOtherAttributes();
-								 QName digestAtt = new QName("http://schemas.telefonica.com/claudia/ovf","digest");
-								 digest = attributesFile.get(digestAtt);
+								Map<QName, String> attributesFile = fl.getOtherAttributes();
+								QName digestAtt = new QName("http://schemas.telefonica.com/claudia/ovf","digest");
+								digest = attributesFile.get(digestAtt);
 
-								 Map<QName, String> attributesFile2 = fl.getOtherAttributes();
-								 QName driverAtt = new QName("http://schemas.telefonica.com/claudia/ovf","driver");
-								 driver = attributesFile.get(driverAtt);
+								Map<QName, String> attributesFile2 = fl.getOtherAttributes();
+								QName driverAtt = new QName("http://schemas.telefonica.com/claudia/ovf","driver");
+								driver = attributesFile.get(driverAtt);
 
 
-								 break;
+								break;
 							}
 						}
 
@@ -1052,12 +1051,12 @@ public class ONEProvisioningDriver implements ProvisioningDriver {
 
 	protected static String getNetContext(VirtualHardwareSectionType vh, String veeFqn,String xml) throws Exception {
 
-	//	log.debug("PONG2 xml" +xml+ "\n");
-		
-		StringBuffer allParametersString  = new StringBuffer();
-		
+		//	log.debug("PONG2 xml" +xml+ "\n");
 
-			
+		StringBuffer allParametersString  = new StringBuffer();
+
+
+
 		List<RASDType> items = vh.getItem();
 		int i=0;
 		for (Iterator<RASDType> iteratorRASD = items.iterator(); iteratorRASD.hasNext();) {
@@ -1073,42 +1072,16 @@ public class ONEProvisioningDriver implements ProvisioningDriver {
 
 			switch (rsType) {
 			case ResourceTypeNIC:
-				
+
 				try {
-//					
-//					DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-//					Document doc = builder.parse(new ByteArrayInputStream(xml.getBytes()));
-//
-//					
-//					log.debug("PONG2 doc" +doc.getTextContent()+ "\n");
-//					
-//					Element root = (Element) doc.getFirstChild();
-//					String fqn = root.getAttribute(TCloudConstants.ATTR_NETWORK_NAME);
-				//	String dns = root.getAttribute(TCloudConstants.TAG_NETWORK_DNS);
-				//	String gateway = root.getAttribute(TCloudConstants.TAG_NETWORK_GATEWAY);
-					
-//					NodeList gw = doc.getElementsByTagName(TCloudConstants.TAG_NETWORK_GATEWAY);
-//					Element firstgwElement = (Element)gw.item(0);
-//					NodeList textgwList = firstgwElement.getChildNodes();
-//					String gateway= ((Node)textgwList.item(0)).getNodeValue().trim();
-//					
-//					NodeList dnss = doc.getElementsByTagName(TCloudConstants.TAG_NETWORK_DNS);
-//					Element firstdnsElement = (Element)dnss.item(0);
-//					NodeList textdnsList = firstdnsElement.getChildNodes();
-//					String dns= ((Node)textdnsList.item(0)).getNodeValue().trim();
-					
-//					
-//					log.debug("PONG2 eth0Dns" + eth0Dns + "\n");
-//					log.debug("PONG2 dns" + dns + "\n");
-//					log.debug("PONG2 gateway: " + gateway + "\n");
-					
-					
-					log.debug("PONG eth0Dns" + eth0Dns + "\n");
-					log.debug("PONG eth0Gateway" + eth0Gateway + "\n");
-					log.debug("PONG eth1Dns" + eth1Dns + "\n");
-					log.debug("PONG eth1Gateway" + eth1Gateway + "\n");
-					
-					
+
+
+//					log.debug("PONG eth0Dns" + eth0Dns + "\n");
+//					log.debug("PONG eth0Gateway" + eth0Gateway + "\n");
+//					log.debug("PONG eth1Dns" + eth1Dns + "\n");
+//					log.debug("PONG eth1Gateway" + eth1Gateway + "\n");
+
+
 					String fqnNet = URICreation.getService(veeFqn) + ".networks." + item.getConnection().get(0).getValue();
 
 					allParametersString.append("ip_eth"+i).append(ASSIGNATION_SYMBOL).append("\"$NIC[IP, NETWORK=\\\""+fqnNet+"\\\"]\"").append(MULT_CONF_SEPARATOR).append(LINE_SEPARATOR);
@@ -1122,19 +1095,19 @@ public class ONEProvisioningDriver implements ProvisioningDriver {
 						dns=eth1Dns;
 						gateway=eth1Gateway;
 					}
-		
-						if(dns.length()>0)
-						{
+
+					if(dns.length()>0)
+					{
 						allParametersString.append("dns_eth"+i).append(ASSIGNATION_SYMBOL).append(dns).append(MULT_CONF_SEPARATOR).append(LINE_SEPARATOR);
-						}
-						if(gateway.length()>0)
-						{
+					}
+					if(gateway.length()>0)
+					{
 						allParametersString.append("gateway_eth"+i).append(ASSIGNATION_SYMBOL).append(gateway).append(MULT_CONF_SEPARATOR).append(LINE_SEPARATOR);
-						}
+					}
 
 					i++;
 
-					
+
 				} catch (FactoryConfigurationError e) {
 					log.error("Error retrieving parser: " + e.getMessage());
 					throw new Exception("Error retrieving parser: " + e.getMessage());
@@ -1150,6 +1123,18 @@ public class ONEProvisioningDriver implements ProvisioningDriver {
 
 		}
 
+		if (i==1){
+			if(netInitScript0.length()>0) {
+				allParametersString.append("SCRIPT_EXEC="+netInitScript0).append(MULT_CONF_SEPARATOR).append(LINE_SEPARATOR);		
+			}
+		}
+		if (i==2){
+			if(netInitScript1.length()>0) {
+				allParametersString.append("SCRIPT_EXEC="+netInitScript1).append(MULT_CONF_SEPARATOR).append(LINE_SEPARATOR);		
+			}
+		}
+
+
 		return allParametersString.toString();
 
 	}
@@ -1161,12 +1146,12 @@ public class ONEProvisioningDriver implements ProvisioningDriver {
 			DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
 			Document doc = builder.parse(new ByteArrayInputStream(xml.getBytes()));
 
-		//	log.debug("PONG3 doc" +doc.getTextContent()+ "\n");
-			
+			//	log.debug("PONG3 doc" +doc.getTextContent()+ "\n");
+
 			Element root = (Element) doc.getFirstChild();
 			String fqn = root.getAttribute(TCloudConstants.ATTR_NETWORK_NAME);
-		//	log.debug("PONG3 fqn" + fqn + "\n");
-			
+			//	log.debug("PONG3 fqn" + fqn + "\n");
+
 			NodeList macEnabled = doc.getElementsByTagName(TCloudConstants.TAG_NETWORK_MAC_ENABLED);
 			Element firstmacenElement = (Element)macEnabled.item(0);
 			NodeList textMacenList = firstmacenElement.getChildNodes();
@@ -1533,8 +1518,11 @@ public class ONEProvisioningDriver implements ProvisioningDriver {
 		if (prop.containsKey(ETH1_DNS_PROPERTY)) {
 			eth1Dns = ((String) prop.get(ETH1_DNS_PROPERTY));
 		}
-		if (prop.containsKey(NET_INIT_SCRIPT)) {
-			netInitScript = ((String) prop.get(NET_INIT_SCRIPT));
+		if (prop.containsKey(NET_INIT_SCRIPT0)) {
+			netInitScript0 = ((String) prop.get(NET_INIT_SCRIPT0));
+		}
+		if (prop.containsKey(NET_INIT_SCRIPT1)) {
+			netInitScript1 = ((String) prop.get(NET_INIT_SCRIPT1));
 		}
 
 		try {
