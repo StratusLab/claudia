@@ -133,7 +133,7 @@ public class ONEProvisioningDriver implements ProvisioningDriver {
 	private final static String NET_GETALL_COMMAND = "one.vnpool.info";
 	private final static String NET_DELETE_COMMAND = "one.vn.delete";
 
-	private final static String DEBUGGING_CONSOLE = "RAW = [ type =\"kvm\", data =\"<devices><serial type='pty'><source path='/dev/pts/5'/><target port='0'/></serial><console type='pty' tty='/dev/pts/5'><source path='/dev/pts/5'/><target port='0'/></console></devices>\" ]";
+	//private final static String DEBUGGING_CONSOLE = "RAW = [ type =\"kvm\", data =\"<devices><serial type='pty'><source path='/dev/pts/5'/><target port='0'/></serial><console type='pty' tty='/dev/pts/5'><source path='/dev/pts/5'/><target port='0'/></console></devices>\" ]";
 
 	/**
 	 * Connection URL for OpenNebula. It defaults to localhost, but can be
@@ -716,9 +716,7 @@ public class ONEProvisioningDriver implements ProvisioningDriver {
 
 				VirtualHardwareSectionType vh = OVFEnvelopeUtils.getSection(vs, VirtualHardwareSectionType.class);
 				String virtualizationType = vh.getSystem().getVirtualSystemType().getValue();
-
-				String netcontext=getNetContext(vh, veeFqn,xml);
-
+				
 				String scriptListProp = null;
 				String scriptListTemplate = "";
 
@@ -749,6 +747,10 @@ public class ONEProvisioningDriver implements ProvisioningDriver {
 					scriptListProp="";
 					scriptListTemplate = "";
 				}
+
+				String netcontext=getNetContext(vh, veeFqn,xml, scriptListProp);
+
+				
 
 				try
 				{
@@ -804,7 +806,7 @@ public class ONEProvisioningDriver implements ProvisioningDriver {
 				allParametersString.append("CustomizationUrl").append(ASSIGNATION_SYMBOL).append("\"" + Main.PROTOCOL + Main.serverHost + ":" + customizationPort + "/"+ replicaName+ "\"").append(MULT_CONF_SEPARATOR).append(LINE_SEPARATOR);
 				allParametersString.append("files").append(ASSIGNATION_SYMBOL).append("\"" + environmentRepositoryPath + "/"+ replicaName + "/ovf-env.xml" +scriptListTemplate+ "\"").append(MULT_CONF_SEPARATOR).append(LINE_SEPARATOR);
 
-				allParametersString.append("target").append(ASSIGNATION_SYMBOL).append("\"" + diskRoot + "dc"+ "\"").append(MULT_CONF_RIGHT_DELIMITER).append(LINE_SEPARATOR);
+				allParametersString.append("target").append(ASSIGNATION_SYMBOL).append("\"" + diskRoot + "dd"+ "\"").append(MULT_CONF_RIGHT_DELIMITER).append(LINE_SEPARATOR);
 
 				if (vh.getSystem() != null && vh.getSystem().getVirtualSystemType()!= null &&
 						vh.getSystem().getVirtualSystemType().getValue() != null &&
@@ -1017,7 +1019,7 @@ public class ONEProvisioningDriver implements ProvisioningDriver {
 					}
 				}
 
-				allParametersString.append(LINE_SEPARATOR).append(DEBUGGING_CONSOLE).append(LINE_SEPARATOR);
+				//allParametersString.append(LINE_SEPARATOR).append(DEBUGGING_CONSOLE).append(LINE_SEPARATOR);
 
 
 				log.debug("VM data sent:\n\n" + allParametersString.toString() + "\n\n");
@@ -1049,7 +1051,7 @@ public class ONEProvisioningDriver implements ProvisioningDriver {
 		return "";
 	}
 
-	protected static String getNetContext(VirtualHardwareSectionType vh, String veeFqn,String xml) throws Exception {
+	protected static String getNetContext(VirtualHardwareSectionType vh, String veeFqn,String xml, String scriptListProp) throws Exception {
 
 		//	log.debug("PONG2 xml" +xml+ "\n");
 
@@ -1125,16 +1127,32 @@ public class ONEProvisioningDriver implements ProvisioningDriver {
 
 		if (i==1){
 			if(netInitScript0.length()>0) {
-				allParametersString.append("SCRIPT_EXEC="+netInitScript0).append(MULT_CONF_SEPARATOR).append(LINE_SEPARATOR);		
+				allParametersString.append("SCRIPT_EXEC=\""+netInitScript0);	
 			}
 		}
 		if (i==2){
 			if(netInitScript1.length()>0) {
-				allParametersString.append("SCRIPT_EXEC="+netInitScript1).append(MULT_CONF_SEPARATOR).append(LINE_SEPARATOR);		
+				allParametersString.append("SCRIPT_EXEC=\""+netInitScript1);	
 			}
 		}
 
+		if (scriptListProp != null & scriptListProp.length()!=0)
+		{
+		String[] scriptList = scriptListProp.split("/");
 
+		String scriptListTemplate = "";
+
+		for (String scrt: scriptList){
+			
+			if (scrt.indexOf(".py")!=-1)
+			{
+
+			  System.out.println ("python /mnt/stratuslab/"+scrt);
+			  allParametersString.append("; python /mnt/stratuslab/"+scrt+"");
+			}
+		}
+		}
+		allParametersString.append("\"").append(MULT_CONF_SEPARATOR).append(LINE_SEPARATOR);
 		return allParametersString.toString();
 
 	}

@@ -96,7 +96,7 @@ public class ClaudiaClient {
 	public static final String FQN_TAG_NAME = "FQN";
 	public static final String VALUE_TAG_NAME = "Value";
 
-	public static final String RESERVOIR_PATH="/api/org/es_tid/vdc";
+	public static  String RESERVOIR_PATH="";
 
 	private final static String PATH_TO_PROPERTIES_FILE="conf/claudiaClient.properties";
 	private final static String PATH_TO_ACD_TEST="conf/";
@@ -190,7 +190,8 @@ public class ClaudiaClient {
 
 		restPath = prop.getProperty(REST_PATH);
 		restServerPort = prop.getProperty(REST_SERVER_PORT);
-		restServerHost = prop.getProperty(REST_HOST);	
+		restServerHost = prop.getProperty(REST_HOST);
+		RESERVOIR_PATH="/api/org/"+prop.getProperty("domain.root")+"/vdc" ;
 		securityCookieFile = prop.getProperty(SECURITY_FILE);
 		acdHost = prop.getProperty(ACD_HOST);
 
@@ -605,6 +606,7 @@ public class ClaudiaClient {
 
 
 	public static Reference getServiceURI(String customerName, String serviceName) {
+		System.out.println (prop.getProperty(HOST)+prop.getProperty(KEY_PORT) + RESERVOIR_PATH + "/" + customerName + "/vapp/" + serviceName);
 		return new Reference(prop.getProperty(HOST)+prop.getProperty(KEY_PORT) + RESERVOIR_PATH + "/" + customerName + "/vapp/" + serviceName);
 	}
 
