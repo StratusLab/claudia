@@ -1,11 +1,10 @@
 #!/usr/bin/python -tt
 # -*- coding: utf-8 -*-
-import time, sys, commands, urllib2, logging, subprocess
+import time, sys, commands, urllib2, logging
 from xml.dom.minidom import parse
 
-FQN_XML_KEY = "stratus.glite.grid.ce.fqnkpi"
-CLOTHO_URL="stratus.glite.grid.ce.ipmonitoring"
-LOG_FILE = "/var/log/torqueProbe.log"
+FQN_XML_KEY = "fqnkpi"
+LOG_FILE = "/var/log/torqueProbe/out.log"
 ROOT_MONITORING_TAG_NAME = "MonitoringInformation"
 EVENT_TYPE_TAG_NAME = "EventType"
 T_0_TAG_NAME = "EpochTimestamp"
@@ -31,14 +30,14 @@ def parserXML(ovf):
 def getKPI():
     """ return the kpi value of the load balancer. """
     total_slots = pbsnodes()
-    if total_slots == 0 or (total_slots < 0):
+	if total_slots == 0 or (total_slots < 0):
         logging.info("There are 0 slots in Torque")
         return str(0)
-    else:
-        occupied_slots = qstat()
-        KPI = float(occupied_slots)/total_slots
+	else:
+	    occupied_slots = qstat()
+	    KPI = float(occupied_slots)/total_slots
 	    
-        logging.info("Total number of jobs: "+str(occupied_slots))
+	    logging.info("Total number of jobs: "+str(occupied_slots))
         logging.info("Total number of slots: "+str(total_slots))
         logging.info("KPI occupied_slots/total_slots: "+ str(occupied_slots)+"/"+str(total_slots)+"="+str(KPI)+"\n")
     
@@ -113,12 +112,12 @@ def call_command(command):
 def main():
     
     #parse ovf
-    ovf = parserXML("/mnt/ovf-env.xml")
-    url = "http://"+ ovf[CLOTHO_URL] +":1114/vmi"
+    ovf = parserXML("/mnt/stratuslab/ovf-evn.xml")
+    url = "http://"+ ovf['CLOTHO_URL'] +"1114/vmi"
     fqn = ovf[FQN_XML_KEY]
     
     logging.info("Claudia monitoring REST uri: " + url)
-    logging.info("Sending KPI to Claudia every 30  seconds.")
+    logging.info("Sending KPI to Claudia each " + config['time'] + " seconds.")
     logging.info("Ctrl+C to stop\n")
 
     try:

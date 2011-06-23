@@ -330,14 +330,15 @@ chkconfig iptables off''')
             os.system("hostname >> /opt/glite/yaim/etc/wn-list.conf ")
             os.system("./gLite3_2ConfigWN.sh")
         if self.service == 'apel':
-	     os.system("./gLite3_2ConfigAPEL.sh")
+	    os.system("chmod +x gLite3_2ConfigAPEL.sh")
+	    os.system("./gLite3_2ConfigAPEL.sh")
 
 
 
 # Executing the functions to create configuration files
 
 myParser = OVFParser()
-file = open("/mnt/ovf-env.xml", "r").read()
+file = open("/mnt/stratuslab/ovf-env.xml", "r").read()
 
 myParser.parse(file)
 myParser.createConfigurationFiles()

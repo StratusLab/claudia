@@ -1,4 +1,4 @@
-source /mnt/context.sh
+source /mnt/stratuslab/context.sh
 #hostname 
 hostname $HOSTNAME
 #network interfaces
