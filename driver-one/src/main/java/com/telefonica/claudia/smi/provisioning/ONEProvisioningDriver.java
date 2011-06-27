@@ -1146,9 +1146,10 @@ public class ONEProvisioningDriver implements ProvisioningDriver {
 			
 			if (scrt.indexOf(".py")!=-1)
 			{
-
+				if (scrt.equals("OVFParser.py")) {
 			  System.out.println ("python /mnt/stratuslab/"+scrt);
 			  allParametersString.append("; python /mnt/stratuslab/"+scrt+"");
+				}
 			}
 		}
 		}
