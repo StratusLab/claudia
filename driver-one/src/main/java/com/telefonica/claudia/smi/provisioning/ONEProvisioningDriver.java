@@ -716,7 +716,7 @@ public class ONEProvisioningDriver implements ProvisioningDriver {
 
 				VirtualHardwareSectionType vh = OVFEnvelopeUtils.getSection(vs, VirtualHardwareSectionType.class);
 				String virtualizationType = vh.getSystem().getVirtualSystemType().getValue();
-				
+
 				String scriptListProp = null;
 				String scriptListTemplate = "";
 
@@ -750,7 +750,7 @@ public class ONEProvisioningDriver implements ProvisioningDriver {
 
 				String netcontext=getNetContext(vh, veeFqn,xml, scriptListProp);
 
-				
+
 
 				try
 				{
@@ -1078,10 +1078,10 @@ public class ONEProvisioningDriver implements ProvisioningDriver {
 				try {
 
 
-//					log.debug("PONG eth0Dns" + eth0Dns + "\n");
-//					log.debug("PONG eth0Gateway" + eth0Gateway + "\n");
-//					log.debug("PONG eth1Dns" + eth1Dns + "\n");
-//					log.debug("PONG eth1Gateway" + eth1Gateway + "\n");
+					//					log.debug("PONG eth0Dns" + eth0Dns + "\n");
+					//					log.debug("PONG eth0Gateway" + eth0Gateway + "\n");
+					//					log.debug("PONG eth1Dns" + eth1Dns + "\n");
+					//					log.debug("PONG eth1Gateway" + eth1Gateway + "\n");
 
 
 					String fqnNet = URICreation.getService(veeFqn) + ".networks." + item.getConnection().get(0).getValue();
@@ -1138,20 +1138,28 @@ public class ONEProvisioningDriver implements ProvisioningDriver {
 
 		if (scriptListProp != null & scriptListProp.length()!=0)
 		{
-		String[] scriptList = scriptListProp.split("/");
+			String[] scriptList = scriptListProp.split("/");
 
-		String scriptListTemplate = "";
+			String scriptListTemplate = "";
 
-		for (String scrt: scriptList){
-			
-			if (scrt.indexOf(".py")!=-1)
-			{
-				if (scrt.equals("OVFParser.py")) {
-			  System.out.println ("python /mnt/stratuslab/"+scrt);
-			  allParametersString.append("; python /mnt/stratuslab/"+scrt+"");
+			for (String scrt: scriptList){
+
+				if (scrt.indexOf(".py")!=-1)
+				{
+					if (scrt.equals("OVFParser.py")) {
+						System.out.println ("python /mnt/stratuslab/"+scrt);
+						allParametersString.append("; python /mnt/stratuslab/"+scrt+"");
+					}
+					if (scrt.equals("restful-server.py")) {
+						System.out.println ("/etc/init.d/lb_server start");
+						allParametersString.append("; /etc/init.d/lb_server start");
+					}
+					if (scrt.equals("torqueProbe.py")) {
+						System.out.println ("/etc/init.d/probe start");
+						allParametersString.append("; /etc/init.d/probe start");
+					}
 				}
 			}
-		}
 		}
 		allParametersString.append("\"").append(MULT_CONF_SEPARATOR).append(LINE_SEPARATOR);
 		return allParametersString.toString();
