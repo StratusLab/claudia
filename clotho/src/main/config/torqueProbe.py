@@ -94,12 +94,16 @@ def pbsnodes():
     npoutput,_ = call_command('pbsnodes | grep np')
     np_data = npoutput.split('\n')
 
+    state_output,_ = call_command('pbsnodes | grep state\ =')
+    state_data = state_output.split('\n')
+
     nps = 0
+    i = 0
     for l in np_data:
         ls = l.strip().split('=')
-        if(len(ls) > 1):
+        if(len(ls) > 1 and not state_data[i].startswith('down')):
             nps = nps + int(ls[1].strip())
-
+        i = i + 1
     return nps
 #
 
