@@ -73,16 +73,16 @@ def qstat():
         if line.endswith(':'):
             current_host = line.replace(':', '')
             begin = False
-            #Start monitoring output, you are streaming through the actual data
-            if begin and line != '':
-                output_all[job_num] = {}
-                # A dictionary for each job entry
-                output_all[job_num]['job_id'], output_all[job_num]['username'], output_all[job_num]['queue'], output_all[job_num]['jobname'], output_all[job_num]['session_id'], output_all[job_num]['nds'], output_all[job_num]['tsk'], output_all[job_num]['required_memory'], output_all[job_num]['required_time'], output_all[job_num]['status'], output_all[job_num]['elapsed_time'] = line.split()
-                output_all[job_num]['host'] = current_host
-                job_num = job_num + 1
+        #Start monitoring output, you are streaming through the actual data
+        if begin and line != '':
+            output_all[job_num] = {}
+            # A dictionary for each job entry
+            output_all[job_num]['job_id'], output_all[job_num]['username'], output_all[job_num]['queue'], output_all[job_num]['jobname'], output_all[job_num]['session_id'], output_all[job_num]['nds'], output_all[job_num]['tsk'], output_all[job_num]['required_memory'], output_all[job_num]['required_time'], output_all[job_num]['status'], output_all[job_num]['elapsed_time'] = line.split()
+            output_all[job_num]['host'] = current_host
+            job_num = job_num + 1
 
-            if line.startswith('--'):
-                begin = True
+        if line.startswith('--'):
+            begin = True
 
     return len(output_all)
 #
@@ -113,7 +113,7 @@ def call_command(command):
 def main():
     
     #parse ovf
-    ovf = parserXML("/mnt/ovf-env.xml")
+    ovf = parserXML("/mnt/stratuslab/ovf-env.xml")
     url = "http://"+ ovf[CLOTHO_URL] +":1114/vmi"
     fqn = ovf[FQN_XML_KEY]
     

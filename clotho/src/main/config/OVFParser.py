@@ -32,7 +32,8 @@ class OVFParser:
             self.service = "se"
         elif 'workernode' in file:
             self.service = "wn"
-        
+        elif 'apelelement' in file:
+            self.service = "apel"
         return self.configAttr
     
     def createDirs(self):
@@ -50,7 +51,8 @@ class OVFParser:
     def createUserConf(self):
         userconf = open('/opt/glite/yaim/etc/users.conf','w')
         sgroupId = 21000
-        for i in range (1,200):
+        #for i in range (1,200):
+        for i in range (1,10):
             userId = sgroupId + i
             userconf.write(str(userId) + ":strat")
 	    userconf.write("%.3d" %i)
@@ -60,7 +62,8 @@ class OVFParser:
          #   userId = groupId + i
          #   userconf.write(str(userId) + ":prdstrat" +'{0:03d}'.format(i)+":"+str(groupId)+","+str(sgroupId)+":stratuslabprd,stratuslab:vo.stratuslab.eu:prd:\n")
         groupId = 21900
-        for i in range (1,100):
+	for i in range (1,10):
+        #for i in range (1,100):
            userId = groupId + i
            userconf.write(str(userId) + ":sgmstrat")
 	   userconf.write ("%.3d" %i)
@@ -304,55 +307,80 @@ I2G_MPI_START=/opt/i2g/bin/mpi-start''')
             self.creategliteBdii()
             self.createCreamCE()
 	    config = open('/root/gLite3_2ConfigCE.sh','w')
-       	    config.write('''/opt/glite/yaim/bin/yaim -c -s /opt/glite/yaim/etc/siteinfo/site-info.def -n MPI_CE -n creamCE -n TORQUE_server -n TORQUE_utils -n BDII_site
+       	    config.write('''cp /mnt/stratuslab/node*/node* /etc/grid-security/hostcert.pem
+cp /mnt/stratuslab/node*/privkey.pem /etc/grid-security/hostkey.pem
+#yum -y upgrade
+#yum --enablerepo='glite-*' -y update 
+service ntpd stop
+ntpdate pool.ntp.org
+service ntpd start
+date
+chmod 400 /etc/grid-security/hostkey.pem
+chmod 444 /etc/grid-security/hostcert.pem
+/opt/glite/yaim/bin/yaim -c -s /opt/glite/yaim/etc/siteinfo/site-info.def -n MPI_CE -n creamCE -n TORQUE_server -n TORQUE_utils -n BDII_site
 /etc/init.d/pbs_server restart
-/etc/init.d/iptables stop''')
+/etc/init.d/iptables stop
+date''')
 	    config.close()
-	    os.system("chmod +x gLite3_2ConfigCE.sh")
-            os.system("./gLite3_2ConfigCE.sh")
+	    os.system("chmod +x /root/gLite3_2ConfigCE.sh")
+            os.system("/root/gLite3_2ConfigCE.sh > /root/gLite3_2ConfigCE.log")
         if self.service == 'se':
             self.createSeDpmDisk()
             self.createSeDpmMysql()
             config = open('/root/gLite3_2ConfigSE.sh','w')
-       	    config.write('''/opt/glite/yaim/bin/yaim -c -s /opt/glite/yaim/etc/siteinfo/site-info.def -n SE_dpm_mysql''')
+       	    config.write('''cp /mnt/stratuslab/node*/node* /etc/grid-security/hostcert.pem
+cp /mnt/stratuslab/node*/privkey.pem /etc/grid-security/hostkey.pem
+service ntpd stop
+ntpdate pool.ntp.org
+service ntpd start
+#yum -y upgrade
+#yum --enablerepo='glite-*' -y update 
+chmod 400 /etc/grid-security/hostkey.pem
+chmod 444 /etc/grid-security/hostcert.pem
+/opt/glite/yaim/bin/yaim -c -s /opt/glite/yaim/etc/siteinfo/site-info.def -n SE_dpm_mysql''')
 	    config.close()
-	    os.system("chmod +x gLite3_2ConfigSE.sh")
-            os.system("./gLite3_2ConfigSE.sh")
+	    os.system("chmod +x /root/gLite3_2ConfigSE.sh")
+            os.system("/root/gLite3_2ConfigSE.sh > /root/gLite3_2ConfigSE.log")
         if self.service == 'wn':
             #self.creategliteBdii()
             #self.createCreamCE()
             config = open('/root/gLite3_2ConfigWN.sh','w')
-       	    config.write('''/opt/glite/yaim/bin/yaim -c -s /opt/glite/yaim/etc/siteinfo/site-info.def -n MPI_WN -n WN -n TORQUE_client
+       	    config.write('''#yum -y upgrade
+#yum --enablerepo='glite-*' -y update 
+service ntpd stop
+ntpdate pool.ntp.org
+service ntpd start
+/opt/glite/yaim/bin/yaim -c -s /opt/glite/yaim/etc/siteinfo/site-info.def -n MPI_WN -n WN -n TORQUE_client
 /etc/init.d/iptables stop
 chkconfig iptables off''')
 	    config.close()
-	    os.system("chmod +x gLite3_2ConfigWN.sh")
+	    os.system("chmod +x /root/gLite3_2ConfigWN.sh")
             os.system("hostname >> /opt/glite/yaim/etc/wn-list.conf ")
-            os.system("./gLite3_2ConfigWN.sh")
+            os.system("/root/gLite3_2ConfigWN.sh > /root/gLite3_2ConfigWN.log")
         if self.service == 'apel':
-	     os.system("./gLite3_2ConfigAPEL.sh")
+            config = open('/root/gLite3_2ConfigAPEL.sh','w')
+       	    config.write('''cp /mnt/stratuslab/node*/node* /etc/grid-security/hostcert.pem
+cp /mnt/stratuslab/node*/privkey.pem /etc/grid-security/hostkey.pem
+#yum -y upgrade
+#yum --enablerepo='glite-*' -y update 
+service ntpd stop
+ntpdate pool.ntp.org
+service ntpd start
+chmod 400 /etc/grid-security/hostkey.pem
+chmod 444 /etc/grid-security/hostcert.pem
+/opt/glite/yaim/bin/yaim -c -s /opt/glite/yaim/etc/siteinfo/site-info.def -n APEL''')
+	    config.close()
+            os.system("chmod +x /root/gLite3_2ConfigAPEL.sh")
+	    os.system("/root/gLite3_2ConfigAPEL.sh > /root/gLite3_2ConfigAPEL.log")
 
 
 
 # Executing the functions to create configuration files
 
 myParser = OVFParser()
-file = open("/mnt/ovf-env.xml", "r").read()
+file = open("/mnt/stratuslab/ovf-env.xml", "r").read()
 
 myParser.parse(file)
 myParser.createConfigurationFiles()
-
-#myParser.createDirs()
-#myParser.createUserConf()
-#myParser.createGroupsConf()
-#myParser.createSiteInfoDef()
-#myParser.createStrausvod()
-
-
-#myParser.creategliteBdii()
-#myParser.createCreamCE()
-#myParser.creategliteMpi()
-#myParser.createSeDpmDisk()
-#myParser.createSeDpmMysql()
         
         
