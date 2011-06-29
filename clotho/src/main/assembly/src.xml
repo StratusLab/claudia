@@ -40,7 +40,7 @@
 		<fileSet>
 			<directory>target/</directory>
 			<outputDirectory>/extraFiles</outputDirectory>
-			<directoryMode>0644</directoryMode>
+			<directoryMode>0755</directoryMode>
 
 			<excludes>
 				<exclude>**/*</exclude>
@@ -95,19 +95,31 @@
 			<source>src/main/config/OVFParser.py</source>
 			<outputDirectory>/extraFiles</outputDirectory>
 			<filtered>true</filtered>
-			<fileMode>0777</fileMode>
+			<fileMode>0744</fileMode>
 		</file>
 		<file>
 			<source>src/main/config/torqueProbe.py</source>
 			<outputDirectory>/extraFiles</outputDirectory>
 			<filtered>true</filtered>
-			<fileMode>0777</fileMode>
+			<fileMode>0744</fileMode>
 		</file>
 		<file>
 			<source>src/main/config/restful-server.py</source>
 			<outputDirectory>/extraFiles</outputDirectory>
 			<filtered>true</filtered>
-			<fileMode>0777</fileMode>
+			<fileMode>0744</fileMode>
+		</file>
+		<file>
+			<source>src/main/config/netinit0.sh</source>
+			<outputDirectory>/extraFiles</outputDirectory>
+			<filtered>true</filtered>
+			<fileMode>0744</fileMode>
+		</file>
+		<file>
+			<source>src/main/config/netinit1.sh</source>
+			<outputDirectory>/extraFiles</outputDirectory>
+			<filtered>true</filtered>
+			<fileMode>0744</fileMode>
 		</file>
 
 	</files>
