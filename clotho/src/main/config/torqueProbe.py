@@ -36,11 +36,11 @@ def getKPI():
         return str(0)
     else:
         occupied_slots = qstat()
-        KPI = float(occupied_slots)/total_slots
+        KPI = (float(occupied_slots)/total_slots) * 100
 	    
         logging.info("Total number of jobs: "+str(occupied_slots))
         logging.info("Total number of slots: "+str(total_slots))
-        logging.info("KPI occupied_slots/total_slots: "+ str(occupied_slots)+"/"+str(total_slots)+"="+str(KPI)+"\n")
+        logging.info("KPI occupied_slots/total_slots: ("+ str(occupied_slots)+"/"+str(total_slots)+")*100="+str(KPI)+"\n")
     
         return str(KPI)
 #
