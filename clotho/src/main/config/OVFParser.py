@@ -264,9 +264,9 @@ I2G_MPI_START=/opt/i2g/bin/mpi-start''')
             elif 'CE_BATCH_SYS=' in line:
                 siteinfo.write("CE_BATCH_SYS=pbs\n")
             elif 'BATCH_LOG_DIR=' in line:
-                siteinfo.write("BATCH_LOG_DIR=/var/spool/pbs\n")
+                siteinfo.write("BATCH_LOG_DIR=/var/torque\n")
             elif 'BATCH_VERSION=' in line:
-                siteinfo.write("BATCH_VERSION=2.3.6-2cri.el5\n")      
+                siteinfo.write("BATCH_VERSION=2.3.13-1cri.el5\n")      
             elif 'APEL_DB_PASSWORD=' in line:  
                 siteinfo.write("APEL_MYSQL_HOST="+ self.configAttr["stratus.glite.grid."+self.service+".apel.HOSTNAME"]+"\n" ) 
                 siteinfo.write("APEL_DB_PASSWORD=\""+ self.configAttr["stratus.glite.grid."+self.service+".DB_PASSWD"]+"\"\n")
@@ -314,7 +314,6 @@ cp /mnt/stratuslab/node*/privkey.pem /etc/grid-security/hostkey.pem
 service ntpd stop
 ntpdate pool.ntp.org
 service ntpd start
-mkdir -p /var/spool/pbs/server_logs
 date
 chmod 400 /etc/grid-security/hostkey.pem
 chmod 444 /etc/grid-security/hostcert.pem
@@ -338,7 +337,8 @@ service ntpd start
 #yum --enablerepo='glite-*' -y update 
 chmod 400 /etc/grid-security/hostkey.pem
 chmod 444 /etc/grid-security/hostcert.pem
-/opt/glite/yaim/bin/yaim -c -s /opt/glite/yaim/etc/siteinfo/site-info.def -n SE_dpm_mysql''')
+/opt/glite/yaim/bin/yaim -c -s /opt/glite/yaim/etc/siteinfo/site-info.def -n SE_dpm_mysql
+/etc/init.d/iptables stop''')
 	    config.close()
 	    os.system("chmod +x /root/gLite3_2ConfigSE.sh")
             os.system("/root/gLite3_2ConfigSE.sh > /root/gLite3_2ConfigSE.log")
@@ -368,9 +368,12 @@ service ntpd stop
 ntpdate pool.ntp.org
 service ntpd start
 chmod 400 /etc/grid-security/hostkey.pem
-chmod 444 /etc/grid-security/hostcert.pem
-/opt/glite/yaim/bin/yaim -c -s /opt/glite/yaim/etc/siteinfo/site-info.def -n APEL''')
+chmod 444 /etc/grid-security/hostcert.pem 
+/opt/glite/yaim/bin/yaim -c -s /opt/glite/yaim/etc/siteinfo/site-info.def -n APEL
+/etc/init.d/iptables stop''')
 	    config.close()
+	    os.system("/etc/init.d/mysqld start")
+	    os.system("mysqladmin password "+ self.configAttr["stratus.glite.grid."+self.service+".DB_PASSWD"])
             os.system("chmod +x /root/gLite3_2ConfigAPEL.sh")
 	    os.system("/root/gLite3_2ConfigAPEL.sh > /root/gLite3_2ConfigAPEL.log")
 
