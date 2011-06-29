@@ -314,6 +314,7 @@ cp /mnt/stratuslab/node*/privkey.pem /etc/grid-security/hostkey.pem
 service ntpd stop
 ntpdate pool.ntp.org
 service ntpd start
+mkdir -p /var/spool/pbs/server_logs
 date
 chmod 400 /etc/grid-security/hostkey.pem
 chmod 444 /etc/grid-security/hostcert.pem
