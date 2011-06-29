@@ -1,18 +1,14 @@
 #!/usr/bin/python
 
-import web, OVFParser
+import web
 import os, subprocess, fileinput
 from xml.dom.minidom import parseString
-
-#urls = ('/ce_server/addWN', 'addWN',
-#        '/ce_server/removeWN/(.*)', 'removeWN')
 
 urls = ('/(.*)', 'CEServer')
 
 class CEServer(object):
     
     def GET(self, num):
-        #print 'This is remove: '+ num + ' of nodes.'
         free_nodes = get_free_wns()
         wn_list = '/opt/glite/yaim/etc/wn-list.conf'
         data = '<?xml version="1.0" encoding="UTF-8"?><nodes>'
@@ -29,35 +25,40 @@ class CEServer(object):
         data = data +'</nodes>'
         
         output,_ = call_command('sed -i /^$/d '+wn_list)
-        o,_ = call_command('echo date >> /var/log/yaim_torque_config.log')
+        o,_ = call_command('date >> /var/log/yaim_torque_config.log')
         conf_output,_ = call_command('/opt/glite/yaim/bin/yaim -c -s /opt/glite/yaim/etc/siteinfo/site-info.def -n TORQUE_server -n TORQUE_utils >> /var/log/yaim_torque_config.log')
         
         return data
 
-    def POST(self):
+    def POST(self, arg):
         data = web.data()
-        print data
+    	print 'Data received: '+data
         #hosts = parse_xml_data(data)
-        hosts = parse_string_data(data)
+        hosts = []
+        if len(data) > 0:
+            hosts = parse_string_data(data)
+        else:
+            hosts = parse_string_data(arg)
+
+        print hosts
         wn_list = '/opt/glite/yaim/etc/wn-list.conf'
-        #wn_list = './wn-list.conf'
         f = open(wn_list, 'a')
+        skip = False
         for host in hosts:
-            #f.write(host.firstChild.data+'\n')
-            f.write(host+'\n')
+            for line in fileinput.FileInput(wn_list):
+                if line.startswith(host):
+                    skip = True
+                    print 'Node '+ host +' already included in the wn-list.conf'
+                    break;
+            if not skip:
+                f.write(host+'\n')
         f.close()
         
-        o,_ = call_command('echo date >> /var/log/gLite3_2ConfigCE.log')
+        o,_ = call_command('date >> /var/log/yaim_torque_config.log')
         conf_output,_ = call_command('/opt/glite/yaim/bin/yaim -c -s /opt/glite/yaim/etc/siteinfo/site-info.def -n TORQUE_server -n TORQUE_utils >> /var/log/yaim_torque_config.log')
         
         return 
 
-def parse_ovf():
-    myParser = OVFParser.OVFParser()
-    f = open("ovf-env.xml", "r").read()
-    myParser.parse(f)
-    f.close()
-    
 def parse_xml_data(xml):
     dom = parseString(xml)
     hosts = dom.getElementsByTagName('node')
@@ -69,6 +70,7 @@ def parse_string_data(s):
     for param in params:
         p = param.split('=')
         if p[0].startswith('ip'):
+            print 'nslookup '+ p[1] +' | grep name'
             lookupoutput,_ = call_command('nslookup '+ p[1] +' | grep name')
             lu_data = lookupoutput.split('\n')
             name = ''
@@ -78,8 +80,9 @@ def parse_string_data(s):
                     n = l.split('=')
                     print n
                     name = n[1].strip()
+                    if name.endswith('.'):
+                        name = name[:-1]
                     hosts.append(name)
-    print hosts
     return hosts
 
 def get_free_wns():

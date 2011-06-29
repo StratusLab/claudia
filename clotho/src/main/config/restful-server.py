@@ -43,9 +43,15 @@ class CEServer(object):
         print hosts
         wn_list = '/opt/glite/yaim/etc/wn-list.conf'
         f = open(wn_list, 'a')
+        skip = False
         for host in hosts:
-            #f.write(host.firstChild.data+'\n')
-            f.write(host+'\n')
+            for line in fileinput.FileInput(wn_list):
+                if line.startswith(host):
+                    skip = True
+                    print 'Node '+ host +' already included in the wn-list.conf'
+                    break;
+            if not skip:
+                f.write(host+'\n')
         f.close()
         
         o,_ = call_command('date >> /var/log/yaim_torque_config.log')

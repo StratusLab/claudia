@@ -1,10 +1,11 @@
 #!/usr/bin/python -tt
 # -*- coding: utf-8 -*-
-import time, sys, commands, urllib2, logging
+import time, sys, commands, urllib2, logging, subprocess
 from xml.dom.minidom import parse
 
-FQN_XML_KEY = "fqnkpi"
-LOG_FILE = "/var/log/torqueProbe/out.log"
+FQN_XML_KEY = "stratus.glite.grid.ce.fqnkpi"
+CLOTHO_URL="stratus.glite.grid.ce.ipmonitoring"
+LOG_FILE = "/var/log/torqueProbe.log"
 ROOT_MONITORING_TAG_NAME = "MonitoringInformation"
 EVENT_TYPE_TAG_NAME = "EventType"
 T_0_TAG_NAME = "EpochTimestamp"
@@ -30,16 +31,16 @@ def parserXML(ovf):
 def getKPI():
     """ return the kpi value of the load balancer. """
     total_slots = pbsnodes()
-	if total_slots == 0 or (total_slots < 0):
+    if total_slots == 0 or (total_slots < 0):
         logging.info("There are 0 slots in Torque")
         return str(0)
-	else:
-	    occupied_slots = qstat()
-	    KPI = float(occupied_slots)/total_slots
+    else:
+        occupied_slots = qstat()
+        KPI = (float(occupied_slots)/total_slots) * 100
 	    
-	    logging.info("Total number of jobs: "+str(occupied_slots))
+        logging.info("Total number of jobs: "+str(occupied_slots))
         logging.info("Total number of slots: "+str(total_slots))
-        logging.info("KPI occupied_slots/total_slots: "+ str(occupied_slots)+"/"+str(total_slots)+"="+str(KPI)+"\n")
+        logging.info("KPI occupied_slots/total_slots: ("+ str(occupied_slots)+"/"+str(total_slots)+")*100="+str(KPI)+"\n")
     
         return str(KPI)
 #
@@ -72,16 +73,16 @@ def qstat():
         if line.endswith(':'):
             current_host = line.replace(':', '')
             begin = False
-            #Start monitoring output, you are streaming through the actual data
-            if begin and line != '':
-                output_all[job_num] = {}
-                # A dictionary for each job entry
-                output_all[job_num]['job_id'], output_all[job_num]['username'], output_all[job_num]['queue'], output_all[job_num]['jobname'], output_all[job_num]['session_id'], output_all[job_num]['nds'], output_all[job_num]['tsk'], output_all[job_num]['required_memory'], output_all[job_num]['required_time'], output_all[job_num]['status'], output_all[job_num]['elapsed_time'] = line.split()
-                output_all[job_num]['host'] = current_host
-                job_num = job_num + 1
+        #Start monitoring output, you are streaming through the actual data
+        if begin and line != '':
+            output_all[job_num] = {}
+            # A dictionary for each job entry
+            output_all[job_num]['job_id'], output_all[job_num]['username'], output_all[job_num]['queue'], output_all[job_num]['jobname'], output_all[job_num]['session_id'], output_all[job_num]['nds'], output_all[job_num]['tsk'], output_all[job_num]['required_memory'], output_all[job_num]['required_time'], output_all[job_num]['status'], output_all[job_num]['elapsed_time'] = line.split()
+            output_all[job_num]['host'] = current_host
+            job_num = job_num + 1
 
-            if line.startswith('--'):
-                begin = True
+        if line.startswith('--'):
+            begin = True
 
     return len(output_all)
 #
@@ -112,12 +113,12 @@ def call_command(command):
 def main():
     
     #parse ovf
-    ovf = parserXML("/mnt/stratuslab/ovf-evn.xml")
-    url = "http://"+ ovf['CLOTHO_URL'] +"1114/vmi"
+    ovf = parserXML("/mnt/stratuslab/ovf-env.xml")
+    url = "http://"+ ovf[CLOTHO_URL] +":1114/vmi"
     fqn = ovf[FQN_XML_KEY]
     
     logging.info("Claudia monitoring REST uri: " + url)
-    logging.info("Sending KPI to Claudia each " + config['time'] + " seconds.")
+    logging.info("Sending KPI to Claudia every 30  seconds.")
     logging.info("Ctrl+C to stop\n")
 
     try:

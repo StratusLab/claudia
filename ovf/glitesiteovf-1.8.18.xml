@@ -81,7 +81,7 @@ xmlns="http://schemas.dmtf.org/ovf/envelope/1"
 				<Property ovf:key="BDII_HOST" ovf:type="string" rsrvr:cloudConfigurable="true" ovf:value="bdii.isabella.grnet.gr"/>
 				<Property ovf:key="apel.HOSTNAME" ovf:type="string" rsrvr:cloudConfigurable="true" ovf:value="node036.one.ypepth.grnet.gr"/>
 				<Property ovf:key="STATIC_IP" ovf:type="string" rsrvr:cloudConfigurable="true" ovf:value="62.217.120.164"/>
-				<Property ovf:key="SCRIPT_LIST" ovf:type="string" rsrvr:cloudConfigurable="true" ovf:value="netinit1.sh/OVFParser.py/torqueProbe.py/restful-server.py/node034.one.ypepth.grnet.gr"/>
+				<Property ovf:key="SCRIPT_LIST" ovf:type="string" rsrvr:cloudConfigurable="true" ovf:value="netinit0.sh/OVFParser.py/torqueProbe.py/restful-server.py/node034.one.ypepth.grnet.gr"/>
 			</ProductSection>
 			
 			<VirtualHardwareSection>
@@ -246,7 +246,7 @@ xmlns="http://schemas.dmtf.org/ovf/envelope/1"
 				<Property ovf:key="HOSTNAME" ovf:type="string" rsrvr:cloudConfigurable="true" ovf:value="node035.one.ypepth.grnet.gr"/>
 				<Property ovf:key="BDII_HOST" ovf:type="string" rsrvr:cloudConfigurable="true" ovf:value="bdii.isabella.grnet.gr"/>
                                 <Property ovf:key="apel.HOSTNAME" ovf:type="string" rsrvr:cloudConfigurable="true" ovf:value="node036.one.ypepth.grnet.gr"/>
-				<Property ovf:key="SCRIPT_LIST" ovf:type="string" rsrvr:cloudConfigurable="true" ovf:value="netinit1.sh/node035.one.ypepth.grnet.gr/OVFParser.py"/>
+				<Property ovf:key="SCRIPT_LIST" ovf:type="string" rsrvr:cloudConfigurable="true" ovf:value="netinit0.sh/node035.one.ypepth.grnet.gr/OVFParser.py"/>
                                 <Property ovf:key="STATIC_IP" ovf:type="string" rsrvr:cloudConfigurable="true" ovf:value="62.217.120.165"/>
 
 			</ProductSection>
@@ -323,7 +323,7 @@ xmlns="http://schemas.dmtf.org/ovf/envelope/1"
                                 <Property ovf:key="HOSTNAME" ovf:type="string" rsrvr:cloudConfigurable="true" ovf:value="node036.one.ypepth.grnet.gr"/>
                                 <Property ovf:key="BDII_HOST" ovf:type="string" rsrvr:cloudConfigurable="true" ovf:value="bdii.isabella.grnet.gr"/>
                                 <Property ovf:key="apel.HOSTNAME" ovf:type="string" rsrvr:cloudConfigurable="true" ovf:value="node036.one.ypepth.grnet.gr"/>
-                                <Property ovf:key="SCRIPT_LIST" ovf:type="string" rsrvr:cloudConfigurable="true" ovf:value="netinit1.sh/node036.one.ypepth.grnet.gr/OVFParser.py"/>
+                                <Property ovf:key="SCRIPT_LIST" ovf:type="string" rsrvr:cloudConfigurable="true" ovf:value="netinit0.sh/node036.one.ypepth.grnet.gr/OVFParser.py"/>
 				<Property ovf:key="STATIC_IP" ovf:type="string" rsrvr:cloudConfigurable="true" ovf:value="62.217.120.166"/>
                         </ProductSection>
 
