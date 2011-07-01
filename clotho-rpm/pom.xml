@@ -132,18 +132,6 @@
 								</source>
 							</sources>
 						</mapping>
-						
-							<mapping>
-							<directory>${app.home}/extraFiles/</directory>
-							<filemode>755</filemode>
-							<username>root</username>
-							<groupname>root</groupname>
-							<sources>
-								<source>
-									<location>target/dependency/clotho/extraFiles</location>
-								</source>
-							</sources>
-						</mapping>
 
 						<mapping>
 							<directory>${app.home}/logs</directory>
@@ -157,6 +145,9 @@
 							<directory>${app.home}/ruleHome</directory>
 						</mapping>
 
+						<mapping>
+							<directory>${app.home}/extraFiles</directory>
+						</mapping>
 
 						<mapping>
 
