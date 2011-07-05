@@ -772,11 +772,17 @@ public class ONEProvisioningDriver implements ProvisioningDriver {
 				// Migrability ....
 
 				allParametersString.append(ONE_VM_NAME).append(ASSIGNATION_SYMBOL).append(replicaName).append(LINE_SEPARATOR);
+				if (!virtualizationType.toLowerCase().equals("xenhvm"))
+					allParametersString.append("GRAPHICS").append(ASSIGNATION_SYMBOL).append("[type=\"vnc\",listen=\"0.0.0.0\"]").append(LINE_SEPARATOR);
+					
 
 				if (virtualizationType.toLowerCase().equals("kvm")) {
 
 					allParametersString.append("REQUIREMENTS").append(ASSIGNATION_SYMBOL).append("\"HYPERVISOR=\\\"kvm\\\"\"").append(LINE_SEPARATOR);
-				} else if (virtualizationType.toLowerCase().equals("xen")) {
+				} else if (virtualizationType.toLowerCase().equals("xenhvm")) {
+					allParametersString.append("REQUIREMENTS").append(ASSIGNATION_SYMBOL).append("\"HYPERVISOR=\\\"xen\\\"\"").append(LINE_SEPARATOR);
+				}
+				else if (virtualizationType.toLowerCase().equals("xen")) {
 					allParametersString.append("REQUIREMENTS").append(ASSIGNATION_SYMBOL).append("\"HYPERVISOR=\\\"xen\\\"\"").append(LINE_SEPARATOR);
 				}
 				allParametersString.append(ONE_VM_OS).append(ASSIGNATION_SYMBOL).append(MULT_CONF_LEFT_DELIMITER);
@@ -786,7 +792,13 @@ public class ONEProvisioningDriver implements ProvisioningDriver {
 				if (virtualizationType.toLowerCase().equals("kvm")) {
 					diskRoot = "h";
 					allParametersString.append(ONE_VM_OS_PARAM_BOOT).append(ASSIGNATION_SYMBOL).append("hd").append(MULT_CONF_SEPARATOR).append(LINE_SEPARATOR);
-				} else {
+				} 
+				else if (virtualizationType.toLowerCase().equals("xenhvm")) {
+					diskRoot = "h";
+					allParametersString.append(ONE_VM_OS_PARAM_KERNEL).append(ASSIGNATION_SYMBOL).append("/usr/lib/xen/boot/hvmloader").append(MULT_CONF_RIGHT_DELIMITER).append(LINE_SEPARATOR);
+				}
+				
+				else {
 					diskRoot = xendisk;
 					allParametersString.append(ONE_VM_OS_PARAM_INITRD).append(ASSIGNATION_SYMBOL).append(hypervisorInitrd).append(MULT_CONF_SEPARATOR).append(LINE_SEPARATOR);
 					allParametersString.append(ONE_VM_OS_PARAM_KERNEL).append(ASSIGNATION_SYMBOL).append(hypervisorKernel).append(MULT_CONF_SEPARATOR).append(LINE_SEPARATOR);
@@ -794,8 +806,11 @@ public class ONEProvisioningDriver implements ProvisioningDriver {
 
 				if(arch.length()>0)
 					allParametersString.append("ARCH").append(ASSIGNATION_SYMBOL).append("\"").append(arch).append("\"").append(MULT_CONF_SEPARATOR).append(LINE_SEPARATOR);
-				allParametersString.append(ONE_VM_OS_PARAM_ROOT).append(ASSIGNATION_SYMBOL).append(diskRoot + "da1").append(MULT_CONF_RIGHT_DELIMITER).append(LINE_SEPARATOR);
+				
+				if (!virtualizationType.toLowerCase().equals("xenhvm"))
+					allParametersString.append(ONE_VM_OS_PARAM_ROOT).append(ASSIGNATION_SYMBOL).append(diskRoot + "da1").append(MULT_CONF_RIGHT_DELIMITER).append(LINE_SEPARATOR);
 
+				
 				allParametersString.append(ONE_CONTEXT).append(ASSIGNATION_SYMBOL).append(MULT_CONF_LEFT_DELIMITER);
 
 				if(hostname.length()>0) {
@@ -1023,7 +1038,11 @@ public class ONEProvisioningDriver implements ProvisioningDriver {
 
 				//allParametersString.append(LINE_SEPARATOR).append(DEBUGGING_CONSOLE).append(LINE_SEPARATOR);
 
-
+				if (virtualizationType.toLowerCase().equals("xenhvm"))
+					allParametersString.append("RAW=[type=\"xen\",").append(LINE_SEPARATOR).append("data=\"builder = \\\"hvm\\\"").append(LINE_SEPARATOR)
+					.append("device_model = \\\"/usr/lib64/xen/bin/qemu-dm\\\"").append(LINE_SEPARATOR).append("pae = \\\"1\\\"").append(LINE_SEPARATOR)
+					.append("acpi = \\\"1\\\"").append(LINE_SEPARATOR).append("localtime = \\\"0\\\"").append(LINE_SEPARATOR).append("vnc = \\\"1\\\"\"]").append(LINE_SEPARATOR);
+		      
 				log.debug("VM data sent:\n\n" + allParametersString.toString() + "\n\n");
 				System.out.println("VM data sent:\n\n" + allParametersString.toString() + "\n\n");
 				return allParametersString.toString();
