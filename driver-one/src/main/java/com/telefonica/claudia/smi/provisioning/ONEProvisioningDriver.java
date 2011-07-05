@@ -801,7 +801,9 @@ public class ONEProvisioningDriver implements ProvisioningDriver {
 				if(hostname.length()>0) {
 					allParametersString.append("hostname  = \""+hostname+"\"").append(MULT_CONF_SEPARATOR).append(LINE_SEPARATOR);
 				}
+				if(netcontext.length()>0) {
 				allParametersString.append(netcontext);
+				}
 				allParametersString.append("public_key").append(ASSIGNATION_SYMBOL).append(oneSshKey).append(MULT_CONF_SEPARATOR).append(LINE_SEPARATOR);
 				allParametersString.append("CustomizationUrl").append(ASSIGNATION_SYMBOL).append("\"" + Main.PROTOCOL + Main.serverHost + ":" + customizationPort + "/"+ replicaName+ "\"").append(MULT_CONF_SEPARATOR).append(LINE_SEPARATOR);
 				allParametersString.append("files").append(ASSIGNATION_SYMBOL).append("\"" + environmentRepositoryPath + "/"+ replicaName + "/ovf-env.xml" +scriptListTemplate+ "\"").append(MULT_CONF_SEPARATOR).append(LINE_SEPARATOR);
