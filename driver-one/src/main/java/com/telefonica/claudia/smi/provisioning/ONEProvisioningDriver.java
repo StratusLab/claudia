@@ -1184,10 +1184,10 @@ public class ONEProvisioningDriver implements ProvisioningDriver {
 			}
 		}
 		if (scriptexec.length()>0){
-		scriptexec.append("\"").append(MULT_CONF_SEPARATOR).append(LINE_SEPARATOR);
+		scriptexec.append(scriptexec).append("\"").append(MULT_CONF_SEPARATOR).append(LINE_SEPARATOR);
 		}
 		else {
-			scriptexec.append("\"");
+			scriptexec.append(scriptexec).append("\"");
 		}
 		return allParametersString.toString();
 
