@@ -1146,14 +1146,15 @@ public class ONEProvisioningDriver implements ProvisioningDriver {
 
 		}
 
+		StringBuffer scriptexec=new StringBuffer();;
 		if (i==1){
 			if(netInitScript0.length()>0) {
-				allParametersString.append("SCRIPT_EXEC=\""+netInitScript0);	
+				scriptexec.append("SCRIPT_EXEC=\""+netInitScript0);	
 			}
 		}
 		if (i==2){
 			if(netInitScript1.length()>0) {
-				allParametersString.append("SCRIPT_EXEC=\""+netInitScript1);	
+				scriptexec.append("SCRIPT_EXEC=\""+netInitScript1);	
 			}
 		}
 
@@ -1169,20 +1170,25 @@ public class ONEProvisioningDriver implements ProvisioningDriver {
 				{
 					if (scrt.equals("OVFParser.py")) {
 						System.out.println ("python /mnt/stratuslab/"+scrt);
-						allParametersString.append("; python /mnt/stratuslab/"+scrt+"");
+						scriptexec.append("; python /mnt/stratuslab/"+scrt+"");
 					}
 					if (scrt.equals("restful-server.py")) {
 						System.out.println ("/etc/init.d/lb_server start");
-						allParametersString.append("; /etc/init.d/lb_server start");
+						scriptexec.append("; /etc/init.d/lb_server start");
 					}
 					if (scrt.equals("torqueProbe.py")) {
 						System.out.println ("/etc/init.d/probe start");
-						allParametersString.append("; /etc/init.d/probe start");
+						scriptexec.append("; /etc/init.d/probe start");
 					}
 				}
 			}
 		}
-		allParametersString.append("\"").append(MULT_CONF_SEPARATOR).append(LINE_SEPARATOR);
+		if (scriptexec.length()>0){
+		scriptexec.append("\"").append(MULT_CONF_SEPARATOR).append(LINE_SEPARATOR);
+		}
+		else {
+			scriptexec.append("\"");
+		}
 		return allParametersString.toString();
 
 	}
