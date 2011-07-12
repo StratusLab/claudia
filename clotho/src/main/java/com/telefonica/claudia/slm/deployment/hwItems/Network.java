@@ -172,6 +172,10 @@ public class Network implements DirectoryEntry {
     	return networkFQN;
     }
     
+    public void setFQN(String fqn) {
+    	networkFQN = new FQN (fqn);
+    }
+    
     @Override
     public String toString() {
     	return getFQN().toString();

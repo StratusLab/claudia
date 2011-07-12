@@ -1152,6 +1152,11 @@ public class FSM extends Thread implements Serializable {
                 logger.error("Update failed: " + updateResult.getMessage());
                 return false;
             }
+            
+         // If replica is loadbalanced, balancer should be notified
+			VEE balancerVEE = veeReplica.getVEE().getBalancedBy();
+			if (balancerVEE!= null)
+			  removeReplicaFromLoadBalancer(veeReplica, balancerVEE);
 
             // Release the ip addres leased to the replica.
             for (NIC nic : veeReplica.getNICs())
@@ -1624,7 +1629,7 @@ public class FSM extends Thread implements Serializable {
             }
         } else
             return null;
-
+        
         return replicas;
     }
 
@@ -1674,5 +1679,28 @@ public class FSM extends Thread implements Serializable {
          } } } }
          
     }
+    
+    private void removeReplicaFromLoadBalancer(VEEReplica veeReplica,
+			VEE balancerVEE) {
+		logger.info("Removing replica from load balancer: "
+				+ veeReplica.getFQN());
+
+		if (balancerVEE==null) return;
+		Set<VEEReplica> balancerReplicas = balancerVEE.getVEEReplicas();
+		for (VEEReplica balancer : balancerReplicas) {
+			Set<NIC> nics = balancer.getNICs();
+			for (NIC nic : nics) {
+				if (!nic.getNICConf().getNetwork().getPrivateNet()) {
+					List<String> addresses = nic.getIPAddresses();
+					for (String ip : addresses) {
+						this.lbConfigurator.removeNode(ip, balancerVEE
+								.getLbManagementPort(), veeReplica.getFQN()
+								.toString());
+					}
+				}
+			}
+		}
+
+	}
 
 }

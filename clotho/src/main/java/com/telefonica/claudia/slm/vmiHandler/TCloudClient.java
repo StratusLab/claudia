@@ -81,46 +81,16 @@ public class TCloudClient implements VMIHandler {
     }
 
 
-    private Document getTCloudNetworkParameters(Network networkConf) throws ParserConfigurationException {
+    public Document getTCloudNetworkParameters(Network networkConf) throws ParserConfigurationException {
 
+    	logger.info("Obtain XML for network with IP management");
         DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
         Document doc = builder.newDocument();
-
-        
-        String[] networkAddresses2 = SMConfiguration.getInstance().getNetworkRanges();
-        String range2 = networkAddresses2[0];
-        
-        int DNSPos= range2.indexOf("DNS:");
-        String dns = null;
-        if (DNSPos>0) {
-            dns = range2.substring(DNSPos+4, range2.indexOf(";", DNSPos)).trim();
-        }
-        logger.info("PONG DNS section: " + dns);
-        
-        int GWPos= range2.indexOf("Gateway:");
-        String gw = null;
-        if (GWPos>0) {
-            gw = range2.substring(GWPos+8, range2.indexOf(";", GWPos)).trim();
-        }
-        logger.info("PONG Gateway section: " + gw);
-        
+       
         Element root = doc.createElement(TCloudConstants.TAG_NETWORK_ROOT);
         root.setAttribute(TCloudConstants.ATTR_NETWORK_NAME, networkConf.getFQN().toString());
-      //  root.setAttribute(TCloudConstants.TAG_NETWORK_DNS, dns);
-      //  root.setAttribute(TCloudConstants.TAG_NETWORK_GATEWAY,gw);
         doc.appendChild(root);
 
-//
-//        Element gateway = doc.createElement(TCloudConstants.TAG_NETWORK_GATEWAY);
-//        gateway.appendChild(doc.createTextNode(gw));
-//        root.appendChild(gateway);
-//         
-//
-//        Element dnss = doc.createElement(TCloudConstants.TAG_NETWORK_DNS);
-//        dnss.appendChild(doc.createTextNode(dns));
-//        root.appendChild(dnss);
-//        
-        
         Element baseAddress = doc.createElement(TCloudConstants.TAG_NETWORK_BASE_ADDRESS);
         baseAddress.appendChild(doc.createTextNode(networkConf.getNetworkAddresses()[0]));
         root.appendChild(baseAddress);
@@ -128,23 +98,22 @@ public class TCloudClient implements VMIHandler {
         Element netmask = doc.createElement(TCloudConstants.TAG_NETWORK_NETMASK);
         netmask.appendChild(doc.createTextNode(networkConf.getNetworkAddresses()[1]));
         root.appendChild(netmask);
-        
-        
 
+        String macEnable = null;
+        if (SMConfiguration.getInstance()!=null)
+          macEnable = SMConfiguration.getInstance().getNetworkMacEnable();
 
-
-         String macEnable = SMConfiguration.getInstance().getNetworkMacEnable();
-
-        if (macEnable.equals("true")){
+        if (macEnable!=null && macEnable.equals("true")){
 
 
         logger.info("PONG Private: " +networkConf.getPrivateNet());
         Boolean nettype=networkConf.getPrivateNet();
+        
 
 
         if (nettype==false){
 
-            String[] networkAddresses = SMConfiguration.getInstance().getNetworkRanges();
+           String[] networkAddresses = SMConfiguration.getInstance().getNetworkRanges();
             String range = networkAddresses[0];
             String[] networkMacAddresses = SMConfiguration.getInstance().getNetworkMacList();
             String mac = networkMacAddresses[0];
@@ -193,6 +162,44 @@ public class TCloudClient implements VMIHandler {
         return doc;
 
     }
+    
+    public Document getTCloudNetworkParametersNotIpManagement(Network networkConf) throws ParserConfigurationException {
+
+        logger.info("Obtain XML for network without IP management");
+    	DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+        Document doc = builder.newDocument();
+        
+               
+        Element root = doc.createElement(TCloudConstants.TAG_NETWORK_ROOT);
+        root.setAttribute(TCloudConstants.ATTR_NETWORK_NAME, networkConf.getFQN().toString());
+      //  root.setAttribute(TCloudConstants.TAG_NETWORK_DNS, dns);
+      //  root.setAttribute(TCloudConstants.TAG_NETWORK_GATEWAY,gw);
+        doc.appendChild(root);
+
+//
+//        Element gateway = doc.createElement(TCloudConstants.TAG_NETWORK_GATEWAY);
+//        gateway.appendChild(doc.createTextNode(gw));
+//        root.appendChild(gateway);
+//         
+//
+//        Element dnss = doc.createElement(TCloudConstants.TAG_NETWORK_DNS);
+//        dnss.appendChild(doc.createTextNode(dns));
+//        root.appendChild(dnss);
+//        
+        
+  /*      Element baseAddress = doc.createElement(TCloudConstants.TAG_NETWORK_BASE_ADDRESS);
+        baseAddress.appendChild(doc.createTextNode(networkConf.getNetworkAddresses()[0]));
+        root.appendChild(baseAddress);
+
+        Element netmask = doc.createElement(TCloudConstants.TAG_NETWORK_NETMASK);
+        netmask.appendChild(doc.createTextNode(networkConf.getNetworkAddresses()[1]));
+        root.appendChild(netmask);*/
+        
+
+
+        return doc;
+
+    }
 
     public void allocateNetwork(Set<Network> conf)
             throws AccessDeniedException, CommunicationErrorException, NotEnoughResourcesException {
@@ -200,16 +207,29 @@ public class TCloudClient implements VMIHandler {
             throw new IllegalArgumentException("Set of netowrks configurations to allocate cannot be null");
 
         Map<Network, String> urlTasks = new HashMap<Network, String> ();
+        
+        boolean management = true;
+        
+        management = SMConfiguration.getInstance().getIpManagement();
+        
+        System.out.println ("management " + management);
 
         for (Network networkConf: conf) {
 
             // Compose the URL for the network.
+        	if (networkConf.getName().endsWith("public"))
+        	{
+        		continue;
+        	}
             Reference urlNetwork = new Reference(serverURL + URICreation.getURINetAdd(networkConf.getFQN().toString()));
 
             // Create de DOM Representation for the network configuration
             DomRepresentation data;
             try {
-                data = new DomRepresentation(MediaType.APPLICATION_XML, getTCloudNetworkParameters(networkConf));
+            	if (management)
+                    data = new DomRepresentation(MediaType.APPLICATION_XML, getTCloudNetworkParameters(networkConf));
+            	else
+            		data = new DomRepresentation(MediaType.APPLICATION_XML, getTCloudNetworkParametersNotIpManagement(networkConf));
 
             } catch (ParserConfigurationException e) {
                 logger.error("Error creating parser: " + e.getMessage());

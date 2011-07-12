@@ -160,6 +160,8 @@ public class SMConfiguration extends Properties {
 
 	private int smiPort;
 	
+	private boolean management = true;
+	
 	private SMConfiguration() throws Exception {		
 		readSMProperties();
 	}
@@ -209,11 +211,33 @@ public class SMConfiguration extends Properties {
 		
 		networkRanges = readCollectionInProperty(NETWORK_RANGES_AVAILABLE);
 		
-		networkMacList = readCollectionInProperty(NETWORK_MAC_LIST);
+		try
+		{
+			networkMacList = readCollectionInProperty(NETWORK_MAC_LIST);
+		}
+		catch (Throwable t) {
+			logger.warn("Parsing error on " +  "networkMacList" + "property: not found");
+		}
 		
-		networkStaticList = readCollectionInProperty(STATIC_IP_LIST);
 		
-		macEnabled = readProperty(NETWORK_MAC_ENABLE);
+		
+		try
+		{
+			networkStaticList = readCollectionInProperty(STATIC_IP_LIST);
+		}
+		catch (Throwable t) {
+			logger.warn("Parsing error on " +  "networkStaticList" + "property: not found");
+		}
+		
+		
+		try
+		{
+			macEnabled = readProperty(NETWORK_MAC_ENABLE);
+		}
+		catch (Throwable t) {
+			logger.warn("Parsing error on " +  "macEnabled" + "property: not found");
+		}
+		
 		
 		try {
 			undeployOnServerStop = Boolean.parseBoolean(readProperty(UNDEPLOY_ON_SERVER_STOP));
@@ -277,9 +301,27 @@ public class SMConfiguration extends Properties {
 		} catch (Throwable t) {
 			logger.error("Parsing error on " + OVF_ENV_ENTITY_GEN + "property: " + readProperty(OVF_ENV_ENTITY_GEN));
 		}
-		logger.info("Property [" + OVF_ENV_ENTITY_GEN + "] with value [" + ovfEnvEntityGen + "]");		
+		logger.info("Property [" + OVF_ENV_ENTITY_GEN + "] with value [" + ovfEnvEntityGen + "]");
+		
+		try
+		{
+		management = Boolean.parseBoolean(readProperty("ipmanagement"));
+		}
+		catch (Throwable t) {
+			logger.error("Parsing error on " +  "ipmanagement" + "property: not found");
+		}
+		logger.info("Property [" + "ipmanagement" + "] with value [" + management + "]");
+		
+		
 	}
-	
+	 public boolean getIpManagement() {
+	    	return management;
+	 }
+	    
+	public void setIpManagement(boolean management) {
+	    	 this.management = management;
+	}
+	    
     public String getCustomerType() {
     	return customerType;
     }
