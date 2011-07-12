@@ -8,17 +8,14 @@ import string
 import logging
 import subprocess
 
-#LOG_FILE = "/var/log/wnMonitor.log"
-LOG_FILE = "/tmp/wnMonitor.log"
+LOG_FILE = "/var/log/wnMonitor.log"
 SSH_PORT = 22
 SSH_TIMEOUT = 900
 WN_POLL_INTERVAL = 30
 
 logging.basicConfig(filename=LOG_FILE, level=logging.DEBUG, format="%(asctime)s - %(levelname)s - %(message)s")
 
-#WN_LIST_CONF = "/opt/glite/yaim/etc/wn-list.conf"
-WN_LIST_CONF = "/tmp/wn-list.conf"
-
+WN_LIST_CONF = "/opt/glite/yaim/etc/wn-list.conf"
 
 def waitForConnectivity(host, port, timeout):
     start_time = time.time()
