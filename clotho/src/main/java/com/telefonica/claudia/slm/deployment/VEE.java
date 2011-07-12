@@ -60,6 +60,7 @@ import com.telefonica.claudia.slm.deployment.hwItems.CPUConf;
 import com.telefonica.claudia.slm.deployment.hwItems.DiskConf;
 import com.telefonica.claudia.slm.deployment.hwItems.MemoryConf;
 import com.telefonica.claudia.slm.deployment.hwItems.NICConf;
+import com.telefonica.claudia.slm.maniParser.GetOperationsUtils;
 import com.telefonica.claudia.slm.naming.DirectoryEntry;
 import com.telefonica.claudia.slm.naming.FQN;
 import com.telefonica.claudia.slm.naming.ReservoirDirectory;
@@ -441,23 +442,7 @@ public void setBalancedBy(VEE balancedBy) {
 				
 				doc = docBuilder.newDocument();
 				
-		   /*     Element r = doc.createElement("VApp");
-		        doc.appendChild(r);
-		        
-		        r.setAttribute("name", getFQN().toString());
-		        r.setAttribute("href", "@HOSTNAME/api/org/" + organizationId + "/vdc/" + getCustomer().getCustomerName() + "/vapp/" + getSerAppName());
-		        
-		        Element link = doc.createElement("Link");
-		        r.appendChild(link);
-		        
-		        link.setAttribute("rel", "monitor:measures");
-		        link.setAttribute("type", "application/vnc.telefonica.tcloud. measureDescriptorList+xml");
-		        link.setAttribute("href", "@HOSTNAME/api/org/" + organizationId + "/vdc/" + getCustomer().getCustomerName() + "/vapp/" + getSerAppName() + "/monitor");
-
-		        Element children = doc.createElement("Children");
-		        r.appendChild(children);*/
-		        
-		    	//for(VEE vee : vees) { 
+			
 		    		
 		    		Element veeElement = doc.createElement("VApp");
 		    		doc.appendChild(veeElement);
@@ -492,7 +477,7 @@ public void setBalancedBy(VEE balancedBy) {
 		    			veeReplicaElement.setAttribute("name", veeReplica.getFQN().toString());
 		    			
 		    			
-		    			veeReplicaElement.setAttribute("href", "@HOSTNAME/api/org/reservoir/vdc/" + this.getServiceApplication().getCustomer().getCustomerName() + "/vapp/" + this.getServiceApplication().getSerAppName() +
+		    			veeReplicaElement.setAttribute("href", "@HOSTNAME/api/org/" + organizationId + "/vdc/" +   this.getServiceApplication().getCustomer().getCustomerName() + "/vapp/" + this.getServiceApplication().getSerAppName() +
 														"/" + getVEEName() + "/" + veeReplica.getId());
 		    			
 		    			Element linkVeeReplica = doc.createElement("Link");
@@ -500,8 +485,12 @@ public void setBalancedBy(VEE balancedBy) {
 		    			
 		    			linkVeeReplica.setAttribute("rel", "monitor:measures");
 		    			linkVeeReplica.setAttribute("type", "application/vnc.telefonica.tcloud. measureDescriptorList+xml");
-		    			linkVeeReplica.setAttribute("href", "@HOSTNAME/api/org/reservoir/vdc/" + 
+		    			linkVeeReplica.setAttribute("href", "@HOSTNAME/api/org/" + organizationId + "/vdc/" +   
 		    					this.getServiceApplication().getCustomer().getCustomerName() + "/vapp/" + this.getServiceApplication().getSerAppName() + "/" + getVEEName() + "/" + veeReplica.getId() + "/monitor");
+		    			
+		    			Element virtuahardware = GetOperationsUtils.getVirtualHardwareSystem(doc, "@HOSTNAME/api/org/" + organizationId + "/vdc/" +   this.getServiceApplication().getCustomer().getCustomerName() + "/vapp/" + this.getServiceApplication().getSerAppName() +
+														"/" + getVEEName() + "/" + veeReplica.getId(), veeReplica);
+		    			veeReplicaElement.appendChild(virtuahardware);
 
 		    		}
 		    	

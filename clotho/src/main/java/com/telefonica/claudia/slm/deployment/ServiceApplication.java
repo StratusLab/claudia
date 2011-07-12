@@ -55,6 +55,7 @@ import org.w3c.dom.Element;
 import com.telefonica.claudia.slm.common.SMConfiguration;
 import com.telefonica.claudia.slm.deployment.hwItems.NICConf;
 import com.telefonica.claudia.slm.deployment.hwItems.Network;
+import com.telefonica.claudia.slm.maniParser.GetOperationsUtils;
 import com.telefonica.claudia.slm.naming.DirectoryEntry;
 import com.telefonica.claudia.slm.naming.FQN;
 import com.telefonica.claudia.slm.naming.ReservoirDirectory;
@@ -364,7 +365,7 @@ public class ServiceApplication implements DirectoryEntry {
 	    		veeElement.appendChild(monitorLink);
 	    		
 	    		monitorLink.setAttribute("rel", "monitor:measures");
-	    		monitorLink.setAttribute("type", "application/vnc.telefonica.tcloud. measureDescriptorList+xml");
+	    		monitorLink.setAttribute("type", "application/vnc.telefonica.tcloud.measureDescriptorList+xml");
 	    		monitorLink.setAttribute("href", "@HOSTNAME/api/org/" + organizationId + "/vdc/" + 
 	    				getCustomer().getCustomerName() + "/vapp/" + getSerAppName() + "/" + vee.getVEEName() + "/monitor");
 	    		
@@ -380,16 +381,19 @@ public class ServiceApplication implements DirectoryEntry {
 	    			veeChildren.appendChild(veeReplicaElement);
 	    			
 	    			veeReplicaElement.setAttribute("name", veeReplica.getFQN().toString());
-	    			veeReplicaElement.setAttribute("href", "@HOSTNAME/api/org/" + organizationId + "/vdc/" + getCustomer().getCustomerName() + "/vapp/" + getSerAppName() +
+	    			veeReplicaElement.setAttribute("href", "@HOSTNAME/api/org/"+  organizationId +"/vdc/" + getCustomer().getCustomerName() + "/vapp/" + getSerAppName() +
 													"/" + vee.getVEEName() + "/" + veeReplica.getId());
 	    			
 	    			Element linkVeeReplica = doc.createElement("Link");
 	    			veeReplicaElement.appendChild(linkVeeReplica);
 	    			
 	    			linkVeeReplica.setAttribute("rel", "monitor:measures");
-	    			linkVeeReplica.setAttribute("type", "application/vnc.telefonica.tcloud. measureDescriptorList+xml");
-	    			linkVeeReplica.setAttribute("href", "@HOSTNAME/api/org/" + organizationId + "/vdc/" + 
+	    			linkVeeReplica.setAttribute("type", "application/vnc.telefonica.tcloud.measureDescriptorList+xml");
+	    			linkVeeReplica.setAttribute("href", "@HOSTNAME/api/org/" + organizationId +"/vdc/" + 
 	        				getCustomer().getCustomerName() + "/vapp/" + getSerAppName() + "/" + vee.getVEEName() + "/" + veeReplica.getId() + "/monitor");
+	    			Element virtualhardware = GetOperationsUtils.getVirtualHardwareSystem(doc, "@HOSTNAME/api/org/"+  organizationId +"/vdc/" + getCustomer().getCustomerName() + "/vapp/" + getSerAppName() +
+							"/" + vee.getVEEName() + "/" + veeReplica.getId(), veeReplica);
+	    			veeReplicaElement.appendChild(virtualhardware);
 
 	    		}
 	    	}
