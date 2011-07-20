@@ -73,6 +73,7 @@ import com.telefonica.claudia.slm.monitoring.MonitoringRestBusConnector;
 import com.telefonica.claudia.slm.monitoring.WasupHierarchy;
 import com.telefonica.claudia.slm.naming.FQN;
 import com.telefonica.claudia.slm.naming.ReservoirDirectory;
+import com.telefonica.claudia.slm.paas.PaasUtils;
 import com.telefonica.claudia.slm.rulesEngine.RulesEngine;
 import com.telefonica.claudia.slm.serviceconfiganalyzer.ServiceConfigurationAnalyzer;
 import com.telefonica.claudia.slm.vmiHandler.TCloudClient;
@@ -143,7 +144,7 @@ public class FSM extends Thread implements Serializable {
      * monitoring period is greater than the time needed to make one of those
      * actions).
      */
-    private Map<VEE, long[]> lastElasticityInterval = new HashMap<VEE, long[]>();
+    public Map<VEE, long[]> lastElasticityInterval = new HashMap<VEE, long[]>();
 
     /**
      * Margin under and over the elasticity interval, to prevent events out of
@@ -296,7 +297,16 @@ public class FSM extends Thread implements Serializable {
 		}
     }
 
-    public int getCurrentState() {
+    public FSM() {
+    	  try {
+  			this.lbConfigurator = ConfiguratorFactory.getInstance()
+  					.createConfigManager(LoadBalancerConfigurator.class);
+  		} catch (InvalidClassException e) {
+  			logger.fatal("Invalid Configurator", e);
+  		}
+	}
+
+	public int getCurrentState() {
         return this.currentState;
     }
 
@@ -672,6 +682,10 @@ public class FSM extends Thread implements Serializable {
             abort("Network creation error");
             return false;
         }
+        
+        
+        
+        
 
         // for each VEE, get the required replicas
         for (int j = 0; j < veeArray.length; j++) {
@@ -684,6 +698,23 @@ public class FSM extends Thread implements Serializable {
             if (createReplica(veeArray[j], veeArray[j].getInitReplicas()) == null)
                 abort("Replicas could not be created for vee ["
                         + veeArray[j].getFQN() + "]");
+            
+        /*    PaasUtils paas = new PaasUtils();
+            if (paas.isPaaSAware(veeArray[j]))
+            {
+            	// if it is paas aware, we have to install the software.....
+            	
+            	//Firstly to get the IP
+            	String ip = paas.getVeePaaSIpFromXML (veeArray[j].toXML());
+            	logger.info("IP for "+ veeArray[j].getVEEName() + " " + ip);
+            	
+            	
+            }*/
+            // GET IP VM
+            
+            // Install software
+            
+            
         }
 
         rle.run();
@@ -748,12 +779,12 @@ public class FSM extends Thread implements Serializable {
         return true;
     }
 
-    private boolean elasticityRemoveReplica(String veeType, long initialTime) {
+    public boolean elasticityRemoveReplica(String veeType, long initialTime) {
 
         VEE vee2Plicate = (VEE) ReservoirDirectory.getInstance().getObject(
                 new FQN(veeType));
 
-        if (!checkElasticityInterval(vee2Plicate, initialTime)) {
+      if (!checkElasticityInterval(vee2Plicate, initialTime)) {
             logger.warn("Action discarded due to the Elasticity Interval.");
             return false;
         }
@@ -765,10 +796,10 @@ public class FSM extends Thread implements Serializable {
         // check that the current number of replicas is not going to be
         // under the minimum
         if (vee2Plicate.getCurrentReplicas() > vee2Plicate.getMinReplicas()) {
-            Set<VEEReplica> replicas = vee2Plicate.getVEEReplicas();
+          Set<VEEReplica> replicas = vee2Plicate.getVEEReplicas();
             // assume all the replicas can equally be removed
 
-            int maxreplica = 0;
+          /*    int maxreplica = 0;
             Set<VEEReplica> plicateSet = new HashSet<VEEReplica>();
             VEEReplica removeCandidate = null;
             for (Iterator<VEEReplica> removeIt = replicas.iterator(); removeIt
@@ -779,14 +810,24 @@ public class FSM extends Thread implements Serializable {
                     removeCandidate = plicate;
                 }
 
-            }
-            plicateSet.add(removeCandidate);
-
+            }*/
+        	
+          Set<VEEReplica> plicateSet = getReplicaCandiates (replicas);
+          if (plicateSet == null)
+          {
+        	  logger.error("No replicas to delete ");
+        	  return false;
+          }
+          
+          for (VEEReplica removeCandidate:  plicateSet)
+          {
+        	  Set<VEEReplica> aux = new HashSet<VEEReplica>();
+        	  aux.add(removeCandidate);
             // invoke the appropriate VMI methods
-            if (shutdown(plicateSet)) {
+            if (shutdown(aux)) {
 
                 // Remove it from wasup
-                if (SMConfiguration.getInstance().isWasupActive()) {
+        /*        if (SMConfiguration.getInstance().isWasupActive()) {
                     try {
                         wasupClient.removeNode(removeCandidate);
                     } catch (IOException e) {
@@ -798,7 +839,7 @@ public class FSM extends Thread implements Serializable {
                                 "Unknow error connecting to WASUP: "
                                 + e.getMessage(), e);
                     }
-                }
+                }*/
 
                 // Parche para borrar la réplica del reservoir directory
 
@@ -826,12 +867,140 @@ public class FSM extends Thread implements Serializable {
 
             }
         }
+        
 
         // Save the ending part of the interval
         lastElasticityInterval.get(vee2Plicate)[1] = System.currentTimeMillis()
         + ELASTICITY_MARGIN;
+        }
 
         return false;
+    }
+    
+    private Set<VEEReplica> getReplicaCandiates(Set<VEEReplica> replicas)
+    {
+    	for (VEEReplica replica : replicas)
+    	{
+    		VEE balancerVEE = replica.getVEE().getBalancedBy();
+    		logger.info("Is a replica balanced por" + replica.getVEE().getBalancedBy());
+			if (balancerVEE!= null)
+			{
+				
+				return getReplicaCandiatesLoadBalancer ( replicas);
+			}
+			else
+				return getReplicaCandiatesLastElement (replicas);
+    		
+    	}
+    	return null;
+    }
+    
+    private Set<VEEReplica> getReplicaCandiatesLastElement (Set<VEEReplica> replicas)
+    {
+
+    	logger.info("Last element");
+    	// assume all the replicas can equally be removed
+        int maxreplica = 0;
+        Set<VEEReplica> plicateSet = new HashSet<VEEReplica>();
+        VEEReplica removeCandidate = null;
+        for (Iterator<VEEReplica> removeIt = replicas.iterator(); removeIt
+        .hasNext();) {
+            VEEReplica plicate = (VEEReplica) removeIt.next();
+            if ((plicate.getId()) > maxreplica) {
+                maxreplica = plicate.getId();
+                removeCandidate = plicate;
+            }
+
+        }
+        plicateSet.add(removeCandidate);
+        return plicateSet;
+    }
+    
+    private Set<VEEReplica> getReplicaCandiatesLoadBalancer (Set<VEEReplica> replicas)
+    {
+    	logger.info("Obtain replicas to delete from balancer");
+    	if (replicas.size()==0)
+    		return null;
+    	Set<VEEReplica> plicateSet = new HashSet<VEEReplica>();
+    	VEE balancerVEE = null;
+    	String ipbalancer = null;
+    	for (VEEReplica balancer : replicas)
+    	{
+    		
+    		balancerVEE = balancer.getVEE().getBalancedBy();
+    		for (VEEReplica veebalancer: balancerVEE.getVEEReplicas())
+    		{
+    			for (NIC nic : veebalancer.getNICs() ) {
+    				if (!nic.getNICConf().getNetwork().getPrivateNet())
+    				ipbalancer = nic.getIPAddresses().get(0);
+    			
+    			}
+    		}
+    	/*	 for (NIC nic : veeReplica.getNICs()) {
+    		
+    	/*	if (balancerVEE!=null)
+    		{
+    			for (NIC nic: balancerVEE.get)
+    		}
+    			veeReplica.getNICs()
+    			veeReplica.getNICs()
+    		balancerVEE.get
+    		for (NICConf nic : balancerVEE.getNICsConf()) {
+				if (!nic.getNetwork().getPrivateNet()) 
+				{
+					String[] addresses = nic.getNetwork().getNetworkAddresses();
+					ipbalancer = nic.addIPAddress
+					
+				}
+    		}*/
+    	}
+
+		
+		String[] ipreplica = null;
+		try {
+			logger.info("IP balancer " + ipbalancer+ " " + balancerVEE
+					.getLbManagementPort());
+		
+			ipreplica = this.lbConfigurator.getNodeRemove(ipbalancer, balancerVEE
+					.getLbManagementPort(), 1);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return null;
+		}
+		
+		for (int i=0; i<ipreplica.length; i++)
+		{
+			System.out.println (ipreplica[i]);
+		VEEReplica replica = getReplicaByIp (replicas,  ipreplica[i] );
+		if (replica== null)
+		{
+			logger.error("No replica for IP " + ipreplica[i]);
+			continue;
+		}
+		
+		plicateSet.add(replica);
+		}
+        return plicateSet;
+    }
+    	
+    private VEEReplica getReplicaByIp (Set<VEEReplica> replicas, String Ip)
+    {
+    	for (VEEReplica replica : replicas)
+    	{
+    		for (NIC nic : replica.getNICs()) {
+				if (!nic.getNICConf().getNetwork().getPrivateNet()) 
+				{
+					logger.info("Looking for ip " + Ip + " ip found " + nic.getIPAddresses().get(0));
+					if (nic.getIPAddresses().get(0).equals(Ip))
+					{
+						return replica;
+					}
+					
+				}
+    		}
+    	}
+    	return null;
     }
 
     private int dispatchEvent(SMControlEvent cntrlEvent)
@@ -1570,7 +1739,7 @@ public class FSM extends Thread implements Serializable {
                     }
 
                     nic.addIPAddress(replicaIP);
-
+          
                     ips.get(networkName).add(replicaIP);
                 }
             }

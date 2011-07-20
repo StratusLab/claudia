@@ -399,6 +399,7 @@ public class Parser {
 		try {
 			ovfDocuments = splitOvf();
 		} catch (Exception e1) {
+			e1.printStackTrace();
 			logger.error("Could not split OVF due to the following error: " + e1.getMessage());
 			throw new ManiParserException("Could not split OVF due to the following error: " + e1.getMessage());
 		}
@@ -472,6 +473,7 @@ public class Parser {
 					try {
 						lbManagementPort = Integer.parseInt(attributes.get(lbManagementPortAtt));
 						vee.setLbManagementPort(lbManagementPort);
+						vee.setBalancer(true);
 						balancer = vee;
 						logger.info("Balancer " + vee.getVEEName() + " " + vee.getLbManagementPort()  );
 					} catch (NumberFormatException e1) {
@@ -694,9 +696,13 @@ public class Parser {
 						String digest = null;
 
 						ReferencesType ref = envelope.getReferences();
-						List<FileType> files = ref.getFile();
+						
+						List<FileType> files = null;
+						if (ref!= null)
+					    files =ref.getFile();
+						
  
-						if (fileRef != null) {
+						if (fileRef != null&&files!=null) {
 						for (Iterator<FileType> iteratorFl = files.iterator(); iteratorFl.hasNext();) {
 							FileType fl = iteratorFl.next();
 							if (fl.getId().equals(fileRef)) {
@@ -1289,16 +1295,20 @@ public class Parser {
 									}
 
 									ReferencesType ref = envelope.getReferences();
-									List<FileType> files = ref.getFile();
-
-									if (fileRef!=null)
+									if (ref!=null)
 									{
-									for (Iterator<FileType> iteratorFl = files.iterator(); iteratorFl.hasNext();) {
-										FileType fl = iteratorFl.next();
-										if (fl.getId().equals(fileRef)) {
-											OVFReferenceUtils.addFile(references, fl);
+										List<FileType> files = ref.getFile();
+
+										if (fileRef!=null)
+										{
+										for (Iterator<FileType> iteratorFl = files.iterator(); iteratorFl.hasNext();) {
+											FileType fl = iteratorFl.next();
+											if (fl.getId().equals(fileRef)) {
+												OVFReferenceUtils.addFile(references, fl);
+											}
 										}
 									}
+									
 									}
 								}
 

@@ -103,5 +103,7 @@ public interface LoadBalancerConfigurator extends Configurator {
 	 * @return a list of existing nodes (fqn's) in the load balanacer
 	 */
 	public List<String> getNodes(String ipLb, int portLb);
+	
+	public String [] getNodeRemove(String ipLb, int portLb,  int numbernodes) throws Exception;
 
 }

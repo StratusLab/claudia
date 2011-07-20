@@ -355,7 +355,7 @@ public class ServiceApplication implements DirectoryEntry {
 	        
 	    	for(VEE vee : vees) { 
 	    		
-	    		Element veeElement = doc.createElement("Vapp");
+	    		Element veeElement = doc.createElement("VApp");
 	    		children.appendChild(veeElement);
 	    		
 	    		veeElement.setAttribute("name", vee.getFQN().toString());

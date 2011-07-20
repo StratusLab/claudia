@@ -4,11 +4,17 @@ import static com.telefonica.claudia.configmanager.common.ReturnCode.ERROR_INTER
 import static com.telefonica.claudia.configmanager.common.ReturnCode.ERROR_NOT_AVAILABLE_NODE;
 import static com.telefonica.claudia.configmanager.common.ReturnCode.SUCCESS_NODE_DELETE;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
@@ -24,6 +30,9 @@ import org.restlet.data.Request;
 import org.restlet.data.Response;
 import org.restlet.resource.ObjectRepresentation;
 import org.restlet.resource.Representation;
+import org.w3c.dom.Document;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
 
 import com.telefonica.claudia.configmanager.lb.LoadBalancerConfigurator;
 
@@ -104,17 +113,101 @@ public class LoadBalancerConfiguratorRESTImpl implements LoadBalancerConfigurato
 
 	public int removeNode(String ipLb, int portLb, String fqnNode) {
 		// Define our Restlet HTTP client.
-		Client client = new Client(Protocol.HTTP);
 		
+		
+	/*	Client client = new Client(Protocol.HTTP);
+		
+	
 		// The URI of the node
 		Reference lbUri = new Reference(Protocol.HTTP, ipLb, portLb);
-		lbUri.addSegment(fqnNode);
+		lbUri.addSegment("removeWN/");
 		
 		Response response = client.delete(lbUri);
 		response.getEntity().release();
+		
+		
+		
 		response.release();
-		return response.getStatus().getCode();
+		return response.getStatus().getCode();*/
+		return 200;
+
+		
 	}
+	
+	public String [] getNodeRemove(String ipLb, int portLb,  int numbernodes) throws Exception {
+		// Define our Restlet HTTP client.
+		Client client = new Client(Protocol.HTTP);
+		String [] ips = new String [numbernodes];
+		
+		 System.out.println ("Iclient");
+		// The URI of the node
+		Reference lbUri = new Reference(Protocol.HTTP, ipLb, portLb);
+		lbUri.addSegment("lb_server/removeWN/"+numbernodes);
+		
+		
+		Response response = client.get(lbUri);
+		String ipstext = null;
+		 Representation output = null;
+		 System.out.println ("IP text" + response + response.getStatus().isSuccess());
+	      if (response.getStatus().isSuccess()) { 
+	    	  
+	    	  
+	         if (response.isEntityAvailable()) { 
+
+	        		ipstext = response.getEntity().getText();
+					System.out.println ("IP text" + ipstext);
+	         }  
+	      }  
+	      else
+	      {
+	    	 return null;
+	      }
+
+	      
+		response.getEntity().release();
+		System.out.println (response.getStatus());
+	
+	
+		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+
+		DocumentBuilder builder = null;
+		try {
+			builder = factory.newDocumentBuilder();
+		} catch (ParserConfigurationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		System.out.println ("ipt tests" + ipstext);
+		Document doc = null;
+		
+			try {
+				doc = builder.parse(new ByteArrayInputStream(ipstext.getBytes()));
+			} catch (SAXException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
+		
+		NodeList nodes = doc.getElementsByTagName("node");
+		
+		for (int i=0; i<numbernodes; i++)
+		{
+		
+			if (nodes.item(i).getNodeName().equals("node"))
+			{
+				ips[i] = nodes.item(i).getFirstChild().getNodeValue();
+				System.out.println (ips[i]);
+			}
+		}
+		
+	//	ips[0] ="62.217.120.164";
+		return ips;
+	 
+	}
+
 	
 
 	public ArrayList<String> removeNodes(String ipLb, int portLb, List<String> nodeList) {

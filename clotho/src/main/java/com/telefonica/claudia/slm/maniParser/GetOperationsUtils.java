@@ -45,6 +45,11 @@ public class GetOperationsUtils {
 			String ip = null;
 			if (network.getIPAddresses().size()!=0)
 				ip = network.getIPAddresses().get(0);
+			else if (network.getNICConf().getNetwork().getNetworkAddresses()!=null)
+			{
+				if ( network.getNICConf().getNetwork().getNetworkAddresses()[0]!=null)
+				ip = network.getNICConf().getNetwork().getNetworkAddresses()[0];
+			}
 			Element itemnetwork = getItemElement (doc, href,  count++, 3, 0, null  ,ip);
 			virtualHardware.appendChild(itemnetwork);
 		}

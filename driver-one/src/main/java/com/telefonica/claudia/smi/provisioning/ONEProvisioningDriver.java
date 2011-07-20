@@ -971,6 +971,7 @@ public class ONEProvisioningDriver implements ProvisioningDriver {
 						if (digest == null) {
 							log.debug("md5sum digest was not found for disk " + hostRes);
 						}
+						 
 
 
 						String urlDisk = null;
@@ -1003,12 +1004,13 @@ public class ONEProvisioningDriver implements ProvisioningDriver {
 							}
 							allParametersString.append(ONE_VM_DISK_PARAM_FORMAT).append(ASSIGNATION_SYMBOL).append(format).append(MULT_CONF_SEPARATOR);
 						}
+						log.info("Driver " + driver);
 						if (driver!=null)
 							allParametersString.append(ONE_VM_DISK_PARAM_DRIVER).append(ASSIGNATION_SYMBOL).append(driver).append(MULT_CONF_SEPARATOR);
 
 
 
-
+                       
 						if (digest!=null)
 							allParametersString.append(ONE_VM_DISK_PARAM_DIGEST).append(ASSIGNATION_SYMBOL).append(digest).append(MULT_CONF_SEPARATOR);
 						allParametersString.append(ONE_VM_DISK_PARAM_SIZE).append(ASSIGNATION_SYMBOL).append(capacity);
@@ -1194,91 +1196,112 @@ public class ONEProvisioningDriver implements ProvisioningDriver {
 
 	}
 
-	protected static String TCloud2ONENet(String xml) throws Exception {
+	protected  String TCloud2ONENet(String xml) throws Exception {
 
 
 		try {
 			DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
 			Document doc = builder.parse(new ByteArrayInputStream(xml.getBytes()));
 
-			//	log.debug("PONG3 doc" +doc.getTextContent()+ "\n");
 
 			Element root = (Element) doc.getFirstChild();
 			String fqn = root.getAttribute(TCloudConstants.ATTR_NETWORK_NAME);
-			//	log.debug("PONG3 fqn" + fqn + "\n");
-
+			StringBuffer allParametersString  = new StringBuffer();
+			
 			NodeList macEnabled = doc.getElementsByTagName(TCloudConstants.TAG_NETWORK_MAC_ENABLED);
 			Element firstmacenElement = (Element)macEnabled.item(0);
+			String macenabled = null;
+			if (firstmacenElement!=null)
+			{
 			NodeList textMacenList = firstmacenElement.getChildNodes();
-			String macenabled= ((Node)textMacenList.item(0)).getNodeValue().trim();
+			if (((Node)textMacenList.item(0))!=null)
+			 macenabled= ((Node)textMacenList.item(0)).getNodeValue().trim();
+			}
 
 			NodeList netmaskList = doc.getElementsByTagName(TCloudConstants.TAG_NETWORK_NETMASK);
 			NodeList baseAddressList = doc.getElementsByTagName(TCloudConstants.TAG_NETWORK_BASE_ADDRESS);
-
-			StringBuffer allParametersString  = new StringBuffer();
-
-			String privateNet =  null;
-
-			if (root.getAttribute(TCloudConstants.ATTR_NETWORK_TYPE).equals("true"))
-				privateNet =   "private";
-			else
-				privateNet ="public";
-
-
-
-
-			// If there is a netmask, calculate the size of the net counting it's bits.
-			if (netmaskList.getLength() >0) {
-				Element netmask = (Element) netmaskList.item(0);
-
-				if (!netmask.getTextContent().matches("\\d+\\.\\d+\\.\\d+\\.\\d+"))
-					throw new IllegalArgumentException("Wrong IPv4 format. Expected example: 192.168.0.0 Got: " + netmask.getTextContent());
-
-				String[] ipBytes = netmask.getTextContent().split("\\.");
-
-				short[] result = new short[4];
-				for (int i=0; i < 4; i++) {
-					try {
-						result[i] = Short.parseShort(ipBytes[i]);
-						if (result[i]>255) throw new NumberFormatException("Should be in the range [0-255].");
-					} catch (NumberFormatException nfe) {
-						throw new IllegalArgumentException("Number out of bounds. Bytes should be on the range 0-255.");
-					}
-				}
-
-				// The network can host 2^n where n is the number of bits in the network address,
-				// substracting the broadcast and the network value (all 1s and all 0s).
-				int size = (int) Math.pow(2, 32.0-getBitNumber(result));
-
-				if (size < 8)
-					size = 8;
-				else
-					size -= 2;
-				if (macenabled.equals("false"))
-					allParametersString.append(ONE_NET_SIZE).append(ASSIGNATION_SYMBOL).append(size).append(LINE_SEPARATOR);
-			}
-
-			if (baseAddressList.getLength()>0) {
-				if (macenabled.equals("false"))
-					allParametersString.append(ONE_NET_ADDRESS).append(ASSIGNATION_SYMBOL).append(baseAddressList.item(0).getTextContent()).append(LINE_SEPARATOR);
-			}
-
-			// Translate the simple data to RPC format
-			allParametersString.append(ONE_NET_NAME).append(ASSIGNATION_SYMBOL).append(fqn).append(LINE_SEPARATOR);
-
-			// Add the net Type
-			if (macenabled.equals("false")) {
-				allParametersString.append(ONE_NET_TYPE).append(ASSIGNATION_SYMBOL).append("RANGED").append(LINE_SEPARATOR);
-			}
-			else {
-				allParametersString.append(ONE_NET_TYPE).append(ASSIGNATION_SYMBOL).append("FIXED").append(LINE_SEPARATOR);
-			}
-			allParametersString.append(ONE_NET_BRIDGE).append(ASSIGNATION_SYMBOL).append(networkBridge).append(LINE_SEPARATOR);
-
-
+			
 			NodeList ipLeaseList = doc.getElementsByTagName(TCloudConstants.TAG_NETWORK_IPLEASES);
+			
+			if (baseAddressList.getLength()==0)
+			{
+				allParametersString.append(getTCloud2FixedONENet (fqn));
+			}
+			else if (ipLeaseList.getLength()==0)
+			{
+				int size = 0;
+				if (netmaskList.getLength() >0)
+				{
+				   size = getSizeNetwork ((Element) netmaskList.item(0));
+				}
+				allParametersString.append(getTCloud2RangedONENet (fqn, size, baseAddressList.item(0).getTextContent()));
+			}
+			else if (ipLeaseList.getLength()>0)
+			{
+				int size = 0;
+				if (netmaskList.getLength() >0)
+				{
+				   size = getSizeNetwork ((Element) netmaskList.item(0));
+				}
+				allParametersString.append(getTCloud2IPElasedONENet (fqn, size, baseAddressList.item(0).getTextContent(), ipLeaseList));
+			}
+			
+			System.out.println("Network data sent:\n\n" + allParametersString.toString() + "\n\n");
 
+			return allParametersString.toString();
 
+		} catch (IOException e1) {
+			System.out.println("OVF of the virtual machine was not well formed or it contained some errors.");
+			throw new Exception("OVF of the virtual machine was not well formed or it contained some errors: " + e1.getMessage());
+		} catch (ParserConfigurationException e) {
+			System.out.println("Error configuring parser: " + e.getMessage());
+			throw new Exception("Error configuring parser: " + e.getMessage());
+		} catch (FactoryConfigurationError e) {
+			System.out.println("Error retrieving parser: " + e.getMessage());
+			throw new Exception("Error retrieving parser: " + e.getMessage());
+		} catch (Exception e) {
+			e.printStackTrace();
+			System.out.println("Error configuring a XML Builder.");
+			throw new Exception("Error configuring a XML Builder: " + e.getMessage());
+		}
+	}
+	
+	public String getTCloud2FixedONENet (String fqn)
+	{
+		StringBuffer allParametersString  = new StringBuffer();
+		// Translate the simple data to RPC format
+		allParametersString.append(ONE_NET_NAME).append(ASSIGNATION_SYMBOL).append(fqn).append(LINE_SEPARATOR);
+		allParametersString.append(ONE_NET_TYPE).append(ASSIGNATION_SYMBOL).append("FIXED").append(LINE_SEPARATOR);
+		allParametersString.append(ONE_NET_BRIDGE).append(ASSIGNATION_SYMBOL).append(networkBridge).append(LINE_SEPARATOR);
+		return allParametersString.toString();
+	}
+	
+	public String getTCloud2RangedONENet (String fqn, int size, String network)
+	{
+		
+		StringBuffer allParametersString  = new StringBuffer();
+		// Translate the simple data to RPC format
+		allParametersString.append(ONE_NET_NAME).append(ASSIGNATION_SYMBOL).append(fqn).append(LINE_SEPARATOR);
+		allParametersString.append(ONE_NET_TYPE).append(ASSIGNATION_SYMBOL).append("RANGED").append(LINE_SEPARATOR);
+		allParametersString.append(ONE_NET_BRIDGE).append(ASSIGNATION_SYMBOL).append(networkBridge).append(LINE_SEPARATOR);
+		if (size != 0)
+		  allParametersString.append(ONE_NET_SIZE).append(ASSIGNATION_SYMBOL).append(size).append(LINE_SEPARATOR);
+		allParametersString.append(ONE_NET_ADDRESS).append(ASSIGNATION_SYMBOL).append(network).append(LINE_SEPARATOR);
+		return allParametersString.toString();
+	}
+	
+	public String getTCloud2IPElasedONENet (String fqn, int size, String network, NodeList ipLeaseList)
+	{
+		StringBuffer allParametersString  = new StringBuffer();
+		// Translate the simple data to RPC format
+		allParametersString.append(ONE_NET_NAME).append(ASSIGNATION_SYMBOL).append(fqn).append(LINE_SEPARATOR);
+		allParametersString.append(ONE_NET_TYPE).append(ASSIGNATION_SYMBOL).append("FIXED").append(LINE_SEPARATOR);
+		allParametersString.append(ONE_NET_BRIDGE).append(ASSIGNATION_SYMBOL).append(networkBridge).append(LINE_SEPARATOR);
+		if (size != 0)
+		  allParametersString.append(ONE_NET_SIZE).append(ASSIGNATION_SYMBOL).append(size).append(LINE_SEPARATOR);
+	//	allParametersString.append(ONE_NET_ADDRESS).append(ASSIGNATION_SYMBOL).append(network).append(LINE_SEPARATOR);
+		
+		
 			for (int i=0; i<ipLeaseList .getLength(); i++){
 
 				Node firstIpLeaseNode = ipLeaseList.item(i);
@@ -1302,28 +1325,39 @@ public class ONEProvisioningDriver implements ProvisioningDriver {
 				}
 
 			}
-
-
-
-
-			log.debug("Network data sent:\n\n" + allParametersString.toString() + "\n\n");
-
-			return allParametersString.toString();
-
-		} catch (IOException e1) {
-			log.error("OVF of the virtual machine was not well formed or it contained some errors.");
-			throw new Exception("OVF of the virtual machine was not well formed or it contained some errors: " + e1.getMessage());
-		} catch (ParserConfigurationException e) {
-			log.error("Error configuring parser: " + e.getMessage());
-			throw new Exception("Error configuring parser: " + e.getMessage());
-		} catch (FactoryConfigurationError e) {
-			log.error("Error retrieving parser: " + e.getMessage());
-			throw new Exception("Error retrieving parser: " + e.getMessage());
-		} catch (Exception e) {
-			log.error("Error configuring a XML Builder.");
-			throw new Exception("Error configuring a XML Builder: " + e.getMessage());
-		}
+		return allParametersString.toString();
 	}
+
+    public static int getSizeNetwork (Element netmask)
+    {
+    	
+
+			if (!netmask.getTextContent().matches("\\d+\\.\\d+\\.\\d+\\.\\d+"))
+				throw new IllegalArgumentException("Wrong IPv4 format. Expected example: 192.168.0.0 Got: " + netmask.getTextContent());
+
+			String[] ipBytes = netmask.getTextContent().split("\\.");
+
+			short[] result = new short[4];
+			for (int i=0; i < 4; i++) {
+				try {
+					result[i] = Short.parseShort(ipBytes[i]);
+					if (result[i]>255) throw new NumberFormatException("Should be in the range [0-255].");
+				} catch (NumberFormatException nfe) {
+					throw new IllegalArgumentException("Number out of bounds. Bytes should be on the range 0-255.");
+				}
+			}
+
+			// The network can host 2^n where n is the number of bits in the network address,
+			// substracting the broadcast and the network value (all 1s and all 0s).
+			int size = (int) Math.pow(2, 32.0-getBitNumber(result));
+
+			if (size < 8)
+				size = 8;
+			else
+				size -= 2;
+			
+			return size ;
+    }
 
 	protected static String ONENet2TCloud(String ONETemplate) {
 		return "";

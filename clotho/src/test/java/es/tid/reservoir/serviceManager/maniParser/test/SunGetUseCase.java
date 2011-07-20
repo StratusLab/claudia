@@ -40,8 +40,11 @@ import com.telefonica.claudia.slm.deployment.VEE;
 import com.telefonica.claudia.slm.deployment.VEEReplica;
 import com.telefonica.claudia.slm.deployment.hwItems.Disk;
 import com.telefonica.claudia.slm.deployment.hwItems.NIC;
+import com.telefonica.claudia.slm.deployment.hwItems.NICConf;
+import com.telefonica.claudia.slm.deployment.hwItems.Network;
 import com.telefonica.claudia.slm.maniParser.ManiParserException;
 import com.telefonica.claudia.slm.maniParser.Parser;
+import com.telefonica.claudia.slm.paas.PaasUtils;
 import com.telefonica.claudia.slm.serviceconfiganalyzer.ServiceConfigurationAnalyzer;
 
 
@@ -80,7 +83,33 @@ public class SunGetUseCase {
 
 			master.registerVEEReplica(vee1);
 			executor.registerVEEReplica(vee2);
+			
+			for (VEE vee: sa.getVEEs())
+			{
+				for (NICConf nic: vee.getNICsConf())
+				{
+					Network net = nic.getNetwork();
+					net.setNetworkAddresses( new String [] {"10.76.56.54", "245.456.456.456"});
+				}
+			}
 			 Document doc = sa.toXML();
+			 
+			 OutputFormat format    = new OutputFormat (doc); 
+	            // as a String
+	            StringWriter stringOut = new StringWriter ();    
+	            XMLSerializer serial   = new XMLSerializer (stringOut, 
+	                                                        format);
+	            try {
+	    			serial.serialize(doc);
+	    		} catch (IOException e) {
+	    			// TODO Auto-generated catch block
+	    			e.printStackTrace();
+	    		}
+	            // Display the XML
+	            System.out.println("XML " + stringOut.toString());
+	            
+			 PaasUtils paas = new PaasUtils();
+		//	 paas.getPaaSIpFromXML (stringOut.toString());
 		/*	for(VEE vee : sa.getVEEs()) { 
 	    		
 				VEE veetest = vee;
@@ -159,19 +188,7 @@ public class SunGetUseCase {
 			veeReplicaElement.appendChild(virtualHardware);*/
 
 		
-           OutputFormat format    = new OutputFormat (doc); 
-            // as a String
-            StringWriter stringOut = new StringWriter ();    
-            XMLSerializer serial   = new XMLSerializer (stringOut, 
-                                                        format);
-            try {
-    			serial.serialize(doc);
-    		} catch (IOException e) {
-    			// TODO Auto-generated catch block
-    			e.printStackTrace();
-    		}
-            // Display the XML
-            System.out.println("XML " + stringOut.toString());
+           
 		} catch (Throwable t) {
 			t.printStackTrace();
 			fail(t.getMessage());			
