@@ -1,4 +1,4 @@
-#!/usr/bin/python -tt
+#!/usr/bin/python
 # -*- coding: utf-8 -*-
 import time, sys, commands, urllib2, logging, subprocess
 from xml.dom.minidom import parse
