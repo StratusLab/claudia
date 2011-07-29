@@ -652,7 +652,10 @@ public class ONEProvisioningDriver implements ProvisioningDriver {
 	}
 
 
-	protected String TCloud2ONEVM(String xml, String veeFqn) throws Exception {
+	
+
+	public String TCloud2ONEVM(String xml,
+	 String veeFqn) throws Exception {
 
 		try {
 			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
@@ -715,7 +718,9 @@ public class ONEProvisioningDriver implements ProvisioningDriver {
 				VirtualSystemType vs = (VirtualSystemType) entityInstance;
 
 				VirtualHardwareSectionType vh = OVFEnvelopeUtils.getSection(vs, VirtualHardwareSectionType.class);
-				String virtualizationType = vh.getSystem().getVirtualSystemType().getValue();
+				String virtualizationType = "kvm";
+				if (vh.getSystem()!= null)
+				 virtualizationType = vh.getSystem().getVirtualSystemType().getValue();
 
 				String scriptListProp = null;
 				String scriptListTemplate = "";
@@ -770,8 +775,10 @@ public class ONEProvisioningDriver implements ProvisioningDriver {
 				StringBuffer allParametersString  = new StringBuffer();
 
 				// Migrability ....
-
+    
 				allParametersString.append(ONE_VM_NAME).append(ASSIGNATION_SYMBOL).append(replicaName).append(LINE_SEPARATOR);
+				
+			
 				if (!virtualizationType.toLowerCase().equals("xenhvm"))
 					allParametersString.append("GRAPHICS").append(ASSIGNATION_SYMBOL).append("[type=\"vnc\",listen=\"0.0.0.0\"]").append(LINE_SEPARATOR);
 					
@@ -786,7 +793,7 @@ public class ONEProvisioningDriver implements ProvisioningDriver {
 					allParametersString.append("REQUIREMENTS").append(ASSIGNATION_SYMBOL).append("\"HYPERVISOR=\\\"xen\\\"\"").append(LINE_SEPARATOR);
 				}
 				allParametersString.append(ONE_VM_OS).append(ASSIGNATION_SYMBOL).append(MULT_CONF_LEFT_DELIMITER);
-
+				
 
 				String diskRoot;
 				if (virtualizationType.toLowerCase().equals("kvm")) {
@@ -836,6 +843,7 @@ public class ONEProvisioningDriver implements ProvisioningDriver {
 				char sdaId = 'a';
 
 				List<RASDType> items = vh.getItem();
+				boolean ispaasaware = true;
 				for (Iterator<RASDType> iteratorRASD = items.iterator(); iteratorRASD.hasNext();) {
 					RASDType item = (RASDType) iteratorRASD.next();
 
@@ -901,6 +909,7 @@ public class ONEProvisioningDriver implements ProvisioningDriver {
 									fileRef = disk.getFileRef();
 									capacity = disk.getCapacity();
 									format = disk.getFormat();
+									ispaasaware = true;
 
 									break;
 								}
@@ -1027,15 +1036,32 @@ public class ONEProvisioningDriver implements ProvisioningDriver {
 						String fqnNet = URICreation.getService(veeFqn) + ".networks." + item.getConnection().get(0).getValue();
 						allParametersString.append(ONE_VM_NIC).append(ASSIGNATION_SYMBOL).append(MULT_CONF_LEFT_DELIMITER).append(LINE_SEPARATOR);
 
-						allParametersString.append(ONE_NET_BRIDGE).append(ASSIGNATION_SYMBOL).append(networkBridge).append(MULT_CONF_SEPARATOR).append(LINE_SEPARATOR).
-						append(ONE_VM_NIC_PARAM_NETWORK).append(ASSIGNATION_SYMBOL).append(fqnNet).append(MULT_CONF_SEPARATOR).append(LINE_SEPARATOR).
-						append(ONE_VM_NIC_PARAM_IP).append(ASSIGNATION_SYMBOL).append(ipOnNetworkMap.get(fqnNet)).append(LINE_SEPARATOR).
-						append(MULT_CONF_RIGHT_DELIMITER).append(LINE_SEPARATOR);
+						allParametersString.append(ONE_NET_BRIDGE).append(ASSIGNATION_SYMBOL).append(networkBridge).append(MULT_CONF_SEPARATOR).append(LINE_SEPARATOR);
+						if (fqnNet.indexOf("public")!=-1)
+						{
+							allParametersString.append(ONE_VM_NIC_PARAM_NETWORK).append(ASSIGNATION_SYMBOL).append("public");
+						}
+						else
+							allParametersString.append(ONE_VM_NIC_PARAM_NETWORK).append(ASSIGNATION_SYMBOL).append(fqnNet);
+						if (ipOnNetworkMap.get(fqnNet)!=null)
+						  allParametersString.append(MULT_CONF_SEPARATOR).append(LINE_SEPARATOR).append(ONE_VM_NIC_PARAM_IP).append(ASSIGNATION_SYMBOL).append(ipOnNetworkMap.get(fqnNet)).append(LINE_SEPARATOR);
+						 allParametersString.append(MULT_CONF_RIGHT_DELIMITER).append(LINE_SEPARATOR);
 
 						break;
 					default:
 						throw new IllegalArgumentException("unknown hw type: " + rsType);
 					}
+				}
+				
+				if (ispaasaware)
+				{
+					allParametersString.append(ONE_VM_DISK).append(ASSIGNATION_SYMBOL).append(MULT_CONF_LEFT_DELIMITER);
+				    allParametersString.append(ONE_VM_DISK_PARAM_IMAGE).append(ASSIGNATION_SYMBOL).append("http://appliances.stratuslab.eu/images/base/ubuntu-10.04-amd64-base/1.4/ubuntu-10.04-amd64-base-1.4.img.gz").append(MULT_CONF_SEPARATOR);
+
+					allParametersString.append(ONE_VM_DISK_PARAM_TARGET).append(ASSIGNATION_SYMBOL).append("sdc").append(MULT_CONF_SEPARATOR);
+					
+					allParametersString.append(ONE_VM_DISK_PARAM_SIZE).append(ASSIGNATION_SYMBOL).append(512);
+					allParametersString.append(MULT_CONF_RIGHT_DELIMITER).append(LINE_SEPARATOR);
 				}
 
 				//allParametersString.append(LINE_SEPARATOR).append(DEBUGGING_CONSOLE).append(LINE_SEPARATOR);
@@ -1055,6 +1081,7 @@ public class ONEProvisioningDriver implements ProvisioningDriver {
 			}
 
 		} catch (IOException e1) {
+			
 			log.error("OVF of the virtual machine was not well formed or it contained some errors.");
 			throw new Exception("OVF of the virtual machine was not well formed or it contained some errors: " + e1.getMessage());
 		} catch (ParserConfigurationException e) {
@@ -1065,6 +1092,7 @@ public class ONEProvisioningDriver implements ProvisioningDriver {
 			throw new Exception("Error retrieving parser: " + e.getMessage());
 		} catch (Exception e) {
 			log.error("Error configuring a XML Builder.");
+			e.printStackTrace();
 			throw new Exception("Error configuring a XML Builder: " + e.getMessage());
 		}
 	}
@@ -1572,7 +1600,7 @@ public class ONEProvisioningDriver implements ProvisioningDriver {
 			arch = ((String) prop.get(ARCH_PROPERTY));
 		}
 
-		if (prop.containsKey(Main.CUSTOMIZATION_PORT_PROPERTY)) {
+		if (prop.containsKey("com.telefonica.claudia.customization.port")) {
 			customizationPort = ((String) prop.get(Main.CUSTOMIZATION_PORT_PROPERTY));
 		}
 
