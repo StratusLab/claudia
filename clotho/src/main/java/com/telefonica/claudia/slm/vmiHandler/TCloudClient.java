@@ -31,6 +31,7 @@ package com.telefonica.claudia.slm.vmiHandler;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.StringWriter;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -51,8 +52,11 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
+import com.sun.org.apache.xml.internal.serialize.OutputFormat;
+import com.sun.org.apache.xml.internal.serialize.XMLSerializer;
 import com.telefonica.claudia.slm.common.SMConfiguration;
 import com.telefonica.claudia.slm.deployment.ServiceApplication;
+import com.telefonica.claudia.slm.deployment.VEE;
 import com.telefonica.claudia.slm.deployment.VEEReplica;
 import com.telefonica.claudia.slm.deployment.hwItems.NIC;
 import com.telefonica.claudia.slm.deployment.hwItems.Network;
@@ -62,6 +66,8 @@ import com.telefonica.claudia.slm.vmiHandler.exceptions.NotEnoughResourcesExcept
 import com.telefonica.claudia.slm.vmiHandler.exceptions.VEEReplicaDescriptionMalformedException;
 import com.telefonica.claudia.smi.TCloudConstants;
 import com.telefonica.claudia.smi.URICreation;
+
+import es.test.GetVEE;
 
 public class TCloudClient implements VMIHandler {
 
@@ -340,6 +346,7 @@ public class TCloudClient implements VMIHandler {
         Element netConfig = doc.createElement(TCloudConstants.TAG_NETWORK_CONFIG);
         netConfigSection.appendChild(netConfig);
 
+        
         Element aspectsSection = doc.createElement(TCloudConstants.TAG_ASPECTS_SECTION);
         instantiationParams.appendChild(aspectsSection);
 
@@ -350,23 +357,41 @@ public class TCloudClient implements VMIHandler {
         aspectsSection.appendChild(aspect);
 
         for (NIC nicItr: actualReplica.getNICs()) {
+        	  if (nicItr != null && nicItr.getIPAddresses()!= null && nicItr.getIPAddresses().size()>0 
+              		&& nicItr.getIPAddresses().get(0)!= null)
+              {
             Element netConfigAssociation = doc.createElement(TCloudConstants.TAG_NETWORK_ASSOCIATION);
             netConfigSection.appendChild(netConfigAssociation);
             netConfigSection.setAttribute(TCloudConstants.ATTR_NETWORK_ASSOCIATION_HREF, serverURL + URICreation.getURINet(nicItr.getNICConf().getNetwork().getFQN().toString()));
 
-            Element property = doc.createElement(TCloudConstants.TAG_ASPECT_PROPERTY);
-            aspect.appendChild(property);
-            property.setAttribute("type", "string");
+            
+            	Element property = doc.createElement(TCloudConstants.TAG_ASPECT_PROPERTY);
+                aspect.appendChild(property);
+                property.setAttribute("type", "string");
 
-            Element key = doc.createElement(TCloudConstants.TAG_ASPECT_KEY);
-            key.appendChild(doc.createTextNode(nicItr.getNICConf().getNetwork().getFQN().toString()));
-            property.appendChild(key);
-
-            Element value = doc.createElement(TCloudConstants.TAG_ASPECT_VALUE);
+                Element key = doc.createElement(TCloudConstants.TAG_ASPECT_KEY);
+                key.appendChild(doc.createTextNode(nicItr.getNICConf().getNetwork().getFQN().toString()));
+                property.appendChild(key);
+                
+            	Element value = doc.createElement(TCloudConstants.TAG_ASPECT_VALUE);
             value.appendChild(doc.createTextNode(nicItr.getIPAddresses().get(0)));
             property.appendChild(value);
+            }
         }
 
+        OutputFormat format    = new OutputFormat (doc); 
+        // as a String
+        StringWriter stringOut = new StringWriter ();    
+        XMLSerializer serial   = new XMLSerializer (stringOut, 
+                                                    format);
+        try {
+			serial.serialize(doc);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+        // Display the XML
+        System.out.println("XML " + stringOut.toString());
         return doc;
     }
 
@@ -403,6 +428,7 @@ public class TCloudClient implements VMIHandler {
             } catch (ParserConfigurationException e) {
                 throw new VEEReplicaDescriptionMalformedException(e.getMessage(), actualReplica);
             }
+           
 
             // Call the server with the URI and the data
             Response response = client.post(urlReplica, data);
@@ -592,11 +618,66 @@ public class TCloudClient implements VMIHandler {
         // TODO Auto-generated method stub
         return null;
     }
+    
 
     public Set<VEEReplica> getVEEReplicas() throws CommunicationErrorException {
         // TODO Auto-generated method stub
         return null;
     }
+    
+    public String getVEEReplicaXML (VEE veeReplica)
+    throws CommunicationErrorException, AccessDeniedException {
+    	
+        GetVEE vee = new GetVEE ();
+		String fqn = veeReplica.getFQN().toString();
+		String ip = vee.getIp(fqn);
+		Document doc = vee.obtainXMLVEE (fqn,ip);
+		String text = vee.tooString(doc);
+		if (true)
+		return text;
+		
+    	Reference urlReplica = new Reference(serverURL + URICreation.getURINet(veeReplica.getFQN().toString()));
+
+        // Call the server with the URI and the data
+        Response response = client.get(urlReplica);
+
+        // Depending on the response code, return with an error, or wait for a response
+        switch (response.getStatus().getCode()) {
+
+            case 401:    // Unauthorized
+            case 403:    // Forbidden
+                // Throw an Access Denied Exception
+                logger.error("Not enough privileges to access the VM information.");
+                throw new AccessDeniedException(response.getStatus().getDescription(), null, null);
+
+            case 400:    // Bad Request
+            case 404:    // Not found
+                logger.error("The resource was not found on the server; the tcloud server may be misconfigured, or the URL may be wrong.");
+                throw new CommunicationErrorException(response.getStatus().getDescription(), new Exception(response.getStatus().getName()));
+
+            case 501:
+            case 500:
+                logger.error("Internal error in the VEEM tcloud server: " + response.getStatus().getDescription());
+                throw new CommunicationErrorException(response.getStatus().getDescription(), new Exception(response.getStatus().getName()));
+
+            case 202:
+            case 201:
+            case 200:
+                logger.info("Operation suceesfully done.");
+                
+                try {
+                    Document responseXml = response.getEntityAsDom().getDocument();
+                    return com.telefonica.claudia.slm.paas.PaasUtils.tooString(responseXml);
+                } 
+                catch (Throwable e) 
+                {
+                       throw new CommunicationErrorException("Internal error while decoding the answer", e);
+                }
+                    
+                
+        }
+        return null;
+   }
 
     public void sendACD(ServiceApplication sa) {
         // TODO Auto-generated method stub

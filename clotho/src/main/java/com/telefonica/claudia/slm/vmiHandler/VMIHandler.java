@@ -33,6 +33,7 @@ import java.util.Map;
 import java.util.Set;
 
 import com.telefonica.claudia.slm.deployment.ServiceApplication;
+import com.telefonica.claudia.slm.deployment.VEE;
 import com.telefonica.claudia.slm.deployment.VEEReplica;
 import com.telefonica.claudia.slm.deployment.hwItems.Network;
 import com.telefonica.claudia.slm.vmiHandler.exceptions.AccessDeniedException;
@@ -66,6 +67,8 @@ public interface VMIHandler {
             AccessDeniedException, VEEReplicaDescriptionMalformedException;
 
     public Set<VEEReplica> getVEEReplicas() throws CommunicationErrorException;
+    
+    public String getVEEReplicaXML(VEE vee) throws CommunicationErrorException, AccessDeniedException;
 
     public VEEReplica getVEEReplicaHwState(VEEReplica veeReplica)
             throws CommunicationErrorException;

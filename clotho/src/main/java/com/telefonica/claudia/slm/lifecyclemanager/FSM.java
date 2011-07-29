@@ -178,7 +178,7 @@ public class FSM extends Thread implements Serializable {
     /**
      * Service application the FSM manages.
      */
-    private ServiceApplication sap;
+    public ServiceApplication sap;
 
     /**
      * URL of the OVF Descriptor used to deploy the service.
@@ -223,13 +223,13 @@ public class FSM extends Thread implements Serializable {
      * replica once it is deployed (whether it is the first deployement or a
      * elasticity action).
      */
-    private Parser parser;
+    public Parser parser;
 
     /**
      * VMI client used to comunicate with the underlying layer in order to
      * deploy replicas and other resources.
      */
-    private VMIHandler vmi = null;
+    public VMIHandler vmi = null;
 
     // Deployment information
     // --------------------------------------------------------------------------------------------
@@ -662,7 +662,7 @@ public class FSM extends Thread implements Serializable {
         return false;
     }
 
-    private boolean startService() {
+    public boolean startService() {
 
         // in this case we use an Array so as to sort it properly
         int g = 0;
@@ -678,9 +678,12 @@ public class FSM extends Thread implements Serializable {
         Arrays.sort(veeArray);
 
         // First of all, check the needed networks have been created.
+        if (SMConfiguration.getInstance().getIpManagement())
+        {
         if (!checkAndDeployNetworks()) {
             abort("Network creation error");
             return false;
+        }
         }
         
         
@@ -1693,10 +1696,16 @@ public class FSM extends Thread implements Serializable {
             .getNumberOfIpsPerNetwork(originalVEE.getVEEName());
 
             for (Network net : sap.getNetworks()) {
+            	if (net.getNetworkAddresses()!=null && net.getNetworkAddresses()[1]!=null)
                 masks.put(net.getName(), net.getNetworkAddresses()[1]);
+            	if (net.getNetworkAddresses()!=null &&net.getNetworkAddresses().length>2)
                 dnss.put(net.getName(), net.getNetworkAddresses()[2]);
+            	if (net.getNetworkAddresses()!=null &&net.getNetworkAddresses().length>3)
                 gateways.put(net.getName(), net.getNetworkAddresses()[3]);
             }
+            
+            if (SMConfiguration.getInstance().getIpManagement())
+            {
 
             for (NIC nic : veeReplica.getNICs()) {
                 String networkName = nic.getNICConf().getNetwork().getName();
@@ -1742,6 +1751,7 @@ public class FSM extends Thread implements Serializable {
           
                     ips.get(networkName).add(replicaIP);
                 }
+            }
             }
 
             HashMap<String, HashMap<String, String>> entryPoints = new HashMap<String, HashMap<String, String>>();

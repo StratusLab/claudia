@@ -73,6 +73,8 @@ import org.dmtf.schemas.ovf.envelope._1.VirtualSystemCollectionType;
 import org.dmtf.schemas.ovf.envelope._1.VirtualSystemType;
 import org.dmtf.schemas.ovf.envelope._1.ProductSectionType.Property;
 import org.dmtf.schemas.ovf.envelope._1.StartupSectionType.Item;
+import org.dmtf.schemas.ovf.environment._1.PropertySectionType;
+
 
 import com.abiquo.ovf.OVFEnvelopeUtils;
 import com.abiquo.ovf.OVFEnvironmentUtils;
@@ -121,7 +123,9 @@ import com.telefonica.claudia.slm.deployment.hwItems.DiskConf;
 import com.telefonica.claudia.slm.deployment.hwItems.MemoryConf;
 import com.telefonica.claudia.slm.deployment.hwItems.NICConf;
 import com.telefonica.claudia.slm.deployment.hwItems.Network;
+import com.telefonica.claudia.slm.deployment.hwItems.Product;
 import com.telefonica.claudia.slm.lifecyclemanager.DeploymentException;
+import com.telefonica.claudia.slm.paas.PaasUtils;
 
 
 public class Parser {
@@ -139,6 +143,8 @@ public class Parser {
 		Logger.getLogger("com.telefonica.claudia.slm.maniParser").addAppender(new ConsoleAppender(new PatternLayout("%-5p [%t] %c{2}: %m%n"), "System.out"));
 	}
 
+	public Parser ()
+	{}
 	/**
 	 * Class constructor.
 	 * 
@@ -434,6 +440,9 @@ public class Parser {
 				logger.debug("creating VEE name: " + vs.getId());
 
 				vee.setOvfRepresentation(ovfDocuments.get(vs.getId()));
+				
+				PaasUtils paas = new PaasUtils(logger);
+				paas.addProductsToVEE (vs,vee);
 
 				/* Elasticity bounds and default instances value */
 				/*
@@ -536,7 +545,9 @@ public class Parser {
 				vee.setMinReplicas(min);
 				vee.setMaxReplicas(max);
 				vee.setUUID(uuid);
-
+				
+				
+                 
 
 				/* Set deployment order */
 				StartupSectionType stup = null;
@@ -563,14 +574,22 @@ public class Parser {
 				}
 
 				/* Virtual system type */
-				String type = vh.getSystem().getVirtualSystemType().getValue();
-				logger.debug("virt-tech = " + type);
+				String type = null;
+				if (vh.getSystem()!=null && vh.getSystem().getVirtualSystemType()!= null)
+				{
+				  type = vh.getSystem().getVirtualSystemType().getValue();
+				  logger.debug("virt-tech = " + type);
+				}
 
+				
+				
 				/*
 				 * CIM_VirtualSystemSettingData VirtualSystemType property does
 				 * not define the actual text identifies, so we based on OVF
 				 * documentation examples or making it up
 				 */
+				if (type != null)
+				{
 				if (type.startsWith("vmx")) {
 					/* vmx-4 is based on OVF spec 1.0.0d line 611 */
 					vee.setVirtType(VEE.VirtualizationTechnologyType.VMWARE);
@@ -582,6 +601,7 @@ public class Parser {
 					vee.setVirtType(VEE.VirtualizationTechnologyType.KVM);
 				} else {
 					throw new ManiParserException("unrecognized virtual system type: " + type);
+				}
 				}
 
 				/*
@@ -792,6 +812,11 @@ public class Parser {
 					case OVFEnvelopeUtils.ResourceTypeNIC:
 
 						String netName = item.getConnection().get(0).getValue();
+						
+						if (netName.endsWith("public"))
+						{
+							netName="public";
+						}
 
 						Network net = sa.getNetworkByName(netName);
 
@@ -919,6 +944,8 @@ public class Parser {
 		} //End else-if
 
 	}
+	
+	
 
 	/**
 	 * builds the rule vector

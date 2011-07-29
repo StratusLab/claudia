@@ -60,6 +60,7 @@ import com.telefonica.claudia.slm.deployment.hwItems.CPUConf;
 import com.telefonica.claudia.slm.deployment.hwItems.DiskConf;
 import com.telefonica.claudia.slm.deployment.hwItems.MemoryConf;
 import com.telefonica.claudia.slm.deployment.hwItems.NICConf;
+import com.telefonica.claudia.slm.deployment.hwItems.Product;
 import com.telefonica.claudia.slm.maniParser.GetOperationsUtils;
 import com.telefonica.claudia.slm.naming.DirectoryEntry;
 import com.telefonica.claudia.slm.naming.FQN;
@@ -77,6 +78,8 @@ public class VEE implements Comparable, DirectoryEntry {
 	
     private String veeName = null;
     
+
+    
     @ManyToOne
     private ServiceApplication serviceApplication = null;
     
@@ -88,6 +91,9 @@ public class VEE implements Comparable, DirectoryEntry {
     
     @OneToMany(cascade=CascadeType.ALL)
     private List<DiskConf> disksConf = new ArrayList<DiskConf>();
+    
+    @OneToMany(cascade=CascadeType.ALL)
+    private List<Product> products = new ArrayList<Product>();
     
     @OneToMany(cascade=CascadeType.ALL)
     private List<CPUConf> cpusConf = new ArrayList<CPUConf>();
@@ -197,6 +203,18 @@ public class VEE implements Comparable, DirectoryEntry {
     public List<DiskConf> getDisksConf() {
         return disksConf;
     }
+    
+    public void addProduct(Product product) {
+		System.out.println(" +++++ Product " + product.getProductName());
+		products.add(product);
+    }
+    
+    public List<Product> getProducts() {
+        return products;
+    }
+    
+    
+    
     
     public void removeDiskConf(DiskConf diskConf){
     	if (disksConf.remove(diskConf))

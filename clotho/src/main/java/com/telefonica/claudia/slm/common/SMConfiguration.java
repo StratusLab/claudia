@@ -162,6 +162,8 @@ public class SMConfiguration extends Properties {
 	
 	private boolean management = true;
 	
+	private String sdcurl = "";
+	
 	private SMConfiguration() throws Exception {		
 		readSMProperties();
 	}
@@ -312,6 +314,15 @@ public class SMConfiguration extends Properties {
 		}
 		logger.info("Property [" + "ipmanagement" + "] with value [" + management + "]");
 		
+		try
+		{
+		sdcurl = readProperty("sdcurl");
+		}
+		catch (Throwable t) {
+			logger.error("Parsing error on " +  "sdcurl" + "property: not found");
+		}
+		logger.info("Property [" + "sdcurl" + "] with value [" + sdcurl + "]");
+		
 		
 	}
 	 public boolean getIpManagement() {
@@ -320,6 +331,14 @@ public class SMConfiguration extends Properties {
 	    
 	public void setIpManagement(boolean management) {
 	    	 this.management = management;
+	}
+	
+	public String getSdcUrl() {
+	    	return sdcurl;
+	 }
+	    
+	public void setSdcUrl(String sdcurl) {
+	    	 this.sdcurl = sdcurl;
 	}
 	    
     public String getCustomerType() {

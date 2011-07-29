@@ -37,6 +37,7 @@ import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PatternLayout;
 
+
 import com.telefonica.claudia.slm.deployment.Customer;
 import com.telefonica.claudia.slm.deployment.ProbeKPI;
 import com.telefonica.claudia.slm.deployment.Rule;
@@ -49,6 +50,7 @@ import com.telefonica.claudia.slm.deployment.hwItems.Disk;
 import com.telefonica.claudia.slm.deployment.hwItems.Memory;
 import com.telefonica.claudia.slm.deployment.hwItems.NIC;
 import com.telefonica.claudia.slm.deployment.hwItems.Network;
+import com.telefonica.claudia.slm.deployment.hwItems.Product;
 import com.telefonica.claudia.slm.maniParser.Parser;
 
 @SuppressWarnings("unchecked")
@@ -68,6 +70,7 @@ public class ReservoirDirectory extends Directory {
 	public static final String NETWORKS_NAME_SPACE= "networks";
 	public static final String VEES_NAME_SPACE = "vees";
 	public static final String VEE_REPLICAS_NAME_SPACE = "replicas";
+	public static final String PRODUCT_NAME_SPACE = "products";
 	public static final String CPUS_NAME_SPACE = "cpus";
 	public static final String DISKS_NAME_SPACE = "disks";
 	public static final String MEMORY_NAME_SPACE = "memory";
@@ -89,6 +92,11 @@ public class ReservoirDirectory extends Directory {
 
 	public FQN buildFQN(Customer customer) {
 		return new FQN(ROOT_NAME_SPACE + FQN.CONTEXT_SEPARATOR + COSTUMERS_NAME_SPACE + FQN.CONTEXT_SEPARATOR + customer.getCustomerName());       
+	}
+	
+	public FQN buildFQN(Product product) {
+		return new FQN(
+				buildFQN(product.getVEE()) + FQN.CONTEXT_SEPARATOR + PRODUCT_NAME_SPACE + FQN.CONTEXT_SEPARATOR + product.getProductName());
 	}
 
 	/**
