@@ -21,6 +21,20 @@ import org.w3c.dom.Element;
 
 public abstract class TCloudConstants {
 	
+	
+	
+	public static final String  TAG_NETWORK_MAC_ENABLED = "MAC_ENABLE";
+	
+
+	
+	public static final String  TAG_NETWORK_IPLEASES="LEASE";
+	
+	public static final String  TAG_NETWORK_IP="IP";
+	
+	
+	public static final String  TAG_NETWORK_MAC="MAC";
+
+	
 	public static final String TAG_NETWORK_ROOT = "Network";
 	public static final String ATTR_NETWORK_NAME = "name";
 	
