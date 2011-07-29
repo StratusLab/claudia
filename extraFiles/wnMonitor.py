@@ -9,13 +9,17 @@ import logging
 import subprocess
 
 LOG_FILE = "/var/log/wnMonitor.log"
+WN_LIST_CONF = "/opt/glite/yaim/etc/wn-list.conf"
+SSH_KNOWN_HOSTS = "/etc/ssh/ssh_known_hosts"
+RECONFIGURE_COMMAND = "/opt/edg/sbin/edg-pbs-knownhosts"
+YAIM_TORQUE_CONFIG = "/opt/glite/yaim/bin/yaim -c -s /opt/glite/yaim/etc/siteinfo/site-info.def -n TORQUE_server -n TORQUE_utils >> /var/log/yaim_torque_config.log"
+
 SSH_PORT = 22
 SSH_TIMEOUT = 900
 WN_POLL_INTERVAL = 30
 
 logging.basicConfig(filename=LOG_FILE, level=logging.DEBUG, format="%(asctime)s - %(levelname)s - %(message)s")
 
-WN_LIST_CONF = "/opt/glite/yaim/etc/wn-list.conf"
 
 def waitForConnectivity(host, port, timeout):
     start_time = time.time()
@@ -64,8 +68,9 @@ def pollWNs(old_wn_list):
     new_wn_list = getWNs()
     return new_wn_list, list(set(new_wn_list) - set(old_wn_list))
 
-def yaimReconfigure():
-    conf_output,_ = call_command('/opt/glite/yaim/bin/yaim -c -s /opt/glite/yaim/etc/siteinfo/site-info.def -n TORQUE_server -n TORQUE_utils >> /var/log/yaim_torque_config.log')
+def torqueReconfigure():
+    call_command("mv -f " + SSH_KNOWN_HOSTS + " " + SSH_KNOWN_HOSTS + ".old")
+    conf_output,_ = call_command(RECONFIGURE_COMMAND)
     return 0
 
 def call_command(command):
@@ -82,21 +87,21 @@ def main():
 
     checkWNConnectivity(wn_list)
 
-    logging.info("Running yaim TORQUE reconfigure for the first time")
+    logging.info("Running TORQUE reconfigure for the first time")
 
-    yaimReconfigure()
+    torqueReconfigure()
 
     while True:
         time.sleep(WN_POLL_INTERVAL)
         allWNs, newWNs = pollWNs(wn_list)
 
         if not newWNs:
-            logging.info("No new WN(s) found")
+            logging.debug("No new WNs found")
         else:
-            logging.info("New WN(s) found:" + str(newWNs))
+            logging.info("New WNs found:" + str(newWNs))
             checkWNConnectivity(newWNs)
-            logging.info("Running yaim TORQUE reconfigure...")
-            yaimReconfigure()
+            logging.info("Running TORQUE reconfigure...")
+            torqueReconfigure()
 
         wn_list = allWNs
 
