@@ -39,7 +39,7 @@ import com.telefonica.claudia.slm.vmiHandler.TCloudClient;
 import com.telefonica.claudia.slm.vmiHandler.exceptions.AccessDeniedException;
 import com.telefonica.claudia.slm.vmiHandler.exceptions.CommunicationErrorException;
 
-import es.test.GetVEE;
+//import es.test.GetVEE;
 public class PaasUtils {
 
 	Logger logger = null;

@@ -53,7 +53,7 @@ public class PaaSTest {
 			System.out.println("------------------------------------------------------------------------------------");
 			System.out.println("procesing " + xmlFileName);
 			
-			Parser p = new Parser(xmlFileName, new Customer("SP_STANDARD"), "ANONYMOUSSERVICE");
+			Parser p = new Parser(xmlFileName, new Customer("cc1"), "m2");
 			p.parse();
 
 			// Manually populate the replicas to continue the test
@@ -67,7 +67,7 @@ public class PaaSTest {
 		
 			fsm.parser = p;
 			
-			TCloudClient vmi = new TCloudClient("http://84.21.173.28:8182");
+			TCloudClient vmi = new TCloudClient("http://localhost:8182");
 			fsm.vmi = vmi;
 			RulesEngine rle=new RulesEngine(lcc);    
 
@@ -77,12 +77,13 @@ public class PaaSTest {
 			{
 				boolean bPaaSAware = paas.isPaaSAware(vee);
 				 
-				fsm.startService ();
-			/*	if (!fsm.startService ())
-					return ;*/
+				
+	
+				if (!fsm.startService ())
+					return ;
 				
 				
-				if (bPaaSAware)
+			/*	if (bPaaSAware)
 				{
 					String ip = paas.getIPVeeReplica (vee);
 					System.out.println ("IP " + ip);
@@ -92,7 +93,7 @@ public class PaaSTest {
 						paas.installProduct(product, ip);
 					}
 					
-				}
+				}*/
 			}
 			
 			
