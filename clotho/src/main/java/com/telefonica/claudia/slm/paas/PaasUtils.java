@@ -34,7 +34,7 @@ import com.telefonica.claudia.slm.deployment.hwItems.NICConf;
 import com.telefonica.claudia.slm.deployment.hwItems.Network;
 import com.telefonica.claudia.slm.deployment.hwItems.Product;
 import com.telefonica.claudia.slm.maniParser.GetOperationsUtils;
-import com.telefonica.claudia.slm.pass.vmiHandler.SDCClient;
+import com.telefonica.claudia.slm.paas.vmiHandler.SDCClient;
 import com.telefonica.claudia.slm.vmiHandler.TCloudClient;
 import com.telefonica.claudia.slm.vmiHandler.exceptions.AccessDeniedException;
 import com.telefonica.claudia.slm.vmiHandler.exceptions.CommunicationErrorException;
