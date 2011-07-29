@@ -628,13 +628,13 @@ public class TCloudClient implements VMIHandler {
     public String getVEEReplicaXML (VEE veeReplica)
     throws CommunicationErrorException, AccessDeniedException {
     	
-        GetVEE vee = new GetVEE ();
+      /*  GetVEE vee = new GetVEE ();
 		String fqn = veeReplica.getFQN().toString();
 		String ip = vee.getIp(fqn);
 		Document doc = vee.obtainXMLVEE (fqn,ip);
 		String text = vee.tooString(doc);
 		if (true)
-		return text;
+		return text;*/
 		
     	Reference urlReplica = new Reference(serverURL + URICreation.getURINet(veeReplica.getFQN().toString()));
 
