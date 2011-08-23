@@ -26,6 +26,7 @@ grid certificates, and VOMS proxies.
 		<module>driver-clotho</module>
 		<module>driver-one</module>
 		<module>driver-one-mon</module>
+		<module>driver-flexiscale</module>
 		<module>claudia-client</module>
 		<module>tcloud-server</module>
 		<module>configurators</module>
