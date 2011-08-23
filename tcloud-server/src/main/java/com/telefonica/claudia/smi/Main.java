@@ -1,32 +1,15 @@
 /*
- * Claudia Project
- * http://claudia.morfeo-project.org
- *
- * (C) Copyright 2010 Telefonica Investigacion y Desarrollo
- * S.A.Unipersonal (Telefonica I+D)
- *
- * See CREDITS file for info about members and contributors.
- *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the Affero GNU General Public License (AGPL) as 
- * published by the Free Software Foundation; either version 3 of the License, 
- * or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the Affero GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * If you want to use this software an plan to distribute a
- * proprietary application in any way, and you are not licensing and
- * distributing your source code under AGPL, you probably need to
- * purchase a commercial license of the product. Please contact
- * claudia-support@lists.morfeo-project.org for more information.
- */
+
+  (c) Copyright 2011 Telefonica, I+D. Printed in Spain (Europe). All Righ
+  Reserved.
+
+  The copyright to the software program(s) is property of Telefonica I+D.
+  The program(s) may be used and or copied only with the express written
+  consent of Telefonica I+D or in accordance with the terms and conditions
+  stipulated in the agreement/contract under which the program(s) have
+  been supplied.
+
+  */
 
 package com.telefonica.claudia.smi;
 
@@ -46,15 +29,20 @@ import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
 
 import org.apache.log4j.Logger;
+import org.restlet.Application;
 import org.restlet.Component;
+import org.restlet.Directory;
+import org.restlet.Restlet;
 import org.restlet.Router;
 import org.restlet.data.Protocol;
 
+import com.telefonica.claudia.smi.console.ConsoleApplication;
 import com.telefonica.claudia.smi.deployment.DeploymentApplication;
 import com.telefonica.claudia.smi.monitoring.MonitoringApplication;
 import com.telefonica.claudia.smi.provisioning.ProvisioningApplication;
 import com.telefonica.claudia.smi.task.TaskApplication;
 import com.telefonica.claudia.smi.task.TaskManager;
+import com.telefonica.claudia.smi.templateManagement.TemplateManagementApplication;
 
 public class Main {
 
@@ -70,10 +58,14 @@ public class Main {
 	private static final String KEY_DRIVER_PROVISIONING = "com.telefonica.claudia.smi.drivers.provisioning";
 	private static final String KEY_DRIVER_DEPLOYMENT = "com.telefonica.claudia.smi.drivers.deployment";
 	private static final String KEY_DRIVER_MONITORING = "com.telefonica.claudia.smi.drivers.monitoring";
-
+	private static final String KEY_DRIVER_TASKMANAGER = "com.telefonica.claudia.smi.drivers.taskManager";
+	private static final String KEY_DRIVER_TEMPLATEMANAGEMENT = "com.telefonica.claudia.smi.drivers.templateManagement";	
+	private static final String KEY_DRIVER_CONSOLE = "com.telefonica.claudia.smi.drivers.console";
+	
 	public static final Object CUSTOMIZATION_PORT_PROPERTY = "com.telefonica.claudia.customization.port";
-
+	
 	public static final String PROTOCOL = "http://";
+	private static final String HEARTBEAT_URI = "/heartbeat";
 
 	private static Logger log = Logger
 			.getLogger("com.telefonica.claudia.smi.Main");
@@ -168,19 +160,21 @@ public class Main {
 						ZipEntry entry = entries.nextElement();
 
 						// Create the file inside the target directory
-						File newEntry = new File(targetDir, entry.getName());
+						if (entry.getName().endsWith(".jar")){
+							File newEntry = new File(targetDir, entry.getName());
 
-						FileOutputStream out = new FileOutputStream(newEntry);
-						InputStream in = zipFile.getInputStream(entry);
+							FileOutputStream out = new FileOutputStream(newEntry);
+							InputStream in = zipFile.getInputStream(entry);
 
-						byte[] buffer = new byte[1024];
-						int len;
+							byte[] buffer = new byte[1024];
+							int len;
 
-						while ((len = in.read(buffer)) >= 0)
-							out.write(buffer, 0, len);
+							while ((len = in.read(buffer)) >= 0)
+								out.write(buffer, 0, len);
 
-						in.close();
-						out.close();
+							in.close();
+							out.close();
+						}
 					}
 
 					if (!particularDriverFile.delete())
@@ -225,20 +219,44 @@ public class Main {
 		// Add a new HTTP server listening on port.
 		component.getServers().add(Protocol.HTTP, serverPort);
 
-		// Initialize the Task server
-		TaskManager.createManager(PROTOCOL + serverHost + ":" + serverPort
-				+ URICreation.URI_VDC + "/task");
 		TaskApplication taskApp = new TaskApplication();
 		component.getDefaultHost().attach(taskApp);
+	
+		((Router)taskApp.getRoot()).attach(HEARTBEAT_URI , HeartbeatResource.class);
+		
+		// Load the driver for TaskManager
+		if (prop.get(KEY_DRIVER_TASKMANAGER) != null
+				&& !prop.get(KEY_DRIVER_TASKMANAGER).equals("")) {
+			try {
+				Class classDriver = cl.loadClass(prop
+						.getProperty(KEY_DRIVER_TASKMANAGER));
+				// Initialize the Task Manager
+				TaskManager taskManager = TaskApplication.setDriver(classDriver, prop);
+				taskManager.createManager(taskManager);			
 
+				log.info("TaskManager active.");
+			} catch (IllegalArgumentException iae) {
+				log.error("Driver didn't extend the expected class.");
+				System.exit(ERROR_CODE_DRIVERS);
+			} catch (ClassNotFoundException cnfe) {
+				log.error("The TaksManager class was not loaded. Check the driver folder contents.");
+				System.out.println("The TaksManager class was not loaded. Check the driver folder contents.");
+				System.exit(ERROR_CODE_DRIVERS);
+			}
+		} else {
+			log.error("No TaskManager driver was specified. Task driver is mandatory.");
+			System.out.println("No TaskManager driver was specified. Task driver is mandatory.");
+			System.exit(ERROR_CODE_DRIVERS);
+		}
+		
 		// Load the driver for each API
 		if (prop.get(KEY_DRIVER_MONITORING) != null
 				&& !prop.get(KEY_DRIVER_MONITORING).equals("")) {
 			try {
-				Class claseDriver = cl.loadClass(prop
+				Class classDriver = cl.loadClass(prop
 						.getProperty(KEY_DRIVER_MONITORING));
 
-				MonitoringApplication.setDriver(claseDriver, prop);
+				MonitoringApplication.setDriver(classDriver, prop);
 
 				MonitoringApplication app = new MonitoringApplication();
 				app.modifyRoot((Router) taskApp.getRoot());
@@ -254,13 +272,37 @@ public class Main {
 				System.exit(ERROR_CODE_DRIVERS);
 			}
 		}
+		
+		if (prop.get(KEY_DRIVER_DEPLOYMENT) != null
+				&& !prop.get(KEY_DRIVER_DEPLOYMENT).equals("")) {
+			try {
+				Class classDriver = cl.loadClass(prop
+						.getProperty(KEY_DRIVER_DEPLOYMENT));
+
+				DeploymentApplication.setDriver(classDriver, prop);
+
+				DeploymentApplication app = new DeploymentApplication();
+				app.modifyRoot((Router) taskApp.getRoot());
+
+				log.info("Deployment application active.");
+
+			} catch (IllegalArgumentException iae) {
+				log.error("Driver didn't extend the expected class.");
+			} catch (ClassNotFoundException cnfe) {
+				log
+						.error("The Deployment class was not loaded. Check the driver folder contents.");
+				System.out
+						.println("The Deployment class was not loaded. Check the driver folder contents.");
+				System.exit(ERROR_CODE_DRIVERS);
+			}
+		}
+		
 		if (prop.get(KEY_DRIVER_PROVISIONING) != null
 				&& !prop.get(KEY_DRIVER_PROVISIONING).equals("")) {
 			try {
-				Class claseDriver = cl.loadClass(prop
-						.getProperty(KEY_DRIVER_PROVISIONING));
+				Class classDriver = cl.loadClass(prop.getProperty(KEY_DRIVER_PROVISIONING));
 
-				ProvisioningApplication.setDriver(claseDriver, prop);
+				ProvisioningApplication.setDriver(classDriver, prop);
 
 				ProvisioningApplication app = new ProvisioningApplication();
 				app.modifyRoot((Router) taskApp.getRoot());
@@ -278,30 +320,62 @@ public class Main {
 			}
 		}
 
-		if (prop.get(KEY_DRIVER_DEPLOYMENT) != null
-				&& !prop.get(KEY_DRIVER_DEPLOYMENT).equals("")) {
+		if (prop.get(KEY_DRIVER_TEMPLATEMANAGEMENT) != null
+				&& !prop.get(KEY_DRIVER_TEMPLATEMANAGEMENT).equals("")) {
 			try {
-				Class claseDriver = cl.loadClass(prop
-						.getProperty(KEY_DRIVER_DEPLOYMENT));
+				Class classDriver = cl.loadClass(prop.getProperty(KEY_DRIVER_TEMPLATEMANAGEMENT));
 
-				DeploymentApplication.setDriver(claseDriver, prop);
+				TemplateManagementApplication.setDriver(classDriver, prop);
 
-				DeploymentApplication app = new DeploymentApplication();
+				TemplateManagementApplication app = new TemplateManagementApplication();
 				app.modifyRoot((Router) taskApp.getRoot());
 
-				log.info("Deployment application active.");
+				log.info("TemplateManagement application active.");
 
 			} catch (IllegalArgumentException iae) {
 				log.error("Driver didn't extend the expected class.");
 			} catch (ClassNotFoundException cnfe) {
-				log
-						.error("The Deployment class was not loaded. Check the driver folder contents.");
-				System.out
-						.println("The Deployment class was not loaded. Check the driver folder contents.");
+				log.error("The Template Manager driver class was not loaded. Check the driver folder contents.");
+				System.out.println("The Template Manager class was not loaded. Check the driver folder contents.");
 				System.exit(ERROR_CODE_DRIVERS);
 			}
 		}
+		
+		if (prop.get(KEY_DRIVER_CONSOLE) != null
+				&& !prop.get(KEY_DRIVER_CONSOLE).equals("")) {
+			try {
+				Class classDriver = cl.loadClass(prop.getProperty(KEY_DRIVER_CONSOLE));
 
+				ConsoleApplication.setDriver(classDriver, prop);
+
+				ConsoleApplication app = new ConsoleApplication();
+				app.modifyRoot((Router) taskApp.getRoot());
+
+				log.info("Console application active.");
+
+			} catch (IllegalArgumentException iae) {
+				log.error("Driver didn't extend the expected class.");
+			} catch (ClassNotFoundException cnfe) {
+				log.error("The Console driver class was not loaded. Check the driver folder contents.");
+				System.out.println("The Console driver class was not loaded. Check the driver folder contents.");
+				System.exit(ERROR_CODE_DRIVERS);
+			}
+		}
+		
+		final String staticDocRoot = prop.getProperty("com.telefonica.claudia.server.docroot");
+    	if (staticDocRoot != null && staticDocRoot.trim().equals("") == false) {
+			// start serving static files
+			// @see http://www.restlet.org/documentation/1.1/tutorial#part06
+			Application application = new Application(component.getContext().createChildContext()) { 
+			    @Override  
+			    public Restlet createRoot() {		    	
+			    	return new Directory(getContext(), staticDocRoot);
+			    }  
+			};  
+			
+			((Router)taskApp.getRoot()).attach("", application);
+    	}
+		
 		// Start the component.
 		component.getDefaultHost().attach(taskApp);
 		component.start();

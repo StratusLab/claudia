@@ -149,12 +149,15 @@ public class ComputeCollectionResource  extends Resource {
     			// Create the virtual machine itself
     			ProvisioningDriver actualDriver= (ProvisioningDriver) getContext().getAttributes().get(ProvisioningApplication.ATTR_PLUGIN_PROVISIONING);
 				taskId = actualDriver.deployVirtualMachine(URICreation.getFQN(orgId, vdcId, vappId, veeId), domR.getText());
+				System.out.println ("task id" + taskId);
 				
 			} catch (IOException e) {
 				log.error(ERROR_VM_COMMUNICATION + e.getMessage());
+				e.printStackTrace();
 				getResponse().setStatus(Status.SERVER_ERROR_INTERNAL, e);
 				return;
 			} catch (Exception e) {
+				e.printStackTrace();
 				log.error(ERROR_UNEXPECTED + e.getMessage());
 				getResponse().setStatus(Status.SERVER_ERROR_INTERNAL, e);
 				return;

@@ -1,37 +1,23 @@
 /*
-* Claudia Project
-* http://claudia.morfeo-project.org
-*
-* (C) Copyright 2010 Telefonica Investigacion y Desarrollo
-* S.A.Unipersonal (Telefonica I+D)
-*
-* See CREDITS file for info about members and contributors.
-*
-* This program is free software; you can redistribute it and/or modify
-* it under the terms of the Affero GNU General Public License (AGPL) as 
-* published by the Free Software Foundation; either version 3 of the License, 
-* or (at your option) any later version.
-*
-* This program is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-* GNU General Public License for more details.
-*
-* You should have received a copy of the Affero GNU General Public License
-* along with this program; if not, write to the Free Software
-* Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
-*
-* If you want to use this software an plan to distribute a
-* proprietary application in any way, and you are not licensing and
-* distributing your source code under AGPL, you probably need to
-* purchase a commercial license of the product. Please contact
-* claudia-support@lists.morfeo-project.org for more information.
-*/
+
+  (c) Copyright 2011 Telefonica, I+D. Printed in Spain (Europe). All Righ
+  Reserved.
+
+  The copyright to the software program(s) is property of Telefonica I+D.
+  The program(s) may be used and or copied only with the express written
+  consent of Telefonica I+D or in accordance with the terms and conditions
+  stipulated in the agreement/contract under which the program(s) have
+  been supplied.
+
+  */
 package com.telefonica.claudia.smi;
 
 import java.io.StringWriter;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
@@ -44,7 +30,19 @@ import javax.xml.transform.stream.StreamResult;
 import org.w3c.dom.Document;
 
 public class DataTypesUtils {
-
+	
+	public static final String STANDARD_STORAGE_UNIT_DEFAULT="byte * 2^30";
+	public static final String STANDARD_BANDWIDTH_UNIT_DEFAULT="byte per second * 2^10";
+	public static final String STANDARD_STORAGE_UNIT_EXP="byte\\*2\\^\\d*";
+	public static final String STANDARD_BANDWIDTH_UNIT_EXP="byte per second\\*2\\^\\d*";
+	
+	public static Map<String, String> storageUnitsConversion = new HashMap<String, String>();
+	static {
+		storageUnitsConversion.put("GB", "byte * 2^30");
+		storageUnitsConversion.put("MB", "byte * 2^20");
+		storageUnitsConversion.put("KB", "byte * 2^10");
+	}
+	
 	public static String serializeXML(Document doc) throws IllegalArgumentException {
 		StringWriter sw = new StringWriter();
 		DOMSource domSource = new DOMSource(doc);
@@ -55,6 +53,7 @@ public class DataTypesUtils {
 			serializer = tf.newTransformer();
 			serializer.setOutputProperty(OutputKeys.ENCODING,"ISO-8859-1");
 			serializer.setOutputProperty(OutputKeys.INDENT,"yes");
+			
 			
 			serializer.transform(domSource, streamResult);
 			
@@ -68,8 +67,46 @@ public class DataTypesUtils {
 	}
 	
 	public static String date2String(long milis) {
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss'Z'");
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
 		
 		return sdf.format(new Date(milis));
 	}
+	
+	public static Date string2Date(String source) throws ParseException {
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+
+		return sdf.parse(source);
+	}
+	
+	public static double getStorageUnitConversion(String unit1) {
+		return getStorageUnitConversion(unit1, STANDARD_STORAGE_UNIT_DEFAULT);
+	}
+	
+	public static double getStorageUnitConversion(String unit1, String unit2) {
+		
+		String unit1Cleaned = unit1.replaceAll(" ", "");
+		String unit2Cleaned = unit2.replaceAll(" ", "");
+		
+		if (!unit1Cleaned.matches(STANDARD_STORAGE_UNIT_EXP)) 
+			return 1.0;
+		
+		if (!unit2Cleaned.matches(STANDARD_STORAGE_UNIT_EXP)) 
+			return 1.0;
+
+		long firstPower = Long.valueOf(unit1Cleaned.substring(unit1Cleaned.indexOf("^")+1));
+		long secondPower = Long.valueOf(unit2Cleaned.substring(unit2Cleaned.indexOf("^")+1));
+		
+		long finalPower = firstPower - secondPower;
+		
+		return Math.pow(2, finalPower);
+	}
+	
+	public static boolean isStorageUnit(String unit) {
+		return unit.matches(STANDARD_STORAGE_UNIT_EXP);
+	}
+
+	public static boolean isBandwidthUnit(String unit) {
+		return unit.matches(STANDARD_BANDWIDTH_UNIT_EXP);
+	}
+
 }

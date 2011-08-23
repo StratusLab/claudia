@@ -81,7 +81,7 @@ public class NetworkCollectionResource extends Resource {
         this.vdcId = (String) getRequest().getAttributes().get("vdc-id");
 		this.orgId = (String) getRequest().getAttributes().get("org-id");
 		
-        if (vdcId != null && orgId != null && vappId != null) {
+        if (vdcId != null && orgId != null) {
         	
             // Define the supported variant.
             getVariants().add(new Variant(MediaType.TEXT_XML));

@@ -61,6 +61,39 @@ public class Util {
 		sb.delete(sb.lastIndexOf("/"),sb.length());
 		return sb.toString();
 	}
+	
+	public static String removeParameters(String href) {
+		StringBuilder sb = new StringBuilder(href);
+		int n = sb.lastIndexOf("?");
+		if (n>0) {
+			sb.delete(n, sb.length());
+		}
+		return sb.toString();
+	}
+	
+	public static long convertTimeInterval(String timeInterval) {
+		String quantity = timeInterval.substring(0, timeInterval.length() - 1);
+		String units = timeInterval.substring(timeInterval.length() - 1);
+		
+		long result = 0;
+		if (isNumber(quantity)) {
+			result = Integer.parseInt(quantity);
+		}
+		
+		if ("s".equals(units)) {
+			result *= 1;
+		} else if ("m".equals(units)) {
+			result *= 60;
+		} else if ("h".equals(units)) {
+			result *= 3600;
+		} else if ("d".equals(units)) {
+			result *= 3600 * 24;
+		} else {
+			result *= 0;
+		}
+		
+		return result;
+	}
 
 }
 

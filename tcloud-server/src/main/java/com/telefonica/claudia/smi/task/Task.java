@@ -1,35 +1,19 @@
 /*
-* Claudia Project
-* http://claudia.morfeo-project.org
-*
-* (C) Copyright 2010 Telefonica Investigacion y Desarrollo
-* S.A.Unipersonal (Telefonica I+D)
-*
-* See CREDITS file for info about members and contributors.
-*
-* This program is free software; you can redistribute it and/or modify
-* it under the terms of the Affero GNU General Public License (AGPL) as 
-* published by the Free Software Foundation; either version 3 of the License, 
-* or (at your option) any later version.
-*
-* This program is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-* GNU General Public License for more details.
-*
-* You should have received a copy of the Affero GNU General Public License
-* along with this program; if not, write to the Free Software
-* Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
-*
-* If you want to use this software an plan to distribute a
-* proprietary application in any way, and you are not licensing and
-* distributing your source code under AGPL, you probably need to
-* purchase a commercial license of the product. Please contact
-* claudia-support@lists.morfeo-project.org for more information.
-*/
+
+  (c) Copyright 2011 Telefonica, I+D. Printed in Spain (Europe). All Righ
+  Reserved.
+
+  The copyright to the software program(s) is property of Telefonica I+D.
+  The program(s) may be used and or copied only with the express written
+  consent of Telefonica I+D or in accordance with the terms and conditions
+  stipulated in the agreement/contract under which the program(s) have
+  been supplied.
+
+  */
 package com.telefonica.claudia.smi.task;
 
 import java.io.IOException;
+import java.io.Serializable;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -42,11 +26,14 @@ import com.telefonica.claudia.smi.DataTypesUtils;
 import com.telefonica.claudia.smi.TCloudConstants;
 import com.telefonica.claudia.smi.URICreation;
 
-public abstract class Task extends Thread {
+
+public abstract class Task implements Runnable, Serializable {
 
 	public enum TaskStatus {QUEUED, WAITING, RUNNING, SUCCESS, ERROR, CANCELLED};
 	
-	public static class TaskError {
+	protected transient Thread executor;
+	
+	public static class TaskError implements Serializable {
 		public String majorCode;
 		public String minorCode;
 		public String message;
@@ -54,42 +41,35 @@ public abstract class Task extends Thread {
 	}
 	
 	protected String returnMsg;
-	protected long id;
+	private long id;
 	protected TaskStatus status;
 	protected long startTime;
 	protected long endTime;
-	protected long expireTime;
-	protected  TaskError error;
+	private long expireTime;
+	protected TaskError error;
 	
-	String uri;
-	String uriParent;
+	private String uri;
+	private String uriParent;
 	
-	String uriResource;
-	String typeResource;
-	String ownerUri;
-	
-	private static Long actualTaskId  =1l;
-	
-	private synchronized static long generateNewId() {
-		actualTaskId++;
-		
-		return actualTaskId;
-	}
+	private String uriResource;
+	private String typeResource;
+	private String ownerUri;
 	
 	public Task() {
-		this.id = generateNewId();
-		this.status = TaskStatus.QUEUED;
-		this.startTime = System.currentTimeMillis();
+		this.setStatus(TaskStatus.QUEUED);
+		this.setStartTime(System.currentTimeMillis());
+		
+		this.executor = new Thread(this);
 	}
 	
 	public void setUriParent(String uriParent) {
-		this.uri = uriParent + "/" + this.id;
+		this.setUri(uriParent + "/" + this.id);
 		this.uriParent= uriParent;
 	}
 	
 	public void setResource(String uriResource, String typeResource) {
-		this.uriResource = uriResource;
-		this.typeResource = typeResource;
+		this.setUriResource(uriResource);
+		this.setTypeResource(typeResource);
 	}
 	
 	public String getOwnerUri() {
@@ -104,7 +84,15 @@ public abstract class Task extends Thread {
 		execute();
 	}
 	
+	public void start() {
+		executor.start();
+	}
+	
 	public abstract void execute();
+	
+	public void setTaskId(long id) {
+		this.id= id;
+	}
 	
 	public long getTaskId() {
 		return id;
@@ -125,27 +113,27 @@ public abstract class Task extends Thread {
 			
 			Element root = doc.createElement(TCloudConstants.TAG_TASK);
 			
-			root.setAttribute("href", uri);
+			root.setAttribute("href", getUri());
 			
-			root.setAttribute("startTime", DataTypesUtils.date2String(startTime));
-			root.setAttribute("endTime", DataTypesUtils.date2String(endTime));
+			root.setAttribute("startTime", DataTypesUtils.date2String(getStartTime()));
+			root.setAttribute("endTime", DataTypesUtils.date2String(getEndTime()));
 			
-			if (expireTime > 0) {
-				root.setAttribute("expiryTime", DataTypesUtils.date2String(expireTime));
+			if (getExpireTime() > 0) {
+				root.setAttribute("expiryTime", DataTypesUtils.date2String(getExpireTime()));
 			}
 			
-			root.setAttribute("status", status.toString().toLowerCase());
+			root.setAttribute("status", getStatus().toString().toLowerCase());
 			
 			doc.appendChild(root);
 			
-			if (status == TaskStatus.ERROR) {
+			if (getStatus() == TaskStatus.ERROR) {
 				Element errorNode = doc.createElement("error");
 				
-				if (error!= null) {
-					errorNode.setAttribute("message", error.message);
-					errorNode.setAttribute("majorErrorCode", error.majorCode);
-					errorNode.setAttribute("minorErrorCode", error.minorCode);
-					errorNode.setAttribute("vendorSpecificErrorCode", error.vendorSpecificErrorCode);
+				if (getError()!= null) {
+					errorNode.setAttribute("message", getError().message);
+					errorNode.setAttribute("majorErrorCode", getError().majorCode);
+					errorNode.setAttribute("minorErrorCode", getError().minorCode);
+					errorNode.setAttribute("vendorSpecificErrorCode", getError().vendorSpecificErrorCode);
 				} else {
 					errorNode.setAttribute("message", "Unknown error");
 				}
@@ -153,11 +141,11 @@ public abstract class Task extends Thread {
 				root.appendChild(errorNode);
 			}
 			
-			if (status == TaskStatus.SUCCESS && uriResource!=null) {
+			if (getStatus() == TaskStatus.SUCCESS && getUriResource()!=null) {
 				Element resultNode = doc.createElement("result");
 				
-				resultNode.setAttribute("href", uriResource);
-				resultNode.setAttribute("type", typeResource);
+				resultNode.setAttribute("href", getUriResource());
+				resultNode.setAttribute("type", getTypeResource());
 				
 				root.appendChild(resultNode);
 			}
@@ -188,5 +176,69 @@ public abstract class Task extends Thread {
 	
 	public TaskError getError() {
 		return error;
+	}
+
+	public void setEndTime(long endTime) {
+		this.endTime = endTime;
+	}
+
+	public long getEndTime() {
+		return endTime;
+	}
+
+	public void setExpireTime(long expireTime) {
+		this.expireTime = expireTime;
+	}
+
+	public long getExpireTime() {
+		return expireTime;
+	}
+
+	public void setStartTime(long startTime) {
+		this.startTime = startTime;
+	}
+
+	public long getStartTime() {
+		return startTime;
+	}
+
+	protected void setStatus(TaskStatus status) {
+		this.status = status;
+	}
+
+	public void setError(TaskError error) {
+		this.error = error;
+	}
+
+	public void setReturnMsg(String returnMsg) {
+		this.returnMsg = returnMsg;
+	}
+
+	public void setUri(String uri) {
+		this.uri = uri;
+	}
+
+	public String getUri() {
+		return uri;
+	}
+
+	public String getUriParent() {
+		return uriParent;
+	}
+
+	public void setUriResource(String uriResource) {
+		this.uriResource = uriResource;
+	}
+
+	public String getUriResource() {
+		return uriResource;
+	}
+
+	public void setTypeResource(String typeResource) {
+		this.typeResource = typeResource;
+	}
+
+	public String getTypeResource() {
+		return typeResource;
 	}
 }

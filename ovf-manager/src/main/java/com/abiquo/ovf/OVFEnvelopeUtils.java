@@ -947,7 +947,9 @@ public class OVFEnvelopeUtils {
 		List<JAXBElement<? extends SectionType>> sections = entity.getSection();
 		for (JAXBElement<? extends SectionType> elemSection : sections) {
 			SectionType section = elemSection.getValue();
+			System.out.println (section);
 			if (section instanceof ProductSectionType) {
+				System.out.println (section);
 				ps.add((ProductSectionType) section);
 			}
 		}

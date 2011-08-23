@@ -49,11 +49,14 @@ public class ProvisioningApplication {
 	public static void setDriver(Class<?> driver, Properties prop) throws IllegalArgumentException {
 		try {
 			actualDriver = (ProvisioningDriver) driver.getConstructor(Properties.class).newInstance(prop);
-		} catch(ClassCastException cce) {
+		} catch(ClassCastException e) {
+			e.printStackTrace();
 			throw new IllegalArgumentException("Driver class doesn't match the selected Application requirements.");
 		} catch (SecurityException e) {
+			e.printStackTrace();
 			throw new IllegalArgumentException("Security exception while instantiating the driver: " + e.getMessage());
 		} catch (InstantiationException e) {
+			e.printStackTrace();
 			throw new IllegalArgumentException("Couldn't instantiate the driver: " + e.getMessage());
 		} catch (IllegalAccessException e) {
 			// TODO Auto-generated catch block
@@ -62,6 +65,7 @@ public class ProvisioningApplication {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (NoSuchMethodException e) {
+			e.printStackTrace();
 			throw new IllegalArgumentException("Selected driver doesn't implement the DeploymentDriver(Properties) constructor.");
 		}
 	}

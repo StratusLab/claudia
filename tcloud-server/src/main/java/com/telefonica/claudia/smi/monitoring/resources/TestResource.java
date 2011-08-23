@@ -81,8 +81,8 @@ public class TestResource extends Resource {
 			String measureId = "kpis.queueLength";
 			MeasureDescriptor mdes = driver.getVappMeasureDescriptor(orgId, vdcId, al, measureId);
 			System.out.println(toString(mdes));
-			MeasuredValueList mvl = driver.getMeasuredValueList(mdes, 10);
-			System.out.println(toString(mvl));
+		//	MeasuredValueList mvl = driver.getMeasuredValueList(mdes, 10);
+		//	System.out.println(toString(mvl));
 			
 			System.out.println("### VEE ###");
 			vappId2 = "VEEMaster";

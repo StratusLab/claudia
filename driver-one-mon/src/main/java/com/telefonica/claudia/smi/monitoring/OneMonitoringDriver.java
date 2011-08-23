@@ -43,9 +43,10 @@ import com.telefonica.claudia.smi.URICreation;
 import com.telefonica.claudia.smi.monitoring.bean.MeasureDescriptor;
 import com.telefonica.claudia.smi.monitoring.bean.MeasureDescriptorList;
 import com.telefonica.claudia.smi.monitoring.bean.MeasuredValue;
+import com.telefonica.claudia.smi.monitoring.bean.MeasuredValueFilter;
 //import com.telefonica.claudia.smi.monitoring.bean.MeasuredValueFilter;
 import com.telefonica.claudia.smi.monitoring.bean.MeasuredValueList;
-import com.telefonica.claudia.smi.task.Task.TaskError;
+
 
 
  
@@ -621,6 +622,52 @@ public class OneMonitoringDriver implements MonitoringDriver {
 			
 		}
 		return result;
+	}
+
+	@Override
+	public MeasureDescriptor getHwItemMeasureDescriptor(String orgName,
+			String vdcName, List<String> vappNames, String hwItemName,
+			String measureId) throws MonitorException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public MeasureDescriptorList getHwItemMeasureDescriptorList(String orgName,
+			String vdcName, List<String> vappNames, String hwItemName)
+			throws MonitorException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public MeasuredValueList getMeasuredValueList(MeasureDescriptor md,
+			MeasuredValueFilter filter) throws MonitorException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<MeasuredValueList> getMeasuredValueList(
+			List<MeasureDescriptor> md, MeasuredValueFilter filter)
+			throws MonitorException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public MeasureDescriptor getVappMeasureDescriptor(String orgName,
+			String vdcName, List<String> vappNames, String measureId)
+			throws MonitorException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public MeasureDescriptorList getVappMeasureDescriptorList(String orgName,
+			String vdcName, List<String> vappNames) throws MonitorException {
+		// TODO Auto-generated method stub
+		return null;
 	}
 	
 	

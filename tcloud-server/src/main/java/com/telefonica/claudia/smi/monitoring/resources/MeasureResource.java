@@ -1,33 +1,20 @@
 /*
- * Claudia Project
- * http://claudia.morfeo-project.org
- *
- * (C) Copyright 2010 Telefonica Investigacion y Desarrollo
- * S.A.Unipersonal (Telefonica I+D)
- *
- * See CREDITS file for info about members and contributors.
- *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the Affero GNU General Public License (AGPL) as 
- * published by the Free Software Foundation; either version 3 of the License, 
- * or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the Affero GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * If you want to use this software an plan to distribute a
- * proprietary application in any way, and you are not licensing and
- * distributing your source code under AGPL, you probably need to
- * purchase a commercial license of the product. Please contact
- * claudia-support@lists.morfeo-project.org for more information.
- */
+
+  (c) Copyright 2011 Telefonica, I+D. Printed in Spain (Europe). All Righ
+  Reserved.
+
+  The copyright to the software program(s) is property of Telefonica I+D.
+  The program(s) may be used and or copied only with the express written
+  consent of Telefonica I+D or in accordance with the terms and conditions
+  stipulated in the agreement/contract under which the program(s) have
+  been supplied.
+
+  */
 package com.telefonica.claudia.smi.monitoring.resources;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import org.apache.log4j.Logger;
 import org.restlet.Context;
@@ -41,12 +28,11 @@ import org.restlet.resource.ResourceException;
 import org.restlet.resource.StringRepresentation;
 import org.restlet.resource.Variant;
 
-import com.telefonica.claudia.smi.URICreation;
 import com.telefonica.claudia.smi.monitoring.MonitorException;
 import com.telefonica.claudia.smi.monitoring.MonitoringApplication;
 import com.telefonica.claudia.smi.monitoring.MonitoringDriver;
 import com.telefonica.claudia.smi.monitoring.bean.MeasureDescriptor;
-import com.telefonica.claudia.smi.monitoring.bean.MeasureDescriptorList;
+import com.telefonica.claudia.smi.monitoring.bean.MeasuredValueFilter;
 import com.telefonica.claudia.smi.monitoring.bean.MeasuredValueList;
 import com.telefonica.claudia.smi.monitoring.bean.error.ErrorSet;
 import com.telefonica.claudia.smi.monitoring.bean.error.UnknownElementsError;
@@ -57,18 +43,50 @@ public class MeasureResource extends BasicResource {
 
 	private static Logger log = Logger.getLogger(MeasureResource.class);
 
-	private int samples = 1;
+	private MeasuredValueFilter valueFilter;
 
 	public MeasureResource(Context context, Request request, Response response) {
 		super(context, request, response);
-		log.info("MeasureResource created");// log
+		log.info("MeasureResource created");
 
+		valueFilter = new MeasuredValueFilter();
+		
 		Reference resourceRef = request.getResourceRef();
 		Form form = resourceRef.getQueryAsForm();
 		if (form.getNames().size() > 0) {
 			String s = form.getFirstValue("samples");
-			if (Util.isNumber(s))
-				samples = Integer.parseInt(s);
+			if (Util.isNumber(s)) {
+				valueFilter.setSamples(Integer.parseInt(s));
+			} else {
+				valueFilter.setSamples(0);
+			}
+			
+			SimpleDateFormat formatter = new SimpleDateFormat("yyyy'-'MM'-'dd'T'HH':'mm':'ss'Z'");
+			try {
+				String from = form.getFirstValue("from");
+				if (from != null) {
+					valueFilter.setFrom(formatter.parse(from));
+				}
+			} catch (ParseException pe) {
+				log.warn("wrong param : 'from' format is wrong");
+			}
+			
+			try {
+				String to = form.getFirstValue("to");
+				if (to != null) {
+					valueFilter.setTo(formatter.parse(to));
+				}
+			} catch (ParseException pe) {
+				log.warn("wrong param : 'to' format is wrong");
+			}
+					
+			String interval = form.getFirstValue("interval");
+			if (interval != null) {
+				long secondsInterval = Util.convertTimeInterval(interval);
+				if (secondsInterval > 0) {
+					valueFilter.setInterval(secondsInterval);
+				}
+			}
 		}
 
 		getVariants().add(new Variant(MediaType.TEXT_XML));
@@ -153,17 +171,15 @@ public class MeasureResource extends BasicResource {
 			MeasuredValueList mvl = null;
 
 			try {
-				mvl = actualDriver.getMeasuredValueList(md, samples);
+				mvl = actualDriver.getMeasuredValueList(md, valueFilter);
 			} catch (MonitorException e) {
 				log.debug(e.getMessage());
-				es
-						.add(new UnknownElementsError(e.getMessage(),
-								getIdentifier()));
+				es.add(new UnknownElementsError(e.getMessage(), getIdentifier()));
 				return new StringRepresentation(Bean2Xml.toString(es),
 						MediaType.TEXT_XML);
 			}
 
-			mvl.setHrefsLinks(getIdentifier(), TYPE_MONI);
+			mvl.setHref(getIdentifier());
 
 			return new StringRepresentation(Bean2Xml.toString(mvl),
 					MediaType.TEXT_XML);

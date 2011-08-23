@@ -22,10 +22,17 @@ public class URICreation {
 	public static final String VAPP_MIME_TYPE = "application/vnd.telefonica.tcloud.vapp+xml";
 	public static final String ORG_MIME_TYPE = "application/vnd.telefonica.tcloud.org+xml";
 	public static final String VAPPLIST_MIME_TYPE = "application/vnd.telefonica.vappList+xml"; 
+	public static final String SNAPSHOT_MIME_TYPE = "application/vnd.telefonica.tcloud.snapshot+xml";
+	public static final String SNAPSHOTLIST_MIME_TYPE = "application/vnd.telefonica.tcloud.snapshotList+xml";
+	
+	public static final String URI_MONITORING_CALLBACK = "/api/callback/monitoring";
 	
 	public static final String URI_API = "/api";
 	public static final String URI_ORG = URI_API + "/org/{org-id}";
-	public static final String URI_VDC_ADD = URI_ORG + "/action/instantiateVdc";
+	public static final String URI_VDC_ADD_MODIFIER = "/action/instantiateVdc";
+	public static final String URI_VDC_ADD = URI_ORG + URI_VDC_ADD_MODIFIER;
+	
+	public static final String URI_HEARTBEAT = URI_API + "/heartbeat";
 	
 	public static final String URI_POWER_MODIFIER = "/power/action/{power-action}";
 	
@@ -36,6 +43,7 @@ public class URICreation {
 	public static final String URI_TICKET = URI_API + "/console/ticket";
 	
 	public static final String URI_ADD_MODIFIER = "/action/instantiateOvf";
+	public static final String URI_CLONE_MODIFIER = "/action/clone";
 	
 	public static final String URI_VAPP  = URI_VDC   + "/vapp/{vapp-id}";
 	public static final String URI_VAPP_ADD = URI_VDC + URI_ADD_MODIFIER;	
@@ -44,6 +52,7 @@ public class URICreation {
 	public static final String URI_VAPP3_ADD = URI_VAPP2 + URI_ADD_MODIFIER;
 	public static final String URI_VAPP3 = URI_VAPP2 + "/{vm-id}";
 	public static final String URI_VAPP3_POWER = URI_VAPP3 + URI_POWER_MODIFIER;
+	public static final String URI_VAPP3_CLONE = URI_VAPP3 + URI_CLONE_MODIFIER;
 	
 	public static final String URI_HW_ROOT = URI_VAPP + "/hw";
 	public static final String URI_HW = "/hw/{hwitem-id}";
@@ -84,7 +93,7 @@ public class URICreation {
 	public static final String URI_CATALOGID = URI_CATALOG_ROOT + "/{catalog-id}";
 	
 	public static final String TEMPLATE = "/template";
-	public static final String URI_TEMPLATE_ROOT = URI_API + TEMPLATE;
+	public static final String URI_TEMPLATE_ROOT = URI_CATALOG_ROOT + TEMPLATE;
 	public static final String URI_TEMPLATEID = URI_TEMPLATE_ROOT + "/{template-id}";
 	public static final String URI_TEMPLATE_ADD = URI_VAPP3 + "/action/templatize";	
 	
@@ -93,9 +102,9 @@ public class URICreation {
 	public static final String FQN_SEPARATOR_SERVICE = "services";
 	public static final String FQN_SEPARATOR_VDC = "customers";
 	public static final String FQN_SEPARATOR_NET = "networks";
-
+	public static final String FQN_SEPARATOR_HW = "hw";
+	
 	public static final String FQN_SEPARATOR_SNAPSHOT = "snapshots";
-
 	public static final String FQN_SEPARATOR_MEASURE = "measure";
 	
 	public static String getFQN(String org) {
@@ -130,8 +139,12 @@ public class URICreation {
 		return null;
 	}
 	
+//	public static String getFQN(String org, String vdc, List<String> vappList, String hwItem) {
+//		return getFQN(org, vdc, vappList) + "." + hwItem.substring(0, hwItem.indexOf("_")) + "." + hwItem.substring(hwItem.indexOf("_")+1);
+//	}
+	
 	public static String getFQN(String org, String vdc, List<String> vappList, String hwItem) {
-		return getFQN(org, vdc, vappList) + "." + hwItem.substring(0, hwItem.indexOf("_")) + "." + hwItem.substring(hwItem.indexOf("_")+1);
+		return getFQN(org, vdc, vappList) + "." + FQN_SEPARATOR_HW + "." + hwItem;
 	}
 	
 	public static String getNetworkFQN(String org, String vdc, String service, String network) {
@@ -187,6 +200,20 @@ public class URICreation {
 		return rest + "." + FQN_SEPARATOR_SERVICE + "." + service;
 	}
 	
+	public static String getVEE(String fqn) {
+		if (fqn.indexOf(FQN_SEPARATOR_VEE)<=0) {
+			throw new IllegalArgumentException("FQN not well formed or does not contain a vee");
+		}
+		
+        String vee = fqn.substring(fqn.indexOf(FQN_SEPARATOR_VEE));
+        String parts[] = vee.split("\\.");
+        vee = parts[1];
+        
+        String rest = fqn.substring(0, fqn.indexOf(FQN_SEPARATOR_VEE)-1);
+        
+		return rest + "." + FQN_SEPARATOR_VEE + "." + vee;
+	}
+
 	public static String getReplica(String fqn) {
 		if (fqn.indexOf(FQN_SEPARATOR_REPLICA)<=0) {
 			throw new IllegalArgumentException("FQN not well formed or does not contain a replica");
@@ -268,6 +295,41 @@ public class URICreation {
 		return uriService + "/" + veeReplica; 
 	}
 	
+	public static String getURISnapshot(String fqnSnapshot) {
+		
+		String uriService = getURIVapp(fqnSnapshot);
+        
+        String veeReplica = fqnSnapshot.substring(fqnSnapshot.indexOf(FQN_SEPARATOR_REPLICA));
+        String[] parts = veeReplica.split("\\.");
+        veeReplica = parts[1];
+		
+        String snapshot = fqnSnapshot.substring(fqnSnapshot.indexOf(FQN_SEPARATOR_SNAPSHOT));
+        String[] partsSnapshot = snapshot.split("\\.");
+        snapshot = partsSnapshot[1];
+        
+		return uriService + "/" + veeReplica + "/snapshot/" + snapshot; 
+	}
+	
+	public static String getURIHwItem(String fqnReplica) {
+		String uriReplica = getURIVEEReplica(fqnReplica);
+		
+        String hwItem = fqnReplica.substring(fqnReplica.indexOf(FQN_SEPARATOR_NET));
+        String[]  parts = hwItem.split("\\.");
+        hwItem = FQN_SEPARATOR_NET + "_" + parts[1];
+        
+		return (uriReplica + URI_HW).replaceAll("\\{hwitem-id\\}", hwItem); 
+	}
+	
+	public static String getURIVirtualHardwareItem(String fqnHardwareItem) {
+		String uriReplica = getURIVEEReplica(fqnHardwareItem);
+
+        String hwItem = fqnHardwareItem.substring(fqnHardwareItem.indexOf(FQN_SEPARATOR_HW));
+        String[]  parts = hwItem.split("\\.");
+        hwItem = parts[1];
+
+		return (uriReplica + URI_HW).replaceAll("\\{hwitem-id\\}", hwItem); 
+	}
+	
 	public static String getURINet(String fqn) {
 		
 		String org= fqn.substring(0, fqn.indexOf(FQN_SEPARATOR_VDC)-1);
@@ -302,4 +364,74 @@ public class URICreation {
         
 		return URI_VAPP_ADD.replace("{org-id}", org.replace(".", "_")).replace("{vdc-id}", customer);
 	}
+
+	public static String getReplicaFromHardware(String hardwareFqn) {
+		if (hardwareFqn.matches("[^.]+\\." + FQN_SEPARATOR_VDC + "\\.[^.]+\\." + FQN_SEPARATOR_SERVICE +
+				"\\.[^.]+\\." + FQN_SEPARATOR_VEE + "\\.[^.]+\\." + FQN_SEPARATOR_REPLICA + "\\.[^.]+\\." +
+				FQN_SEPARATOR_HW + "\\.[^.]+")) {
+			// If the hardware FQN is well formed, return the substring before the ".hw"
+			return hardwareFqn.split("\\." + FQN_SEPARATOR_HW)[0];
+		} else {
+			throw new IllegalArgumentException("The hardware FQN input was malformed");
+		}
+	}
+
+	public static String getVeeFqn(String fqn) {
+		if (fqn.matches("[^.]+\\." + FQN_SEPARATOR_VDC + "\\.[^.]+\\." + FQN_SEPARATOR_SERVICE +
+				"\\.[^.]+\\." + FQN_SEPARATOR_VEE + "\\.[^.]+\\." + FQN_SEPARATOR_REPLICA + "\\..*")) {
+			// If the FQN is well formed, return the substring before the ".replicas"
+			return fqn.split("\\." + FQN_SEPARATOR_REPLICA)[0];
+		} else {
+			throw new IllegalArgumentException("The VEE FQN input was malformed");
+		}
+	}
+
+	public static String getFQNFromURL(String url) {
+		String fqn = null;
+		if (url.indexOf(URI_API)>0){
+			url = url.substring(url.indexOf(URI_API)+URI_API.length()+1);
+		}
+		if (url.indexOf("?")>0){
+			url = url.substring(0,url.indexOf("?"));
+		}		
+		
+		String[] elemens = url.split("/");
+		String vm;
+		String vee;
+		String vapp;
+		String vdc;
+		String org;
+	
+		if (elemens.length ==2){
+			org = elemens[1];
+			fqn = getFQN(org);
+		}
+		else if (elemens.length ==4){
+			org = elemens[1];
+			vdc = elemens[3];
+			fqn = getFQN(org, vdc);
+		}	
+		else if (elemens.length ==6){
+			org = elemens[1];
+			vdc = elemens[3];			
+			vapp = elemens[5];
+			fqn = getFQN(org, vdc, vapp);
+		}		
+		else if (elemens.length ==7){
+			org = elemens[1];
+			vdc = elemens[3];			
+			vapp = elemens[5];			
+			vee = elemens[6];
+			fqn = getFQN(org, vdc, vapp, vee);
+		}
+		else if (elemens.length >=8){
+			org = elemens[1];
+			vdc = elemens[3];			
+			vapp = elemens[5];			
+			vee = elemens[6];			
+			vm = elemens[7];
+			fqn = getFQN(org, vdc, vapp, vee, vm);
+		}
+		return fqn;
+	}	
 }

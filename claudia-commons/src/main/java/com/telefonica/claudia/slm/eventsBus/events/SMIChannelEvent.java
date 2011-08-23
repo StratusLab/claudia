@@ -1,43 +1,27 @@
 /*
-* Claudia Project
-* http://claudia.morfeo-project.org
-*
-* (C) Copyright 2010 Telefonica Investigacion y Desarrollo
-* S.A.Unipersonal (Telefonica I+D)
-*
-* See CREDITS file for info about members and contributors.
-*
-* This program is free software; you can redistribute it and/or modify
-* it under the terms of the Affero GNU General Public License (AGPL) as 
-* published by the Free Software Foundation; either version 3 of the License, 
-* or (at your option) any later version.
-*
-* This program is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-* GNU General Public License for more details.
-*
-* You should have received a copy of the Affero GNU General Public License
-* along with this program; if not, write to the Free Software
-* Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
-*
-* If you want to use this software an plan to distribute a
-* proprietary application in any way, and you are not licensing and
-* distributing your source code under AGPL, you probably need to
-* purchase a commercial license of the product. Please contact
-* claudia-support@lists.morfeo-project.org for more information.
-*/
+
+  (c) Copyright 2011 Telefonica, I+D. Printed in Spain (Europe). All Righ
+  Reserved.
+
+  The copyright to the software program(s) is property of Telefonica I+D.
+  The program(s) may be used and or copied only with the express written
+  consent of Telefonica I+D or in accordance with the terms and conditions
+  stipulated in the agreement/contract under which the program(s) have
+  been supplied.
+
+  */
 package com.telefonica.claudia.slm.eventsBus.events;
 
 import java.io.Serializable;
 import java.util.HashMap;
+import com.telefonica.claudia.smi.TCloudConstants.ErrorType;
 
 
 public class SMIChannelEvent extends Event implements Serializable {
 
 	private static final long serialVersionUID = 8133331375710757334L;
 
-    private HashMap<String, String> parameters = new HashMap<String, String>();
+    private HashMap<String, Serializable> parameters = new HashMap<String, Serializable>();
     
     /**
      * Kinds of actions the SMI can request the SM to fullfill:
@@ -55,28 +39,73 @@ public class SMIChannelEvent extends Event implements Serializable {
     	UNDEPLOY,
     	GET_VAPP,
     	GET_VDC,
+    	GET_VAPP_LIST,
+    	DEPLOY_VDC,
     	GET_VEE,
-    	GET_ORG
+    	GET_ORG,
+    	DELETE_VDC,
+    	DELETE_VEE,
+    	DEPLOY_VEE,
+    	POWER_VM, 
+    	GET_TASK,
+    	GET_MEASURE_DESCRIPTOR,
+    	GET_MEASURE_DESCRIPTOR_LIST,
+    	GET_MEASURE_VALUE,
+    	MODIFY_HARDWARE,
+    	MODIFY_VDC,
+    	DELETE_SNAPSHOT,
+    	TAKE_SNAPSHOT,
+    	RESTORE_SNAPSHOT,
+    	GET_SNAPSHOT,
+    	GET_SNAPSHOT_LIST,
+    	CLONE_VM
     }
     
     public static final String OVF_DOCUMENT= "OvfDocument";
     public static final String CUSTOMER_NAME= "CustomerName";
+	public static final String VEE_NAME = "veeName";    
     public static final String SERVICE_NAME = "ServiceName";
     public static final String SERVICE_DESCRIPTION = "ServiceDescription";
     public static final String VEE_DESCRIPTION = "VeeDescription";
-    public static final String CUSTOMER_DESCRIPTION = "CustomerDescription";
+    public static final String VDC_DESCRIPTION = "VDCDescription";
     public static final String ORG_DESCRIPTION = "OrgDescription";
-    public static final String SEQUENCE_NUMBER = "seqNumber";
-
-    
-
     public static final String FQN_ID = "fqnId";
+    public static final String POWER_ACTION = "powerAction";
+	public static final String TASK_ID = "taskId";
+	public static final String TASK_STATUS = "taskStatus"; 
+	public static final String TASK_MESSAGE = "taskMessage";
+	public static final String SEQUENCE_NUMBER = "seqNumber";
+	public static final String HARDWARE_ITEM = "hardwareItem";
+	
+	public static final String SNAPSHOT_NAME = "snapshotName";
+	public static final String SNAPSHOT_DESCRIPTION = "snapshotDescription";
+	public static final String SNAPSHOT_LIST = "snapshotList";
+	public static final String SNAPSHOT = "snapshot";
+
+	public static final String MEASURE_NAMES_LIST="MeasureNamesList";
+	public static final String MEASURE_TYPE_ID="MeasurementTypeId";
+	public static final String MEASURE_DESCRIPTION="MeasurementDescription";
+	public static final String MEASURE_NAME="MeasurementName";
+	public static final String MEASURE_VALUE_TYPE="MeasurementValueType";
+	public static final String MEASURE_MIN_VALUE="MeasurementMinValue";
+	public static final String MEASURE_MAX_VALUE="MeasurementMaxValue";
+	public static final String MEASURE_FILTER_FROM="MeasurementFilterFrom";
+	public static final String MEASURE_FILTER_TO="MeasurementFilterTo";
+	public static final String MEASURE_FILTER_NUMBER="MeasurementFilterNumber";
+	public static final String MEASURE_FILTER_INTERVAL="MeasurementFilterInterval";
+	
+	public static final String MEASURE_VALUES="MeasurementValues";
+	public static final String MEASURE_UNITS="MeasurementUnits";
+
+	public static final String CUSTOMER_DESCRIPTION =  "CustomerDescription";
     
     private SMIAction action;
     
     private boolean success=false;
-    
-    private String message;
+
+	private String message;
+	
+    private ErrorType errorType;
 	
 	public SMIChannelEvent(long t_0, long deltaT, SMIAction action) {
 		super(t_0, deltaT, EventType.SMI_CHANNEL_EVENT);
@@ -96,6 +125,14 @@ public class SMIChannelEvent extends Event implements Serializable {
 	}
 	
 	public String get(String parameterName) {
+		return (String) parameters.get(parameterName);
+	}
+	
+	public void putSerializable(String parameterName, Serializable value) {
+		parameters.put(parameterName, value);
+	}
+	
+	public Serializable getSerializable(String parameterName) {
 		return parameters.get(parameterName);
 	}
 	
@@ -123,4 +160,12 @@ public class SMIChannelEvent extends Event implements Serializable {
 	public boolean isSuccess() {
 		return success;
 	}
+	
+    public ErrorType getErrorType() {
+		return errorType;
+	}
+
+	public void setErrorType(ErrorType errorType) {
+		this.errorType = errorType;
+	}	
 }
