@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+
+<Network name="es.tid.customers.cc1.services.m2.networks.public">
+<BaseAddress>84.21.173.0</BaseAddress>
+<Netmask>255.255.255.248</Netmask>
+</Network>
