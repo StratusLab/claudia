@@ -71,9 +71,10 @@
 
 
     <dependency>
-      <groupId>com.telefonica.claudia</groupId>
-      <artifactId>ovf-manager</artifactId>
-      <version>1.0RC4-SNAPSHOT</version>
+      <groupId>eu.stratuslab.pkgs.claudia</groupId>
+	<artifactId>ovf-manager</artifactId>
+	
+	<version>0.7-SNAPSHOT</version>
     </dependency>
 
     <dependency>
