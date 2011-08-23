@@ -83,7 +83,7 @@ public class PaaSTest {
 					return ;
 				
 				
-			/*	if (bPaaSAware)
+				if (bPaaSAware)
 				{
 					String ip = paas.getIPVeeReplica (vee);
 					System.out.println ("IP " + ip);
@@ -93,7 +93,7 @@ public class PaaSTest {
 						paas.installProduct(product, ip);
 					}
 					
-				}*/
+				}
 			}
 			
 			

@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -22,6 +23,7 @@ import org.w3c.dom.NodeList;
 
 import com.telefonica.claudia.slm.common.SMConfiguration;
 import com.telefonica.claudia.slm.deployment.hwItems.Product;
+import com.telefonica.claudia.slm.deployment.hwItems.Property;
 import com.telefonica.claudia.slm.paas.PaasUtils;
 import com.telefonica.claudia.slm.vmiHandler.TCloudClient;
 import com.telefonica.claudia.slm.vmiHandler.exceptions.AccessDeniedException;
@@ -130,21 +132,23 @@ public class SDCClient implements VMIHandler {
 
       
         
-        HashMap<String, String> properties = product.getProperties();
-        Iterator it = properties.entrySet().iterator();
-        while (it.hasNext()) {
-          Map.Entry e = (Map.Entry)it.next();
-          System.out.println(e.getKey() + " " + e.getValue());
-          Element attribute = doc.createElement("attributes");
-          Element key = doc.createElement("key");
-          key.appendChild(doc.createTextNode((String)e.getKey()));
-          Element value = doc.createElement("value");
-          value.appendChild(doc.createTextNode((String)e.getValue()));
-          attribute.appendChild(key);
-          attribute.appendChild(value);
+        Set<Property> properties = product.getProperties();
+        
+        for (Iterator<Property> it = properties.iterator(); it.hasNext(); ) {
+        	Map.Entry e = (Map.Entry)it.next();
+            System.out.println(e.getKey() + " " + e.getValue());
+            Element attribute = doc.createElement("attributes");
+            Element key = doc.createElement("key");
+            key.appendChild(doc.createTextNode((String)e.getKey()));
+            Element value = doc.createElement("value");
+            value.appendChild(doc.createTextNode((String)e.getValue()));
+            attribute.appendChild(key);
+            attribute.appendChild(value);
 
-          root.appendChild(attribute);
-        }
+            root.appendChild(attribute);
+    	}
+        
+ 
         
         Element vm = doc.createElement("vm");
         Element ipnode = doc.createElement("ip");

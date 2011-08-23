@@ -41,6 +41,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.log4j.Logger;
+import org.dom4j.Node;
 import org.restlet.Client;
 import org.restlet.data.MediaType;
 import org.restlet.data.Protocol;
@@ -60,6 +61,7 @@ import com.telefonica.claudia.slm.deployment.VEE;
 import com.telefonica.claudia.slm.deployment.VEEReplica;
 import com.telefonica.claudia.slm.deployment.hwItems.NIC;
 import com.telefonica.claudia.slm.deployment.hwItems.Network;
+import com.telefonica.claudia.slm.paas.PaasUtils;
 import com.telefonica.claudia.slm.vmiHandler.exceptions.AccessDeniedException;
 import com.telefonica.claudia.slm.vmiHandler.exceptions.CommunicationErrorException;
 import com.telefonica.claudia.slm.vmiHandler.exceptions.NotEnoughResourcesException;
@@ -462,6 +464,7 @@ public class TCloudClient implements VMIHandler {
 
                     try {
                         Document responseXml = response.getEntityAsDom().getDocument();
+                        System.out.println (PaasUtils.tooString(responseXml));
 
                         NodeList tasks = responseXml.getElementsByTagName(TCloudConstants.TAG_TASK);
 
@@ -491,14 +494,18 @@ public class TCloudClient implements VMIHandler {
                 VEEReplicaAllocationResult deploymentResult = null;
 
                 if (result.containsKey(actualReplica)) continue;
+                
+                Document xml = getTask (urlTasks.get(actualReplica));
 
-                String status = getTaskStatus(urlTasks.get(actualReplica));
+                String status = getTaskStatus(xml);
 
                 if (status.toLowerCase().equals("success")) {
                     deploymentResult = new VEEReplicaAllocationResult(actualReplica.getId(), "Deployed", true);
                     result.put(actualReplica, deploymentResult);
                 } else if (status.toLowerCase().equals("error")) {
-                    deploymentResult = new VEEReplicaAllocationResult(actualReplica.getId(), "Failed", false);
+                	String error = this.getTaskMessageError(xml);
+                    deploymentResult = new VEEReplicaAllocationResult(actualReplica.getId(), "Failed:"+error, false);
+                   
                     result.put(actualReplica, deploymentResult);
                 }
             }
@@ -510,11 +517,43 @@ public class TCloudClient implements VMIHandler {
         return result;
     }
 
+    private String   getTaskStatus(Document responseXml) throws AccessDeniedException, CommunicationErrorException {
+    	
+    	
+    	if (responseXml == null)
+    		return "unknown";
+    	 NodeList tasks = responseXml.getElementsByTagName(TCloudConstants.TAG_TASK);
 
-    private String getTaskStatus(String url) throws AccessDeniedException, CommunicationErrorException {
+         if (tasks.getLength() != 0 && ((Element)tasks.item(0)).getAttribute("status")!= null) {
+
+             // If the task is Success or Error, store the result.
+             return ((Element)tasks.item(0)).getAttribute("status");
+
+         } 
+         return "unknown";
+    }
+    
+    private String   getTaskStatus(String url) throws AccessDeniedException, CommunicationErrorException {
+    	
+    	Document responseXml = getTask (url);
+    	if (responseXml == null)
+    		return "unknown";
+    	 NodeList tasks = responseXml.getElementsByTagName(TCloudConstants.TAG_TASK);
+
+         if (tasks.getLength() != 0 && ((Element)tasks.item(0)).getAttribute("status")!= null) {
+
+             // If the task is Success or Error, store the result.
+             return ((Element)tasks.item(0)).getAttribute("status");
+
+         } 
+         return "unknown";
+    }
+
+    private Document getTask(String url) throws AccessDeniedException, CommunicationErrorException {
         // Check the state of the task
         Reference urlTask = new Reference(url);
 
+        System.out.println ("URL " + url);
         Response response = client.get(urlTask);
 
         switch (response.getStatus().getCode()) {
@@ -543,17 +582,8 @@ public class TCloudClient implements VMIHandler {
                 // get the task id.
                 try {
                     Document responseXml = response.getEntityAsDom().getDocument();
-
-                    NodeList tasks = responseXml.getElementsByTagName(TCloudConstants.TAG_TASK);
-
-                    if (tasks.getLength() != 0 && ((Element)tasks.item(0)).getAttribute("status")!= null) {
-
-                        // If the task is Success or Error, store the result.
-                        return ((Element)tasks.item(0)).getAttribute("status");
-
-                    } else {
-                        throw new CommunicationErrorException("Error retrieving task URL.", new Exception(response.getStatus().getName()));
-                    }
+                    return responseXml;
+                   
 
                 } catch (IOException e) {
                     throw new CommunicationErrorException(response.getStatus().getDescription(), new Exception(response.getStatus().getName()));
@@ -562,7 +592,22 @@ public class TCloudClient implements VMIHandler {
                 }
         }
 
-        return "unknown";
+        return null;
+    }
+    
+    private String getTaskMessageError(Document message) throws AccessDeniedException, CommunicationErrorException {
+
+
+        NodeList tasks = message.getElementsByTagName("error");
+
+        if (tasks.getLength() != 0 && ((Element)tasks.item(0)).getAttribute("message")!= null) {
+
+                    	
+           return ((Element)tasks.item(0)).getAttribute("message");
+       
+        }
+
+        return "";
     }
 
     public void deleteNetwork(Set<Network> conf)
@@ -735,6 +780,8 @@ public class TCloudClient implements VMIHandler {
 
                     try {
                         Document responseXml = response.getEntityAsDom().getDocument();
+                        
+                        System.out.println (responseXml);
 
                         NodeList tasks = responseXml.getElementsByTagName(TCloudConstants.TAG_TASK);
 

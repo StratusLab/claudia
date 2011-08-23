@@ -31,6 +31,7 @@ package com.telefonica.claudia.slm.deployment.hwItems;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
 
 import javax.persistence.Basic;
@@ -38,8 +39,12 @@ import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
+import javax.persistence.MapKey;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+
+import org.hibernate.annotations.CollectionOfElements;
 
 import com.telefonica.claudia.slm.deployment.ServiceApplication;
 import com.telefonica.claudia.slm.deployment.VEE;
@@ -72,9 +77,11 @@ public class Product implements DirectoryEntry {
     @OneToMany(mappedBy="customer", cascade=CascadeType.ALL)
     private Set<ServiceApplication> services = new HashSet<ServiceApplication>();
     
-    private HashMap mapProperties = new  HashMap();
+    @OneToMany(mappedBy="key2", cascade=CascadeType.ALL)
+    private Set<Property> properties = new HashSet<Property>();
+   // private HashMap mapProperties = new  HashMap();
     
-    @OneToOne(cascade=CascadeType.ALL)
+    @ManyToOne
     private VEE vee = null;
     
     public Product() {}
@@ -113,19 +120,33 @@ public class Product implements DirectoryEntry {
         this.productUrl = productUrl;
     }
     
-    public void addProperty (String key, String value)
+    public void addProperty (Property property)
     {
-    	mapProperties.put(key, value);
+    	properties.add(property);
     }
     
-    public String getProperty (String key)
+    public void addProperty (String key, String value )
     {
-    	return (String)mapProperties.get(key);
+    	Property prop = new Property (key,value);
+    	properties.add(prop);
     }
     
-    public HashMap<String,String> getProperties ()
+    public Property getPropertyByName(String netName) {
+
+    	for (Iterator<Property> it = properties.iterator(); it.hasNext(); ) {
+    		Property net = it.next();
+    		if (net.getKey().equals(netName)) {
+    			return net;
+    		}
+    	}
+    	return null;
+    }
+    
+   
+    
+    public Set<Property> getProperties ()
     {
-    	return mapProperties;
+    	return properties;
     }
     
     
@@ -193,26 +214,4 @@ public class Product implements DirectoryEntry {
         
     }
     
-    public class Property
-    {
-    	String key = null;
-    	String value = null;
-    	
-    	 public String getKey(){
-    	        return key;
-    	 }
-    	    
-    	 public void setKey(String key){
-    	        this.key = key;
-    	    }
-    	 
-    	 public void setValue(String value){
- 	        this.value = value;
- 	    }
-    	 
-    	 public String getValue(){
- 	        return value;
- 	 }
-    	
-    }
 }
