@@ -48,6 +48,13 @@
 			<type>zip</type>
 		</dependency>
 
+		<dependency>
+			<groupId>eu.stratuslab.pkgs.claudia</groupId>
+			<artifactId>driver-flexiscale</artifactId>
+			<version>0.1.7-SNAPSHOT</version>
+			<classifier>deployable</classifier>
+			<type>zip</type>
+		</dependency>
 
 		<dependency>
 			<groupId>eu.stratuslab.pkgs.claudia</groupId>
