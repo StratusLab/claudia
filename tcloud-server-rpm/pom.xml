@@ -121,6 +121,12 @@
 									<classifier>deployable</classifier>
 									<type>zip</type>
 								</artifactItem>
+																<artifactItem>
+									<groupId>eu.stratuslab.pkgs.claudia</groupId>
+									<artifactId>driver-flexiscale</artifactId>
+									<classifier>deployable</classifier>
+									<type>zip</type>
+								</artifactItem>
 								<artifactItem>
 									<groupId>eu.stratuslab.pkgs.claudia</groupId>
 									<artifactId>driver-one</artifactId>
