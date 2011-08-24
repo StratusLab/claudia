@@ -115,7 +115,7 @@ public class FlexiscaleDriver implements ProvisioningDriver{
 	private Map<String, Long> VLAN = new HashMap<String, Long>();
 	private Map<String, Long> ImageTemplateMap = new HashMap<String, Long>();
 
-	//Lo modifiqué
+	//Lo modifiqu
 	
 	//private Map<String, String> VLAN = new HashMap<String, String>();
 	private static final int ResourceTypeDisk=17;
@@ -628,7 +628,7 @@ if (VLAN.containsKey(fqnNet))
 				// Extract the ovf sections and pass them to the OVF manager to be processed.
 				Document ovfDoc = builder.newDocument();
 				ovfDoc.appendChild(ovfDoc.importNode(envelopeItems.item(0), true));
-				//aquí estaba el error
+				//aquÃ­ estaba el error
 				OVFSerializer ovfSerializer = OVFSerializer.getInstance();
 				ovfSerializer.setValidateXML(false);
 				EnvelopeType envelope = ovfSerializer.readXMLEnvelope(new ByteArrayInputStream(DataTypesUtils.serializeXML(ovfDoc).getBytes()));
@@ -1492,7 +1492,7 @@ public class UndeployNetworkTask extends Task
 		//doAction(id);
 		 
 			}
-			//añadido
+			//aÃ±adido
 			}
 			
 		} catch (Exception e) {
@@ -1644,7 +1644,7 @@ public class UndeployNetworkTask extends Task
 		unt.execute();
 		// TODO Auto-generated method stub
 		return 0;*/
-		System.out.println("aquí llega el delete?");
+		System.out.println("aquÃ­ llega el delete?");
 		
 		return TaskManager.getInstance().addTask(new UndeployNetworkTask(netFqn), URICreation.getVDC(netFqn)).getTaskId();
 	}
@@ -1673,7 +1673,7 @@ public class UndeployNetworkTask extends Task
 	/*	DeployNetworkTask dnt=new DeployNetworkTask(netFqn, ovf);
 		dnt.execute();
 		return 0;*/
-		System.out.println("aquí llega?");
+		System.out.println("aquÃ­ llega?");
 		return TaskManager.getInstance().addTask(new DeployNetworkTask(netFqn, ovf), URICreation.getVDC(netFqn)).getTaskId();
 	}
 
@@ -1686,12 +1686,11 @@ public class UndeployNetworkTask extends Task
 		dvt.execute();
 	
 		return 0;*/
-		System.out.println("aquí llega el deployVirtualMachine?");
+		System.out.println("aquÃ­ llega el deployVirtualMachine?");
 		return TaskManager.getInstance().addTask(new DeployVMTask(fqn, ovf), URICreation.getVDC(fqn)).getTaskId();
 		
 	}
 	
-
 
 	//@Override
 	public String getNetworkList(String fqn) throws IOException {
