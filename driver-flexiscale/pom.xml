@@ -1,18 +1,22 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<?xml version="1.0"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>com.telefonica.claudia</groupId>
+  <groupId>eu.stratuslab.pkgs.claudia</groupId>
   <artifactId>driver-flexiscale</artifactId>
-  <version>0.1-SNAPSHOT</version>
-  <packaging>jar</packaging>
+  <version>0.1.7-SNAPSHOT</version>
+  <name>OpenNebula driver for TCloud</name>
 
-  <name>driver-flexiscale</name>
-  <url>http://maven.apache.org</url>
+  <parent>
+    <groupId>eu.stratuslab.pkgs.claudia</groupId>
+    <artifactId>claudia-parent</artifactId>
+    <version>1.7-SNAPSHOT</version>
+  </parent>
 
    <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties> 
+
 
   <dependencies>
     <dependency>
@@ -88,13 +92,10 @@
       <artifactId>xmlrpc-common</artifactId>
       <version>3.0</version>
     </dependency>
-    
-    
-        
-
 
    </dependencies>
-    <build>
+
+  <build>
     <plugins>
 
 	<plugin>
@@ -104,6 +105,7 @@
 	    <encoding>UTF-8</encoding>
 	  </configuration>
 	</plugin>
+
  <plugin>
      <groupId>org.apache.maven.plugins</groupId>
      <artifactId>maven-deploy-plugin</artifactId>
@@ -129,7 +131,7 @@
         </configuration>
       </plugin>
 
-     <!-- <plugin>
+    <!--  <plugin>
         <artifactId>maven-assembly-plugin</artifactId>
         <version>2.2-beta-5</version>
         <configuration>
@@ -139,6 +141,7 @@
           <descriptorRefs>
             <descriptorRef>project</descriptorRef>
           </descriptorRefs>
+
         </configuration>
       </plugin>-->
 
@@ -148,7 +151,7 @@
 				<configuration>
 					<descriptors>
             <descriptor>src/main/assembly/src.xml</descriptor>
-            
+           
           </descriptors>
 
 
@@ -176,7 +179,5 @@
 
     </plugins>
   </build>
-
-  
 
 </project>
