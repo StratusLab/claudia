@@ -115,7 +115,7 @@ public class FlexiscaleDriver implements ProvisioningDriver{
 	private Map<String, Long> VLAN = new HashMap<String, Long>();
 	private Map<String, Long> ImageTemplateMap = new HashMap<String, Long>();
 
-	//Lo modifiqu
+	//Lo modifiqué
 	
 	//private Map<String, String> VLAN = new HashMap<String, String>();
 	private static final int ResourceTypeDisk=17;
