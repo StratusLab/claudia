@@ -13,6 +13,8 @@
 package com.telefonica.claudia.smi.monitoring.bean;
 
 import java.io.Serializable;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class MeasuredValueFilter implements Serializable {
@@ -28,6 +30,35 @@ public class MeasuredValueFilter implements Serializable {
 	private Long interval;
 	
 	public MeasuredValueFilter() {
+	/*	SimpleDateFormat formatter = new SimpleDateFormat("yyyy'-'MM'-'dd'T'HH':'mm':'ss'Z'");
+		try {
+			String from = "2011-08-24T11:36:00Z";
+			if (from != null) {
+				this.from = formatter.parse(from);
+			}
+		} catch (ParseException pe) {
+			System.out.println("wrong param : 'from' format is wrong");
+		}
+		
+		try {
+			String to = "2011-08-24T11:40:00Z";
+			if (to != null) {
+				this.to = formatter.parse(to);
+			}
+		} catch (ParseException pe) {
+			System.out.println("wrong param : 'to' format is wrong");
+		}*/
+		
+	/*	this.to =  new java.util.Date("2011-08-24 14:45:39");
+		long lnMilisegundos = to.getTime() - 3*60*1000;
+		java.util.Date antesDate = new java.util.Date(lnMilisegundos);
+		this.from = antesDate;*/
+		Date currentDAte = new java.util.Date();
+		long lnMilisegundosto = currentDAte.getTime() - 2*60*60*1000;
+		long lnMilisegundosfrom = lnMilisegundosto - 3*60*1000;
+		this.interval = new Long(300);
+		this.to= new java.util.Date(lnMilisegundosto);
+		this.from= new java.util.Date(lnMilisegundosfrom);
 	}
 	
 	public MeasuredValueFilter(int samples, Date from, Date to, Long interval) {

@@ -14,7 +14,13 @@ package com.telefonica.claudia.smi.monitoring.bean;
 
 import java.io.Serializable;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+
 import org.restlet.data.Reference;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 public class MeasureDescriptor implements Serializable{
 	
@@ -149,5 +155,59 @@ public class MeasureDescriptor implements Serializable{
 	public String getMeasurementTypeId() {
 		return measurementTypeId;
 	}
+	
+	public Document getXML () throws ParserConfigurationException
+	{
+		DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+        Document doc = builder.newDocument();     
+        getXML (doc);
+        return doc;
+	}
+	
+	public Element getXML (Document doc) throws ParserConfigurationException
+	{
+		
+       
+        Element md = doc.createElement("MeasureDescriptor");
+        md.setAttribute("href", href);
+        md.setAttribute("name", name);
+        
+        
+        Element link1 = doc.createElement("Link");
+        link1.setAttribute("href", this.getLink1().getHref());
+        link1.setAttribute("type", this.getLink1().getType());
+        link1.setAttribute("rel", this.getLink1().getRel());
+        md.appendChild(link1);
+        
+        Element link2 = doc.createElement("Link");
+        link2.setAttribute("href", this.getLink2().getHref());
+        link2.setAttribute("type", this.getLink2().getType());
+        link2.setAttribute("rel", this.getLink2().getRel());
+        md.appendChild(link2);
+        
+        Element unit = doc.createElement("ValueType");
+        
+        unit.appendChild(doc.createTextNode(valueType));
+        md.appendChild(unit);
+        Element eminValue = doc.createElement("MinValue");
+        
+        eminValue.appendChild(doc.createTextNode(minValue));
+        md.appendChild(eminValue);
+        Element maxValue = doc.createElement("MaxValue");
+    
+        maxValue.appendChild(doc.createTextNode(getMaxValue()));
+        md.appendChild(maxValue);
+        
+        Element description = doc.createElement("Description");
+
+        description.appendChild(doc.createTextNode(getDescription()));
+        md.appendChild(description);
+        
+        
+        return md;
+	}
+	
+	
+ 
 
 }
