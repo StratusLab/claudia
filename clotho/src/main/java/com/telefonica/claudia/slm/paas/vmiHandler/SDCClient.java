@@ -22,8 +22,8 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
 import com.telefonica.claudia.slm.common.SMConfiguration;
-import com.telefonica.claudia.slm.deployment.hwItems.Product;
-import com.telefonica.claudia.slm.deployment.hwItems.Property;
+import com.telefonica.claudia.slm.deployment.paas.Product;
+import com.telefonica.claudia.slm.deployment.paas.Property;
 import com.telefonica.claudia.slm.paas.PaasUtils;
 import com.telefonica.claudia.slm.vmiHandler.TCloudClient;
 import com.telefonica.claudia.slm.vmiHandler.exceptions.AccessDeniedException;
@@ -41,6 +41,7 @@ public class SDCClient implements VMIHandler {
     
     public SDCClient (String url)
     {
+    	logger.info("SDC Url " + url);
     	if (url.charAt(url.length()-1) == '/')
             serverURL = url.substring(0, url.length()-1);
         else
@@ -57,7 +58,7 @@ public class SDCClient implements VMIHandler {
 
 	public void installProduct(Product product, String ip) throws AccessDeniedException,
 			CommunicationErrorException {
-		Reference urlReplica = new Reference(serverURL + "/rest/product");
+        Reference urlReplica = new Reference(serverURL + "/rest/product");
 		
 		System.out.println ("URL " +serverURL + "/rest/product");
 
@@ -132,16 +133,15 @@ public class SDCClient implements VMIHandler {
 
       
         
-        Set<Property> properties = product.getProperties();
+       // Set<Property> properties = product.getProperties();
         
-        for (Iterator<Property> it = properties.iterator(); it.hasNext(); ) {
-        	Map.Entry e = (Map.Entry)it.next();
-            System.out.println(e.getKey() + " " + e.getValue());
+        for (Property prop:  product.getProperties()) {
+
             Element attribute = doc.createElement("attributes");
             Element key = doc.createElement("key");
-            key.appendChild(doc.createTextNode((String)e.getKey()));
+            key.appendChild(doc.createTextNode(prop.getKey()));
             Element value = doc.createElement("value");
-            value.appendChild(doc.createTextNode((String)e.getValue()));
+            value.appendChild(doc.createTextNode(prop.getValue()));
             attribute.appendChild(key);
             attribute.appendChild(value);
 
@@ -158,12 +158,14 @@ public class SDCClient implements VMIHandler {
         
         Element productnode = doc.createElement("product");
         Element productversion = doc.createElement("version");
-        productversion.appendChild(doc.createTextNode(product.getProductVersion()));
+        productversion.appendChild(doc.createTextNode(product.getVersion()));
         productnode.appendChild(productversion);
-        Element productname = doc.createElement("product");
-        productname.appendChild(doc.createTextNode(product.getProductName()));
+        Element productname = doc.createElement("name");
+        productname.appendChild(doc.createTextNode(product.getName()));
         productnode.appendChild(productname);
         root.appendChild(productnode);
+        
+        System.out.println (PaasUtils.tooString(doc));
 
       
 		return doc;

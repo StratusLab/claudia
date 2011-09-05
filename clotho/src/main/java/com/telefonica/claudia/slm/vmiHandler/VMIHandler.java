@@ -68,7 +68,7 @@ public interface VMIHandler {
 
     public Set<VEEReplica> getVEEReplicas() throws CommunicationErrorException;
     
-    public String getVEEReplicaXML(VEE vee) throws CommunicationErrorException, AccessDeniedException;
+    public String getVEEReplicaXML(VEEReplica vee) throws CommunicationErrorException, AccessDeniedException;
 
     public VEEReplica getVEEReplicaHwState(VEEReplica veeReplica)
             throws CommunicationErrorException;

@@ -50,7 +50,8 @@ import com.telefonica.claudia.slm.deployment.hwItems.Disk;
 import com.telefonica.claudia.slm.deployment.hwItems.Memory;
 import com.telefonica.claudia.slm.deployment.hwItems.NIC;
 import com.telefonica.claudia.slm.deployment.hwItems.Network;
-import com.telefonica.claudia.slm.deployment.hwItems.Product;
+import com.telefonica.claudia.slm.deployment.paas.Application;
+import com.telefonica.claudia.slm.deployment.paas.Product;
 import com.telefonica.claudia.slm.maniParser.Parser;
 
 @SuppressWarnings("unchecked")
@@ -71,6 +72,7 @@ public class ReservoirDirectory extends Directory {
 	public static final String VEES_NAME_SPACE = "vees";
 	public static final String VEE_REPLICAS_NAME_SPACE = "replicas";
 	public static final String PRODUCT_NAME_SPACE = "products";
+	public static final String APPLICATION_NAME_SPACE = "applications";
 	public static final String CPUS_NAME_SPACE = "cpus";
 	public static final String DISKS_NAME_SPACE = "disks";
 	public static final String MEMORY_NAME_SPACE = "memory";
@@ -95,8 +97,13 @@ public class ReservoirDirectory extends Directory {
 	}
 	
 	public FQN buildFQN(Product product) {
+		
+		if (product.getParentName()==null)
 		return new FQN(
-				buildFQN(product.getVEE()) + FQN.CONTEXT_SEPARATOR + PRODUCT_NAME_SPACE + FQN.CONTEXT_SEPARATOR + product.getProductName());
+				buildFQN(product.getVEE()) + FQN.CONTEXT_SEPARATOR + PRODUCT_NAME_SPACE + FQN.CONTEXT_SEPARATOR + product.getName());
+		else 
+			return new FQN(
+					buildFQN(product.getParent())+FQN.CONTEXT_SEPARATOR + product.getName() );
 	}
 
 	/**
@@ -163,5 +170,10 @@ public class ReservoirDirectory extends Directory {
 
 	public FQN buildFQN(Rule rule) {
 		return new FQN(buildFQN(rule.getServiceApplication()) + FQN.CONTEXT_SEPARATOR + RULES_KPIS_NAME_SPACE + FQN.CONTEXT_SEPARATOR + rule.getName());
+	}
+
+	public FQN buildFQN(Application application) {
+		return new FQN(
+				buildFQN(application.getProduct()) + FQN.CONTEXT_SEPARATOR + APPLICATION_NAME_SPACE + FQN.CONTEXT_SEPARATOR + application.getName());
 	}
 }

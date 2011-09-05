@@ -670,7 +670,7 @@ public class TCloudClient implements VMIHandler {
         return null;
     }
     
-    public String getVEEReplicaXML (VEE veeReplica)
+    public String getVEEReplicaXML (VEEReplica veeReplica)
     throws CommunicationErrorException, AccessDeniedException {
     	
      /*  GetVEE vee = new GetVEE ();
@@ -681,7 +681,7 @@ public class TCloudClient implements VMIHandler {
 		if (true)
 		return text;*/
 		
-    	Reference urlReplica = new Reference(serverURL + URICreation.getURINet(veeReplica.getFQN().toString()));
+    	Reference urlReplica = new Reference(serverURL + URICreation.getURIVEEReplica(veeReplica.getFQN().toString()));
 
         // Call the server with the URI and the data
         Response response = client.get(urlReplica);

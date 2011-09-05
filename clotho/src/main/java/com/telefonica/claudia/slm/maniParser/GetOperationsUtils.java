@@ -58,6 +58,33 @@ public class GetOperationsUtils {
 	
 	}
 	
+	public static Element getVirtualHardwareSystem (Document doc, String href, int cpu, int memory, int disk, String ip )
+	{
+		Element virtualHardware = doc.createElementNS("http://schemas.dmtf.org/ovf/envelope/1","VirtualHardwareSection");
+		Element virtualHardwarelink = doc.createElement("Link");
+		virtualHardwarelink.setAttribute("rel", "add");
+		virtualHardwarelink.setAttribute("type", "application/ovf.item+xml");
+		virtualHardwarelink.setAttribute("href", href+"/hw/");
+		
+		virtualHardware.appendChild(virtualHardwarelink);
+		
+		
+		int count = 1;
+		Element itemcpu = getItemElement (doc, href,count++, 0, cpu, null, null);
+		virtualHardware.appendChild(itemcpu);
+		Element itemmemory = getItemElement (doc, href, count++, 1, memory, null, null);
+		virtualHardware.appendChild(itemmemory);
+	
+		Element itemdisk = getItemElement (doc, href,  count++, 2, disk, "ovf://disk/" +"disk"   ,null);
+		virtualHardware.appendChild(itemdisk);
+		Element itemnetwork = getItemElement (doc, href,  count++, 3, 0, null  ,ip);
+		virtualHardware.appendChild(itemnetwork);
+		
+		
+		return virtualHardware;
+	
+	}
+	
 	public static Element getItemElement (Document doc, String href, int instance, int type, int value, String diskhost, String ip)
 	{
 		// "@HOSTNAME/api/org/"+organizationId+"/vdc/" + sa.getCustomer().getCustomerName() + "/vapp/" + sa.getSerAppName() +

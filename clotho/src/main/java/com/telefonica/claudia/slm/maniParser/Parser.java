@@ -123,7 +123,7 @@ import com.telefonica.claudia.slm.deployment.hwItems.DiskConf;
 import com.telefonica.claudia.slm.deployment.hwItems.MemoryConf;
 import com.telefonica.claudia.slm.deployment.hwItems.NICConf;
 import com.telefonica.claudia.slm.deployment.hwItems.Network;
-import com.telefonica.claudia.slm.deployment.hwItems.Product;
+import com.telefonica.claudia.slm.deployment.paas.Product;
 import com.telefonica.claudia.slm.lifecyclemanager.DeploymentException;
 import com.telefonica.claudia.slm.paas.PaasUtils;
 

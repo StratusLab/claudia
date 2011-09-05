@@ -3,18 +3,27 @@ package com.telefonica.claudia.slm.paas;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.StringWriter;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+import javax.xml.namespace.QName;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.log4j.Logger;
+import org.dmtf.schemas.ovf.envelope._1.MsgType;
 import org.dmtf.schemas.ovf.envelope._1.OperatingSystemSectionType;
 import org.dmtf.schemas.ovf.envelope._1.ProductSectionType;
+import org.dmtf.schemas.ovf.envelope._1.SectionType;
 import org.dmtf.schemas.ovf.envelope._1.VirtualSystemType;
+import org.dmtf.schemas.wbem.wscim._1.common.CimString;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -23,6 +32,8 @@ import org.w3c.dom.NodeList;
 import com.abiquo.ovf.OVFEnvelopeUtils;
 import com.abiquo.ovf.exceptions.InvalidSectionException;
 import com.abiquo.ovf.exceptions.SectionNotPresentException;
+import com.abiquo.ovf.exceptions.XMLException;
+import com.abiquo.ovf.xml.OVFSerializer;
 import com.sun.org.apache.xml.internal.serialize.OutputFormat;
 import com.sun.org.apache.xml.internal.serialize.XMLSerializer;
 import com.telefonica.claudia.slm.common.SMConfiguration;
@@ -32,18 +43,21 @@ import com.telefonica.claudia.slm.deployment.VEEReplica;
 import com.telefonica.claudia.slm.deployment.hwItems.DiskConf;
 import com.telefonica.claudia.slm.deployment.hwItems.NICConf;
 import com.telefonica.claudia.slm.deployment.hwItems.Network;
-import com.telefonica.claudia.slm.deployment.hwItems.Product;
-import com.telefonica.claudia.slm.deployment.hwItems.Property;
+import com.telefonica.claudia.slm.deployment.paas.Product;
+import com.telefonica.claudia.slm.deployment.paas.Property;
 import com.telefonica.claudia.slm.maniParser.GetOperationsUtils;
 import com.telefonica.claudia.slm.paas.vmiHandler.SDCClient;
 import com.telefonica.claudia.slm.vmiHandler.TCloudClient;
 import com.telefonica.claudia.slm.vmiHandler.exceptions.AccessDeniedException;
 import com.telefonica.claudia.slm.vmiHandler.exceptions.CommunicationErrorException;
 
+
+
 //import es.test.GetVEE;
 public class PaasUtils {
 
 	Logger logger = null;
+	HashMap<String,Product> products = new HashMap<String,Product> ();
 	
 	public PaasUtils (Logger logger)
 	{
@@ -171,8 +185,7 @@ public class PaasUtils {
 					
 					for (int l=0;l<dd.getLength();l++)
 					{
-					
-						System.out.println (dd.item(l).getNodeName());
+
 						if (dd.item(l).getNodeName().equals("ResourceType") &&
 								dd.item(l).getFirstChild().getNodeValue().equals("10"))
 						{
@@ -197,9 +210,9 @@ public class PaasUtils {
 		
 	}
 	
-	public String getIPVeeReplica (VEE veeReplica)
+	public String getIPVeeReplica (VEEReplica veeReplica)
 	{
-		TCloudClient vmi = new TCloudClient(SMConfiguration.getInstance().getSdcUrl());
+		TCloudClient vmi = new TCloudClient("http://"+SMConfiguration.getInstance().getVEEMHost()+":"+SMConfiguration.getInstance().getVEEMPort());
 		String xmlvee = null;
 		try {
 			xmlvee = vmi.getVEEReplicaXML(veeReplica);
@@ -234,6 +247,7 @@ public class PaasUtils {
 	public void addProductsToVEE (VirtualSystemType vs,VEE vee )
 	{
 		List<ProductSectionType> productsSection = null;
+		
 
 		productsSection = OVFEnvelopeUtils.getProductSections(vs);
 
@@ -241,9 +255,21 @@ public class PaasUtils {
 		for (ProductSectionType productSection: productsSection)
 		{
 		   Product product = addProduct(productSection);
-		   if (product==null)
+		   if (product == null)
 			   continue;
-			vee.addProduct(product);
+		   product.setVEE(vee);
+		   vee.addProduct(product);
+			
+			if (product.getParentName()!=null)
+			{
+			   Product parent = products.get(product.getParentName());
+			   parent.setProduct(product);
+			}
+			
+			if (product==null)
+				   continue;
+			
+			products.put(product.getName(), product);
 		}
 	}
 	
@@ -281,37 +307,172 @@ public class PaasUtils {
 
 		if (productSection.getVersion()!=null)
 		{
-		product.setProductVersion(productSection.getVersion().getValue());
+		product.setVersion(productSection.getVersion().getValue());
 		logger.info("Product version " +productSection.getVersion().getValue() );
 		}
 		if (productSection.getVendor()!=null)
 		{
-		product.setProductVendor(productSection.getVendor().getValue());
+		product.setVendor(productSection.getVendor().getValue());
 		logger.info("Product vendor " +productSection.getVendor().getValue() );
 		}
 		if (productSection.getProductUrl()!=null)
 		{
-		product.setProductUrl(productSection.getProductUrl().getValue());
+		product.setUrl(productSection.getProductUrl().getValue());
 		logger.info("Product url " +productSection.getProductUrl().getValue() );
 		}
 		
 		List<Object> sections = productSection.getCategoryOrProperty();
+		String category = "";
 		
 		for (Object prop : sections)
 		{
 			
+			if (prop instanceof MsgType) //category
+			{
+				MsgType cat = (MsgType)prop;
+				Map<QName, String> map = cat.getOtherAttributes();
+				
+				Iterator itr = map.entrySet().iterator();
+				while (itr.hasNext()) {
+					Map.Entry e = (Map.Entry)itr.next();
+					System.out.println("clave: "+e.getKey()+"valor:"+e.getValue());
+					category=(String)e.getValue();
+				}
+				logger.info("Category " + category);
+		
+				
+			}
 			if (prop instanceof ProductSectionType.Property)
 			{
-				ProductSectionType.Property property = (ProductSectionType.Property )prop;
-	
-				logger.info ("Product property " + property.getKey() + " : " + property.getValue());
-			
-				product.addProperty(property.getKey(), property.getValue());
-				
+				if (category.equals("org.4caast.instancecomponent"))
+				{
+					ProductSectionType.Property property = (ProductSectionType.Property )prop;
+					String key = getPropertyKey (property);
+					String value = getPropertyValue (property);
+					
+					logger.info ("Product property " + key + " : " + value);
+					
+					if (key.indexOf("type")!=-1)
+					{
+						product.setType(value);
+					}
+					else if (key.indexOf("id")!=-1)
+					{
+						product.setName(value);
+					}
+					else if (key.indexOf("parent")!=-1)
+					{
+						product.setParentName(value);
+					}
+				}
+				else if (category.equals("org.4caast.instancecomponent.attributes"))
+				{
+					ProductSectionType.Property property = (ProductSectionType.Property )prop;
+					
+					String key = getPropertyKey (property);
+					String value = getPropertyValue (property);
+					logger.info ("Product property " +key + " : " + value);
+					
+					product.addProperty(new Property(key, value));
+				}
 			}
 			
 		}
+		
+		
 		return product;
+	}
+	
+
+	
+	private String getPropertyKey (ProductSectionType.Property property)
+	{
+		String key = null;
+		if (property.getKey()==null)
+		{
+			Map<QName, String> map = property.getOtherAttributes();
+			
+			 Iterator itr = map.entrySet().iterator();
+			  while (itr.hasNext()) {
+				Map.Entry e = (Map.Entry)itr.next();
+				if ((((QName) e.getKey()).getLocalPart()).equals("key"))
+					return (String)e.getValue();
+				
+				//return ((QName) e.getKey()).getLocalPart();
+			  }
+		}
+		else
+			return property.getKey();
+		return null;
+	}
+	
+	private String getPropertyValue (ProductSectionType.Property property)
+	{
+		if (property.getValue()==null || property.getValue().length()==0)
+		{
+			Map<QName, String> map = property.getOtherAttributes();
+			
+			 Iterator itr = map.entrySet().iterator();
+			  while (itr.hasNext()) {
+				Map.Entry e = (Map.Entry)itr.next();
+				if ((((QName) e.getKey()).getLocalPart()).equals("value"))
+					return (String)e.getValue();
+				
+			//	return (String) e.getValue();
+			  }
+		}
+		else
+			return property.getValue();
+		return null;
+	}
+	private String getProductXML (Product product) throws XMLException
+	{
+		ProductSectionType productsection = new ProductSectionType();
+		
+		if (product.getName()!=null)
+		{
+			MsgType productname = new MsgType();
+			productname.setValue(product.getName());
+			productsection.setProduct(productname);
+		}
+		
+		if (product.getVersion()!=null)
+		{
+			CimString mens = new CimString();
+			mens.setValue(product.getVersion());
+			productsection.setVersion(mens);
+		}
+		
+		if (product.getVendor()!=null)
+		{
+			MsgType mens = new MsgType();
+			mens.setValue(product.getVendor());
+			productsection.setVendor(mens);
+		}
+		
+		if (product.getUrl()!=null)
+		{
+			CimString mens = new CimString();
+			mens.setValue(product.getUrl());
+			productsection.setProductUrl(mens);
+		}
+		
+		for (Property prop : product.getProperties())
+		{
+			
+				ProductSectionType.Property property = new ProductSectionType.Property ();
+				property.setKey(prop.getKey());
+				property.setValue(prop.getValue());
+				productsection.getCategoryOrProperty().add(property);
+		}
+		
+		
+		OVFSerializer ovfSerializer = OVFSerializer.getInstance();
+		String ovfproduct = null;
+	
+		ovfproduct = ovfSerializer.writeXML(productsection);
+		return ovfproduct;
+	
 	}
 	
 	public static String tooString (Document doc)
@@ -332,18 +493,20 @@ public class PaasUtils {
         return stringOut.toString();
 	}
 	
-	public void installProduct (Product product, String ip)
+	public void installProduct (String url, Product product, String ip) throws Exception
 	{
-		SDCClient sdc = new SDCClient ("http://109.231.82.11:8080/sdc/");
+		SDCClient sdc = new SDCClient (url);
 		try {
 			sdc.installProduct(product, ip);
-		} catch (AccessDeniedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		} catch (CommunicationErrorException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			throw new CommunicationErrorException ("Error in the communication " + e.getMessage());
 		}
+		catch (Exception e) {
+			// TODO Auto-generated catch block
+			throw new Exception ("Error" + e.getMessage());
+		} 
+		
 	}
 
 }

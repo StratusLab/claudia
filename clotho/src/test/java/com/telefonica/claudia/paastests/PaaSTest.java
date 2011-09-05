@@ -20,7 +20,7 @@ import com.telefonica.claudia.slm.deployment.VEEReplica;
 import com.telefonica.claudia.slm.deployment.hwItems.DiskConf;
 import com.telefonica.claudia.slm.deployment.hwItems.NICConf;
 import com.telefonica.claudia.slm.deployment.hwItems.Network;
-import com.telefonica.claudia.slm.deployment.hwItems.Product;
+import com.telefonica.claudia.slm.deployment.paas.Product;
 import com.telefonica.claudia.slm.lifecyclemanager.FSM;
 import com.telefonica.claudia.slm.lifecyclemanager.LifecycleController;
 import com.telefonica.claudia.slm.maniParser.Parser;
@@ -75,6 +75,9 @@ public class PaaSTest {
 			fsm.loadRuleEngine(rle);
 			for (VEE vee: sa.getVEEs())
 			{
+				
+				for (VEEReplica replica: vee.getVEEReplicas())
+				{
 				boolean bPaaSAware = paas.isPaaSAware(vee);
 				 
 				
@@ -85,15 +88,16 @@ public class PaaSTest {
 				
 				if (bPaaSAware)
 				{
-					String ip = paas.getIPVeeReplica (vee);
+					String ip = paas.getIPVeeReplica (replica);
 					System.out.println ("IP " + ip);
 					
 					for (Product product: vee.getProducts())
 					{
-						paas.installProduct(product, ip);
+						paas.installProduct("http://109.231.82.11:8080/sdc/",product, ip);
 					}
 					
 				}
+			}
 			}
 			
 			
