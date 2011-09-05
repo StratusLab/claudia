@@ -86,7 +86,7 @@
 				<configuration>
 					<archive>
 						<manifest>
-							<mainClass>com.telefonica.claudia.slm.test.ClaudiaClient</mainClass>
+							<mainClass>com.telefonica.claudia.slm.test.Test</mainClass>
 							<addClasspath>true</addClasspath>
 						</manifest>
 					</archive>
