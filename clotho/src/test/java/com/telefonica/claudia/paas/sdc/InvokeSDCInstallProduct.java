@@ -14,9 +14,9 @@ public class InvokeSDCInstallProduct {
 		// TODO Auto-generated method stub
 		SDCClient sdc = new SDCClient("http://109.231.82.11:8080/sdc");
 		Product product = new Product ("tomcat");
-		product.setProductUrl("http: ");
-		product.setProductVendor("vendor");
-		product.setProductVersion("5.5");
+		product.setUrl("http: ");
+		product.setVendor("vendor");
+		product.setVersion("5.5");
 
 		product.addProperty("propq1", "value1");
 		product.addProperty("propq2", "value2");

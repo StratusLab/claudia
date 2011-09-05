@@ -19,9 +19,9 @@ public class CreateXMLProduct {
 		
 
 		Product product = new Product ("tomcat");
-		product.setProductUrl("http: ");
-		product.setProductVendor("vendor");
-		product.setProductVersion("5.5");
+		product.setUrl("http: ");
+		product.setVendor("vendor");
+		product.setVersion("5.5");
 
 		product.addProperty("propq1", "value1");
 		product.addProperty("propq2", "value2");
