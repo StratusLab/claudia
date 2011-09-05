@@ -16,6 +16,8 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import javax.xml.parsers.ParserConfigurationException;
+
 import org.apache.log4j.Logger;
 import org.restlet.Context;
 import org.restlet.data.Form;
@@ -180,8 +182,15 @@ public class MeasureResource extends BasicResource {
 			}
 
 			mvl.setHref(getIdentifier());
-
-			return new StringRepresentation(Bean2Xml.toString(mvl),
+			String xml = null;
+			try {
+				 xml = mvl.getXML();
+			} catch (ParserConfigurationException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+			return new StringRepresentation(xml,
 					MediaType.TEXT_XML);
 		}
 		return null;
