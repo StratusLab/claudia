@@ -60,7 +60,7 @@ import com.telefonica.claudia.slm.deployment.hwItems.CPUConf;
 import com.telefonica.claudia.slm.deployment.hwItems.DiskConf;
 import com.telefonica.claudia.slm.deployment.hwItems.MemoryConf;
 import com.telefonica.claudia.slm.deployment.hwItems.NICConf;
-import com.telefonica.claudia.slm.deployment.hwItems.Product;
+import com.telefonica.claudia.slm.deployment.paas.Product;
 import com.telefonica.claudia.slm.maniParser.GetOperationsUtils;
 import com.telefonica.claudia.slm.naming.DirectoryEntry;
 import com.telefonica.claudia.slm.naming.FQN;
@@ -205,7 +205,7 @@ public class VEE implements Comparable, DirectoryEntry {
     }
     
     public void addProduct(Product product) {
-		System.out.println(" +++++ Product " + product.getProductName());
+		System.out.println(" +++++ Product " + product.getName());
 		products.add(product);
     }
     

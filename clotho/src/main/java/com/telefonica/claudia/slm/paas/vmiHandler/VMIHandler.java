@@ -36,7 +36,7 @@ import com.telefonica.claudia.slm.deployment.ServiceApplication;
 import com.telefonica.claudia.slm.deployment.VEE;
 import com.telefonica.claudia.slm.deployment.VEEReplica;
 import com.telefonica.claudia.slm.deployment.hwItems.Network;
-import com.telefonica.claudia.slm.deployment.hwItems.Product;
+import com.telefonica.claudia.slm.deployment.paas.Product;
 import com.telefonica.claudia.slm.vmiHandler.exceptions.AccessDeniedException;
 import com.telefonica.claudia.slm.vmiHandler.exceptions.CommunicationErrorException;
 import com.telefonica.claudia.slm.vmiHandler.exceptions.NotEnoughResourcesException;

@@ -52,19 +52,19 @@ public interface MonitoringDriver {
 	public List<MeasuredValueList> getMeasuredValueList(List<MeasureDescriptor> md, MeasuredValueFilter filter)
 	throws MonitorException;
 
-	MeasureDescriptorList getVappMeasureDescriptorList(String orgName,
+	public MeasureDescriptorList getVappMeasureDescriptorList(String orgName,
 			String vdcName, ArrayList<String> vappNames)
 			throws MonitorException;
 
-	MeasureDescriptorList getHwItemMeasureDescriptorList(String orgName,
+	public MeasureDescriptorList getHwItemMeasureDescriptorList(String orgName,
 			String vdcName, ArrayList<String> vappNames, String hwItemName)
 			throws MonitorException;
 
-	MeasureDescriptor getVappMeasureDescriptor(String orgName, String vdcName,
+	public MeasureDescriptor getVappMeasureDescriptor(String orgName, String vdcName,
 			ArrayList<String> vappNames, String measureId)
 			throws MonitorException;
 
-	MeasureDescriptor getHwItemMeasureDescriptor(String orgName,
+	public MeasureDescriptor getHwItemMeasureDescriptor(String orgName,
 			String vdcName, ArrayList<String> vappNames, String hwItemName,
 			String measureId) throws MonitorException;	
 }

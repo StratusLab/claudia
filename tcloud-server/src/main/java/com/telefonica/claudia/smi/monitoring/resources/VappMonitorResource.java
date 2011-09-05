@@ -12,6 +12,8 @@
   */
 package com.telefonica.claudia.smi.monitoring.resources;
 
+import javax.xml.parsers.ParserConfigurationException;
+
 import org.apache.log4j.Logger;
 import org.restlet.Context;
 import org.restlet.data.MediaType;
@@ -60,17 +62,28 @@ public class VappMonitorResource extends MonitorResource {
 				return getUnknownElementErrorRepresentation(e.getMessage());
 			}
 
-			log.debug("Data returned for monitor "
+			/*log.debug("Data returned for monitor "
 					+ URICreation.getFQN(orgId, vdcId, vappIds.get(0))
-					+ ": \n\n" + Bean2Xml.toString(mdl));
+					+ ": \n\n" + Bean2Xml.toString(mdl));*/
 			
 			setMeasureDescriptorListHrefsLinks(mdl, TYPE_VAPP);
 
-			log.info("Data returned for monitor "
+		/*	log.info("Data returned for monitor "
 					+ URICreation.getFQN(orgId, vdcId, vappIds.get(0))
-					+ ": \n\n" + Bean2Xml.toString(mdl));
+					+ ": \n\n" + Bean2Xml.toString(mdl));*/
+			String xml = "";
+			try {
+				 xml = mdl.getXML();
+				 log.info("Data returned for monitor "
+							+ URICreation.getFQN(orgId, vdcId, vappIds.get(0))
+							+ ": \n\n" + xml);
+			} catch (ParserConfigurationException e) {
+				// TODO Auto-generated catch block
+				log.debug(e.getMessage());
+				return getUnknownElementErrorRepresentation("Error to obtain the XML");
+			}
 
-			return new StringRepresentation(Bean2Xml.toString(mdl),
+			return new StringRepresentation(xml,
 					MediaType.TEXT_XML);
 
 		}

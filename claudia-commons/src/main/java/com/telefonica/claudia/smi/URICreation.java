@@ -98,6 +98,7 @@ public class URICreation {
 	public static final String URI_TEMPLATE_ADD = URI_VAPP3 + "/action/templatize";	
 	
 	public static final String FQN_SEPARATOR_REPLICA = "replicas";
+	public static final String FQN_SEPARATOR_PRODUCT = "products";
 	public static final String FQN_SEPARATOR_VEE = "vees";
 	public static final String FQN_SEPARATOR_SERVICE = "services";
 	public static final String FQN_SEPARATOR_VDC = "customers";
@@ -294,6 +295,19 @@ public class URICreation {
 		
 		return uriService + "/" + veeReplica; 
 	}
+	
+	public static String getURIProduct(String fqnReplica) {
+		
+		String urivee = getURIVEEReplica(fqnReplica);
+        
+        String product = fqnReplica.substring(fqnReplica.indexOf(FQN_SEPARATOR_PRODUCT));
+        String[]  parts = product.split("\\.");
+        product = parts[1];
+		
+		return urivee + "/" + product; 
+	}
+	
+   
 	
 	public static String getURISnapshot(String fqnSnapshot) {
 		

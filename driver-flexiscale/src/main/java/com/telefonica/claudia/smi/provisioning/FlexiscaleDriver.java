@@ -23,7 +23,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.SortedSet;
 import java.util.StringTokenizer;
+import java.util.TreeSet;
 
 import javax.xml.namespace.QName;
 import javax.xml.parsers.DocumentBuilder;
@@ -81,6 +83,7 @@ import com.flexiscale.api2.VDC;
 import com.flexiscale.api2.Vlan;*/
 import com.sun.org.apache.xml.internal.serialize.OutputFormat;
 import com.sun.org.apache.xml.internal.serialize.XMLSerializer;
+
 import com.telefonica.claudia.smi.DataTypesUtils;
 import com.telefonica.claudia.smi.Main;
 import com.telefonica.claudia.smi.TCloudConstants;
@@ -394,7 +397,7 @@ if (VLAN.containsKey(fqnNet))
 	                    {   //yo
 	                    	//linecount++;
 	                    	
-	                    	String codigo = line.substring(0,3);
+	                    	String codigo = line.substring(0,line.indexOf("="));
 	                    	System.out.println(codigo);
 	                    	Long server_id = new Long(codigo);
 	                		ServerMap.put(fqnVm, server_id);
@@ -531,10 +534,8 @@ if (VLAN.containsKey(fqnNet))
 		public DeployVMTask(String fqn, String ovf) {
 			
 			super();
-			
-			this.fqnVm = fqn;
-			System.out.println("fqn"+fqn);
-			System.out.println("fqnVm"+fqnVm);
+
+		
 			this.ovf = ovf;
 			System.out.println("ovf"+ovf);
 		
@@ -618,6 +619,7 @@ if (VLAN.containsKey(fqnNet))
 							
 				String replicaName = root.getAttribute("name");
 				System.out.println("replicaName"+replicaName);
+				fqnVm = replicaName;
 				
 				NodeList envelopeItems = doc.getElementsByTagNameNS("*", "Envelope");
 				
@@ -654,7 +656,8 @@ if (VLAN.containsKey(fqnNet))
 				
 				// obtener el id de la red de la VM (Debe estar desplegada...)
 				String name=replicaName;
-				System.out.println("replicaName" + replicaName);               
+				System.out.println("replicaName" + replicaName);  
+				
 
                 String imag = getImageName (envelope);
                 long image_id = 635;
@@ -664,11 +667,11 @@ if (VLAN.containsKey(fqnNet))
                 	image_id = 635;
                 System.out.println("image_id" + image_id);
                 
-				long server_productoffer_id = 0;
+				
 				int memory = 0;
 				int cpu = 0;
 				int capacity = 0;
-				long disk_productoffers [] = {20};
+				
 				
 				
 				ContentType entityInstance = OVFEnvelopeUtils.getTopLevelVirtualSystemContent(envelope);
@@ -818,64 +821,13 @@ if (VLAN.containsKey(fqnNet))
 					}
 					
 					
-					switch (cpu) {
-					 
-					case 1: if (memory==1) server_productoffer_id=18;
-							else  server_productoffer_id=19;
-							break;
-							
-					case 2: if (memory==4) server_productoffer_id=21;
-							else  server_productoffer_id=115;
-							break;
-							
-					case 3: if (memory==6) server_productoffer_id=22;
-							else  server_productoffer_id=116;
-							break;
-						
-					case 4: if (memory==4) server_productoffer_id=117;
-							else if (memory==6) server_productoffer_id=118;
-							else  server_productoffer_id=23;
-							break;
-						
-					case 5: if (memory==6) server_productoffer_id=119;
-							else  server_productoffer_id=120;
-							break;
-							
-					case 6: if (memory==6) server_productoffer_id=121;
-							else  server_productoffer_id=122;
-							break;
-							
-					case 7: server_productoffer_id=123;
-							break;
-							
-					case 8: server_productoffer_id=124;
-							break;
-	
-					}
-					switch (capacity) {
-					    case 0: disk_productoffers[0]=31;
-					     break;
-						case 20: disk_productoffers[0]=31;
-								 break;
-								 
-						case 50: disk_productoffers[0]=30;
-						 		 break;
-						 		 
-						case 100: disk_productoffers[0]=29;
-						 		  break;
-						 		  
-						case 250: disk_productoffers[0]=28;
-						 		  break;
-						 		  
-						case 500: disk_productoffers[0]=49;
-						          break;
-						          
-						case 1000:disk_productoffers[0]=50;
-						          break;
-						
-					}
+					
+					
 					//---	
 					log.info("cpu " + cpu + " memory " + memory + " capacity " + capacity);
+					long server_productoffer_id = obtainServerOffer (cpu, memory);
+					long disk_productoffers [] = {20};
+					disk_productoffers = obtainDiskOffer (capacity);
 					log.info("server_productoffer_id " + server_productoffer_id + " disk_productoffers " + disk_productoffers[0]);
 					Server s=service.createServer(vdc_id, vlan_id, name, image_id, server_productoffer_id, disk_productoffers);	
 					log.info("s"+s);
@@ -931,7 +883,77 @@ if (VLAN.containsKey(fqnNet))
 								
 		}	
 		
+	private int obtainServerOffer (int cpu, int memory)
+	{
+
+		int server_productoffer_id =0;
+		switch (cpu) {
+		 
+		case 1: if (memory==1) server_productoffer_id=18;
+		      else if (memory==2) server_productoffer_id=19;
+				else  server_productoffer_id=17;
+				break;
+				
+		case 2: if (memory==4) server_productoffer_id=21;
+				else  server_productoffer_id=115;
+				break;
+				
+		case 3: if (memory==6) server_productoffer_id=22;
+				else  server_productoffer_id=116;
+				break;
 			
+		case 4: if (memory==4) server_productoffer_id=117;
+				else if (memory==6) server_productoffer_id=118;
+				else  server_productoffer_id=23;
+				break;
+			
+		case 5: if (memory==6) server_productoffer_id=119;
+				else  server_productoffer_id=120;
+				break;
+				
+		case 6: if (memory==6) server_productoffer_id=121;
+				else  server_productoffer_id=122;
+				break;
+				
+		case 7: server_productoffer_id=123;
+				break;
+				
+		case 8: server_productoffer_id=124;
+				break;
+
+		}
+		return server_productoffer_id;
+	}
+	
+	private long [] obtainDiskOffer (int capacity)
+	{
+		
+		long [] disk_productoffers = {0};
+		switch (capacity) {
+	    case 0: disk_productoffers[0]=31;
+	     break;
+		case 20: disk_productoffers[0]=31;
+				 break;
+				 
+		case 50: disk_productoffers[0]=30;
+		 		 break;
+		 		 
+		case 100: disk_productoffers[0]=29;
+		 		  break;
+		 		  
+		case 250: disk_productoffers[0]=28;
+		 		  break;
+		 		  
+		case 500: disk_productoffers[0]=49;
+		          break;
+		          
+		case 1000:disk_productoffers[0]=50;
+		          break;
+		          
+		
+	   }
+		return disk_productoffers;
+	}
 			
 			
 	}
@@ -963,11 +985,11 @@ if (VLAN.containsKey(fqnNet))
 				//long id= 8557;
 				Long id = getServerId(fqnVm);
 				//yo
-				System.out.println("delete id" + id);
-				System.out.println("delete fqnVm" + fqnVm);
+				log.info("Delete VM id" + id + " for fqn"+ fqnVm);
+	
 				deleteVirtualMachine(id);
 				//yo (NO LO IMPRIME)
-				System.out.println("DELETE " + id);
+			
 				
 				setStatus(TaskStatus.SUCCESS);
 		
@@ -999,93 +1021,89 @@ if (VLAN.containsKey(fqnNet))
 		
 		//@SuppressWarnings("unchecked")
 		public void deleteVirtualMachine(Long id) throws Exception {
-			System.out.println("id"+id);
-		
-//yo
-			try {
 
-			      //File inFile = new File(file);
-			      File inFile = new File("D:\\Codigos\\tcloud-server\\target\\tcloud-server-0.1.1-environment\\tcloud-server\\conf\\servers.txt");
-			     System.out.println("inFile"+inFile);
-			      if (!inFile.isFile()) {
-			        System.out.println("Parameter is not an existing file");
-			        return;
-			      }
-			       
-			      //Construct the new file that will later be renamed to the original filename.
-			      //File tempFile = new File(inFile.getAbsolutePath() + ".tmp");
-			      //yo
-			      File tempFile = new File("D:\\Codigos\\tcloud-server\\target\\tcloud-server-0.1.1-environment\\tcloud-server\\conf\\servers.tmp");
-				    
-			      System.out.println("tempFile"+tempFile);
-			      
-			     
-			      BufferedReader br = new BufferedReader(new FileReader("D:\\Codigos\\tcloud-server\\target\\tcloud-server-0.1.1-environment\\tcloud-server\\conf\\servers.txt"));
-			      System.out.println("br"+br);
-			      PrintWriter pw = new PrintWriter(new FileWriter(tempFile));
-			      System.out.println("pw"+pw);
-			      String line = null;
-
-			      //Read from the original file and write to the new
-			      //unless content matches data to be removed.
-			      while ((line = br.readLine()) != null) {
-			       
-					
-			    	  String str = id.toString();
-			    	  
-			        
-			    	  //yo
-			    	  if (!line.contains(str)) {
-			          pw.println(line);
-			          pw.flush();
-			        }
-			      }
-			      pw.close();
-			      br.close();
-			      
-			      //Delete the original file
-			      if (!inFile.delete()) {
-			        System.out.println("Could not delete file");
-			        return;
-			      }
-			      
-			      //Rename the new file to the filename the original file had.
-			      if (!tempFile.renameTo(inFile))
-			        System.out.println("Could not rename file");
-			      
-			    }
-			    catch (FileNotFoundException ex) {
-			      ex.printStackTrace();
-			    }
-			    catch (IOException ex) {
-			      ex.printStackTrace();
-			    }
-			    
-			System.out.println("getStatus:" + id);
-			
-			ServerMetadata meta = service.getServerMetadata(id);
-			System.out.println (meta.getPublic_metadata());
-			
-			try {
-				if (service.getServer(id).getStatus() == 2) {
-					service.stopServer(id, 1);
-					while (service.getServer(id).getStatus() != 5)
-						try {
-							Thread.sleep(1);
-							
-						} catch (InterruptedException e) {
-							throw new Exception(e.getMessage());
-						}
-				}
-				if (service.getServer(id).getStatus() == 5)
-					service.destroyServer(id);
-				else throw new Exception ("The vm cannot be destroyed because is not stopped");
+				ServerMetadata meta = service.getServerMetadata(id);
+				System.out.println (meta.getPublic_metadata());
 				
-			} catch(RemoteException re) {
-				throw new RemoteException(re.getMessage());
-			}
+				try {
+					if (service.getServer(id).getStatus() == 2) {
+						log.info("Stoping service id" + id);
+						service.stopServer(id, 1);
+						while (service.getServer(id).getStatus() != 5)
+							try {
+								Thread.sleep(1);
+								
+							} catch (InterruptedException e) {
+								throw new Exception(e.getMessage());
+							}
+					}
+					if (service.getServer(id).getStatus() == 5)
+					{
+						log.info("Destroying service id" + id);
+						service.destroyServer(id);
+						
+					}
+					else throw new Exception ("The vm cannot be destroyed because is not stopped");
+					
+				} catch(RemoteException re) {
+					throw new RemoteException(re.getMessage());
+				}
+				
+				log.info("Update Status Services");
+
+				updateStatusService (id);
+
 			
-		}	
+		}
+		
+		private void updateStatusService (Long id) throws Exception
+		{
+			//File inFile = new File(file);
+		    File inFile = new File("./conf/servers.txt");
+		    System.out.println("inFile"+inFile);
+		    if (!inFile.isFile()) {
+		       System.out.println("Parameter is not an existing file");
+		       return;
+		     }
+		      
+		     //Construct the new file that will later be renamed to the original filename.
+		     //File tempFile = new File(inFile.getAbsolutePath() + ".tmp");
+		     //yo
+		    File tempFile = new File("./conf/servers.tmp");
+			        
+		    
+		    BufferedReader br;
+			
+			br = new BufferedReader(new FileReader("./conf/servers.txt"));
+			PrintWriter pw = new PrintWriter(new FileWriter(tempFile));
+				  
+			String line = null;
+
+			     //Read from the original file and write to the new
+			     //unless content matches data to be removed.
+			while ((line = br.readLine()) != null) {
+			      
+					
+			  String str = new Long(id).toString();
+
+		   	  if (!line.contains(str)) {
+			         pw.println(line);
+			         pw.flush();
+			       }
+			 }
+			 pw.close();
+			 br.close();
+			     
+			  //Delete the original file
+			 if (!inFile.delete()) {
+			      throw new Exception("Could not delete file");
+			     
+			 }
+			     
+			//Rename the new file to the filename the original file had.
+			if (!tempFile.renameTo(inFile))
+			    	 throw new Exception("Could not rename file");
+		}
 	}
 	
 	
@@ -1725,8 +1743,61 @@ public class UndeployNetworkTask extends Task
 	//@Override
 	public String getVirtualMachine(String fqn) throws IOException {
 		
-		// TODO Auto-generated method stub
-		return null;
+		long server_id;
+		try {
+			 server_id = getServerId(fqn).longValue();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			throw new IOException ("The fqn " + fqn + " does not correspond to any VM deployed"); 
+		}
+		Server [] dd = service.listServers(1842);
+		
+		for (Server ddd: dd)
+		{
+			System.out.println (ddd.getServer_id());
+		}
+		Server server = service.getServer(server_id);
+		
+		
+		
+		String ip = "";
+		for (NetworkInterface n : server.getNetwork_interfaces())
+		{
+			String ips [] = n.getIp_list();
+			if (ips != null && ips.length>0)
+			{
+				ip= ips [0];
+			}
+		}
+		
+		// obtener la cpu, ram y disco
+		
+		// obtener stado VM
+		
+		return generateXMLVEE (fqn, ip);
+
+	}
+	
+	public static void main (String [] args)
+	{
+		Properties prop = new Properties();
+		try {
+			prop.load(new FileInputStream("./conf/tcloud.properties"));
+		} catch (FileNotFoundException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		FlexiscaleDriver fd=new FlexiscaleDriver(prop);
+		try {
+			fd.getVirtualMachine("es.tid.customers.cc1.services.m2.vees.vm");
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
 	}
 
 	//@Override
@@ -1944,6 +2015,72 @@ public class UndeployNetworkTask extends Task
         System.out.println("return mapResult" + mapResult);
         return mapResult;
 }
+       
+       private String generateXMLVEE (String fqn, String ip)
+       {
+    	   DocumentBuilderFactory dbfac = DocumentBuilderFactory.newInstance();
+	        DocumentBuilder docBuilder;
+	        Document doc = null;
+	    	
+	        String organizationId =  URICreation.getOrg(fqn).replace(".", "_");
+	        String vdcid = URICreation.getVDC(fqn).substring(fqn.indexOf("customers")+"customers".length()+1);
+	        
+	        String vappid =  URICreation.getService(fqn).substring(fqn.indexOf("services")+"services".length()+1);
+	        String veeid =  URICreation.getVEE(fqn).substring(fqn.indexOf("vees")+"vees".length()+1);
+	        
+	        try {
+				docBuilder = dbfac.newDocumentBuilder();
+				
+				doc = docBuilder.newDocument();
+				
+	
+		    			
+		    	Element veeReplicaElement = doc.createElement("VApp");
+		    	doc.appendChild(veeReplicaElement);
+		    			
+		    	veeReplicaElement.setAttribute("name", fqn);
+
+		    	veeReplicaElement.setAttribute("href", "@HOSTNAME/api/org/" + organizationId + "/vdc/" +   vdcid + "/vapp/" +
+		    			vappid + "/" + veeid + "/" + 1);
+		    			
+		    	Element linkVeeReplica = doc.createElement("Link");
+		    	veeReplicaElement.appendChild(linkVeeReplica);
+		    			
+		    	linkVeeReplica.setAttribute("rel", "monitor:measures");
+		    	linkVeeReplica.setAttribute("type", "application/vnc.telefonica.tcloud. measureDescriptorList+xml");
+		    	linkVeeReplica.setAttribute("href", "@HOSTNAME/api/org/" + organizationId + "/vdc/" +   
+		    			vdcid + "/vapp/" + vappid + "/" + veeid + "/" + "1" + "/monitor");
+		    			
+		    	Element virtuahardware = GetOperationsUtils.getVirtualHardwareSystem(doc, "@HOSTNAME/api/org/" + organizationId + "/vdc/" +  
+		    					vdcid + "/vapp/" + 
+		    					vappid +"/" + veeid + "/" + 1, 1,512,2,ip);
+		    	
+		    	veeReplicaElement.appendChild(virtuahardware);
+
+		    		
+		    	
+		    	
+		    	
+
+			} catch (ParserConfigurationException e) {
+				
+			}
+
+			OutputFormat format    = new OutputFormat (doc); 
+            // as a String
+            StringWriter stringOut = new StringWriter ();    
+            XMLSerializer serial   = new XMLSerializer (stringOut, 
+                                                        format);
+            try {
+    			serial.serialize(doc);
+    		} catch (IOException e) {
+    			// TODO Auto-generated catch block
+    			e.printStackTrace();
+    		}
+            // Display the XML
+            System.out.println("XML " + stringOut.toString());
+            return  stringOut.toString();
+       }
 
 
 

@@ -23,11 +23,13 @@ import java.util.Iterator;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.telefonica.claudia.slm.common.DbManager;
 import com.telefonica.claudia.slm.common.SMConfiguration;
 import com.telefonica.claudia.slm.deployment.Customer;
 import com.telefonica.claudia.slm.deployment.ServiceApplication;
 import com.telefonica.claudia.slm.deployment.VEE;
 import com.telefonica.claudia.slm.deployment.VEEReplica;
+import com.telefonica.claudia.slm.deployment.paas.Product;
 import com.telefonica.claudia.slm.maniParser.ManiParserException;
 import com.telefonica.claudia.slm.maniParser.Parser;
 import com.telefonica.claudia.slm.serviceconfiganalyzer.ServiceConfigurationAnalyzer;
@@ -60,7 +62,28 @@ public class Test4caast {
 			// Manually populate the replicas to continue the test
 			ServiceApplication sa = p.getServiceApplication();
 			Iterator<VEE> vees = sa.getVEEs().iterator();
+			
+			for (VEE vee: sa.getVEEs() )
+			{
+			   for (Product product: vee.getProducts())
+			   {
+				   System.out.println (product.getFQN());
+			   }
+			}
+			
+			
+			
+			for (VEE vee: sa.getVEEs() )
+			{
+			   for (Product product: vee.getProducts())
+			   {
+				   System.out.println (product.getProductXML("10.98.54.33"));
+			   }
+			}
+			
 			VEE master = vees.next();
+			
+			
 		
 
 			VEEReplica vee1 = new VEEReplica(master);
@@ -87,7 +110,7 @@ public class Test4caast {
 			eps.put("1_sge_net", eps1);
 			
 			/* Let's generate the OVF Environment for VEEMaster and VEEExecutor */
-			p.generateEnvironments("vm",0,getFreshIPS(),netmasks,dnsServers,gateways,eps);
+		//	p.generateEnvironments("vm",0,getFreshIPS(),netmasks,dnsServers,gateways,eps);
 		
 
 			

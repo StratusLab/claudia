@@ -15,6 +15,9 @@ package com.telefonica.claudia.smi.monitoring.bean;
 import java.io.Serializable;
 import java.util.Date;
 
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+
 public class MeasuredValue implements Serializable{
 
 	private static final long serialVersionUID = -3490921200395717269L;
@@ -62,6 +65,24 @@ public class MeasuredValue implements Serializable{
 
 	public String getUnit() {
 		return unit;
+	}
+
+	public Element getXML(Document doc) {
+		// TODO Auto-generated method stub
+		Element md = doc.createElement("Sample");
+        md.setAttribute("unit", this.unit);
+        md.setAttribute("timestamp", this.registerDate.toString());
+
+        
+        Element value = doc.createElement("Value");
+        value.appendChild(doc.createTextNode(this.value));
+        md.appendChild(value);
+        
+        Element capacity = doc.createElement("Capacity");
+        value.appendChild(doc.createTextNode(""));
+        md.appendChild(value);
+        
+        return md;
 	}
 	
 	

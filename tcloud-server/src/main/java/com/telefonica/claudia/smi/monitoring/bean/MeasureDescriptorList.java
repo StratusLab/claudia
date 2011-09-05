@@ -30,9 +30,21 @@
 
 package com.telefonica.claudia.smi.monitoring.bean;
 
+import java.io.IOException;
 import java.io.Serializable;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+
+import com.sun.org.apache.xml.internal.serialize.OutputFormat;
+import com.sun.org.apache.xml.internal.serialize.XMLSerializer;
 
 public class MeasureDescriptorList implements Serializable{
 
@@ -118,6 +130,45 @@ public class MeasureDescriptorList implements Serializable{
 		if (n>0) sb.delete(sb.lastIndexOf("?"),sb.length());
 		sb.delete(sb.lastIndexOf("/"),sb.length());
 		return sb.toString();
+	}
+	
+	public String getXML () throws ParserConfigurationException
+	{
+		DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+        Document doc = builder.newDocument();   
+        
+        Element measureDescriptionList = doc.createElement("MeasureDescriptionList");
+        measureDescriptionList.setAttribute("href", this.getHref());
+        Element link2 = doc.createElement("Link");
+        link2.setAttribute("href", this.getLink().getHref());
+        link2.setAttribute("type", this.getLink().getType());
+        link2.setAttribute("rel", this.getLink().getRel());
+        measureDescriptionList.appendChild(link2);
+        doc.appendChild(measureDescriptionList);
+        
+        
+        for (MeasureDescriptor md: this.getMeasureDescriptors())
+        {
+        	Element mde = md.getXML (doc);
+        	measureDescriptionList.appendChild(mde);
+        }
+        
+        OutputFormat format    = new OutputFormat (doc); 
+        // as a String
+        StringWriter stringOut = new StringWriter ();    
+        XMLSerializer serial   = new XMLSerializer (stringOut, 
+                                                    format);
+        try {
+			serial.serialize(doc);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+        // Display the XML
+        System.out.println("XML " + stringOut.toString());
+        return stringOut.toString();
+        
+        
 	}
 	
 //	public void setMeasureDescriptors(List <MeasureDescriptor> mdl) {

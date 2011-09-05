@@ -1,15 +1,13 @@
 /**
  * 
  */
-package com.telefonica.claudia.slm.maniParser;
+package com.telefonica.claudia.smi.provisioning;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Text;
 
-import com.telefonica.claudia.slm.deployment.VEEReplica;
-import com.telefonica.claudia.slm.deployment.hwItems.Disk;
-import com.telefonica.claudia.slm.deployment.hwItems.NIC;
+
 
 /**
  * @author henar
@@ -17,47 +15,7 @@ import com.telefonica.claudia.slm.deployment.hwItems.NIC;
  */
 public class GetOperationsUtils {
 
-	public static Element getVirtualHardwareSystem (Document doc, String href, VEEReplica replicat )
-	{
-		Element virtualHardware = doc.createElementNS("http://schemas.dmtf.org/ovf/envelope/1","VirtualHardwareSection");
-		Element virtualHardwarelink = doc.createElement("Link");
-		virtualHardwarelink.setAttribute("rel", "add");
-		virtualHardwarelink.setAttribute("type", "application/ovf.item+xml");
-		virtualHardwarelink.setAttribute("href", href+"/hw/");
-		
-		virtualHardware.appendChild(virtualHardwarelink);
-		
-		
-		int count = 1;
-		Element itemcpu = getItemElement (doc, href,count++, 0, replicat.getCPUs().size(), null, null);
-		virtualHardware.appendChild(itemcpu);
-		Element itemmemory = getItemElement (doc, href, count++, 1, replicat.getMemory().getMemoryConf().getCapacity(), null, null);
-		virtualHardware.appendChild(itemmemory);
-	
-		for (Disk disk:	replicat.getDisks())
-		{
-			Element itemdisk = getItemElement (doc, href,  count++, 2, disk.getDiskConf().getCapacity(), "ovf://disk/" + replicat.getVEE().getVEEName()   ,null);
-			virtualHardware.appendChild(itemdisk);
-		}
-		
-		for (NIC network:	replicat.getNICs())
-		{
-			String ip = null;
-			if (network.getIPAddresses().size()!=0)
-				ip = network.getIPAddresses().get(0);
-			else if (network.getNICConf().getNetwork().getNetworkAddresses()!=null)
-			{
-				if ( network.getNICConf().getNetwork().getNetworkAddresses()[0]!=null)
-				ip = network.getNICConf().getNetwork().getNetworkAddresses()[0];
-			}
-			Element itemnetwork = getItemElement (doc, href,  count++, 3, 0, null  ,ip);
-			virtualHardware.appendChild(itemnetwork);
-		}
-		
-		return virtualHardware;
-	
-	}
-	
+
 	public static Element getVirtualHardwareSystem (Document doc, String href, int cpu, int memory, int disk, String ip )
 	{
 		Element virtualHardware = doc.createElementNS("http://schemas.dmtf.org/ovf/envelope/1","VirtualHardwareSection");
