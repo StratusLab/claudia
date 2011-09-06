@@ -121,6 +121,12 @@
 			<filtered>true</filtered>
 			<fileMode>0744</fileMode>
 		</file>
+				<file>
+			<source>src/main/config/glitesiteovf</source>
+			<outputDirectory>/extraFiles</outputDirectory>
+			<filtered>true</filtered>
+			<fileMode>0744</fileMode>
+		</file>
 
 	</files>
 
