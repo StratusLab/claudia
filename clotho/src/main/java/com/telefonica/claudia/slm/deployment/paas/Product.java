@@ -54,9 +54,13 @@ import com.abiquo.ovf.exceptions.XMLException;
 import com.abiquo.ovf.xml.OVFSerializer;
 import com.telefonica.claudia.slm.deployment.ServiceApplication;
 import com.telefonica.claudia.slm.deployment.VEE;
+import com.telefonica.claudia.slm.deployment.VEEReplica;
+import com.telefonica.claudia.slm.deployment.hwItems.NIC;
+import com.telefonica.claudia.slm.deployment.hwItems.Network;
 import com.telefonica.claudia.slm.naming.DirectoryEntry;
 import com.telefonica.claudia.slm.naming.FQN;
 import com.telefonica.claudia.slm.naming.ReservoirDirectory;
+import com.telefonica.claudia.slm.paas.OVFContextualization;
 
 @Entity
 public class Product implements DirectoryEntry,PaaSElement {
@@ -319,6 +323,14 @@ public class Product implements DirectoryEntry,PaaSElement {
 		
 	}
 	
+	public String getProductXML () throws XMLException
+	{
+		
+		String ip = getIpVm (this.getVEE());
+		System.out.println ("IP for VM " + ip);
+		return getProductXML(ip);
+	}
+	
 	public String getProductXML (String ip) throws XMLException
 	{
 		ProductSectionType productsection = new ProductSectionType();
@@ -393,7 +405,15 @@ public class Product implements DirectoryEntry,PaaSElement {
 			
 				property = new ProductSectionType.Property ();
 				property.setKey(prop.getKey());
-				property.setValue(prop.getValue());
+				if (prop.getValue().indexOf("@")!=-1)
+				{
+					OVFContextualization context = new OVFContextualization ();
+					String valuemacro = context.getMacro(this.getVEE(), prop.getValue());
+					System.out.println ("Property macro " + prop.getValue() + " " + valuemacro );
+					property.setValue(valuemacro);
+				}
+				else
+				   property.setValue(prop.getValue());
 				productsection.getCategoryOrProperty().add(property);
 		}
 		
@@ -404,6 +424,22 @@ public class Product implements DirectoryEntry,PaaSElement {
 		ovfproduct = ovfSerializer.writeXML(productsection);
 		return ovfproduct;
 	
+	}
+	
+	public String getIpVm (VEE vee)
+	{
+		// We chose the first one
+		for (VEEReplica replica: vee.getVEEReplicas())
+		{
+			for (NIC nic: replica.getNICs())
+			{
+				Network net = nic.getNICConf().getNetwork();
+				
+					return net.getNetworkAddresses()[0];
+				
+			}
+		}
+		return null;
 	}
 
 	public void setParent(String type) {
