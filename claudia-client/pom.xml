@@ -3,13 +3,13 @@
 	<groupId>eu.stratuslab.pkgs.claudia</groupId>
 	<artifactId>claudia-client</artifactId>
 	<packaging>jar</packaging>
-	<version>0.1.7-SNAPSHOT</version>
+	<version>0.1.7</version>
 	<name>Claudia Client</name>
 
 	<parent>
 		<groupId>eu.stratuslab.pkgs.claudia</groupId>
 		<artifactId>claudia-parent</artifactId>
-		<version>1.7-SNAPSHOT</version>
+		<version>1.7</version>
 	</parent>
 
 	<repositories>
