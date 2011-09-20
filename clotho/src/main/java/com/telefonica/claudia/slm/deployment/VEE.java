@@ -155,6 +155,12 @@ public class VEE implements Comparable, DirectoryEntry {
     @Column(columnDefinition = "VARCHAR(32672)")
 	private String ovfRepresentation=null;
     
+    @Column(columnDefinition = "VARCHAR(32672)")
+	private String password=null;
+    
+    @Column(columnDefinition = "VARCHAR(32672)")
+	private String username=null;
+    
     public VEE() {}
     
     public String getUUID() {
@@ -540,5 +546,25 @@ public void setBalancedBy(VEE balancedBy) {
 		public boolean getBalancer()
 		{
 			return this.isBalancer;
+		}
+		
+		public void setUserName(String username)
+		{
+			this.username= username;
+		}
+		
+		public String getUserName()
+		{
+			return this.username;
+		}
+		
+		public void setPassword(String password)
+		{
+			this.password= password;
+		}
+		
+		public String getPassword()
+		{
+			return this.password;
 		}
 }

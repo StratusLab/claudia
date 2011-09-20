@@ -1015,20 +1015,31 @@ public class LifecycleController  extends UnicastRemoteObject implements SMI, Se
 			}
 
 			if (!success) {
-				Element r = doc.createElement("ErrorSet");
-				doc.appendChild(r);
-
-				Element unknown= doc.createElement("UnknownElements");
-				r.appendChild(unknown);
-
-				Element element= doc.createElement("element");
-				unknown.appendChild(element);
-
-				element.setAttribute("type", "vapp");
-
+				
+				Element element = null;
 				try {
+					DocumentBuilderFactory dbfac = DocumentBuilderFactory.newInstance();
+			        DocumentBuilder docBuilder= null;
+				
+					docBuilder = dbfac.newDocumentBuilder();
+				
+					
+					doc = docBuilder.newDocument();
+					Element r = doc.createElement("ErrorSet");
+					doc.appendChild(r);
+
+					Element unknown= doc.createElement("UnknownElements");
+					r.appendChild(unknown);
+
+					 element= doc.createElement("element");
+					unknown.appendChild(element);
+
+					element.setAttribute("type", "vapp");
 					element.setAttribute("ref", "http://" + SMConfiguration.getInstance().getSMIHost() + ":" + SMConfiguration.getInstance().getSMIPort()  + "/" + URICreation.getURIService(serviceFQN));
 				} catch (IllegalArgumentException iae) {
+					element.appendChild(doc.createElement(event.get(SMIChannelEvent.FQN_ID)));
+				} catch (ParserConfigurationException e2) {
+					// TODO Auto-generated catch block
 					element.appendChild(doc.createElement(event.get(SMIChannelEvent.FQN_ID)));
 				}
 			}

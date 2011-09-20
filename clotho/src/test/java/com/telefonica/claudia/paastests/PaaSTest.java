@@ -43,7 +43,7 @@ public class PaaSTest {
 	{
 		ServiceApplication sa  = null;
 	
-		String xmlFileName = "testpaas.xml";
+		String xmlFileName = "4caastpaas.xml";
 		
 		
 		try {
@@ -88,8 +88,11 @@ public class PaaSTest {
 				
 				if (bPaaSAware)
 				{
-					String ip = paas.getIPVeeReplica (replica);
+					String xml = paas.getVEE(replica);
+					String ip = paas.getVeePaaSIpFromXML (xml);
 					System.out.println ("IP " + ip);
+					String [] result = paas.getVeePaaSUserNamePaaswordFromXML(xml);
+					System.out.println ("username  " + result[0] + "  pass " + result[1]);
 					
 					for (Product product: vee.getProducts())
 					{

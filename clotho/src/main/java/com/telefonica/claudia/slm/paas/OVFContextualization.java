@@ -20,6 +20,15 @@ public class OVFContextualization {
 		{
 			return getMonitoringChannel ();
 		}
+		else if (macro.equals("@username"))
+		{
+			return vee.getUserName();
+		}
+		else if (macro.equals("@password"))
+		{
+			return vee.getPassword();
+		}
+		
 		else if (macro.startsWith("@IP"))
 		{
 			if (macro.indexOf(",")!=-1)

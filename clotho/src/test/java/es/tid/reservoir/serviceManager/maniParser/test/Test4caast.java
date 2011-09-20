@@ -29,9 +29,12 @@ import com.telefonica.claudia.slm.deployment.Customer;
 import com.telefonica.claudia.slm.deployment.ServiceApplication;
 import com.telefonica.claudia.slm.deployment.VEE;
 import com.telefonica.claudia.slm.deployment.VEEReplica;
+import com.telefonica.claudia.slm.deployment.hwItems.NICConf;
+import com.telefonica.claudia.slm.deployment.hwItems.Network;
 import com.telefonica.claudia.slm.deployment.paas.Product;
 import com.telefonica.claudia.slm.maniParser.ManiParserException;
 import com.telefonica.claudia.slm.maniParser.Parser;
+import com.telefonica.claudia.slm.paas.vmiHandler.RECManagerClient;
 import com.telefonica.claudia.slm.serviceconfiganalyzer.ServiceConfigurationAnalyzer;
 
 
@@ -56,58 +59,54 @@ public class Test4caast {
 			System.out.println("------------------------------------------------------------------------------------");
 			System.out.println("procesing " + xmlFileName);
 			
-			Parser p = new Parser(xmlFileName, new Customer("SP_STANDARD"), "ANONYMOUSSERVICE");
+			Parser p = new Parser(xmlFileName, new Customer("SP_STANDARD"), "test27");
 			p.parse();
 
 			// Manually populate the replicas to continue the test
 			ServiceApplication sa = p.getServiceApplication();
 			Iterator<VEE> vees = sa.getVEEs().iterator();
-			
-			for (VEE vee: sa.getVEEs() )
-			{
-			   for (Product product: vee.getProducts())
-			   {
-				   System.out.println (product.getFQN());
-			   }
-			}
-			
-			
-			
-			for (VEE vee: sa.getVEEs() )
-			{
-			   for (Product product: vee.getProducts())
-			   {
-				   System.out.println (product.getProductXML("10.98.54.33"));
-			   }
-			}
-			
 			VEE master = vees.next();
-			
-			
-		
+		//	VEE executor = vees.next();
 
 			VEEReplica vee1 = new VEEReplica(master);
-			
+		//	VEEReplica vee2 = new VEEReplica(executor);
 
 			master.registerVEEReplica(vee1);
+	//		executor.registerVEEReplica(vee2);
+			
+			for (VEE vee: sa.getVEEs())
+			{
+				for (NICConf nic: vee.getNICsConf())
+				{
+					Network net = nic.getNetwork();
+					net.setNetworkAddresses( new String [] {"109.231.79.228", "245.456.456.456"});
+				}
+			}
+			
+			for (VEE vee: sa.getVEEs() )
+			{
+				RECManagerClient d = new RECManagerClient("http://109.231.79.226:8080/ovfserver/");
+				//d.installProductsInService (vee);
+				//   d.installProductsInVm (vee);
+			   for (Product product: vee.getProducts())
+			   {
+				   //System.out.println (product.getFQN());
+				   
+				   d.installProduct(product, "109.231.79.228");
+			   }
+			}
 			
 			
-			HashMap<String,String> netmasks = new HashMap<String,String>();
-			netmasks.put("1_sge_net","255.255.255.0");
-			netmasks.put("0_admin_net","255.255.255.0");
 			
-			HashMap<String,String> dnsServers = new HashMap<String,String>();
-			dnsServers.put("1_sge_net","12.23.34.45");
-			dnsServers.put("0_admin_net","12.23.34.45");
+		/*	for (VEE vee: sa.getVEEs() )
+			{
+			   for (Product product: vee.getProducts())
+			   {
+				   System.out.println (product.getProductXML());
+			   }
+			}*/
 			
-			HashMap<String,String> gateways = new HashMap<String,String>();
-			gateways.put("1_sge_net","10.0.1.254");
-			gateways.put("0_admin_net","10.0.2.254");
 			
-			HashMap<String, HashMap<String,String>> eps = new HashMap<String, HashMap<String,String>>();
-			HashMap<String,String> eps1 = new HashMap<String,String>();
-			eps1.put("vm", "10.0.0.1");
-			eps.put("1_sge_net", eps1);
 			
 			/* Let's generate the OVF Environment for VEEMaster and VEEExecutor */
 		//	p.generateEnvironments("vm",0,getFreshIPS(),netmasks,dnsServers,gateways,eps);
