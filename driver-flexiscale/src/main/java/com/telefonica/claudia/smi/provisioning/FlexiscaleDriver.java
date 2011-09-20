@@ -91,6 +91,8 @@ import com.telefonica.claudia.smi.TCloudException;
 import com.telefonica.claudia.smi.URICreation;
 //import com.telefonica.claudia.smi.provisioning.ONEProvisioningDriver.ControlActionType;
 //import com.telefonica.claudia.smi.provisioning.ONEProvisioningDriver.DeployNetworkTask;
+import com.telefonica.claudia.smi.provisioning.GetOperationsUtils;
+import com.telefonica.claudia.smi.provisioning.ProvisioningDriver;
 import com.telefonica.claudia.smi.task.Task;
 import com.telefonica.claudia.smi.task.TaskManager;
 import com.telefonica.claudia.smi.task.Task.TaskError;
@@ -889,7 +891,7 @@ if (VLAN.containsKey(fqnNet))
 		int server_productoffer_id =0;
 		switch (cpu) {
 		 
-		case 1: if (memory==1) server_productoffer_id=18;
+		case 1: if (memory==1||memory==1024) server_productoffer_id=18;
 		      else if (memory==2) server_productoffer_id=19;
 				else  server_productoffer_id=17;
 				break;
@@ -1769,12 +1771,17 @@ public class UndeployNetworkTask extends Task
 				ip= ips [0];
 			}
 		}
+		String user = server.getInitial_password();
+		String password = server.getInitial_user();
+		
+		System.out.println (server.getInitial_password() + "  " + server.getInitial_user() +  " " + ip);
+		
 		
 		// obtener la cpu, ram y disco
 		
 		// obtener stado VM
 		
-		return generateXMLVEE (fqn, ip);
+		return generateXMLVEE (fqn, ip, user, password);
 
 	}
 	
@@ -2016,7 +2023,7 @@ public class UndeployNetworkTask extends Task
         return mapResult;
 }
        
-       private String generateXMLVEE (String fqn, String ip)
+       String generateXMLVEE (String fqn, String ip, String user, String password)
        {
     	   DocumentBuilderFactory dbfac = DocumentBuilderFactory.newInstance();
 	        DocumentBuilder docBuilder;
@@ -2050,6 +2057,10 @@ public class UndeployNetworkTask extends Task
 		    	linkVeeReplica.setAttribute("type", "application/vnc.telefonica.tcloud. measureDescriptorList+xml");
 		    	linkVeeReplica.setAttribute("href", "@HOSTNAME/api/org/" + organizationId + "/vdc/" +   
 		    			vdcid + "/vapp/" + vappid + "/" + veeid + "/" + "1" + "/monitor");
+		    	
+		    	Element productvm = GetOperationsUtils.getInstallProductInVirtualMachine(doc, user, password);
+		    	veeReplicaElement.appendChild(productvm);
+
 		    			
 		    	Element virtuahardware = GetOperationsUtils.getVirtualHardwareSystem(doc, "@HOSTNAME/api/org/" + organizationId + "/vdc/" +  
 		    					vdcid + "/vapp/" + 
@@ -2062,8 +2073,8 @@ public class UndeployNetworkTask extends Task
 		    	
 		    	
 
-			} catch (ParserConfigurationException e) {
-				
+			} catch (Exception e) {
+				log.error("Error " + e.getMessage());
 			}
 
 			OutputFormat format    = new OutputFormat (doc); 

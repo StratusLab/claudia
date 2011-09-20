@@ -3,9 +3,27 @@
  */
 package com.telefonica.claudia.smi.provisioning;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+
+import org.dmtf.schemas.ovf.envelope._1.MsgType;
+import org.dmtf.schemas.ovf.envelope._1.ProductSectionType;
+import org.dmtf.schemas.ovf.envelope._1.VirtualSystemType;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Text;
+import org.xml.sax.SAXException;
+
+import com.abiquo.ovf.OVFEnvelopeUtils;
+import com.abiquo.ovf.exceptions.InvalidSectionException;
+import com.abiquo.ovf.exceptions.SectionAlreadyPresentException;
+import com.abiquo.ovf.exceptions.XMLException;
+import com.abiquo.ovf.xml.OVFSerializer;
 
 
 
@@ -124,6 +142,36 @@ public class GetOperationsUtils {
 		item.appendChild(VirtualQuantityCPU);
 		}
 		return item;
+		
+
+	}
+	
+	public static Element getInstallProductInVirtualMachine(Document doc, String username, String password) throws ParserConfigurationException, XMLException, SAXException, IOException, SectionAlreadyPresentException, InvalidSectionException
+	{
+      
+		Element product = doc.createElementNS("http://schemas.dmtf.org/ovf/envelope/1","ProductSection");
+
+		Element category = doc.createElementNS("http://schemas.dmtf.org/ovf/envelope/1","Category");
+	    category.setAttributeNS("http://schemas.dmtf.org/ovf/envelope/1", "msgid", "org.fourcaast.rec");
+	    category.appendChild(doc.createTextNode("REC Attribute"));
+	    product.appendChild(category);
+	    
+	    Element propertyusername = doc.createElementNS("http://schemas.dmtf.org/ovf/envelope/1","Property");
+	    propertyusername.setAttributeNS("http://schemas.dmtf.org/ovf/envelope/1", "key", "org.fourcaast.rec.username");
+	    propertyusername.setAttributeNS("http://schemas.dmtf.org/ovf/envelope/1", "value", username);
+	  
+	    product.appendChild(propertyusername);
+	    
+	    
+	    Element propertypassword = doc.createElementNS("http://schemas.dmtf.org/ovf/envelope/1","Property");
+	    propertypassword.setAttributeNS("http://schemas.dmtf.org/ovf/envelope/1", "key", "org.fourcaast.rec.password");
+	    propertypassword.setAttributeNS("http://schemas.dmtf.org/ovf/envelope/1", "value", password);
+	  
+	    product.appendChild(propertypassword);
+	    
+	    
+		return product;
+
 		
 
 	}
