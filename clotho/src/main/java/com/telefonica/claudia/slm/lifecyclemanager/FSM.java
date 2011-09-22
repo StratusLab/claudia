@@ -1128,7 +1128,7 @@ public class FSM extends Thread implements Serializable {
                             .parseInt(parameters[1]), cntrlEvent
                             .getInitialTime(),checkinterval);
                 }
-                if (reply==false) scaleup--;
+                if (reply==false && scaleUpNumber !=1) scaleup--;
                 retorno = FSM.RUNNING;
             	 }
             	 
