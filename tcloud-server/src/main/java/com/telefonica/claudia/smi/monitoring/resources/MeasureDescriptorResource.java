@@ -12,6 +12,8 @@
   */
 package com.telefonica.claudia.smi.monitoring.resources;
 
+import javax.xml.parsers.ParserConfigurationException;
+
 import org.apache.log4j.Logger;
 import org.restlet.Context;
 import org.restlet.data.MediaType;
@@ -28,6 +30,7 @@ import com.telefonica.claudia.smi.monitoring.MonitoringDriver;
 import com.telefonica.claudia.smi.monitoring.bean.MeasureDescriptor;
 import com.telefonica.claudia.smi.monitoring.bean.error.ErrorSet;
 import com.telefonica.claudia.smi.monitoring.bean.error.UnknownElementsError;
+
 import com.telefonica.claudia.smi.util.Bean2Xml;
 import com.telefonica.claudia.smi.util.Util;
 
@@ -121,8 +124,14 @@ public class MeasureDescriptorResource extends BasicResource {
 			}
 
 			md.setHrefs(Util.getUpHref(getIdentifier()));
-
-			return new StringRepresentation(Bean2Xml.toString(md),
+            String xml = null;
+			try {
+				xml = md.getString();
+			} catch (ParserConfigurationException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			return new StringRepresentation(xml,
 					MediaType.TEXT_XML);
 		}
 		return null;

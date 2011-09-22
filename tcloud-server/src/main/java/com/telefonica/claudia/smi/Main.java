@@ -13,20 +13,32 @@
 
 package com.telefonica.claudia.smi;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
+
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.PersistenceException;
+import javax.persistence.spi.PersistenceProvider;
 
 import org.apache.log4j.Logger;
 import org.restlet.Application;
@@ -35,6 +47,7 @@ import org.restlet.Directory;
 import org.restlet.Restlet;
 import org.restlet.Router;
 import org.restlet.data.Protocol;
+
 
 import com.telefonica.claudia.smi.console.ConsoleApplication;
 import com.telefonica.claudia.smi.deployment.DeploymentApplication;
@@ -256,6 +269,52 @@ public class Main {
 				Class classDriver = cl.loadClass(prop
 						.getProperty(KEY_DRIVER_MONITORING));
 
+				/*
+				 * Properties prop = new Properties(); try { prop.load(new
+				 * FileInputStream("./conf/tcloud.properties")); } catch
+				 * (FileNotFoundException e1) { // TODO Auto-generated catch block
+				 * e1.printStackTrace(); } catch (IOException e1) { // TODO
+				 * Auto-generated catch block e1.printStackTrace(); }
+				 */
+				Set<PersistenceProvider> providers =findAllProviders();
+				Map <String, Object> configuration = new HashMap<String, Object>();
+				configuration.put("hibernate.connection.url", "jdbc:mysql://maquetacollectd.hi.inet:3306/monitoring");
+				configuration.put("hibernate.connection.driver_class", "com.mysql.jdbc.Driver");
+				configuration.put("hibernate.connection.username", "claudia");
+				configuration.put("hibernate.connection.password", "ClaudiaPass");
+				configuration.put("hibernate.dialect", "org.hibernate.dialect.MySQLDialect");
+				
+				configuration.put("hibernate.c3p0.min_size", "5");
+				configuration.put("hibernate.c3p0.max_size", "50");
+				configuration.put("hibernate.c3p0.timeout", "5000");
+				configuration.put("hibernate.c3p0.max_statements", "100");
+
+						
+				
+				 EntityManagerFactory emf = null;
+			        if (providers.size() == 0) {
+			            findAllProviders();
+			        }
+			        for (PersistenceProvider provider : providers) {
+			            emf = provider.createEntityManagerFactory("ClaudiaPU", configuration);
+			            if (emf != null){
+			                break;
+			            }
+			        }
+			        if (emf == null) {
+			            throw new PersistenceException("No Persistence provider for EntityManager named " + "ClaudiaPU");
+			        }
+			     
+				
+				
+			     /*   for (String s : names) {
+			            try{
+			                providers.add((PersistenceProvider)loader.loadClass(s).newInstance());
+			            } catch (ClassNotFoundException exc){
+			            } catch (InstantiationException exc){
+			            } catch (IllegalAccessException exc){
+			            }*/
+				
 				MonitoringApplication.setDriver(classDriver, prop);
 
 				MonitoringApplication app = new MonitoringApplication();
@@ -382,5 +441,68 @@ public class Main {
 
 		log.info("Service started");
 	}
+	
+	 private static Set<PersistenceProvider>  findAllProviders()  {
+		   Set<PersistenceProvider> providers = new HashSet<PersistenceProvider>();
+	        ClassLoader loader = Thread.currentThread().getContextClassLoader();
+	        Enumeration<URL> resources = null;
+			try {
+				resources = loader.getResources("META-INF/services/" + PersistenceProvider.class.getName());
+			} catch (IOException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+	        Set<String> names = new HashSet<String>();
+	        while (resources.hasMoreElements()) {
+	            URL url = resources.nextElement();
+	            System.out.println (url.toString());
+	            InputStream is = null;
+				try {
+					is = url.openStream();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+	            try {
+	                names.addAll(providerNamesFromReader(new BufferedReader(new InputStreamReader(is))));
+	            } catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} finally {
+	                try {
+						is.close();
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+	            }
+	        }
+	        for (String s : names) {
+	            try{
+	                providers.add((PersistenceProvider)loader.loadClass(s).newInstance());
+	            } catch (ClassNotFoundException exc){
+	            } catch (InstantiationException exc){
+	            } catch (IllegalAccessException exc){
+	            }
+	        }
+	        return providers;
+	    }
+	 
+
+	  
+
+	    private static Set<String> providerNamesFromReader(BufferedReader reader) throws IOException {
+	        Set<String> names = new HashSet<String>();
+	       Pattern nonCommentPattern = Pattern.compile("^([^#]+)");
+	        String line;
+	        while ((line = reader.readLine()) != null) {
+	            line = line.trim();
+	            Matcher m = nonCommentPattern.matcher(line);
+	            if (m.find()) {
+	                names.add(m.group().trim());
+	            }
+	        }
+	        return names;
+	    }
 
 }
