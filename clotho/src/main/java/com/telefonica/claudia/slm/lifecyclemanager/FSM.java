@@ -1108,7 +1108,7 @@ public class FSM extends Thread implements Serializable {
 					String veeType = action.substring(initIndex + 1, endIndex);
 					
 					boolean reply = true;
-					if (scaleUpNumber !=1) checkinterval = false;
+					if (scaleDownNumber !=1) checkinterval = false;
 					
 					reply = elasticityRemoveReplica(veeType, cntrlEvent.getInitialTime(),checkinterval);
 					if (reply==false) scaledown--;
