@@ -168,6 +168,7 @@ public class OVFEnvelopeUtils {
 	public static <T extends SectionType> void checkEnvelopeSection(Class<T> sectionType) throws InvalidSectionException {
 		if (!DiskSectionType.class.equals(sectionType) 
 			& !NetworkSectionType.class.equals(sectionType) 
+			& !AnnotationSectionType.class.equals(sectionType) 
 			& !DeploymentOptionSectionType.class.equals(sectionType)
 			& !VirtualHardwareSectionType.class.equals(sectionType) 
 			& !ProductSectionType.class.equals(sectionType)
@@ -362,6 +363,8 @@ public class OVFEnvelopeUtils {
 				envelope.getSection().add(envelopFactory.createAvailabilitySection((AvailabilitySectionType) section));
 			else if (section instanceof PerformanceObjectiveSectionType)
 				envelope.getSection().add(envelopFactory.createPerformanceObjectiveSection((PerformanceObjectiveSectionType) section));
+			else if (section instanceof AnnotationSectionType)
+				envelope.getSection().add(envelopFactory.createAnnotationSection((AnnotationSectionType) section));
 			else
 				envelope.getSection().add(envelopFactory.createSection(section));
 		} catch (Exception e) // InstantiationException or
@@ -947,7 +950,7 @@ public class OVFEnvelopeUtils {
 		List<JAXBElement<? extends SectionType>> sections = entity.getSection();
 		for (JAXBElement<? extends SectionType> elemSection : sections) {
 			SectionType section = elemSection.getValue();
-			System.out.println (section);
+		
 			if (section instanceof ProductSectionType) {
 				System.out.println (section);
 				ps.add((ProductSectionType) section);

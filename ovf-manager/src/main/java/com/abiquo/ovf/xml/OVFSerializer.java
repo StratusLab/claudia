@@ -48,6 +48,7 @@ import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
 
 import org.dmtf.schemas.ovf.envelope._1.AnnotationSectionType;
+import org.dmtf.schemas.ovf.envelope._1.ContentType;
 import org.dmtf.schemas.ovf.envelope._1.DeploymentOptionSectionType;
 import org.dmtf.schemas.ovf.envelope._1.DiskSectionType;
 import org.dmtf.schemas.ovf.envelope._1.EnvelopeType;
@@ -319,6 +320,52 @@ public class OVFSerializer
 
         writeXML(envelope, os);
     }
+    
+    public String writeXML(VirtualSystemType virtualSystem) throws XMLException
+    {
+        Marshaller marshall;
+        StringWriter writer = new StringWriter();
+        
+        try
+        {
+            marshall = contextEnvelope.createMarshaller();
+
+            if (formatOutput)
+            {
+                marshall.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
+            }
+
+            marshall.marshal(toJAXBElement(virtualSystem), writer);
+            return writer.toString();
+        }
+        catch (JAXBException ea)
+        {
+            throw new XMLException(ea);
+        }        
+    }
+    
+    public String writeXML(EnvelopeType env) throws XMLException
+    {
+        Marshaller marshall;
+        StringWriter writer = new StringWriter();
+        
+        try
+        {
+            marshall = contextEnvelope.createMarshaller();
+
+            if (formatOutput)
+            {
+                marshall.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
+            }
+
+            marshall.marshal(toJAXBElement(env), writer);
+            return writer.toString();
+        }
+        catch (JAXBException ea)
+        {
+            throw new XMLException(ea);
+        }        
+    }
 
   
     /**
@@ -439,7 +486,16 @@ public class OVFSerializer
     /** Wrap into an JAXBElement the provided OVF envelope.**/
     public JAXBElement<EnvelopeType> toJAXBElement(EnvelopeType envelope)
     {
-        return  factoryEnvelop.createEnvelope(envelope);       
+        return  factoryEnvelop.createEnvelope(envelope);      
+        
+       
+    }
+    
+    public JAXBElement<VirtualSystemType> toJAXBElement(VirtualSystemType vs)
+    {
+        return  factoryEnvelop.createVirtualSystem(vs);      
+        
+        
     }
    
     
