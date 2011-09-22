@@ -80,7 +80,7 @@ public class ScaleDownTest {
 				}
 			}
 			FSM fsm = new FSM ();
-			fsm.elasticityRemoveReplica(wn.getFQN().toString(), 0,true);
+			fsm.elasticityRemoveReplica(wn.getFQN().toString(), 0);
 	         
 	            
 			 
