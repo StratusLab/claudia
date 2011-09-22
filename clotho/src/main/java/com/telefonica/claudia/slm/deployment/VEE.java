@@ -31,6 +31,7 @@ package com.telefonica.claudia.slm.deployment;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.SortedSet;
@@ -61,6 +62,7 @@ import com.telefonica.claudia.slm.deployment.hwItems.DiskConf;
 import com.telefonica.claudia.slm.deployment.hwItems.MemoryConf;
 import com.telefonica.claudia.slm.deployment.hwItems.NICConf;
 import com.telefonica.claudia.slm.deployment.paas.Product;
+import com.telefonica.claudia.slm.deployment.paas.Property;
 import com.telefonica.claudia.slm.maniParser.GetOperationsUtils;
 import com.telefonica.claudia.slm.naming.DirectoryEntry;
 import com.telefonica.claudia.slm.naming.FQN;
@@ -155,6 +157,12 @@ public class VEE implements Comparable, DirectoryEntry {
     @Column(columnDefinition = "VARCHAR(32672)")
 	private String ovfRepresentation=null;
     
+    @Column(columnDefinition = "VARCHAR(32672)")
+	private String password=null;
+    
+    @Column(columnDefinition = "VARCHAR(32672)")
+	private String username=null;
+    
     public VEE() {}
     
     public String getUUID() {
@@ -213,6 +221,16 @@ public class VEE implements Comparable, DirectoryEntry {
         return products;
     }
     
+    public Product getProductByName(String productin) {
+
+    	for (Iterator<Product> it = products.iterator(); it.hasNext(); ) {
+    		Product product = it.next();
+    		if (product.getName().equals(productin)) {
+    			return product;
+    		}
+    	}
+    	return null;
+    }
     
     
     
@@ -540,5 +558,25 @@ public void setBalancedBy(VEE balancedBy) {
 		public boolean getBalancer()
 		{
 			return this.isBalancer;
+		}
+		
+		public void setUserName(String username)
+		{
+			this.username= username;
+		}
+		
+		public String getUserName()
+		{
+			return this.username;
+		}
+		
+		public void setPassword(String password)
+		{
+			this.password= password;
+		}
+		
+		public String getPassword()
+		{
+			return this.password;
 		}
 }

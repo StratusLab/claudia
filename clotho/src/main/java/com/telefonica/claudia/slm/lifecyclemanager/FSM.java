@@ -75,6 +75,7 @@ import com.telefonica.claudia.slm.monitoring.WasupHierarchy;
 import com.telefonica.claudia.slm.naming.FQN;
 import com.telefonica.claudia.slm.naming.ReservoirDirectory;
 import com.telefonica.claudia.slm.paas.PaasUtils;
+import com.telefonica.claudia.slm.paas.vmiHandler.RECManagerClient;
 import com.telefonica.claudia.slm.rulesEngine.RulesEngine;
 import com.telefonica.claudia.slm.serviceconfiganalyzer.ServiceConfigurationAnalyzer;
 import com.telefonica.claudia.slm.vmiHandler.TCloudClient;
@@ -692,7 +693,8 @@ public class FSM extends Thread implements Serializable {
             return false;
         }
         }
-
+     
+        RECManagerClient rec = new RECManagerClient(SMConfiguration.getInstance().getSdcUrl());
 
         // for each VEE, get the required replicas
         for (int j = 0; j < veeArray.length; j++) {
@@ -704,18 +706,52 @@ public class FSM extends Thread implements Serializable {
             // get the required number of replicas.
             Set<VEEReplica> replicas = createReplica(veeArray[j], veeArray[j].getInitReplicas());
             if (replicas == null)
-                abort("Replicas could not be created for vee ["
-                        + veeArray[j].getFQN() + "]");
-            PaasUtils paas = new PaasUtils();
-            for (VEEReplica replica: replicas)
             {
+                abort("Replicas could not be created for vee ["
+                       + veeArray[j].getFQN() + "]");
+                return false;
+            }
+            PaasUtils paas = new PaasUtils();
             
+            try {
+				rec.installProductsInService (veeArray[j]);
+				
+			} catch (AccessDeniedException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			} catch (CommunicationErrorException e1) {
+				// TODO Auto-generated catch block
+				logger.error("Error to install the product " + e1.getMessage());
+				abortServiceAlreadyDeployed("Error to install the product " + e1.getMessage()+ ". Replicas could not be created for vee ["
+                        + veeArray[j].getFQN() + "]");
+				return false;
+			}
+            
+            for (VEEReplica replica: replicas)
+
+            { 
+            		
               if (paas.isPaaSAware(veeArray[j]))
               {
             	// if it is paas aware, we have to install the software.....
-				
-            	String ip = paas.getIPVeeReplica (replica);
+				String xml = paas.getVEE(replica);
+            	String ip = paas.getVeePaaSIpFromXML (xml);
             	logger.info("IP for "+ veeArray[j].getVEEName() + " " + ip);
+            	
+            	String [] result = paas.getVeePaaSUserNamePaaswordFromXML(xml);
+				System.out.println ("username  " + result[0] + "  pass " + result[1]);
+				
+			//	veeArray[j].setUserName(result[0]);
+			//	veeArray[j].setPassword(result[1]);
+				
+            	try {
+					rec.installProductsInVm (veeArray[j], ip, result[0], result[1]);
+				} catch (Exception e1) {
+					// TODO Auto-generated catch block
+					logger.error("Error to install the product " + e1.getMessage());
+					abortServiceAlreadyDeployed("Error to install the product " + e1.getMessage()+ ". Error to configure the VM]");
+					return false;
+				} 
             	for (Product product: veeArray[j].getProducts())
 				{
 					try {
@@ -723,8 +759,9 @@ public class FSM extends Thread implements Serializable {
 					} catch (Exception e) {
 						// TODO Auto-generated catch block
 						logger.error("Error to install the product " + e.getMessage());
-						abort("Error to install the product " + e.getMessage()+ ". Replicas could not be created for vee ["
+						abortServiceAlreadyDeployed("Error to install the product " + e.getMessage()+ ". Replicas could not be created for vee ["
 		                        + veeArray[j].getFQN() + "]");
+						return false;
 					}
 				}
             	
@@ -1559,17 +1596,35 @@ public class FSM extends Thread implements Serializable {
                     + reason);
         }
         
-    /*    shutdown(veesRollBack);
-       if (nicsToDeploy == null)
-    	   nicsToDeploy = new HashSet<Network>(); 
-        removeNetworks();
-        sap.getCustomer().unregisterService(sap);
-        DbManager.getDbManager().save(sap.getCustomer());
-
-        FQN fqnService = sap.getFQN();
-        DbManager.getDbManager().remove(sap);
-        DbManager.getDbManager().remove(fqnService);*/
+     
     }
+    
+    private void abortServiceAlreadyDeployed (String reason)
+    {
+    	 if (currentState == INIT) {
+             logger.error("Aborting the FSM due to the following reason: "
+                     + reason);
+             abort = true;
+             this.abortMessage = reason;
+             
+         } else {
+             logger.error("Action discarded due to the following reason: "
+                     + reason);
+         }
+         
+        shutdown(veesRollBack);
+        if (nicsToDeploy == null)
+     	   nicsToDeploy = new HashSet<Network>(); 
+         removeNetworks();
+         sap.getCustomer().unregisterService(sap);
+         DbManager.getDbManager().save(sap.getCustomer());
+
+         FQN fqnService = sap.getFQN();
+         DbManager.getDbManager().remove(sap);
+         DbManager.getDbManager().remove(fqnService);
+    }
+    
+    
 
     @SuppressWarnings("unchecked")
     private Set<VEEReplica> createReplica(VEE originalVEE, int replicaNumber) {

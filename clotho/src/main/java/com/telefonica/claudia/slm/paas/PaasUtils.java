@@ -2,6 +2,7 @@ package com.telefonica.claudia.slm.paas;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -28,9 +29,11 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
 
 import com.abiquo.ovf.OVFEnvelopeUtils;
 import com.abiquo.ovf.exceptions.InvalidSectionException;
+import com.abiquo.ovf.exceptions.SectionAlreadyPresentException;
 import com.abiquo.ovf.exceptions.SectionNotPresentException;
 import com.abiquo.ovf.exceptions.XMLException;
 import com.abiquo.ovf.xml.OVFSerializer;
@@ -46,6 +49,7 @@ import com.telefonica.claudia.slm.deployment.hwItems.Network;
 import com.telefonica.claudia.slm.deployment.paas.Product;
 import com.telefonica.claudia.slm.deployment.paas.Property;
 import com.telefonica.claudia.slm.maniParser.GetOperationsUtils;
+import com.telefonica.claudia.slm.paas.vmiHandler.RECManagerClient;
 import com.telefonica.claudia.slm.paas.vmiHandler.SDCClient;
 import com.telefonica.claudia.slm.vmiHandler.TCloudClient;
 import com.telefonica.claudia.slm.vmiHandler.exceptions.AccessDeniedException;
@@ -81,7 +85,7 @@ public class PaasUtils {
 		return !imageurl;
 	}
 	
-	public String getPaaSIp (VEE vee)
+	public static String getPaaSIp (VEE vee)
 	{
 		for (NICConf nic: vee.getNICsConf())
 		{
@@ -210,7 +214,70 @@ public class PaasUtils {
 		
 	}
 	
-	public String getIPVeeReplica (VEEReplica veeReplica)
+	public String []  getVeePaaSUserNamePaaswordFromXML (String xml)
+	{
+		Document doc = getVEEDocument (xml);
+		Node vapp =  doc.getElementsByTagName ("VApp").item(0);
+	
+		String result [] = new String [2];
+		
+		Node vh = ((Element)vapp).getElementsByTagName ("ProductSection").item(0);
+		
+		
+		Node itemresource = null;
+		NodeList items = vh.getChildNodes();
+
+	
+		for (int k=0; k<items.getLength();k++)
+		{
+						if (items.item(k).getNodeName().equals("Property"))
+							
+						{
+							 Element child = (Element) items.item(k);
+							 String attribute = child.getAttribute("key");
+							 if (attribute.equals("org.fourcaast.rec.username"))
+							 {
+								 result [1] = child.getAttribute("value");
+							 }
+							 else if (attribute.equals("org.fourcaast.rec.password"))
+							 {
+								 result [0] = child.getAttribute("value");
+							 }
+						}
+								
+				
+		}
+		return result;
+	}
+	
+	public String  getVeePaaSPaaSWordFromXML (Document doc)
+	{
+		Node vapp =  doc.getElementsByTagName ("VApp").item(0);
+	
+			
+
+		NodeList items = vapp.getChildNodes();
+		for (int k=0; k<items.getLength();k++)
+		{
+						if (items.item(k).getNodeName().equals("Property"))
+							
+						{
+							 Element child = (Element) items.item(k);
+							 String attribute = child.getAttribute("key");
+							 if (attribute.equals("org.fourcaast.rec.password"))
+							 {
+								 return child.getAttribute("value");
+							 }
+						}
+								
+				
+		}
+		return null;
+	}
+	
+
+	
+	public String getVEE (VEEReplica veeReplica)
 	{
 		TCloudClient vmi = new TCloudClient("http://"+SMConfiguration.getInstance().getVEEMHost()+":"+SMConfiguration.getInstance().getVEEMPort());
 		String xmlvee = null;
@@ -223,9 +290,16 @@ public class PaasUtils {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		return this.getVeePaaSIpFromXML(xmlvee);
+		return xmlvee;
 	}
 	public String  getVeePaaSIpFromXML (String xml)
+	{
+
+	   return getVeePaaSIpFromXML ( getVEEDocument (xml));
+			
+	}
+	
+	public Document getVEEDocument (String xml)
 	{
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 		   
@@ -239,21 +313,23 @@ public class PaasUtils {
 		{
 			e.printStackTrace();
 		}
-			
-	   return getVeePaaSIpFromXML ( doc);
-			
+		return doc;
 	}
+	
+	
 	
 	public void addProductsToVEE (VirtualSystemType vs,VEE vee )
 	{
 		List<ProductSectionType> productsSection = null;
-		
-
 		productsSection = OVFEnvelopeUtils.getProductSections(vs);
-
 		
 		for (ProductSectionType productSection: productsSection)
 		{
+		   if (isProductforVEE(productSection))
+		   {
+			   addUserNameAndPasswordProperties (vee, productSection);
+			   continue;
+		   }
 		   Product product = addProduct(productSection);
 		   if (product == null)
 			   continue;
@@ -297,6 +373,72 @@ public class PaasUtils {
 		
 		
 	}*/
+	
+	private boolean isProductforVEE (ProductSectionType productSection)
+	{
+		List<Object> sections = productSection.getCategoryOrProperty();
+		String category = "";
+		
+		for (Object prop : sections)
+		{
+		
+			if (prop instanceof MsgType) //category
+			{
+				MsgType cat = (MsgType)prop;
+				Map<QName, String> map = cat.getOtherAttributes();
+				
+				Iterator itr = map.entrySet().iterator();
+				while (itr.hasNext()) {
+					Map.Entry e = (Map.Entry)itr.next();
+					System.out.println("clave: "+e.getKey()+"valor:"+e.getValue());
+					category=(String)e.getValue();
+				}
+				logger.info("Category " + category);
+				
+				if (category.equals("org.fourcaast.rec"))
+				{
+					return true;
+				}
+		
+				
+			}
+		}
+		return false;
+	}
+	
+	
+	private void addUserNameAndPasswordProperties (VEE vee, ProductSectionType productSection)
+	{
+		List<Object> sections = productSection.getCategoryOrProperty();
+		String category = "";
+		
+		for (Object prop : sections)
+		{
+			
+			if (prop instanceof ProductSectionType.Property)
+			{
+			
+					ProductSectionType.Property property = (ProductSectionType.Property )prop;
+					String key = getPropertyKey (property);
+					String value = getPropertyValue (property);
+					
+					logger.info ("Product property " + key + " : " + value);
+					
+
+					if (key.indexOf("username")!=-1)
+					{
+						vee.setUserName(value);
+					}
+					else if (key.indexOf("password")!=-1)
+					{
+						vee.setPassword(value);
+					}
+					
+				
+			}
+			
+		}
+	}
 	
 	private Product addProduct (ProductSectionType productSection)
 	{
@@ -344,7 +486,7 @@ public class PaasUtils {
 			}
 			if (prop instanceof ProductSectionType.Property)
 			{
-				if (category.equals("org.4caast.instancecomponent"))
+				if (category.equals("org.fourcaast.instancecomponent"))
 				{
 					ProductSectionType.Property property = (ProductSectionType.Property )prop;
 					String key = getPropertyKey (property);
@@ -365,7 +507,7 @@ public class PaasUtils {
 						product.setParentName(value);
 					}
 				}
-				else if (category.equals("org.4caast.instancecomponent.attributes"))
+				else if (category.equals("org.fourcaast.instancecomponent.attributes"))
 				{
 					ProductSectionType.Property property = (ProductSectionType.Property )prop;
 					
@@ -495,7 +637,7 @@ public class PaasUtils {
 	
 	public void installProduct (String url, Product product, String ip) throws Exception
 	{
-		SDCClient sdc = new SDCClient (url);
+		RECManagerClient sdc = new RECManagerClient (url);
 		try {
 			sdc.installProduct(product, ip);
 		} catch (CommunicationErrorException e) {
@@ -508,5 +650,64 @@ public class PaasUtils {
 		} 
 		
 	}
+	
+	public Document getInstallProductInVirtualMachine(String ip, String username, String password) throws ParserConfigurationException, XMLException, SAXException, IOException, SectionAlreadyPresentException, InvalidSectionException
+	{
+        VirtualSystemType vs = new VirtualSystemType();
+		
+		ProductSectionType productsection = new ProductSectionType();
+
+		MsgType category  = new MsgType ();
+		category.setMsgid("org.fourcaast.instancecomponent");
+		category.setValue("Instance Component Metadata");
+		productsection.getCategoryOrProperty().add(category);
+		
+		ProductSectionType.Property property = new ProductSectionType.Property ();
+		property.setKey("org.fourcaast.instancecomponent.type");
+		property.setValue("REC");
+		productsection.getCategoryOrProperty().add(property);
+				  
+		category  = new MsgType ();
+		category.setMsgid("org.fourcaast.rec");
+		category.setValue("REC Attributes");
+		productsection.getCategoryOrProperty().add(category);
+		
+		property = new ProductSectionType.Property ();
+		property.setKey("org.fourcaast.rec.address");
+		property.setValue(ip);
+		productsection.getCategoryOrProperty().add(property);
+		
+		property = new ProductSectionType.Property ();
+		property.setKey("org.fourcaast.rec.username");
+		property.setValue(username);
+		productsection.getCategoryOrProperty().add(property);
+		
+		property = new ProductSectionType.Property ();
+		property.setKey("org.fourcaast.rec.password");
+		property.setValue(password);
+		productsection.getCategoryOrProperty().add(property);
+
+		OVFEnvelopeUtils.addSection(vs, productsection);
+		
+		
+		OVFSerializer ovfSerializer = OVFSerializer.getInstance();
+	
+	
+		String vsstring = ovfSerializer.writeXML(vs);
+		
+		DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();
+        DocumentBuilder docBuilder = docBuilderFactory.newDocumentBuilder();
+        InputStream is = new ByteArrayInputStream(vsstring.getBytes("UTF-8"));
+       
+       	 
+        Document doc = docBuilder.parse (is);
+
+     
+		return doc;
+		
+
+	}
+	
+	
 
 }

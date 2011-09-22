@@ -12,7 +12,9 @@
   */
 package com.telefonica.claudia.smi.monitoring.bean;
 
+import java.io.IOException;
 import java.io.Serializable;
+import java.io.StringWriter;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -21,6 +23,9 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.restlet.data.Reference;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+
+import com.sun.org.apache.xml.internal.serialize.OutputFormat;
+import com.sun.org.apache.xml.internal.serialize.XMLSerializer;
 
 public class MeasureDescriptor implements Serializable{
 	
@@ -164,6 +169,30 @@ public class MeasureDescriptor implements Serializable{
         return doc;
 	}
 	
+	public String getString () throws ParserConfigurationException
+	{
+		DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+        Document doc = builder.newDocument();     
+        Element el = getXML (doc);
+        doc.appendChild(el);
+       
+	
+	 OutputFormat format    = new OutputFormat (doc); 
+     // as a String
+     StringWriter stringOut = new StringWriter ();    
+     XMLSerializer serial   = new XMLSerializer (stringOut, 
+                                                 format);
+     try {
+			serial.serialize(doc);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+     // Display the XML
+     System.out.println("XML " + stringOut.toString());
+     return stringOut.toString();
+	}
+	
 	public Element getXML (Document doc) throws ParserConfigurationException
 	{
 		
@@ -200,7 +229,10 @@ public class MeasureDescriptor implements Serializable{
         
         Element description = doc.createElement("Description");
 
-        description.appendChild(doc.createTextNode(getDescription()));
+        if (getDescription() == null || getDescription().length()==0)
+        	description.appendChild(doc.createTextNode(name));
+        else
+            description.appendChild(doc.createTextNode(getDescription()));
         md.appendChild(description);
         
         

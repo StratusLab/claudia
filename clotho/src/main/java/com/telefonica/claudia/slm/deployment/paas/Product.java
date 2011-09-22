@@ -191,6 +191,17 @@ public class Product implements DirectoryEntry,PaaSElement {
     	return null;
     }
     
+    public Property getPropertyByNameFinished(String prop) {
+
+    	for (Iterator<Property> it = properties.iterator(); it.hasNext(); ) {
+    		Property net = it.next();
+    		if (net.getKey().endsWith(prop)) {
+    			return net;
+    		}
+    	}
+    	return null;
+    }
+    
    
     
     public Set<Property> getProperties ()
@@ -327,7 +338,7 @@ public class Product implements DirectoryEntry,PaaSElement {
 	{
 		
 		String ip = getIpVm (this.getVEE());
-		System.out.println ("IP for VM " + ip);
+	
 		return getProductXML(ip);
 	}
 	
@@ -363,38 +374,48 @@ public class Product implements DirectoryEntry,PaaSElement {
 			productsection.setProductUrl(mens);
 		}
 		
+		
+
+
+		  
+		  
 		MsgType category  = new MsgType ();
-		category.setMsgid("org.4caast.instancecomponent");
+		category.setMsgid("org.fourcaast.instancecomponent");
 		category.setValue("Instance Component Metadata");
 		productsection.getCategoryOrProperty().add(category);
 		
 		ProductSectionType.Property property = new ProductSectionType.Property ();
-		property.setKey("org.4caast.instancecomponent.id");
+		property.setKey("org.fourcaast.instancecomponent.id");
 		property.setValue(this.getName());
 		productsection.getCategoryOrProperty().add(property);
 		
 		property = new ProductSectionType.Property ();
-		property.setKey("org.4caast.instancecomponent.type");
+		property.setKey("org.fourcaast.instancecomponent.type");
 		property.setValue(this.getType());
+		productsection.getCategoryOrProperty().add(property);
+		
+		property = new ProductSectionType.Property ();
+		property.setKey("org.fourcaast.instancecomponent.recipe");
+		property.setValue(this.getName());
 		productsection.getCategoryOrProperty().add(property);
 		
 		if (ip != null)
 		{
 			property = new ProductSectionType.Property ();
-			property.setKey("org.4caast.instancecomponent.ip");
+			property.setKey("org.fourcaast.instancecomponent.ip");
 			property.setValue(ip);
 			productsection.getCategoryOrProperty().add(property);
 		}
 		if (this.getParentName()!=null)
 		{
 			property = new ProductSectionType.Property ();
-			property.setKey("org.4caast.instancecomponent.parent");
+			property.setKey("org.fourcaast.instancecomponent.parent");
 			property.setValue(this.getParentName());
 			productsection.getCategoryOrProperty().add(property);
 		}
 		
 		category  = new MsgType ();
-		category.setMsgid("org.4caast.instancecomponent.attributes");
+		category.setMsgid("org.fourcaast.instancecomponent.attributes");
 		category.setValue("Product Specific Attributes");
 		productsection.getCategoryOrProperty().add(category);
 		

@@ -13,20 +13,29 @@
 
 package com.telefonica.claudia.smi;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
+
 
 import org.apache.log4j.Logger;
 import org.restlet.Application;
@@ -35,6 +44,7 @@ import org.restlet.Directory;
 import org.restlet.Restlet;
 import org.restlet.Router;
 import org.restlet.data.Protocol;
+
 
 import com.telefonica.claudia.smi.console.ConsoleApplication;
 import com.telefonica.claudia.smi.deployment.DeploymentApplication;
@@ -256,6 +266,24 @@ public class Main {
 				Class classDriver = cl.loadClass(prop
 						.getProperty(KEY_DRIVER_MONITORING));
 
+				/*
+				 * Properties prop = new Properties(); try { prop.load(new
+				 * FileInputStream("./conf/tcloud.properties")); } catch
+				 * (FileNotFoundException e1) { // TODO Auto-generated catch block
+				 * e1.printStackTrace(); } catch (IOException e1) { // TODO
+				 * Auto-generated catch block e1.printStackTrace(); }
+				 */
+				
+				
+				
+			     /*   for (String s : names) {
+			            try{
+			                providers.add((PersistenceProvider)loader.loadClass(s).newInstance());
+			            } catch (ClassNotFoundException exc){
+			            } catch (InstantiationException exc){
+			            } catch (IllegalAccessException exc){
+			            }*/
+				
 				MonitoringApplication.setDriver(classDriver, prop);
 
 				MonitoringApplication app = new MonitoringApplication();
@@ -382,5 +410,7 @@ public class Main {
 
 		log.info("Service started");
 	}
+	
+	
 
 }
