@@ -90,9 +90,9 @@ public class Test4caast {
 				//   d.installProductsInVm (vee);
 			   for (Product product: vee.getProducts())
 			   {
-				   //System.out.println (product.getFQN());
+				   System.out.println (product.getProductXML());
 				   
-				   d.installProduct(product, "109.231.79.228");
+				  // d.installProduct(product, "109.231.79.228");
 			   }
 			}
 			

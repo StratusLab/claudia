@@ -191,6 +191,17 @@ public class Product implements DirectoryEntry,PaaSElement {
     	return null;
     }
     
+    public Property getPropertyByNameFinished(String prop) {
+
+    	for (Iterator<Property> it = properties.iterator(); it.hasNext(); ) {
+    		Property net = it.next();
+    		if (net.getKey().endsWith(prop)) {
+    			return net;
+    		}
+    	}
+    	return null;
+    }
+    
    
     
     public Set<Property> getProperties ()
