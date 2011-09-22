@@ -284,6 +284,8 @@ public class URICreation {
         
 		return URI_VAPP2.replace("{org-id}", org.replace(".", "_")).replace("{vdc-id}", customer).replace("{vapp-id}", service).replace("{vee-id}", vee);
 	}
+	
+   
 
 	public static String getURIVEEReplica(String fqnReplica) {
 		
@@ -296,15 +298,26 @@ public class URICreation {
 		return uriService + "/" + veeReplica; 
 	}
 	
+	public static String getURIVEE(String fqnvee) {
+		
+		String uriService = getURIService(fqnvee);
+        
+        String vee = fqnvee.substring(fqnvee.indexOf(FQN_SEPARATOR_VEE));
+        String[]  parts = vee.split("\\.");
+        vee = parts[1];
+		
+		return uriService + "/" + vee; 
+	}
+	
 	public static String getURIProduct(String fqnReplica) {
 		
-		String urivee = getURIVEEReplica(fqnReplica);
+		String urivee = getURIVEE(fqnReplica);
         
         String product = fqnReplica.substring(fqnReplica.indexOf(FQN_SEPARATOR_PRODUCT));
         String[]  parts = product.split("\\.");
         product = parts[1];
 		
-		return urivee + "/" + product; 
+		return urivee + "/product/" + product; 
 	}
 	
    
