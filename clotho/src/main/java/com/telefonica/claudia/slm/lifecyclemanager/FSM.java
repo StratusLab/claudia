@@ -181,12 +181,18 @@ public class FSM extends Thread implements Serializable {
      * Service application the FSM manages.
      */
     public ServiceApplication sap;
-
+    
     /**
      * URL of the OVF Descriptor used to deploy the service.
      */
     private String xmlFile = "";
 
+    /**
+     * Scale up and down factors.
+     */
+    public Integer scaleUpNumber;
+    public Integer scaleDownNumber;
+    
     // VEE Related information
     // -------------------------------------------------------------------------------------------
     /**
@@ -791,12 +797,12 @@ public class FSM extends Thread implements Serializable {
     }
 
     public boolean elasticityCreateReplica(String veeType, int replicaNumber,
-            long initialTime) {
+            long initialTime, boolean checkinterval) {
 
         VEE vee2Replicate = (VEE) ReservoirDirectory.getInstance().getObject(
                 new FQN(veeType));
 
-        if (!checkElasticityInterval(vee2Replicate, initialTime)) {
+        if (!checkElasticityInterval(vee2Replicate, initialTime) && checkinterval==true) {
             logger.warn("Action discarded due to the Elasticity Interval.");
             return false;
         }
@@ -1054,7 +1060,7 @@ public class FSM extends Thread implements Serializable {
     private int dispatchEvent(SMControlEvent cntrlEvent)
     throws MalformedURLException {
 
-        int retorno;
+        int retorno = 0;
 
         // Check there is really an event.
         if (cntrlEvent == null)
@@ -1099,6 +1105,10 @@ public class FSM extends Thread implements Serializable {
             // actions
             if (action.contains("createReplica")) {
 
+            	 boolean checkinterval = true;
+            	 
+            	 for (int scaleup = 0; scaleup < scaleUpNumber; scaleup++) {
+            		 
                 // get the action parameters
                 int initIndex = action.indexOf("(");
                 int endIndex = action.lastIndexOf(")");
@@ -1106,17 +1116,22 @@ public class FSM extends Thread implements Serializable {
 
                 String[] parameters = veeType.split(",");
 
+                boolean reply = true;
+               
+                if (scaleUpNumber !=1) checkinterval = false;
+                
                 if (parameters.length < 2) {
-                    elasticityCreateReplica(parameters[0], 1, cntrlEvent
-                            .getInitialTime());
+                 reply =   elasticityCreateReplica(parameters[0], 1, cntrlEvent
+                            .getInitialTime(),checkinterval);
                 } else {
-                    elasticityCreateReplica(parameters[0], Integer
+                  reply =  elasticityCreateReplica(parameters[0], Integer
                             .parseInt(parameters[1]), cntrlEvent
-                            .getInitialTime());
+                            .getInitialTime(),checkinterval);
                 }
-
+                if (reply==false) scaleup--;
                 retorno = FSM.RUNNING;
-
+            	 }
+            	 
             } else if (action.contains("removeReplica")) {
                 // get the action parameters
                 int initIndex = action.indexOf("(");
@@ -1820,6 +1835,12 @@ public class FSM extends Thread implements Serializable {
                     iterations = 1;
 
                 String staticIpProp = parser.getStaticIpProperty(originalVEE.getVEEName());
+                
+                scaleUpNumber = parser.getScaleUpNumber(originalVEE.getVEEName());
+                if (scaleUpNumber==null) scaleUpNumber=1;
+                
+                scaleDownNumber = parser.getScaleDownNumber(originalVEE.getVEEName());
+                if (scaleDownNumber==null) scaleUpNumber=1;
                 
                 for (int i = 0; i < iterations; i++) {
 

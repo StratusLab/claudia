@@ -254,6 +254,53 @@ public class Parser {
 		return null;
 	}
 	
+	public Integer getScaleUpNumber(String vsId)  {
+		VirtualSystemCollectionType topVsc;
+		try {
+			topVsc = (VirtualSystemCollectionType) OVFEnvelopeUtils.getTopLevelVirtualSystemContent(envelope);
+			VirtualSystemType vs = (VirtualSystemType) OVFEnvelopeUtils.getContentTypeByString(topVsc, vsId);
+			
+			//return OVFEnvelopeUtils.getRequiredIPByNetwork(envelope, vs);
+			
+			String scalenumber = getPropertyFromVirtualSystem(vs, "SCALE_UP_NUMBER");
+			
+			Integer scaleupnumber = 1;
+			
+			if (scalenumber!=null)
+			scaleupnumber = Integer.parseInt(scalenumber);
+			return scaleupnumber;
+
+		} catch (EmptyEnvelopeException e) {
+			logger.warn("Empty envelope detected, service deployment may not be completed.");
+		}
+
+		return null;
+	}
+	
+	public Integer getScaleDownNumber(String vsId)  {
+		VirtualSystemCollectionType topVsc;
+		try {
+			topVsc = (VirtualSystemCollectionType) OVFEnvelopeUtils.getTopLevelVirtualSystemContent(envelope);
+			VirtualSystemType vs = (VirtualSystemType) OVFEnvelopeUtils.getContentTypeByString(topVsc, vsId);
+			
+			//return OVFEnvelopeUtils.getRequiredIPByNetwork(envelope, vs);
+			
+			String scalenumber = getPropertyFromVirtualSystem(vs, "SCALE_DOWN_NUMBER");
+			
+			Integer scaledownnumber = 1;
+			
+			if (scalenumber!=null)
+			scaledownnumber = Integer.parseInt(scalenumber);
+			return scaledownnumber;
+
+
+		} catch (EmptyEnvelopeException e) {
+			logger.warn("Empty envelope detected, service deployment may not be completed.");
+		}
+
+		return null;
+	}
+	
 	public String getScriptListProperty(String vsId)  {
 		VirtualSystemCollectionType topVsc;
 		try {

@@ -122,7 +122,7 @@ xmlns="http://schemas.dmtf.org/ovf/envelope/1"
 				</Item>
 			</VirtualHardwareSection>
 		</VirtualSystem>	   
-	<VirtualSystem ovf:id="workernode" rsrvr:min="1" rsrvr:max="4" rsrvr:initial="1" rsrvr:balanced="computingelement" rsrvr:lbmanagedport="5555">
+	<VirtualSystem ovf:id="workernode" rsrvr:min="1" rsrvr:max="6" rsrvr:initial="1" rsrvr:balanced="computingelement" rsrvr:lbmanagedport="5555">
 			<Info>Worker Node VM</Info>
 			<!--  Master daemon configuration parameters -->
            <rsrvr:ElasticArraySection>
@@ -133,8 +133,8 @@ xmlns="http://schemas.dmtf.org/ovf/envelope/1"
 			<rsrvr:KPIName>jobqueue</rsrvr:KPIName>
 			<rsrvr:Window unit="minute">5</rsrvr:Window>
 			<rsrvr:Frequency>20</rsrvr:Frequency>
-			<rsrvr:Quota>50</rsrvr:Quota>
-			<rsrvr:Tolerance>60</rsrvr:Tolerance>
+			<rsrvr:Quota>49</rsrvr:Quota>
+			<rsrvr:Tolerance>59</rsrvr:Tolerance>
 		</rsrvr:Rule>
         	</rsrvr:ElasticArraySection>
 
