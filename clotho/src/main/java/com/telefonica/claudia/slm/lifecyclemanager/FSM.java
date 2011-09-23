@@ -695,7 +695,7 @@ public class FSM extends Thread implements Serializable {
         }
         }
      
-        RECManagerClient rec = new RECManagerClient(SMConfiguration.getInstance().getSdcUrl());
+        
 
         // for each VEE, get the required replicas
         for (int j = 0; j < veeArray.length; j++) {
@@ -715,7 +715,8 @@ public class FSM extends Thread implements Serializable {
             
             if (SMConfiguration.getInstance().isPaaSAware())
             {
-            PaasUtils paas = new PaasUtils();
+            	RECManagerClient rec = new RECManagerClient(SMConfiguration.getInstance().getSdcUrl());
+            	PaasUtils paas = new PaasUtils();
             
             try {
 				rec.installProductsInService (veeArray[j]);
