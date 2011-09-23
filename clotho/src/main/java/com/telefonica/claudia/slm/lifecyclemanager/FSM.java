@@ -711,6 +711,9 @@ public class FSM extends Thread implements Serializable {
                        + veeArray[j].getFQN() + "]");
                 return false;
             }
+            
+            if (SMConfiguration.getInstance().isPaaSAware())
+            {
             PaasUtils paas = new PaasUtils();
             
             try {
@@ -769,6 +772,7 @@ public class FSM extends Thread implements Serializable {
             
            }
         }
+        }
 
         rle.run();
         logger.info("DONE with ALL replicas and ALL VEEs ");
@@ -776,6 +780,23 @@ public class FSM extends Thread implements Serializable {
         // Once all the VEES are working, it's time to replicate its structure
         // in
         // WASUP
+        if (SMConfiguration.getInstance().isMonitoringEnabled()) {
+            try {
+            	MonitoringClient client = new MonitoringClient (SMConfiguration.getInstance().getMonitoringUrl());
+                wasupClient.createWasupHierarchy(getServiceApplication());
+            } catch (IOException e) {
+                logger
+                .error("Error creating the WASUP monitorization hierarchy: "
+                        + e.getMessage());
+            } catch (JSONException e) {
+                logger.error("Error parsing the response of a WASUP request: "
+                        + e.getMessage());
+            } catch (Throwable e) {
+                logger.error("Unknow error connecting to WASUP: "
+                        + e.getMessage(), e);
+            }
+        }
+        
         if (SMConfiguration.getInstance().isWasupActive()) {
             try {
                 wasupClient.createWasupHierarchy(getServiceApplication());

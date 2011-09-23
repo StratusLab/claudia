@@ -164,6 +164,12 @@ public class SMConfiguration extends Properties {
 	
 	private String sdcurl = "";
 	
+	private boolean paasaware = false;
+	
+	private boolean monitoring = false;
+	
+	private String monitoringurl = "";
+	
 	private SMConfiguration() throws Exception {		
 		readSMProperties();
 	}
@@ -323,7 +329,50 @@ public class SMConfiguration extends Properties {
 		}
 		logger.info("Property [" + "sdcurl" + "] with value [" + sdcurl + "]");
 		
+		try
+		{
+		  paasaware = Boolean.parseBoolean(readProperty("paasaware"));
+		}
+		catch (Throwable t) {
+			logger.error(" Parsing error on PaaS Aware " + paasaware );
+		}
+		logger.info("Property [" + "paasaware" + "] with value [" + paasaware + "]");
 		
+		try
+		{
+		  monitoring = Boolean.parseBoolean(readProperty("monitoring"));
+		}
+		catch (Throwable t) {
+			logger.error(" Parsing error on PaaS Aware " + monitoring );
+		}
+		logger.info("Property [" + "monitoring" + "] with value [" + monitoring + "]");
+		
+		try
+		{
+			monitoringurl = readProperty("monitoringurl");
+		}
+		catch (Throwable t) {
+			logger.error("Parsing error on " +  "monitoringurl" + "property: not found");
+		}
+		logger.info("Property [" + "monitoringurl" + "] with value [" + monitoringurl + "]");
+		
+		
+	}
+	
+	 public boolean isMonitoringEnabled() {
+	    	return monitoring;
+	 }
+	    
+	public void setIsMonitoringEnabled(boolean monitoring) {
+	    	 this.monitoring = monitoring;
+	}
+	
+	 public boolean isPaaSAware() {
+	    	return paasaware;
+	 }
+	    
+	public void setIpPaaSAware(boolean paasaware) {
+	    	 this.paasaware = paasaware;
 	}
 	 public boolean getIpManagement() {
 	    	return management;
@@ -333,13 +382,21 @@ public class SMConfiguration extends Properties {
 	    	 this.management = management;
 	}
 	
-	public String getSdcUrl() {
-	    	return sdcurl;
+	public String getMonitoringUrl() {
+	    	return monitoringurl;
 	 }
 	    
-	public void setSdcUrl(String sdcurl) {
-	    	 this.sdcurl = sdcurl;
+	public void setMonitoringUrl(String sdcurl) {
+	    	 this.monitoringurl = monitoringurl;
 	}
+	
+	public String getSdcUrl() {
+    	return sdcurl;
+ }
+    
+public void setSdcUrl(String sdcurl) {
+    	 this.sdcurl = sdcurl;
+}
 	    
     public String getCustomerType() {
     	return customerType;
