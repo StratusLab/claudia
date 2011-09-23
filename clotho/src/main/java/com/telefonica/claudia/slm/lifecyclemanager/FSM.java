@@ -75,6 +75,7 @@ import com.telefonica.claudia.slm.monitoring.WasupHierarchy;
 import com.telefonica.claudia.slm.naming.FQN;
 import com.telefonica.claudia.slm.naming.ReservoirDirectory;
 import com.telefonica.claudia.slm.paas.PaasUtils;
+import com.telefonica.claudia.slm.paas.vmiHandler.MonitoringClient;
 import com.telefonica.claudia.slm.paas.vmiHandler.RECManagerClient;
 import com.telefonica.claudia.slm.rulesEngine.RulesEngine;
 import com.telefonica.claudia.slm.serviceconfiganalyzer.ServiceConfigurationAnalyzer;
