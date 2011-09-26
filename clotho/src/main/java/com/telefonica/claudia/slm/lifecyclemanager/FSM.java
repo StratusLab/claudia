@@ -1141,7 +1141,7 @@ public class FSM extends Thread implements Serializable {
 
                 boolean reply = true;
                
-                if (scaleUpNumber !=1) checkinterval = false;
+                if (scaleup > 0) checkinterval = false;
                 
                 if (parameters.length < 2) {
                  reply =   elasticityCreateReplica(parameters[0], 1, cntrlEvent
@@ -1151,7 +1151,10 @@ public class FSM extends Thread implements Serializable {
                             .parseInt(parameters[1]), cntrlEvent
                             .getInitialTime(),checkinterval);
                 }
-                if (reply==false && scaleUpNumber !=1) scaleup--;
+                if (reply==false && scaleUpNumber !=1) 
+            	{
+                	scaleup--;
+            	}
                 retorno = FSM.RUNNING;
             	 }
             	 
