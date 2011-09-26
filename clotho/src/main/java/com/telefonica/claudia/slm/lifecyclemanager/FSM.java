@@ -1134,10 +1134,17 @@ public class FSM extends Thread implements Serializable {
                 int initIndexTemp = action.indexOf("(");
                 int endIndexTemp = action.lastIndexOf(")");
                 String veeTypeTemp = action.substring(initIndexTemp + 1, endIndexTemp);
+                String[] parametersTemp = veeTypeTemp.split(",");
                 VEE vee2Replicate = (VEE) ReservoirDirectory.getInstance().getObject(
-                        new FQN(veeTypeTemp));
+                        new FQN(parametersTemp[0]));
+                try {
                 int currentReplicasTemp = vee2Replicate.getCurrentReplicas();
                 scaleUpNumber = Math.round((scaleUpPercentage/100) * currentReplicasTemp);
+                }
+                catch (NullPointerException npe) {
+                	 scaleUpNumber = 1;
+          	  }
+                
                 if (scaleUpNumber < 1) {
                 	scaleUpNumber = 1;
                 }
