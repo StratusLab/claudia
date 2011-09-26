@@ -264,11 +264,14 @@ public class Parser {
 			
 			String scalenumber = getPropertyFromVirtualSystem(vs, "SCALE_UP_PERCENTAGE");
 			
+			logger.info("Scale Up percentage found: "+ scalenumber);
 			long scaleupnumber = 1;
 			
 			if (scalenumber!=null)
 			scaleupnumber = Long.parseLong(scalenumber);
 			else scaleupnumber = 1;
+			
+			
 			return scaleupnumber;
 
 		} catch (EmptyEnvelopeException e) {
