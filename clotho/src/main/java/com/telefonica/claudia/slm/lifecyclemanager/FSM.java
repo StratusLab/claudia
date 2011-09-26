@@ -191,8 +191,8 @@ public class FSM extends Thread implements Serializable {
     /**
      * Scale up and down factors.
      */
-    public Integer scaleUpNumber;
-    public Integer scaleDownNumber;
+    public int scaleUpNumber;
+    public int scaleDownNumber;
     
     // VEE Related information
     // -------------------------------------------------------------------------------------------
@@ -1128,6 +1128,10 @@ public class FSM extends Thread implements Serializable {
             // actions
             if (action.contains("createReplica")) {
 
+                logger.info("Scaling up "
+                        + scaleUpNumber +" more replicas");
+
+                
             	 boolean checkinterval = true;
             	 
             	 for (int scaleup = 0; scaleup < scaleUpNumber; scaleup++) {
@@ -1863,10 +1867,8 @@ public class FSM extends Thread implements Serializable {
                 String staticIpProp = parser.getStaticIpProperty(originalVEE.getVEEName());
                 
                 scaleUpNumber = parser.getScaleUpNumber(originalVEE.getVEEName());
-                if (scaleUpNumber==null) scaleUpNumber=1;
                 
                 scaleDownNumber = parser.getScaleDownNumber(originalVEE.getVEEName());
-                if (scaleDownNumber==null) scaleUpNumber=1;
                 
                 for (int i = 0; i < iterations; i++) {
 

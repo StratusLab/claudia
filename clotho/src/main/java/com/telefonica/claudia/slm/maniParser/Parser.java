@@ -254,7 +254,7 @@ public class Parser {
 		return null;
 	}
 	
-	public Integer getScaleUpNumber(String vsId)  {
+	public int getScaleUpNumber(String vsId)  {
 		VirtualSystemCollectionType topVsc;
 		try {
 			topVsc = (VirtualSystemCollectionType) OVFEnvelopeUtils.getTopLevelVirtualSystemContent(envelope);
@@ -268,16 +268,17 @@ public class Parser {
 			
 			if (scalenumber!=null)
 			scaleupnumber = Integer.parseInt(scalenumber);
+			else scaleupnumber = 1;
 			return scaleupnumber;
 
 		} catch (EmptyEnvelopeException e) {
 			logger.warn("Empty envelope detected, service deployment may not be completed.");
 		}
 
-		return null;
+		return 1;
 	}
 	
-	public Integer getScaleDownNumber(String vsId)  {
+	public int getScaleDownNumber(String vsId)  {
 		VirtualSystemCollectionType topVsc;
 		try {
 			topVsc = (VirtualSystemCollectionType) OVFEnvelopeUtils.getTopLevelVirtualSystemContent(envelope);
@@ -291,6 +292,7 @@ public class Parser {
 			
 			if (scalenumber!=null)
 			scaledownnumber = Integer.parseInt(scalenumber);
+			else scaledownnumber = 1;
 			return scaledownnumber;
 
 
@@ -298,7 +300,7 @@ public class Parser {
 			logger.warn("Empty envelope detected, service deployment may not be completed.");
 		}
 
-		return null;
+		return 1;
 	}
 	
 	public String getScriptListProperty(String vsId)  {
