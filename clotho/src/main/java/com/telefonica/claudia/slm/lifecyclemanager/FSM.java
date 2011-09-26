@@ -193,8 +193,8 @@ public class FSM extends Thread implements Serializable {
 	 */
 	public int scaleUpNumber;
 	public int scaleDownNumber;
-	public long scaleUpPercentage;
-	public long scaleDownPercentage;
+	public float scaleUpPercentage;
+	public float scaleDownPercentage;
 
 
 	// VEE Related information
@@ -1142,10 +1142,10 @@ public class FSM extends Thread implements Serializable {
 							+ currentReplicasTemp);
 					logger.info("Scale Up Percentage:"
 							+ scaleUpPercentage);
-					scaleUpNumber = Math.round((scaleUpPercentage/100) * currentReplicasTemp);
+					scaleUpNumber = Math.round((scaleUpPercentage/100)*currentReplicasTemp);
 				}
 				catch (NullPointerException npe) {
-					logger.error("problem getting number of replicas:");
+					logger.error("problem getting number of replicas");
 					scaleUpNumber = 1;
 				}
 
