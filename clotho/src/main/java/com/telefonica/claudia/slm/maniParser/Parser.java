@@ -254,7 +254,7 @@ public class Parser {
 		return null;
 	}
 	
-	public int getScaleUpNumber(String vsId)  {
+	public long getScaleUpPercentage(String vsId)  {
 		VirtualSystemCollectionType topVsc;
 		try {
 			topVsc = (VirtualSystemCollectionType) OVFEnvelopeUtils.getTopLevelVirtualSystemContent(envelope);
@@ -262,12 +262,12 @@ public class Parser {
 			
 			//return OVFEnvelopeUtils.getRequiredIPByNetwork(envelope, vs);
 			
-			String scalenumber = getPropertyFromVirtualSystem(vs, "SCALE_UP_NUMBER");
+			String scalenumber = getPropertyFromVirtualSystem(vs, "SCALE_UP_PERCENTAGE");
 			
-			Integer scaleupnumber = 1;
+			long scaleupnumber = 1;
 			
 			if (scalenumber!=null)
-			scaleupnumber = Integer.parseInt(scalenumber);
+			scaleupnumber = Long.parseLong(scalenumber);
 			else scaleupnumber = 1;
 			return scaleupnumber;
 
@@ -278,7 +278,7 @@ public class Parser {
 		return 1;
 	}
 	
-	public int getScaleDownNumber(String vsId)  {
+	public long getScaleDownPercentage(String vsId)  {
 		VirtualSystemCollectionType topVsc;
 		try {
 			topVsc = (VirtualSystemCollectionType) OVFEnvelopeUtils.getTopLevelVirtualSystemContent(envelope);
@@ -286,12 +286,12 @@ public class Parser {
 			
 			//return OVFEnvelopeUtils.getRequiredIPByNetwork(envelope, vs);
 			
-			String scalenumber = getPropertyFromVirtualSystem(vs, "SCALE_DOWN_NUMBER");
+			String scalenumber = getPropertyFromVirtualSystem(vs, "SCALE_DOWN_PERCENTAGE");
 			
-			Integer scaledownnumber = 1;
+			long scaledownnumber = 1;
 			
 			if (scalenumber!=null)
-			scaledownnumber = Integer.parseInt(scalenumber);
+			scaledownnumber = Long.parseLong(scalenumber);
 			else scaledownnumber = 1;
 			return scaledownnumber;
 

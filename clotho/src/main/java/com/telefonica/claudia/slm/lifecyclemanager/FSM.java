@@ -193,6 +193,9 @@ public class FSM extends Thread implements Serializable {
      */
     public int scaleUpNumber;
     public int scaleDownNumber;
+    public long scaleUpPercentage;
+    public long scaleDownPercentage;
+    
     
     // VEE Related information
     // -------------------------------------------------------------------------------------------
@@ -1127,10 +1130,21 @@ public class FSM extends Thread implements Serializable {
             // check the action grammar and perform the needed VMI
             // actions
             if (action.contains("createReplica")) {
-
+                
+                int initIndexTemp = action.indexOf("(");
+                int endIndexTemp = action.lastIndexOf(")");
+                String veeTypeTemp = action.substring(initIndexTemp + 1, endIndexTemp);
+                VEE vee2Replicate = (VEE) ReservoirDirectory.getInstance().getObject(
+                        new FQN(veeTypeTemp));
+                int currentReplicasTemp = vee2Replicate.getCurrentReplicas();
+                scaleUpNumber = Math.round((scaleUpPercentage/100) * currentReplicasTemp);
+                if (scaleUpNumber < 1) {
+                	scaleUpNumber = 1;
+                }
                 logger.info("Scaling up "
                         + scaleUpNumber +" more replicas");
-
+                
+                
                 
             	 boolean checkinterval = true;
             	 
@@ -1866,9 +1880,9 @@ public class FSM extends Thread implements Serializable {
 
                 String staticIpProp = parser.getStaticIpProperty(originalVEE.getVEEName());
                 
-                scaleUpNumber = parser.getScaleUpNumber(originalVEE.getVEEName());
+                scaleUpPercentage = parser.getScaleUpPercentage(originalVEE.getVEEName());
                 
-                scaleDownNumber = parser.getScaleDownNumber(originalVEE.getVEEName());
+                scaleDownPercentage = parser.getScaleDownPercentage(originalVEE.getVEEName());
                 
                 for (int i = 0; i < iterations; i++) {
 

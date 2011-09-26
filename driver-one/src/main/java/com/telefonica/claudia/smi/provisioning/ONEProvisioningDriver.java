@@ -652,10 +652,10 @@ public class ONEProvisioningDriver implements ProvisioningDriver {
 	}
 
 
-	
+
 
 	public String TCloud2ONEVM(String xml,
-	 String veeFqn) throws Exception {
+			String veeFqn) throws Exception {
 
 		try {
 			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
@@ -720,7 +720,7 @@ public class ONEProvisioningDriver implements ProvisioningDriver {
 				VirtualHardwareSectionType vh = OVFEnvelopeUtils.getSection(vs, VirtualHardwareSectionType.class);
 				String virtualizationType = "kvm";
 				if (vh.getSystem()!= null)
-				 virtualizationType = vh.getSystem().getVirtualSystemType().getValue();
+					virtualizationType = vh.getSystem().getVirtualSystemType().getValue();
 
 				String scriptListProp = null;
 				String scriptListTemplate = "";
@@ -775,13 +775,13 @@ public class ONEProvisioningDriver implements ProvisioningDriver {
 				StringBuffer allParametersString  = new StringBuffer();
 
 				// Migrability ....
-    
+
 				allParametersString.append(ONE_VM_NAME).append(ASSIGNATION_SYMBOL).append(replicaName).append(LINE_SEPARATOR);
-				
-			
+
+
 				if (!virtualizationType.toLowerCase().equals("xenhvm"))
 					allParametersString.append("GRAPHICS").append(ASSIGNATION_SYMBOL).append("[type=\"vnc\",listen=\"0.0.0.0\"]").append(LINE_SEPARATOR);
-					
+
 
 				if (virtualizationType.toLowerCase().equals("kvm")) {
 
@@ -793,7 +793,7 @@ public class ONEProvisioningDriver implements ProvisioningDriver {
 					allParametersString.append("REQUIREMENTS").append(ASSIGNATION_SYMBOL).append("\"HYPERVISOR=\\\"xen\\\"\"").append(LINE_SEPARATOR);
 				}
 				allParametersString.append(ONE_VM_OS).append(ASSIGNATION_SYMBOL).append(MULT_CONF_LEFT_DELIMITER);
-				
+
 
 				String diskRoot;
 				if (virtualizationType.toLowerCase().equals("kvm")) {
@@ -804,7 +804,7 @@ public class ONEProvisioningDriver implements ProvisioningDriver {
 					diskRoot = "h";
 					allParametersString.append(ONE_VM_OS_PARAM_KERNEL).append(ASSIGNATION_SYMBOL).append("/usr/lib/xen/boot/hvmloader").append(MULT_CONF_RIGHT_DELIMITER).append(LINE_SEPARATOR);
 				}
-				
+
 				else {
 					diskRoot = xendisk;
 					allParametersString.append(ONE_VM_OS_PARAM_INITRD).append(ASSIGNATION_SYMBOL).append(hypervisorInitrd).append(MULT_CONF_SEPARATOR).append(LINE_SEPARATOR);
@@ -813,18 +813,18 @@ public class ONEProvisioningDriver implements ProvisioningDriver {
 
 				if(arch.length()>0)
 					allParametersString.append("ARCH").append(ASSIGNATION_SYMBOL).append("\"").append(arch).append("\"").append(MULT_CONF_SEPARATOR).append(LINE_SEPARATOR);
-				
+
 				if (!virtualizationType.toLowerCase().equals("xenhvm"))
 					allParametersString.append(ONE_VM_OS_PARAM_ROOT).append(ASSIGNATION_SYMBOL).append(diskRoot + "da1").append(MULT_CONF_RIGHT_DELIMITER).append(LINE_SEPARATOR);
 
-				
+
 				allParametersString.append(ONE_CONTEXT).append(ASSIGNATION_SYMBOL).append(MULT_CONF_LEFT_DELIMITER);
 
 				if(hostname.length()>0) {
 					allParametersString.append("hostname  = \""+hostname+"\"").append(MULT_CONF_SEPARATOR).append(LINE_SEPARATOR);
 				}
 				if(netcontext.length()>0) {
-				allParametersString.append(netcontext);
+					allParametersString.append(netcontext);
 				}
 				allParametersString.append("public_key").append(ASSIGNATION_SYMBOL).append(oneSshKey).append(MULT_CONF_SEPARATOR).append(LINE_SEPARATOR);
 				allParametersString.append("CustomizationUrl").append(ASSIGNATION_SYMBOL).append("\"" + Main.PROTOCOL + Main.serverHost + ":" + customizationPort + "/"+ replicaName+ "\"").append(MULT_CONF_SEPARATOR).append(LINE_SEPARATOR);
@@ -843,7 +843,7 @@ public class ONEProvisioningDriver implements ProvisioningDriver {
 				char sdaId = 'a';
 
 				List<RASDType> items = vh.getItem();
-				boolean ispaasaware = true;
+				boolean ispaasaware = false;
 				for (Iterator<RASDType> iteratorRASD = items.iterator(); iteratorRASD.hasNext();) {
 					RASDType item = (RASDType) iteratorRASD.next();
 
@@ -909,7 +909,12 @@ public class ONEProvisioningDriver implements ProvisioningDriver {
 									fileRef = disk.getFileRef();
 									capacity = disk.getCapacity();
 									format = disk.getFormat();
-									ispaasaware = true;
+
+									if (fileRef == null) {
+										log.warn("file reference can not be found for disk: " + hostRes);
+										ispaasaware = true;
+									}
+
 
 									break;
 								}
@@ -980,7 +985,7 @@ public class ONEProvisioningDriver implements ProvisioningDriver {
 						if (digest == null) {
 							log.debug("md5sum digest was not found for disk " + hostRes);
 						}
-						 
+
 
 
 						String urlDisk = null;
@@ -1019,7 +1024,7 @@ public class ONEProvisioningDriver implements ProvisioningDriver {
 
 
 
-                       
+
 						if (digest!=null)
 							allParametersString.append(ONE_VM_DISK_PARAM_DIGEST).append(ASSIGNATION_SYMBOL).append(digest).append(MULT_CONF_SEPARATOR);
 						allParametersString.append(ONE_VM_DISK_PARAM_SIZE).append(ASSIGNATION_SYMBOL).append(capacity);
@@ -1044,22 +1049,22 @@ public class ONEProvisioningDriver implements ProvisioningDriver {
 						else
 							allParametersString.append(ONE_VM_NIC_PARAM_NETWORK).append(ASSIGNATION_SYMBOL).append(fqnNet);
 						if (ipOnNetworkMap.get(fqnNet)!=null)
-						  allParametersString.append(MULT_CONF_SEPARATOR).append(LINE_SEPARATOR).append(ONE_VM_NIC_PARAM_IP).append(ASSIGNATION_SYMBOL).append(ipOnNetworkMap.get(fqnNet)).append(LINE_SEPARATOR);
-						 allParametersString.append(MULT_CONF_RIGHT_DELIMITER).append(LINE_SEPARATOR);
+							allParametersString.append(MULT_CONF_SEPARATOR).append(LINE_SEPARATOR).append(ONE_VM_NIC_PARAM_IP).append(ASSIGNATION_SYMBOL).append(ipOnNetworkMap.get(fqnNet)).append(LINE_SEPARATOR);
+						allParametersString.append(MULT_CONF_RIGHT_DELIMITER).append(LINE_SEPARATOR);
 
 						break;
 					default:
 						throw new IllegalArgumentException("unknown hw type: " + rsType);
 					}
 				}
-				
+
 				if (ispaasaware)
 				{
 					allParametersString.append(ONE_VM_DISK).append(ASSIGNATION_SYMBOL).append(MULT_CONF_LEFT_DELIMITER);
-				    allParametersString.append(ONE_VM_DISK_PARAM_IMAGE).append(ASSIGNATION_SYMBOL).append("http://appliances.stratuslab.eu/images/base/ubuntu-10.04-amd64-base/1.4/ubuntu-10.04-amd64-base-1.4.img.gz").append(MULT_CONF_SEPARATOR);
+					allParametersString.append(ONE_VM_DISK_PARAM_IMAGE).append(ASSIGNATION_SYMBOL).append("http://appliances.stratuslab.eu/images/base/ubuntu-10.04-amd64-base/1.4/ubuntu-10.04-amd64-base-1.4.img.gz").append(MULT_CONF_SEPARATOR);
 
 					allParametersString.append(ONE_VM_DISK_PARAM_TARGET).append(ASSIGNATION_SYMBOL).append("sdc").append(MULT_CONF_SEPARATOR);
-					
+
 					allParametersString.append(ONE_VM_DISK_PARAM_SIZE).append(ASSIGNATION_SYMBOL).append(512);
 					allParametersString.append(MULT_CONF_RIGHT_DELIMITER).append(LINE_SEPARATOR);
 				}
@@ -1070,7 +1075,7 @@ public class ONEProvisioningDriver implements ProvisioningDriver {
 					allParametersString.append("RAW=[type=\"xen\",").append(LINE_SEPARATOR).append("data=\"builder = \\\"hvm\\\"").append(LINE_SEPARATOR)
 					.append("device_model = \\\"/usr/lib64/xen/bin/qemu-dm\\\"").append(LINE_SEPARATOR).append("pae = \\\"1\\\"").append(LINE_SEPARATOR)
 					.append("acpi = \\\"1\\\"").append(LINE_SEPARATOR).append("localtime = \\\"0\\\"").append(LINE_SEPARATOR).append("vnc = \\\"1\\\"\"]").append(LINE_SEPARATOR);
-		      
+
 				log.debug("VM data sent:\n\n" + allParametersString.toString() + "\n\n");
 				System.out.println("VM data sent:\n\n" + allParametersString.toString() + "\n\n");
 				return allParametersString.toString();
@@ -1081,7 +1086,7 @@ public class ONEProvisioningDriver implements ProvisioningDriver {
 			}
 
 		} catch (IOException e1) {
-			
+
 			log.error("OVF of the virtual machine was not well formed or it contained some errors.");
 			throw new Exception("OVF of the virtual machine was not well formed or it contained some errors: " + e1.getMessage());
 		} catch (ParserConfigurationException e) {
@@ -1214,7 +1219,7 @@ public class ONEProvisioningDriver implements ProvisioningDriver {
 			}
 		}
 		if (scriptexec.length()>0){
-		scriptexec.append("\"").append(MULT_CONF_SEPARATOR).append(LINE_SEPARATOR);
+			scriptexec.append("\"").append(MULT_CONF_SEPARATOR).append(LINE_SEPARATOR);
 		}
 		else {
 			scriptexec.append("");
@@ -1235,22 +1240,22 @@ public class ONEProvisioningDriver implements ProvisioningDriver {
 			Element root = (Element) doc.getFirstChild();
 			String fqn = root.getAttribute(TCloudConstants.ATTR_NETWORK_NAME);
 			StringBuffer allParametersString  = new StringBuffer();
-			
+
 			NodeList macEnabled = doc.getElementsByTagName(TCloudConstants.TAG_NETWORK_MAC_ENABLED);
 			Element firstmacenElement = (Element)macEnabled.item(0);
 			String macenabled = null;
 			if (firstmacenElement!=null)
 			{
-			NodeList textMacenList = firstmacenElement.getChildNodes();
-			if (((Node)textMacenList.item(0))!=null)
-			 macenabled= ((Node)textMacenList.item(0)).getNodeValue().trim();
+				NodeList textMacenList = firstmacenElement.getChildNodes();
+				if (((Node)textMacenList.item(0))!=null)
+					macenabled= ((Node)textMacenList.item(0)).getNodeValue().trim();
 			}
 
 			NodeList netmaskList = doc.getElementsByTagName(TCloudConstants.TAG_NETWORK_NETMASK);
 			NodeList baseAddressList = doc.getElementsByTagName(TCloudConstants.TAG_NETWORK_BASE_ADDRESS);
-			
+
 			NodeList ipLeaseList = doc.getElementsByTagName(TCloudConstants.TAG_NETWORK_IPLEASES);
-			
+
 			if (baseAddressList.getLength()==0)
 			{
 				allParametersString.append(getTCloud2FixedONENet (fqn));
@@ -1260,7 +1265,7 @@ public class ONEProvisioningDriver implements ProvisioningDriver {
 				int size = 0;
 				if (netmaskList.getLength() >0)
 				{
-				   size = getSizeNetwork ((Element) netmaskList.item(0));
+					size = getSizeNetwork ((Element) netmaskList.item(0));
 				}
 				allParametersString.append(getTCloud2RangedONENet (fqn, size, baseAddressList.item(0).getTextContent()));
 			}
@@ -1269,11 +1274,11 @@ public class ONEProvisioningDriver implements ProvisioningDriver {
 				int size = 0;
 				if (netmaskList.getLength() >0)
 				{
-				   size = getSizeNetwork ((Element) netmaskList.item(0));
+					size = getSizeNetwork ((Element) netmaskList.item(0));
 				}
 				allParametersString.append(getTCloud2IPElasedONENet (fqn, size, baseAddressList.item(0).getTextContent(), ipLeaseList));
 			}
-			
+
 			System.out.println("Network data sent:\n\n" + allParametersString.toString() + "\n\n");
 
 			return allParametersString.toString();
@@ -1293,7 +1298,7 @@ public class ONEProvisioningDriver implements ProvisioningDriver {
 			throw new Exception("Error configuring a XML Builder: " + e.getMessage());
 		}
 	}
-	
+
 	public String getTCloud2FixedONENet (String fqn)
 	{
 		StringBuffer allParametersString  = new StringBuffer();
@@ -1303,21 +1308,21 @@ public class ONEProvisioningDriver implements ProvisioningDriver {
 		allParametersString.append(ONE_NET_BRIDGE).append(ASSIGNATION_SYMBOL).append(networkBridge).append(LINE_SEPARATOR);
 		return allParametersString.toString();
 	}
-	
+
 	public String getTCloud2RangedONENet (String fqn, int size, String network)
 	{
-		
+
 		StringBuffer allParametersString  = new StringBuffer();
 		// Translate the simple data to RPC format
 		allParametersString.append(ONE_NET_NAME).append(ASSIGNATION_SYMBOL).append(fqn).append(LINE_SEPARATOR);
 		allParametersString.append(ONE_NET_TYPE).append(ASSIGNATION_SYMBOL).append("RANGED").append(LINE_SEPARATOR);
 		allParametersString.append(ONE_NET_BRIDGE).append(ASSIGNATION_SYMBOL).append(networkBridge).append(LINE_SEPARATOR);
 		if (size != 0)
-		  allParametersString.append(ONE_NET_SIZE).append(ASSIGNATION_SYMBOL).append(size).append(LINE_SEPARATOR);
+			allParametersString.append(ONE_NET_SIZE).append(ASSIGNATION_SYMBOL).append(size).append(LINE_SEPARATOR);
 		allParametersString.append(ONE_NET_ADDRESS).append(ASSIGNATION_SYMBOL).append(network).append(LINE_SEPARATOR);
 		return allParametersString.toString();
 	}
-	
+
 	public String getTCloud2IPElasedONENet (String fqn, int size, String network, NodeList ipLeaseList)
 	{
 		StringBuffer allParametersString  = new StringBuffer();
@@ -1326,66 +1331,66 @@ public class ONEProvisioningDriver implements ProvisioningDriver {
 		allParametersString.append(ONE_NET_TYPE).append(ASSIGNATION_SYMBOL).append("FIXED").append(LINE_SEPARATOR);
 		allParametersString.append(ONE_NET_BRIDGE).append(ASSIGNATION_SYMBOL).append(networkBridge).append(LINE_SEPARATOR);
 		if (size != 0)
-		  allParametersString.append(ONE_NET_SIZE).append(ASSIGNATION_SYMBOL).append(size).append(LINE_SEPARATOR);
-	//	allParametersString.append(ONE_NET_ADDRESS).append(ASSIGNATION_SYMBOL).append(network).append(LINE_SEPARATOR);
-		
-		
-			for (int i=0; i<ipLeaseList .getLength(); i++){
-
-				Node firstIpLeaseNode = ipLeaseList.item(i);
-				if (firstIpLeaseNode.getNodeType() == Node.ELEMENT_NODE){
-
-					Element firstIpLeaseElement = (Element)firstIpLeaseNode;
-					NodeList ipList =firstIpLeaseElement.getElementsByTagName(TCloudConstants.TAG_NETWORK_IP);
-					Element firstIpElement = (Element)ipList.item(0);
-					NodeList textIpList = firstIpElement.getChildNodes();
-					String ipString = ("IP="+((Node)textIpList.item(0)).getNodeValue().trim());
-
-					NodeList macList =firstIpLeaseElement.getElementsByTagName(TCloudConstants.TAG_NETWORK_MAC);
-					Element firstMacElement = (Element)macList.item(0);
-					NodeList textMacList = firstMacElement.getChildNodes();
-					String macString = ("MAC="+((Node)textMacList.item(0)).getNodeValue().trim());
+			allParametersString.append(ONE_NET_SIZE).append(ASSIGNATION_SYMBOL).append(size).append(LINE_SEPARATOR);
+		//	allParametersString.append(ONE_NET_ADDRESS).append(ASSIGNATION_SYMBOL).append(network).append(LINE_SEPARATOR);
 
 
-					allParametersString.append(ONE_NET_LEASES).append(ASSIGNATION_SYMBOL).append(MULT_CONF_LEFT_DELIMITER);
-					allParametersString.append(ipString).append(MULT_CONF_SEPARATOR).append(macString).append(MULT_CONF_RIGHT_DELIMITER).append(LINE_SEPARATOR);
+		for (int i=0; i<ipLeaseList .getLength(); i++){
 
-				}
+			Node firstIpLeaseNode = ipLeaseList.item(i);
+			if (firstIpLeaseNode.getNodeType() == Node.ELEMENT_NODE){
+
+				Element firstIpLeaseElement = (Element)firstIpLeaseNode;
+				NodeList ipList =firstIpLeaseElement.getElementsByTagName(TCloudConstants.TAG_NETWORK_IP);
+				Element firstIpElement = (Element)ipList.item(0);
+				NodeList textIpList = firstIpElement.getChildNodes();
+				String ipString = ("IP="+((Node)textIpList.item(0)).getNodeValue().trim());
+
+				NodeList macList =firstIpLeaseElement.getElementsByTagName(TCloudConstants.TAG_NETWORK_MAC);
+				Element firstMacElement = (Element)macList.item(0);
+				NodeList textMacList = firstMacElement.getChildNodes();
+				String macString = ("MAC="+((Node)textMacList.item(0)).getNodeValue().trim());
+
+
+				allParametersString.append(ONE_NET_LEASES).append(ASSIGNATION_SYMBOL).append(MULT_CONF_LEFT_DELIMITER);
+				allParametersString.append(ipString).append(MULT_CONF_SEPARATOR).append(macString).append(MULT_CONF_RIGHT_DELIMITER).append(LINE_SEPARATOR);
 
 			}
+
+		}
 		return allParametersString.toString();
 	}
 
-    public static int getSizeNetwork (Element netmask)
-    {
-    	
+	public static int getSizeNetwork (Element netmask)
+	{
 
-			if (!netmask.getTextContent().matches("\\d+\\.\\d+\\.\\d+\\.\\d+"))
-				throw new IllegalArgumentException("Wrong IPv4 format. Expected example: 192.168.0.0 Got: " + netmask.getTextContent());
 
-			String[] ipBytes = netmask.getTextContent().split("\\.");
+		if (!netmask.getTextContent().matches("\\d+\\.\\d+\\.\\d+\\.\\d+"))
+			throw new IllegalArgumentException("Wrong IPv4 format. Expected example: 192.168.0.0 Got: " + netmask.getTextContent());
 
-			short[] result = new short[4];
-			for (int i=0; i < 4; i++) {
-				try {
-					result[i] = Short.parseShort(ipBytes[i]);
-					if (result[i]>255) throw new NumberFormatException("Should be in the range [0-255].");
-				} catch (NumberFormatException nfe) {
-					throw new IllegalArgumentException("Number out of bounds. Bytes should be on the range 0-255.");
-				}
+		String[] ipBytes = netmask.getTextContent().split("\\.");
+
+		short[] result = new short[4];
+		for (int i=0; i < 4; i++) {
+			try {
+				result[i] = Short.parseShort(ipBytes[i]);
+				if (result[i]>255) throw new NumberFormatException("Should be in the range [0-255].");
+			} catch (NumberFormatException nfe) {
+				throw new IllegalArgumentException("Number out of bounds. Bytes should be on the range 0-255.");
 			}
+		}
 
-			// The network can host 2^n where n is the number of bits in the network address,
-			// substracting the broadcast and the network value (all 1s and all 0s).
-			int size = (int) Math.pow(2, 32.0-getBitNumber(result));
+		// The network can host 2^n where n is the number of bits in the network address,
+		// substracting the broadcast and the network value (all 1s and all 0s).
+		int size = (int) Math.pow(2, 32.0-getBitNumber(result));
 
-			if (size < 8)
-				size = 8;
-			else
-				size -= 2;
-			
-			return size ;
-    }
+		if (size < 8)
+			size = 8;
+		else
+			size -= 2;
+
+		return size ;
+	}
 
 	protected static String ONENet2TCloud(String ONETemplate) {
 		return "";
