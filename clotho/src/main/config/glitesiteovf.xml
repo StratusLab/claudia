@@ -170,7 +170,7 @@ xmlns="http://schemas.dmtf.org/ovf/envelope/1"
 				<Property ovf:key="BDII_HOST" ovf:type="string" rsrvr:cloudConfigurable="true" ovf:value="bdii.isabella.grnet.gr"/>
  				<Property ovf:key="ID" ovf:type="string" rsrvr:cloudConfigurable="true" ovf:value="@id(2)"/>
 				<Property ovf:key="SCRIPT_LIST" ovf:type="string" rsrvr:cloudConfigurable="true" ovf:value="netinit0.sh/OVFParser.py"/>
-
+				<Property ovf:key="SCALE_UP_PERCENTAGE" ovf:type="string" rsrvr:cloudConfigurable="true" ovf:value="70"/>
 
 			</ProductSection>
 			

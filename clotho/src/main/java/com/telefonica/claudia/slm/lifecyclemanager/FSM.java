@@ -1169,8 +1169,10 @@ public class FSM extends Thread implements Serializable {
 
 					String[] parameters = veeType.split(",");
 
+					// set to true the elasticity checkinterval return
 					boolean reply = true;
 
+					// only check interval for the first replica of a group in case of multiple scaling up
 					if (scaleup > 0) checkinterval = false;
 
 					if (parameters.length < 2) {
@@ -1181,6 +1183,7 @@ public class FSM extends Thread implements Serializable {
 								.parseInt(parameters[1]), cntrlEvent
 								.getInitialTime(),checkinterval);
 					}
+					// in case of chack interval reply false, don't increase the scaleup variable and try again
 					if (reply==false && scaleUpNumber !=1 && scaleup > 0) 
 					{
 						scaleup--;
