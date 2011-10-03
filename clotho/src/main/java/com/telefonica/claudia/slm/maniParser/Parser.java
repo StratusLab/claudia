@@ -265,11 +265,11 @@ public class Parser {
 			String scalenumber = getPropertyFromVirtualSystem(vs, "SCALE_UP_PERCENTAGE");
 			
 			logger.info("Scale Up percentage found: "+ scalenumber);
-			long scaleupnumber = 1;
+			long scaleupnumber = 0;
 			
 			if (scalenumber!=null)
 			scaleupnumber = Long.parseLong(scalenumber);
-			else scaleupnumber = 1;
+			else scaleupnumber = 0;
 			
 			
 			return scaleupnumber;
@@ -291,13 +291,15 @@ public class Parser {
 			
 			String scalenumber = getPropertyFromVirtualSystem(vs, "SCALE_DOWN_PERCENTAGE");
 			
-			long scaledownnumber = 1;
+			logger.info("Scale Down percentage found: "+ scalenumber);
+			long scaledownnumber = 0;
 			
 			if (scalenumber!=null)
 			scaledownnumber = Long.parseLong(scalenumber);
-			else scaledownnumber = 1;
+			else scaledownnumber = 0;
+			
+			
 			return scaledownnumber;
-
 
 		} catch (EmptyEnvelopeException e) {
 			logger.warn("Empty envelope detected, service deployment may not be completed.");
@@ -305,6 +307,35 @@ public class Parser {
 
 		return 1;
 	}
+	
+	public int getScaleDownTime(String vsId)  {
+		VirtualSystemCollectionType topVsc;
+		try {
+			topVsc = (VirtualSystemCollectionType) OVFEnvelopeUtils.getTopLevelVirtualSystemContent(envelope);
+			VirtualSystemType vs = (VirtualSystemType) OVFEnvelopeUtils.getContentTypeByString(topVsc, vsId);
+			
+			//return OVFEnvelopeUtils.getRequiredIPByNetwork(envelope, vs);
+			
+			String scalenumber = getPropertyFromVirtualSystem(vs, "SCALE_DOWN_LAZY_TIME");
+			
+			logger.info("Lazy Scale Down time found: "+ scalenumber);
+			int scaledowntime = 0;
+			
+			if (scalenumber!=null)
+			scaledowntime = Integer.parseInt(scalenumber);
+			else scaledowntime  = 0;
+			
+			
+			return scaledowntime;
+
+		} catch (EmptyEnvelopeException e) {
+			logger.warn("Empty envelope detected, service deployment may not be completed.");
+		}
+
+		return 1;
+	}
+	
+	
 	
 	public String getScriptListProperty(String vsId)  {
 		VirtualSystemCollectionType topVsc;

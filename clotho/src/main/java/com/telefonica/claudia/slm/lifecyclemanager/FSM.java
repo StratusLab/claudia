@@ -195,6 +195,11 @@ public class FSM extends Thread implements Serializable {
 	public int scaleDownNumber;
 	public float scaleUpPercentage;
 	public float scaleDownPercentage;
+	
+	/**
+	 * Lazy scale down time.
+	 */
+	public int lazyScaleDownTime;
 
 
 	// VEE Related information
@@ -859,12 +864,12 @@ public class FSM extends Thread implements Serializable {
 		return true;
 	}
 
-	public boolean elasticityRemoveReplica(String veeType, long initialTime) {
+	public boolean elasticityRemoveReplica(String veeType, long initialTime, boolean checkinterval) {
 
 		VEE vee2Plicate = (VEE) ReservoirDirectory.getInstance().getObject(
 				new FQN(veeType));
 
-		if (!checkElasticityInterval(vee2Plicate, initialTime)) {
+		if (!checkElasticityInterval(vee2Plicate, initialTime) && checkinterval==true) {
 			logger.warn("Action discarded due to the Elasticity Interval.");
 			return false;
 		}
@@ -896,7 +901,7 @@ public class FSM extends Thread implements Serializable {
 			if (plicateSet == null)
 			{
 				logger.error("No replicas to delete ");
-				return false;
+				return true;
 			}
 
 			for (VEEReplica removeCandidate:  plicateSet)
@@ -1130,6 +1135,9 @@ public class FSM extends Thread implements Serializable {
 			// check the action grammar and perform the needed VMI
 			// actions
 			if (action.contains("createReplica")) {
+
+
+				// Decide how many replicas can be created with the percentage property
 				int initIndexTemp = action.indexOf("(");
 				int endIndexTemp = action.lastIndexOf(")");
 				String veeTypeTemp = action.substring(initIndexTemp + 1, endIndexTemp);
@@ -1149,12 +1157,12 @@ public class FSM extends Thread implements Serializable {
 					scaleUpNumber = 1;
 				}
 
+				//Always scale 1 at minimum
 				if (scaleUpNumber < 1) {
 					scaleUpNumber = 1;
 				}
 				logger.info("Scaling up "
-						+ scaleUpNumber +" more replicas");
-
+						+ scaleUpNumber +" more replicas if possible");
 
 
 
@@ -1192,14 +1200,77 @@ public class FSM extends Thread implements Serializable {
 				}
 
 			} else if (action.contains("removeReplica")) {
-				// get the action parameters
-				int initIndex = action.indexOf("(");
-				int endIndex = action.lastIndexOf(")");
-				String veeType = action.substring(initIndex + 1, endIndex);
 
-				elasticityRemoveReplica(veeType, cntrlEvent.getInitialTime());
+				// Decide how many replicas can be removed with the percentage property
+				int initIndexTemp = action.indexOf("(");
+				int endIndexTemp = action.lastIndexOf(")");
+				String veeTypeTemp = action.substring(initIndexTemp + 1, endIndexTemp);
+				String[] parametersTemp = veeTypeTemp.split(",");
+				VEE vee2Replicate = (VEE) ReservoirDirectory.getInstance().getObject(
+						new FQN(parametersTemp[0]));
+				try {
+					int currentReplicasTemp = vee2Replicate.getCurrentReplicas();
+					logger.info("Current number of replicas:"
+							+ currentReplicasTemp);
+					logger.info("Scale Down Percentage:"
+							+ scaleDownPercentage);
+					scaleDownNumber = Math.round((scaleDownPercentage/100)*currentReplicasTemp);
+				}
+				catch (NullPointerException npe) {
+					logger.error("problem getting number of replicas");
+					scaleDownNumber = 1;
+				}
 
-				retorno = FSM.RUNNING;
+				//Always scale 1 at minimum
+				if (scaleDownNumber < 1) {
+					scaleDownNumber = 1;
+				}
+				logger.info("Scaling Down "
+						+ scaleDownNumber +" more replicas if possible");
+
+
+				boolean checkinterval = true;
+
+				for (int scaledown = 0; scaledown < scaleDownNumber; scaledown++) {
+
+					// get the action parameters
+					int initIndex = action.indexOf("(");
+					int endIndex = action.lastIndexOf(")");
+					String veeType = action.substring(initIndex + 1, endIndex);
+					
+					// set to true the elasticity checkinterval return
+					boolean reply = true;
+
+					// only check interval for the first replica of a group in case of multiple scaling up
+					if (scaledown > 0) checkinterval = false;
+
+					reply =  elasticityRemoveReplica(veeType, cntrlEvent.getInitialTime(),checkinterval);
+
+					// in case of chackinterval reply false, don't increase the scaleup variable and try again
+					if (reply==false && scaleDownNumber !=1 && scaledown > 0) 
+					{
+						scaledown--;
+					}
+					
+					//Check if there's more replicas to remove
+					if (((scaledown+1) < scaleDownNumber) && reply==true){
+					//Lazy Scale down, wait for the next replica to be removed
+					try
+					{
+					logger.info("Lazy Scale Down: waiting "
+								+ lazyScaleDownTime +" seconds to remove next replica");	
+					Thread.sleep(lazyScaleDownTime*1000);
+					}
+					catch(InterruptedException e)
+					{
+					e.printStackTrace();
+					}
+							
+					}
+					
+					
+					retorno = FSM.RUNNING;
+				}
 			} else {
 				// or return an error if they weren't
 				retorno = FSM.ERROR;
@@ -1898,6 +1969,8 @@ public class FSM extends Thread implements Serializable {
 					scaleUpPercentage = parser.getScaleUpPercentage(originalVEE.getVEEName());
 
 					scaleDownPercentage = parser.getScaleDownPercentage(originalVEE.getVEEName());
+					
+					lazyScaleDownTime = parser.getScaleDownTime(originalVEE.getVEEName());
 
 					for (int i = 0; i < iterations; i++) {
 
