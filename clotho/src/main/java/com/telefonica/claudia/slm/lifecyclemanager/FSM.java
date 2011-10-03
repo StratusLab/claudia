@@ -1179,9 +1179,11 @@ public class FSM extends Thread implements Serializable {
 
 					// set to true the elasticity checkinterval return
 					boolean reply = true;
+					
 
 					// only check interval for the first replica of a group in case of multiple scaling up
 					if (scaleup > 0) checkinterval = false;
+					else checkinterval = true;
 
 					if (parameters.length < 2) {
 						reply =   elasticityCreateReplica(parameters[0], 1, cntrlEvent
