@@ -1222,6 +1222,7 @@ public class FSM extends Thread implements Serializable {
 
 				}
 				retorno = FSM.RUNNING;
+				logger.info("FSM RUNNING");
 
 			} else {
 				// or return an error if they weren't
