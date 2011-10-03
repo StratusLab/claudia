@@ -1243,6 +1243,7 @@ public class FSM extends Thread implements Serializable {
 
 					// only check interval for the first replica of a group in case of multiple scaling up
 					if (scaledown > 0) checkinterval = false;
+					else checkinterval = true;
 
 					reply =  elasticityRemoveReplica(veeType, cntrlEvent.getInitialTime(),checkinterval);
 
