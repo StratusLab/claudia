@@ -771,6 +771,19 @@ public class ONEProvisioningDriver implements ProvisioningDriver {
 					hostname="";
 				}
 
+				String contextarget = "";
+				
+				try
+				{
+					Property prop = OVFProductUtils.getProperty(productSection, "TARGET_CONF");     			
+					if (prop.getValue().toString()!= null)
+						contextarget =prop.getValue().toString();
+
+				}
+				catch (Exception e) 
+				{
+					
+				}
 
 				StringBuffer allParametersString  = new StringBuffer();
 
@@ -830,8 +843,14 @@ public class ONEProvisioningDriver implements ProvisioningDriver {
 				allParametersString.append("CustomizationUrl").append(ASSIGNATION_SYMBOL).append("\"" + Main.PROTOCOL + Main.serverHost + ":" + customizationPort + "/"+ replicaName+ "\"").append(MULT_CONF_SEPARATOR).append(LINE_SEPARATOR);
 				allParametersString.append("files").append(ASSIGNATION_SYMBOL).append("\"" + environmentRepositoryPath + "/"+ replicaName + "/ovf-env.xml" +scriptListTemplate+ "\"").append(MULT_CONF_SEPARATOR).append(LINE_SEPARATOR);
 
-				allParametersString.append("target").append(ASSIGNATION_SYMBOL).append("\"" + diskRoot + "dd"+ "\"").append(MULT_CONF_RIGHT_DELIMITER).append(LINE_SEPARATOR);
+				if (contextarget.length()>0)
+					allParametersString.append("target").append(ASSIGNATION_SYMBOL).append("\"" + contextarget +"\"").append(MULT_CONF_RIGHT_DELIMITER).append(LINE_SEPARATOR);
+				else
+				    allParametersString.append("target").append(ASSIGNATION_SYMBOL).append("\"" + diskRoot + "dd"+ "\"").append(MULT_CONF_RIGHT_DELIMITER).append(LINE_SEPARATOR);
 
+				   
+				
+				
 				if (vh.getSystem() != null && vh.getSystem().getVirtualSystemType()!= null &&
 						vh.getSystem().getVirtualSystemType().getValue() != null &&
 						vh.getSystem().getVirtualSystemType().getValue().equals("vjsc"))
@@ -1006,9 +1025,14 @@ public class ONEProvisioningDriver implements ProvisioningDriver {
 
 						if (virtualizationType.toLowerCase().equals("kvm")) {
 							allParametersString.append(ONE_VM_DISK_PARAM_TARGET).append(ASSIGNATION_SYMBOL).append(diskRoot + "d" + sdaId).append(MULT_CONF_SEPARATOR);
-						} else
+						}
+						else if (virtualizationType.toLowerCase().equals("xenhvm")){
+							allParametersString.append(ONE_VM_DISK_PARAM_TARGET).append(ASSIGNATION_SYMBOL).append(diskRoot + "d" + sdaId).append(MULT_CONF_SEPARATOR);
+							
+						}
+						else
 							allParametersString.append(ONE_VM_DISK_PARAM_TARGET).append(ASSIGNATION_SYMBOL).append(filesystem.getAbsolutePath()).append(MULT_CONF_SEPARATOR);
-
+				    
 						if (format!=null)
 						{
 
