@@ -1182,7 +1182,7 @@ public class FSM extends Thread implements Serializable {
 
 				// By default always checkinterval
 				boolean checkinterval = true;
-				boolean reply = true
+				boolean reply = true;
 				
 				for (int scaledown = 0; scaledown < scaleDownNumber; scaledown++) {
 
