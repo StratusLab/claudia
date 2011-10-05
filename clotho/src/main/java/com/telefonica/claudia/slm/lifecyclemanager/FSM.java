@@ -156,7 +156,7 @@ public class FSM extends Thread implements Serializable {
 	 * action), and to let the deployed or removed replica affect the real load
 	 * of the service before reevaluating the need of doing some action.
 	 */
-	private final static long ELASTICITY_MARGIN = 30 * 1000;
+	private final static long ELASTICITY_MARGIN = 60 * 1000;
 
 	// State-related information
 	// --------------------------------------------------------------------------------------------
@@ -1139,6 +1139,7 @@ public class FSM extends Thread implements Serializable {
 
 				// By default always checkinterval
 				boolean checkinterval = true;
+				boolean reply = true;
 
 				for (int scaleup = 0; scaleup < scaleUpNumber; scaleup++) {
 
@@ -1150,7 +1151,7 @@ public class FSM extends Thread implements Serializable {
 					String[] parameters = veeType.split(",");
 
 					// set to true the elasticity checkinterval return
-					boolean reply = true;
+					reply = true;
 
 
 					// only check interval for the first replica of a group in case of multiple scaling up
@@ -1166,7 +1167,7 @@ public class FSM extends Thread implements Serializable {
 								.getInitialTime(),checkinterval);
 					}
 					// in case of chack interval reply false, don't increase the scaleup variable and try again
-					if (reply==false && scaleUpNumber !=1 && scaleup > 0) 
+					if ((reply==false) && (scaleup > 0)) 
 					{
 						scaleup--;
 					}
@@ -1181,7 +1182,8 @@ public class FSM extends Thread implements Serializable {
 
 				// By default always checkinterval
 				boolean checkinterval = true;
-
+				boolean reply = true
+				
 				for (int scaledown = 0; scaledown < scaleDownNumber; scaledown++) {
 
 					// get the action parameters
@@ -1190,7 +1192,7 @@ public class FSM extends Thread implements Serializable {
 					String veeType = action.substring(initIndex + 1, endIndex);
 
 					// set to true the elasticity checkinterval return
-					boolean reply = true;
+					reply = true;
 
 					// only check interval for the first replica of a group in case of multiple scaling up
 					if (scaledown > 0) checkinterval = false;
@@ -1199,7 +1201,7 @@ public class FSM extends Thread implements Serializable {
 					reply =  elasticityRemoveReplica(veeType, cntrlEvent.getInitialTime(),checkinterval);
 
 					// in case of chackinterval reply false, don't increase the scaledown variable and try again
-					if (reply==false && scaleDownNumber !=1 && scaledown > 0) 
+					if ((reply==false) && (scaledown > 0)) 
 					{
 						scaledown--;
 					}
