@@ -1,8 +1,17 @@
 package com.telefonica.claudia.slm.paas;
 
+import java.io.ByteArrayInputStream;
+import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
+import org.dmtf.schemas.ovf.envelope._1.EnvelopeType;
+import org.dmtf.schemas.ovf.envelope._1.FileType;
+import org.dmtf.schemas.ovf.envelope._1.ReferencesType;
+
+import com.abiquo.ovf.OVFEnvelopeUtils;
+import com.abiquo.ovf.exceptions.XMLException;
+import com.abiquo.ovf.xml.OVFSerializer;
 import com.telefonica.claudia.slm.common.SMConfiguration;
 import com.telefonica.claudia.slm.deployment.VEE;
 import com.telefonica.claudia.slm.deployment.VEEReplica;
@@ -147,6 +156,18 @@ public class OVFContextualization {
 		
 		return getIpVm (veerelated, namenetwork);
 	
+	}
+	
+	public String getOvfVEEwithContextualization (String ovf, String url) throws UnsupportedEncodingException, XMLException
+	{
+		OVFSerializer ovfSerializer = OVFSerializer.getInstance();
+		
+		EnvelopeType envelope = ovfSerializer.readXMLEnvelope(new ByteArrayInputStream(ovf.getBytes("UTF-8")));
+		FileType file = new FileType ();
+		file.setHref(url);
+		file.setId("contextualization");
+		envelope.getReferences().getFile().add(file);
+		return ovfSerializer.writeXML(envelope);
 	}
 
 }

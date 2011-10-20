@@ -29,6 +29,7 @@
 */
 package com.telefonica.claudia.slm.deployment.paas;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -81,6 +82,9 @@ public class Product implements DirectoryEntry,PaaSElement {
 	@Basic
     private String productparent = null;
 	
+	@CollectionOfElements
+	private List<String> recipes = new ArrayList ();
+	
 	@Basic
     private String type = null;
 	
@@ -105,6 +109,8 @@ public class Product implements DirectoryEntry,PaaSElement {
     
     @ManyToOne
     private Product parent = null;
+    
+    
     
     public Product() {}
     
@@ -167,6 +173,18 @@ public class Product implements DirectoryEntry,PaaSElement {
     
     public void setUrl(String productUrl){
         this.productUrl = productUrl;
+    }
+    
+    public List<String> getRecipes (){
+        return recipes;
+    }
+    
+    public void setRecipe(List<String>  recipes){
+        this.recipes = recipes;
+    }
+    
+    public void addRecipe(String recipe){
+        this.recipes.add(recipe);
     }
     
     public void addProperty (Property property)
@@ -394,10 +412,16 @@ public class Product implements DirectoryEntry,PaaSElement {
 		property.setValue(this.getType());
 		productsection.getCategoryOrProperty().add(property);
 		
-		property = new ProductSectionType.Property ();
-		property.setKey("org.fourcaast.instancecomponent.recipe");
-		property.setValue(this.getName());
-		productsection.getCategoryOrProperty().add(property);
+		if (this.getRecipes()!= null && this.getRecipes().size() >0)
+		{
+		     for (String recipe: this.getRecipes())
+		     {
+			   property = new ProductSectionType.Property ();
+		       property.setKey("org.fourcaast.instancecomponent.recipe");
+		       property.setValue(this.getName());
+		       productsection.getCategoryOrProperty().add(property);
+		     }
+		}
 		
 		if (ip != null)
 		{

@@ -433,6 +433,10 @@ public class PaasUtils {
 					{
 						vee.setPassword(value);
 					}
+					else if (key.indexOf("recipe")!=-1)
+					{
+						vee.addRecipe(value);
+					}
 					
 				
 			}
@@ -505,6 +509,10 @@ public class PaasUtils {
 					else if (key.indexOf("parent")!=-1)
 					{
 						product.setParentName(value);
+					}
+					else if (key.indexOf("recipe")!=-1)
+					{
+						product.addRecipe(value);
 					}
 				}
 				else if (category.equals("org.fourcaast.instancecomponent.attributes"))

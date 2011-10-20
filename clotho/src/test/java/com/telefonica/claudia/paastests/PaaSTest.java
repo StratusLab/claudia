@@ -43,7 +43,7 @@ public class PaaSTest {
 	{
 		ServiceApplication sa  = null;
 	
-		String xmlFileName = "4caastpaas.xml";
+		String xmlFileName = "4caastpaas5.xml";
 		
 		
 		try {

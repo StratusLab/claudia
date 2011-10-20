@@ -3,13 +3,27 @@
  */
 package com.telefonica.claudia.slm.maniParser;
 
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Text;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.util.List;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+
+
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
+import org.w3c.dom.Text;
+import org.xml.sax.SAXException;
+
+import com.abiquo.ovf.exceptions.XMLException;
 import com.telefonica.claudia.slm.deployment.VEEReplica;
 import com.telefonica.claudia.slm.deployment.hwItems.Disk;
 import com.telefonica.claudia.slm.deployment.hwItems.NIC;
+import com.telefonica.claudia.slm.deployment.paas.Product;
 
 /**
  * @author henar
@@ -58,6 +72,34 @@ public class GetOperationsUtils {
 	
 	}
 	
+	public static Element getProductSection (Document doc, String href, Product product ) throws XMLException, ParserConfigurationException, SAXException, IOException
+	{
+		Element productSection = doc.createElementNS("http://schemas.dmtf.org/ovf/envelope/1","ProductSection");
+		productSection.setAttributeNS("http://schemas.dmtf.org/ovf/envelope/1", "class", "fourcast.product."+product.getName());
+		productSection.setAttribute("href", href);
+		Element productSectionlink = doc.createElement("Link");
+		
+		productSectionlink.setAttribute("rel", "add");
+		productSectionlink.setAttribute("type", "application/ovf.item+xml");
+		productSection.appendChild(productSectionlink);
+		
+		
+		Element productXML = doc.createElementNS("http://schemas.dmtf.org/ovf/envelope/1","Product");
+		productXML.appendChild(doc.createTextNode(product.getName()));
+		productSection.appendChild(productXML);
+		
+		Element versionXML = doc.createElementNS("http://schemas.dmtf.org/ovf/envelope/1","Version");
+		versionXML.appendChild(doc.createTextNode(product.getVersion()));
+		productSection.appendChild(versionXML);
+	
+		
+		
+		
+        return productSection;
+		
+		
+	
+	}
 	public static Element getVirtualHardwareSystem (Document doc, String href, int cpu, int memory, int disk, String ip )
 	{
 		Element virtualHardware = doc.createElementNS("http://schemas.dmtf.org/ovf/envelope/1","VirtualHardwareSection");

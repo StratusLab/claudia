@@ -29,6 +29,7 @@
 */
 package com.telefonica.claudia.slm.deployment;
 
+import java.io.IOException;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -51,10 +52,13 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.hibernate.annotations.CollectionOfElements;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.xml.sax.SAXException;
 
+import com.abiquo.ovf.exceptions.XMLException;
 import com.telefonica.claudia.slm.common.SMConfiguration;
 import com.telefonica.claudia.slm.deployment.hwItems.NICConf;
 import com.telefonica.claudia.slm.deployment.hwItems.Network;
+import com.telefonica.claudia.slm.deployment.paas.Product;
 import com.telefonica.claudia.slm.maniParser.GetOperationsUtils;
 import com.telefonica.claudia.slm.naming.DirectoryEntry;
 import com.telefonica.claudia.slm.naming.FQN;
@@ -391,6 +395,20 @@ public class ServiceApplication implements DirectoryEntry {
 	    			linkVeeReplica.setAttribute("type", "application/vnc.telefonica.tcloud.measureDescriptorList+xml");
 	    			linkVeeReplica.setAttribute("href", "@HOSTNAME/api/org/" + organizationId +"/vdc/" + 
 	        				getCustomer().getCustomerName() + "/vapp/" + getSerAppName() + "/" + vee.getVEEName() + "/" + veeReplica.getId() + "/monitor");
+	    			for (Product product: veeReplica.getVEE().getProducts())
+	    			{
+	    				Element productsection;
+					    try {
+						    productsection = GetOperationsUtils.getProductSection(doc, "@HOSTNAME/api/org/"+  organizationId +"/vdc/" + getCustomer().getCustomerName() + "/vapp/" + getSerAppName() +
+								"/" + vee.getVEEName() + "/" + veeReplica.getId()+"/product/"+product.getName(), product);
+						    veeReplicaElement.appendChild(productsection);
+					    } catch (Exception e) {
+					    	
+						
+					    }
+	    			
+	    			}
+	    			
 	    			Element virtualhardware = GetOperationsUtils.getVirtualHardwareSystem(doc, "@HOSTNAME/api/org/"+  organizationId +"/vdc/" + getCustomer().getCustomerName() + "/vapp/" + getSerAppName() +
 							"/" + vee.getVEEName() + "/" + veeReplica.getId(), veeReplica);
 	    			veeReplicaElement.appendChild(virtualhardware);

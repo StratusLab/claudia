@@ -446,6 +446,18 @@ public class RECManagerClient implements VMIHandler {
 		property.setKey("org.fourcaast.instancecomponent.type");
 		property.setValue("REC");
 		productsection.getCategoryOrProperty().add(property);
+		
+		if (vee.getRecipes()!= null && vee.getRecipes().size() >0)
+		{
+		     for (String recipe: vee.getRecipes())
+		     {
+			   property = new ProductSectionType.Property ();
+		       property.setKey("org.fourcaast.instancecomponent.recipe");
+		       property.setValue(recipe);
+		       productsection.getCategoryOrProperty().add(property);
+		     }
+		}
+		
 				  
 		category  = new MsgType ();
 		category.setMsgid("org.fourcaast.rec");
