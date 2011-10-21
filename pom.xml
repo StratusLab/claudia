@@ -109,13 +109,13 @@ grid certificates, and VOMS proxies.
 			<dependency>
 				<groupId>org.apache.derby</groupId>
 				<artifactId>derby</artifactId>
-				<version>10.5.3.0</version>
+				<version>10.5.3.0_1</version>
 			</dependency>
 
 			<dependency>
 				<groupId>org.apache.derby</groupId>
 				<artifactId>derbytools</artifactId>
-				<version>10.5.3.0</version>
+				<version>10.5.3.0_1</version>
 			</dependency>
 
 			<dependency>
