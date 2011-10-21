@@ -47,12 +47,14 @@ import javax.persistence.Id;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+
 import javax.persistence.OneToOne;
 import javax.persistence.Transient;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.hibernate.annotations.CollectionOfElements;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -147,6 +149,9 @@ public class VEE implements Comparable, DirectoryEntry {
     
     private double availabilityValue;
     
+    @CollectionOfElements
+    private List<String> recipes = new ArrayList ();
+    
     
     
 	/**
@@ -217,6 +222,7 @@ public class VEE implements Comparable, DirectoryEntry {
 		products.add(product);
     }
     
+    @OneToMany
     public List<Product> getProducts() {
         return products;
     }
@@ -579,4 +585,16 @@ public void setBalancedBy(VEE balancedBy) {
 		{
 			return this.password;
 		}
+		
+		 public List<String> getRecipes (){
+		        return recipes;
+		    }
+		    
+		    public void setRecipe(List<String>  recipes){
+		        this.recipes = recipes;
+		    }
+		    
+		    public void addRecipe(String recipe){
+		        this.recipes.add(recipe);
+		    }
 }

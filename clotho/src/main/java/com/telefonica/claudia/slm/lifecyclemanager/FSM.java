@@ -721,6 +721,8 @@ public class FSM extends Thread implements Serializable {
 
 			if (SMConfiguration.getInstance().isPaaSAware())
 			{
+				
+				logger.info ("Calling REC Manager for installing softwaer in the VM");
 				RECManagerClient rec = new RECManagerClient(SMConfiguration.getInstance().getSdcUrl());
 				PaasUtils paas = new PaasUtils();
 
@@ -754,7 +756,7 @@ public class FSM extends Thread implements Serializable {
 
 						//	veeArray[j].setUserName(result[0]);
 						//	veeArray[j].setPassword(result[1]);
-
+						logger.info ("Configuring VM " + veeArray[j].getVEEName()+ " with the right parameters");
 						try {
 							rec.installProductsInVm (veeArray[j], ip, result[0], result[1]);
 						} catch (Exception e1) {
@@ -765,6 +767,7 @@ public class FSM extends Thread implements Serializable {
 						} 
 						for (Product product: veeArray[j].getProducts())
 						{
+							logger.info ("Installing software " + product.getName());
 							try {
 								paas.installProduct(SMConfiguration.getInstance().getSdcUrl(),product, ip);
 							} catch (Exception e) {
@@ -1764,7 +1767,7 @@ public class FSM extends Thread implements Serializable {
 					+ reason);
 		}
 
-		shutdown(veesRollBack);
+	/*	shutdown(veesRollBack);
 		if (nicsToDeploy == null)
 			nicsToDeploy = new HashSet<Network>(); 
 		removeNetworks();
@@ -1773,7 +1776,7 @@ public class FSM extends Thread implements Serializable {
 
 		FQN fqnService = sap.getFQN();
 		DbManager.getDbManager().remove(sap);
-		DbManager.getDbManager().remove(fqnService);
+		DbManager.getDbManager().remove(fqnService);*/
 	}
 
 

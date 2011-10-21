@@ -19,6 +19,7 @@ import org.restlet.data.Protocol;
 import org.restlet.data.Reference;
 import org.restlet.data.Response;
 import org.restlet.resource.DomRepresentation;
+import org.restlet.resource.StringRepresentation;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -57,26 +58,22 @@ public class MonitoringClient {
 
 	public void setUpMonitoring(String fqn) throws AccessDeniedException,
 			CommunicationErrorException {
-        Reference urlMonitoring = new Reference(serverURL + "/rest/product");
+        
+        String md5 = this.getMd5FromFQN(fqn);
+        Reference urlMonitoring = new Reference(serverURL + "/"+md5);
 		
-		System.out.println ("URL " +serverURL + "/rest/product");
+		System.out.println ("URL " +serverURL + "/"+md5);
 
         // Call the server with the URI and the data
-		DomRepresentation data;
-        try {
+		StringRepresentation data  = new StringRepresentation(fqn);
 
-        		data = new DomRepresentation(MediaType.APPLICATION_XML, getMonitoringParams(fqn));
-
-        } catch (ParserConfigurationException e) {
-            logger.error("Error creating parser: " + e.getMessage());
-            return;
-        }
-
+        
         // Call the server with the URI and the data
         logger.debug("Posting Monitoring information: " );
-        Response response = client.post(urlMonitoring,data);
+        Response response = client.put(urlMonitoring,data);
 
         // Depending on the response code, return with an error, or wait for a response
+        System.out.println ("Response " + response.getStatus().getCode());
         switch (response.getStatus().getCode()) {
 
             case 401:    // Unauthorized
@@ -98,8 +95,9 @@ public class MonitoringClient {
             case 202:
             case 201:
             case 200:
+            case 204:
                 logger.info("Operation suceesfully done.");
-                Document responseXml;
+        /*        Document responseXml;
 
             
 			try {
@@ -111,7 +109,7 @@ public class MonitoringClient {
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
-			}
+			}*/
                    
              break;
 

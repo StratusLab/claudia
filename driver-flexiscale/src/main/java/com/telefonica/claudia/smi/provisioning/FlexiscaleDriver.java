@@ -332,8 +332,8 @@ if (VLAN.containsKey(fqnNet))
 			return -1;
 			
 		}
-		String codigo = sCadena.substring(0,3);
-		System.out.println(codigo);
+		String codigo = sCadena.substring(0,sCadena.indexOf("="));
+	
 		fr.close();
 		
 		Long vlan_id = new Long(codigo);
@@ -469,12 +469,12 @@ if (VLAN.containsKey(fqnNet))
 			*/
 			
 		if (ServerMap.containsKey(fqnVm))//fqn
-			//No imprime
+		{
 			System.out.println("ServerMap1" + ServerMap.containsKey(fqnVm));//fqn	
 			return ServerMap.get(fqnVm);//fqn
-		//else
-			//OJO
-			//return null;
+		}
+		return null;
+	
 	}
 	
 	protected Map<String, Long> getServers(Long vdc_id) throws Exception {
@@ -1745,14 +1745,23 @@ public class UndeployNetworkTask extends Task
 	//@Override
 	public String getVirtualMachine(String fqn) throws IOException {
 		
+		log.info("Get Virtual Machine " + fqn);
 		long server_id;
 		try {
 			 server_id = getServerId(fqn).longValue();
+			 log.info("Service Id" + server_id);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			throw new IOException ("The fqn " + fqn + " does not correspond to any VM deployed"); 
 		}
-		Server [] dd = service.listServers(1842);
+		long vdc_id = 0;
+		try {
+			 vdc_id=getVDCId(URICreation.getVDC(fqn));
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			
+		}
+		Server [] dd = service.listServers(vdc_id);
 		
 		for (Server ddd: dd)
 		{
