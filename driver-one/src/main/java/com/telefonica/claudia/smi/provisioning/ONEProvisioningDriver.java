@@ -29,6 +29,8 @@
  */
 package com.telefonica.claudia.smi.provisioning;
 
+import static org.junit.Assert.assertEquals;
+
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
@@ -173,6 +175,9 @@ public class ONEProvisioningDriver implements ProvisioningDriver {
 
 	private static final String NETWORK_BRIDGE = "oneNetworkBridge";
 	private static final String XEN_DISK = "xendisk";
+	
+	OneOperations operations = null;
+	OneNetUtilities netUtils = null;
 
 
 	/**
@@ -262,6 +267,8 @@ public class ONEProvisioningDriver implements ProvisioningDriver {
 
 	public static final String ONE_OVF_URL = "OVF";
 	public static final String ONE_CONTEXT = "CONTEXT";
+	
+	public static final String ONE_VERSION = "ONEVERSION";
 
 	public static final String RESULT_NET_ID = "ID";
 	public static final String RESULT_NET_NAME = "NAME";
@@ -278,6 +285,8 @@ public class ONEProvisioningDriver implements ProvisioningDriver {
 	private static final int ResourceTypeMEMORY = 4;
 	private static final int ResourceTypeNIC = 10;
 	private static final int ResourceTypeDISK = 17;
+	
+	private String oneversion = "2.2";
 
 
 	public class DeployVMTask extends Task {
@@ -294,6 +303,8 @@ public class ONEProvisioningDriver implements ProvisioningDriver {
 
 			this.fqnVm = fqn;
 			this.ovf = ovf;
+			
+			
 		}
 
 		@Override
@@ -369,28 +380,20 @@ public class ONEProvisioningDriver implements ProvisioningDriver {
 
 		public String createVirtualMachine() throws Exception {
 
-			List<String> rpcParams = new ArrayList<String>();
-			rpcParams.add(oneSession);
-			rpcParams.add(TCloud2ONEVM(ovf, fqnVm));
-			Object[] result = null;
-			try {
-				result = (Object[])xmlRpcClient.execute(VM_ALLOCATION_COMMAND, rpcParams);
-			} catch (XmlRpcException ex) {
-				throw new IOException ("Error on allocation of VEE replica , XMLRPC call failed: " + ex.getMessage(), ex);
+			String idvm = null; 
+			try
+			{
+			   idvm = operations.deployVirtualMachine (ovf, fqnVm );
+			   this.returnMsg = "Virtual machine internal id: " + idvm;
 			}
-
-			boolean success = (Boolean)result[0];
-
-			if(success) {
-				log.debug("Request succeded. Returining: \n\n" + ((Integer)result[1]).toString() + "\n\n");
-				this.returnMsg = "Virtual machine internal id: " + ((Integer)result[1]).toString();
-				return ((Integer)result[1]).toString();
-			} else {
-				log.error("Error recieved from ONE: " + (String)result[1]);
+			catch (Exception e)
+			{
 				this.error = new TaskError();
-				this.error.message = (String)result[1];
-				return null;
+				this.error.message = e.getMessage();
+				
 			}
+			return idvm;
+
 		}
 	}
 
@@ -402,6 +405,7 @@ public class ONEProvisioningDriver implements ProvisioningDriver {
 		public DeployNetworkTask(String netFqn, String ovf) {
 			this.fqnNet = netFqn;
 			this.ovf = ovf;
+		//	execute();
 		}
 
 		@Override
@@ -437,7 +441,25 @@ public class ONEProvisioningDriver implements ProvisioningDriver {
 
 		public boolean createNetwork() throws Exception {
 
-			List<String> rpcParams = new ArrayList<String>();
+			String idvm = null; 
+			String xml = netUtils.TCloud2ONENet(ovf);
+			try
+			{
+			   idvm = operations.deployNetwork(xml);
+			   this.returnMsg = "Virtual network machine internal id: " + idvm;
+			}
+			catch (Exception e)
+			{
+				this.error = new TaskError();
+				this.error.message = e.getMessage();
+				return false;
+				
+			}
+			return true;
+			
+			
+			
+		/*	List<String> rpcParams = new ArrayList<String>();
 			rpcParams.add(oneSession);
 			rpcParams.add(TCloud2ONENet(ovf));
 			Object[] result = null;
@@ -459,7 +481,7 @@ public class ONEProvisioningDriver implements ProvisioningDriver {
 				this.error = new TaskError();
 				this.error.message = (String)result[1];
 				return false;
-			}
+			}*/
 		}
 	}
 
@@ -469,6 +491,7 @@ public class ONEProvisioningDriver implements ProvisioningDriver {
 
 		public UndeployVMTask(String vmFqn) {
 			this.fqnVm = vmFqn;
+			execute() ;
 		}
 
 		@Override
@@ -480,11 +503,14 @@ public class ONEProvisioningDriver implements ProvisioningDriver {
 			// Undeploy the VM
 			try {
 				String id = getVmId(fqnVm).toString();
-				deleteVirtualMachine(id);
+			//	deleteVirtualMachine(id);
+				
+				operations.deleteVirtualMachine(id);
 
 				this.status= TaskStatus.SUCCESS;
 				this.endTime = System.currentTimeMillis();
 			} catch (IOException e) {
+				System.out.println ( e.getMessage());
 				log.error("Error connecting to ONE: " + e.getMessage());
 				this.error = new TaskError();
 				this.error.message = e.getMessage();
@@ -493,6 +519,7 @@ public class ONEProvisioningDriver implements ProvisioningDriver {
 				this.endTime = System.currentTimeMillis();
 				return;
 			} catch (Exception e) {
+				System.out.println ( e.getMessage());
 				log.error("Unknown error undeploying VM: " + e.getMessage());
 				this.error = new TaskError();
 				this.error.message = e.getMessage();
@@ -503,7 +530,7 @@ public class ONEProvisioningDriver implements ProvisioningDriver {
 			}
 		}
 
-		@SuppressWarnings("unchecked")
+	/*	@SuppressWarnings("unchecked")
 		public boolean deleteVirtualMachine(String id) throws IOException {
 			List rpcParams = new ArrayList ();
 
@@ -528,7 +555,7 @@ public class ONEProvisioningDriver implements ProvisioningDriver {
 			} else {
 				return (Boolean)result[0];
 			}
-		}
+		}*/
 	}
 
 	public class UndeployNetworkTask extends Task {
@@ -537,6 +564,7 @@ public class ONEProvisioningDriver implements ProvisioningDriver {
 
 		public UndeployNetworkTask(String netFqn) {
 			this.fqnNet = netFqn;
+			execute() ;
 		}
 
 		@Override
@@ -547,7 +575,9 @@ public class ONEProvisioningDriver implements ProvisioningDriver {
 
 			// Undeploy the VM
 			try {
-				deleteNetwork(getNetId(fqnNet).toString());
+				//deleteNetwork(getNetId(fqnNet).toString());
+				
+				operations.deleteNetwork(getNetId(fqnNet).toString());
 
 				this.status= TaskStatus.SUCCESS;
 				this.endTime = System.currentTimeMillis();
@@ -555,14 +585,17 @@ public class ONEProvisioningDriver implements ProvisioningDriver {
 				log.error("Error connecting to ONE: " + e.getMessage());
 				this.error = new TaskError();
 				this.error.message = e.getMessage();
+				System.out.println ( e.getMessage());
 
 				this.status = TaskStatus.ERROR;
 				this.endTime = System.currentTimeMillis();
+				System.out.println ( e.getMessage());
 				return;
 			} catch (Exception e) {
 				log.error("Unknown error undeploying Network: " + e.getMessage());
 				this.error = new TaskError();
 				this.error.message = e.getMessage();
+				System.out.println ( e.getMessage());
 
 				this.status = TaskStatus.ERROR;
 				this.endTime = System.currentTimeMillis();
@@ -570,7 +603,7 @@ public class ONEProvisioningDriver implements ProvisioningDriver {
 			}
 		}
 
-		@SuppressWarnings("unchecked")
+/*		@SuppressWarnings("unchecked")
 		public void deleteNetwork(String id) throws IOException {
 
 			List rpcParams = new ArrayList<String>();
@@ -589,7 +622,7 @@ public class ONEProvisioningDriver implements ProvisioningDriver {
 			} else {
 				throw new IOException("Unknown error trying to delete network: " + (String)result[1]);
 			}
-		}
+		}*/
 	}
 
 	public class ActionVMTask extends Task {
@@ -612,7 +645,7 @@ public class ONEProvisioningDriver implements ProvisioningDriver {
 
 			// Undeploy the VM
 			try {
-				boolean result = doAction();
+				boolean result = operations.doAction(getVmId(fqnVM).toString(), action);
 
 				if (result)
 					this.status= TaskStatus.SUCCESS;
@@ -642,496 +675,20 @@ public class ONEProvisioningDriver implements ProvisioningDriver {
 				return;
 			}
 		}
-
-		public boolean doAction() throws Exception {
-
-			System.out.println("Executing action: " + action);
-
-			return true;
-		}
+		
 	}
 
 
 
 
-	public String TCloud2ONEVM(String xml,
-			String veeFqn) throws Exception {
-
-		try {
-			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-			factory.setNamespaceAware(true);
-			DocumentBuilder builder = factory.newDocumentBuilder();
-			Document doc = builder.parse(new ByteArrayInputStream(xml.getBytes()));
-
-			if (!doc.getFirstChild().getNodeName().equals(TCloudConstants.TAG_INSTANTIATE_OVF)) {
-				log.error("Element <"+TCloudConstants.TAG_INSTANTIATE_OVF+"> not found.");
-				throw new Exception("Element <"+TCloudConstants.TAG_INSTANTIATE_OVF+"> not found.");
-			}
-
-			Element root = (Element) doc.getFirstChild();
-
-			String replicaName = root.getAttribute("name");
-
-			NodeList envelopeItems = doc.getElementsByTagNameNS("*", "Envelope");
-
-			if (envelopeItems.getLength() != 1) {
-				log.error("Envelope items not found.");
-				throw new Exception("Envelope items not found.");
-			}
-
-			// Extract the IP from the aspects section
-			Map<String, String> ipOnNetworkMap = new HashMap<String, String>();
-
-			NodeList aspects = doc.getElementsByTagNameNS("*", "Aspect");
-
-			for (int i=0; i < aspects.getLength(); i++) {
-				Element aspect = (Element) aspects.item(i);
-
-				if (aspect.getAttribute("name").equals("IP Config")) {
-
-					NodeList properties = aspect.getElementsByTagNameNS("*", "Property");
-
-					for (int j=0; j < properties.getLength(); j++) {
-						Element property = (Element) properties.item(j);
-
-						NodeList keys = property.getElementsByTagNameNS("*", "Key");
-						NodeList values = property.getElementsByTagNameNS("*", "Value");
-
-						if (keys.getLength() >0 && values.getLength()>0) {
-							ipOnNetworkMap.put(keys.item(0).getTextContent(), values.item(0).getTextContent());
-						}
-					}
-				}
-			}
-
-			// Extract the ovf sections and pass them to the OVF manager to be processed.
-			Document ovfDoc = builder.newDocument();
-			ovfDoc.appendChild(ovfDoc.importNode(envelopeItems.item(0), true));
-			OVFSerializer ovfSerializer = OVFSerializer.getInstance();
-			ovfSerializer.setValidateXML(false);
-			EnvelopeType envelope = ovfSerializer.readXMLEnvelope(new ByteArrayInputStream(DataTypesUtils.serializeXML(ovfDoc).getBytes()));
-
-			ContentType entityInstance = OVFEnvelopeUtils.getTopLevelVirtualSystemContent(envelope);
-
-			if (entityInstance instanceof VirtualSystemType) {
-
-				VirtualSystemType vs = (VirtualSystemType) entityInstance;
-
-				VirtualHardwareSectionType vh = OVFEnvelopeUtils.getSection(vs, VirtualHardwareSectionType.class);
-				String virtualizationType = "kvm";
-				if (vh.getSystem()!= null)
-					virtualizationType = vh.getSystem().getVirtualSystemType().getValue();
-
-				String scriptListProp = null;
-				String scriptListTemplate = "";
-
-				String hostname=null;
-
-				ProductSectionType productSection;
-				productSection = OVFEnvelopeUtils.getSection(vs, ProductSectionType.class);
-				try
-				{
-					Property prop = OVFProductUtils.getProperty(productSection, "SCRIPT_LIST");     			
-					scriptListProp = prop.getValue().toString();
-
-					String[] scriptList = scriptListProp.split("/");
-
-					scriptListTemplate = "";
-
-					for (String scrt: scriptList){
-
-						scriptListTemplate = scriptListTemplate + " "+oneScriptPath+"/"+scrt;
-					}
-
-
-				}
-				catch (Exception e) 
-				{
-					//TODO throw PropertyNotFoundException
-					//logger.error(e);
-					scriptListProp="";
-					scriptListTemplate = "";
-				}
-
-				String netcontext=getNetContext(vh, veeFqn,xml, scriptListProp);
-
-
-
-				try
-				{
-					Property prop = OVFProductUtils.getProperty(productSection, "HOSTNAME");     			
-					hostname = prop.getValue().toString();
-
-
-				}
-				catch (Exception e) 
-				{
-					//TODO throw PropertyNotFoundException
-					//logger.error(e);
-					hostname="";
-				}
-
-				String contextarget = "";
-				
-				try
-				{
-					Property prop = OVFProductUtils.getProperty(productSection, "TARGET_CONF");     			
-					if (prop.getValue().toString()!= null)
-						contextarget =prop.getValue().toString();
-
-				}
-				catch (Exception e) 
-				{
-					
-				}
-
-				StringBuffer allParametersString  = new StringBuffer();
-
-				// Migrability ....
-
-				allParametersString.append(ONE_VM_NAME).append(ASSIGNATION_SYMBOL).append(replicaName).append(LINE_SEPARATOR);
-
-
-				if (!virtualizationType.toLowerCase().equals("xenhvm"))
-					allParametersString.append("GRAPHICS").append(ASSIGNATION_SYMBOL).append("[type=\"vnc\",listen=\"0.0.0.0\"]").append(LINE_SEPARATOR);
-
-
-				if (virtualizationType.toLowerCase().equals("kvm")) {
-
-					allParametersString.append("REQUIREMENTS").append(ASSIGNATION_SYMBOL).append("\"HYPERVISOR=\\\"kvm\\\"\"").append(LINE_SEPARATOR);
-				} else if (virtualizationType.toLowerCase().equals("xenhvm")) {
-					allParametersString.append("REQUIREMENTS").append(ASSIGNATION_SYMBOL).append("\"HYPERVISOR=\\\"xen\\\"\"").append(LINE_SEPARATOR);
-				}
-				else if (virtualizationType.toLowerCase().equals("xen")) {
-					allParametersString.append("REQUIREMENTS").append(ASSIGNATION_SYMBOL).append("\"HYPERVISOR=\\\"xen\\\"\"").append(LINE_SEPARATOR);
-				}
-				allParametersString.append(ONE_VM_OS).append(ASSIGNATION_SYMBOL).append(MULT_CONF_LEFT_DELIMITER);
-
-
-				String diskRoot;
-				if (virtualizationType.toLowerCase().equals("kvm")) {
-					diskRoot = "h";
-					allParametersString.append(ONE_VM_OS_PARAM_BOOT).append(ASSIGNATION_SYMBOL).append("hd").append(MULT_CONF_SEPARATOR).append(LINE_SEPARATOR);
-				} 
-				else if (virtualizationType.toLowerCase().equals("xenhvm")) {
-					diskRoot = "h";
-					allParametersString.append(ONE_VM_OS_PARAM_KERNEL).append(ASSIGNATION_SYMBOL).append("/usr/lib/xen/boot/hvmloader").append(MULT_CONF_RIGHT_DELIMITER).append(LINE_SEPARATOR);
-				}
-
-				else {
-					diskRoot = xendisk;
-					allParametersString.append(ONE_VM_OS_PARAM_INITRD).append(ASSIGNATION_SYMBOL).append(hypervisorInitrd).append(MULT_CONF_SEPARATOR).append(LINE_SEPARATOR);
-					allParametersString.append(ONE_VM_OS_PARAM_KERNEL).append(ASSIGNATION_SYMBOL).append(hypervisorKernel).append(MULT_CONF_SEPARATOR).append(LINE_SEPARATOR);
-				}
-
-				if(arch.length()>0)
-					allParametersString.append("ARCH").append(ASSIGNATION_SYMBOL).append("\"").append(arch).append("\"").append(MULT_CONF_SEPARATOR).append(LINE_SEPARATOR);
-
-				if (!virtualizationType.toLowerCase().equals("xenhvm"))
-					allParametersString.append(ONE_VM_OS_PARAM_ROOT).append(ASSIGNATION_SYMBOL).append(diskRoot + "da1").append(MULT_CONF_RIGHT_DELIMITER).append(LINE_SEPARATOR);
-
-
-				allParametersString.append(ONE_CONTEXT).append(ASSIGNATION_SYMBOL).append(MULT_CONF_LEFT_DELIMITER);
-
-				if(hostname.length()>0) {
-					allParametersString.append("hostname  = \""+hostname+"\"").append(MULT_CONF_SEPARATOR).append(LINE_SEPARATOR);
-				}
-				if(netcontext.length()>0) {
-					allParametersString.append(netcontext);
-				}
-				allParametersString.append("public_key").append(ASSIGNATION_SYMBOL).append(oneSshKey).append(MULT_CONF_SEPARATOR).append(LINE_SEPARATOR);
-				allParametersString.append("CustomizationUrl").append(ASSIGNATION_SYMBOL).append("\"" + Main.PROTOCOL + Main.serverHost + ":" + customizationPort + "/"+ replicaName+ "\"").append(MULT_CONF_SEPARATOR).append(LINE_SEPARATOR);
-				allParametersString.append("files").append(ASSIGNATION_SYMBOL).append("\"" + environmentRepositoryPath + "/"+ replicaName + "/ovf-env.xml" +scriptListTemplate+ "\"").append(MULT_CONF_SEPARATOR).append(LINE_SEPARATOR);
-
-				if (contextarget.length()>0)
-					allParametersString.append("target").append(ASSIGNATION_SYMBOL).append("\"" + contextarget +"\"").append(MULT_CONF_RIGHT_DELIMITER).append(LINE_SEPARATOR);
-				else
-				    allParametersString.append("target").append(ASSIGNATION_SYMBOL).append("\"" + diskRoot + "dd"+ "\"").append(MULT_CONF_RIGHT_DELIMITER).append(LINE_SEPARATOR);
-
-				   
-				
-				
-				if (vh.getSystem() != null && vh.getSystem().getVirtualSystemType()!= null &&
-						vh.getSystem().getVirtualSystemType().getValue() != null &&
-						vh.getSystem().getVirtualSystemType().getValue().equals("vjsc"))
-				{
-					allParametersString.append("HYPERVISOR").append(ASSIGNATION_SYMBOL).append("VJSC").append(LINE_SEPARATOR);
-				}
-
-
-				char sdaId = 'a';
-
-				List<RASDType> items = vh.getItem();
-				boolean ispaasaware = false;
-				for (Iterator<RASDType> iteratorRASD = items.iterator(); iteratorRASD.hasNext();) {
-					RASDType item = (RASDType) iteratorRASD.next();
-
-					/* Get the resource type and process it accordingly */
-					int rsType = new Integer(item.getResourceType().getValue());
-
-					int quantity = 1;
-					if (item.getVirtualQuantity() != null) {
-						quantity = item.getVirtualQuantity().getValue().intValue();
-					}
-
-					switch (rsType) {
-					case ResourceTypeCPU:
-
-						//  for (int k = 0; k < quantity; k++) {
-						allParametersString.append(ONE_VM_CPU).append(ASSIGNATION_SYMBOL).append(quantity).append(LINE_SEPARATOR);
-						allParametersString.append(ONE_VM_VCPU).append(ASSIGNATION_SYMBOL).append(quantity).append(LINE_SEPARATOR);
-						//  }
-
-						break;
-
-					case ResourceTypeDISK:
-
-						/*
-						 * The rasd:HostResource will follow the pattern
-						 * 'ovf://disk/<id>' where id is the ovf:diskId of some
-						 * <Disk>
-						 */
-						String hostRes = item.getHostResource().get(0).getValue();
-						StringTokenizer st = new StringTokenizer(hostRes, "/");
-
-						/*
-						 * Only ovf:/<file|disk>/<n> format is valid, accodring
-						 * OVF spec
-						 */
-						if (st.countTokens() != 3) {
-							throw new IllegalArgumentException("malformed HostResource value (" + hostRes + ")");
-						}
-						if (!(st.nextToken().equals("ovf:"))) {
-							throw new IllegalArgumentException("HostResource must start with ovf: (" + hostRes + ")");
-						}
-						String hostResType = st.nextToken();
-						if (!(hostResType.equals("disk") || hostResType.equals("file"))) {
-							throw new IllegalArgumentException("HostResource type must be either disk or file: (" + hostRes + ")");
-						}
-						String hostResId = st.nextToken();
-
-						String fileRef = null;
-						String capacity = null;
-						String format = null;
-						if (hostResType.equals("disk")) {
-							/* This type involves an indirection level */
-							DiskSectionType ds = null;
-							ds = OVFEnvelopeUtils.getSection(envelope, DiskSectionType.class);
-							List<VirtualDiskDescType> disks = ds.getDisk();
-
-							for (Iterator<VirtualDiskDescType> iteratorDk = disks.iterator(); iteratorDk.hasNext();) {
-								VirtualDiskDescType disk = iteratorDk.next();
-
-								String diskId = disk.getDiskId();
-								if (diskId.equals(hostResId)) {
-
-									fileRef = disk.getFileRef();
-									capacity = disk.getCapacity();
-									format = disk.getFormat();
-
-									if (fileRef == null) {
-										log.warn("file reference can not be found for disk: " + hostRes);
-										ispaasaware = true;
-									}
-
-
-									break;
-								}
-							}
-						} else {
-							throw new IllegalArgumentException("File type not supported in Disk sections.");
-						}
-
-						/* Throw exceptions in the case of missing information */
-						if (fileRef == null) {
-							log.warn("file reference can not be found for disk: " + hostRes);
-						}
-
-
-						URL url = null;
-						String digest = null;
-						String driver = null;
-
-						ReferencesType ref = envelope.getReferences();
-						List<FileType> files = ref.getFile();
-
-
-
-						for (Iterator<FileType> iteratorFl = files.iterator(); iteratorFl.hasNext();) {
-							FileType fl = iteratorFl.next();
-							if (fileRef!=null)
-							{
-
-								if (fl.getId().equals(fileRef)) {
-									try {
-										url = new URL(fl.getHref());
-									} catch (MalformedURLException e) {
-										throw new IllegalArgumentException("problems parsing disk href: " + e.getMessage());
-									}
-								}
-
-								/*
-								 * If capacity was not set using ovf:capacity in
-								 * <Disk>, try to get it know frm <File>
-								 * ovf:size
-								 */
-								if (capacity == null && fl.getSize() != null) {
-									capacity = fl.getSize().toString();
-								}
-
-								/* Try to get the digest */
-								Map<QName, String> attributesFile = fl.getOtherAttributes();
-								QName digestAtt = new QName("http://schemas.telefonica.com/claudia/ovf","digest");
-								digest = attributesFile.get(digestAtt);
-
-								Map<QName, String> attributesFile2 = fl.getOtherAttributes();
-								QName driverAtt = new QName("http://schemas.telefonica.com/claudia/ovf","driver");
-								driver = attributesFile.get(driverAtt);
-
-
-								break;
-							}
-						}
-
-						/* Throw exceptions in the case of missing information */
-						if (capacity == null) {
-							throw new IllegalArgumentException("capacity can not be set for disk " + hostRes);
-						}
-						if (url == null && fileRef!=null) {
-							throw new IllegalArgumentException("url can not be set for disk " + hostRes);
-						}
-
-						if (digest == null) {
-							log.debug("md5sum digest was not found for disk " + hostRes);
-						}
-
-
-
-						String urlDisk = null;
-
-						if (url != null)  
-						{
-							urlDisk = url.toString();
-
-							if (urlDisk.contains("file:/"))
-								urlDisk = urlDisk.replace("file:/", "file:///");
-						}
-
-						File filesystem = new File("/dev/" + diskRoot + "d" + sdaId);
-
-						allParametersString.append(ONE_VM_DISK).append(ASSIGNATION_SYMBOL).append(MULT_CONF_LEFT_DELIMITER);
-						if (urlDisk!= null)
-							allParametersString.append(ONE_VM_DISK_PARAM_IMAGE).append(ASSIGNATION_SYMBOL).append(urlDisk).append(MULT_CONF_SEPARATOR);
-
-						if (virtualizationType.toLowerCase().equals("kvm")) {
-							allParametersString.append(ONE_VM_DISK_PARAM_TARGET).append(ASSIGNATION_SYMBOL).append(diskRoot + "d" + sdaId).append(MULT_CONF_SEPARATOR);
-						}
-						else if (virtualizationType.toLowerCase().equals("xenhvm")){
-							allParametersString.append(ONE_VM_DISK_PARAM_TARGET).append(ASSIGNATION_SYMBOL).append(diskRoot + "d" + sdaId).append(MULT_CONF_SEPARATOR);
-							
-						}
-						else
-							allParametersString.append(ONE_VM_DISK_PARAM_TARGET).append(ASSIGNATION_SYMBOL).append(filesystem.getAbsolutePath()).append(MULT_CONF_SEPARATOR);
-				    
-						if (format!=null)
-						{
-
-							if (format.equals("ext3"))
-							{
-								allParametersString.append(ONE_VM_DISK_PARAM_TYPE).append(ASSIGNATION_SYMBOL).append("fs").append(MULT_CONF_SEPARATOR); 
-							}
-							allParametersString.append(ONE_VM_DISK_PARAM_FORMAT).append(ASSIGNATION_SYMBOL).append(format).append(MULT_CONF_SEPARATOR);
-						}
-						log.info("Driver " + driver);
-						if (driver!=null)
-							allParametersString.append(ONE_VM_DISK_PARAM_DRIVER).append(ASSIGNATION_SYMBOL).append(driver).append(MULT_CONF_SEPARATOR);
-
-
-
-
-						if (digest!=null)
-							allParametersString.append(ONE_VM_DISK_PARAM_DIGEST).append(ASSIGNATION_SYMBOL).append(digest).append(MULT_CONF_SEPARATOR);
-						allParametersString.append(ONE_VM_DISK_PARAM_SIZE).append(ASSIGNATION_SYMBOL).append(capacity);
-						allParametersString.append(MULT_CONF_RIGHT_DELIMITER).append(LINE_SEPARATOR);
-
-						sdaId++;
-						break;
-
-					case ResourceTypeMEMORY:
-						allParametersString.append(ONE_VM_MEMORY).append(ASSIGNATION_SYMBOL).append(quantity).append(LINE_SEPARATOR);
-						break;
-
-					case ResourceTypeNIC:
-						String fqnNet = URICreation.getService(veeFqn) + ".networks." + item.getConnection().get(0).getValue();
-						allParametersString.append(ONE_VM_NIC).append(ASSIGNATION_SYMBOL).append(MULT_CONF_LEFT_DELIMITER).append(LINE_SEPARATOR);
-
-						allParametersString.append(ONE_NET_BRIDGE).append(ASSIGNATION_SYMBOL).append(networkBridge).append(MULT_CONF_SEPARATOR).append(LINE_SEPARATOR);
-						if (fqnNet.indexOf("public")!=-1)
-						{
-							allParametersString.append(ONE_VM_NIC_PARAM_NETWORK).append(ASSIGNATION_SYMBOL).append("public");
-						}
-						else
-							allParametersString.append(ONE_VM_NIC_PARAM_NETWORK).append(ASSIGNATION_SYMBOL).append(fqnNet);
-						if (ipOnNetworkMap.get(fqnNet)!=null)
-							allParametersString.append(MULT_CONF_SEPARATOR).append(LINE_SEPARATOR).append(ONE_VM_NIC_PARAM_IP).append(ASSIGNATION_SYMBOL).append(ipOnNetworkMap.get(fqnNet)).append(LINE_SEPARATOR);
-						allParametersString.append(MULT_CONF_RIGHT_DELIMITER).append(LINE_SEPARATOR);
-
-						break;
-					default:
-						throw new IllegalArgumentException("unknown hw type: " + rsType);
-					}
-				}
-
-				if (ispaasaware)
-				{
-					allParametersString.append(ONE_VM_DISK).append(ASSIGNATION_SYMBOL).append(MULT_CONF_LEFT_DELIMITER);
-					allParametersString.append(ONE_VM_DISK_PARAM_IMAGE).append(ASSIGNATION_SYMBOL).append("http://appliances.stratuslab.eu/images/base/ubuntu-10.04-amd64-base/1.4/ubuntu-10.04-amd64-base-1.4.img.gz").append(MULT_CONF_SEPARATOR);
-
-					allParametersString.append(ONE_VM_DISK_PARAM_TARGET).append(ASSIGNATION_SYMBOL).append("sdc").append(MULT_CONF_SEPARATOR);
-
-					allParametersString.append(ONE_VM_DISK_PARAM_SIZE).append(ASSIGNATION_SYMBOL).append(512);
-					allParametersString.append(MULT_CONF_RIGHT_DELIMITER).append(LINE_SEPARATOR);
-				}
-
-				//allParametersString.append(LINE_SEPARATOR).append(DEBUGGING_CONSOLE).append(LINE_SEPARATOR);
-
-				if (virtualizationType.toLowerCase().equals("xenhvm"))
-					allParametersString.append("RAW=[type=\"xen\",").append(LINE_SEPARATOR).append("data=\"builder = \\\"hvm\\\"").append(LINE_SEPARATOR)
-					.append("device_model = \\\"/usr/lib64/xen/bin/qemu-dm\\\"").append(LINE_SEPARATOR).append("pae = \\\"1\\\"").append(LINE_SEPARATOR)
-					.append("acpi = \\\"1\\\"").append(LINE_SEPARATOR).append("localtime = \\\"0\\\"").append(LINE_SEPARATOR).append("vnc = \\\"1\\\"\"]").append(LINE_SEPARATOR);
-
-				log.debug("VM data sent:\n\n" + allParametersString.toString() + "\n\n");
-				System.out.println("VM data sent:\n\n" + allParametersString.toString() + "\n\n");
-				return allParametersString.toString();
-
-
-			} else {
-				throw new IllegalArgumentException("OVF malformed. No VirtualSystemType found.");
-			}
-
-		} catch (IOException e1) {
-
-			log.error("OVF of the virtual machine was not well formed or it contained some errors.");
-			throw new Exception("OVF of the virtual machine was not well formed or it contained some errors: " + e1.getMessage());
-		} catch (ParserConfigurationException e) {
-			log.error("Error configuring parser: " + e.getMessage());
-			throw new Exception("Error configuring parser: " + e.getMessage());
-		} catch (FactoryConfigurationError e) {
-			log.error("Error retrieving parser: " + e.getMessage());
-			throw new Exception("Error retrieving parser: " + e.getMessage());
-		} catch (Exception e) {
-			log.error("Error configuring a XML Builder.");
-			e.printStackTrace();
-			throw new Exception("Error configuring a XML Builder: " + e.getMessage());
-		}
-	}
+	
 
 	protected static String ONEVM2TCloud(String ONETemplate) {
 		// TODO: ONE Template to TCloud translation
 		return "";
 	}
 
-	protected static String getNetContext(VirtualHardwareSectionType vh, String veeFqn,String xml, String scriptListProp) throws Exception {
+/*	protected static String getNetContext(VirtualHardwareSectionType vh, String veeFqn,String xml, String scriptListProp) throws Exception {
 
 		//	log.debug("PONG2 xml" +xml+ "\n");
 
@@ -1144,7 +701,7 @@ public class ONEProvisioningDriver implements ProvisioningDriver {
 		for (Iterator<RASDType> iteratorRASD = items.iterator(); iteratorRASD.hasNext();) {
 			RASDType item = (RASDType) iteratorRASD.next();
 
-			/* Get the resource type and process it accordingly */
+			// Get the resource type and process it accordingly 
 			int rsType = new Integer(item.getResourceType().getValue());
 
 			int quantity = 1;
@@ -1252,8 +809,8 @@ public class ONEProvisioningDriver implements ProvisioningDriver {
 		return allParametersString.toString();
 
 	}
-
-	protected  String TCloud2ONENet(String xml) throws Exception {
+*/
+	/*protected  String TCloud2ONENet(String xml) throws Exception {
 
 
 		try {
@@ -1322,8 +879,8 @@ public class ONEProvisioningDriver implements ProvisioningDriver {
 			throw new Exception("Error configuring a XML Builder: " + e.getMessage());
 		}
 	}
-
-	public String getTCloud2FixedONENet (String fqn)
+*/
+	/*public String getTCloud2FixedONENet (String fqn)
 	{
 		StringBuffer allParametersString  = new StringBuffer();
 		// Translate the simple data to RPC format
@@ -1383,9 +940,9 @@ public class ONEProvisioningDriver implements ProvisioningDriver {
 
 		}
 		return allParametersString.toString();
-	}
+	}*/
 
-	public static int getSizeNetwork (Element netmask)
+/*	public static int getSizeNetwork (Element netmask)
 	{
 
 
@@ -1414,7 +971,7 @@ public class ONEProvisioningDriver implements ProvisioningDriver {
 			size -= 2;
 
 		return size ;
-	}
+	}*/
 
 	protected static String ONENet2TCloud(String ONETemplate) {
 		return "";
@@ -1425,7 +982,7 @@ public class ONEProvisioningDriver implements ProvisioningDriver {
 	 *
 	 * @return
 	 */
-	public static int getBitNumber (short[] ip) {
+/*	public static int getBitNumber (short[] ip) {
 
 		if (ip == null || ip.length != 4)
 			return 0;
@@ -1436,7 +993,7 @@ public class ONEProvisioningDriver implements ProvisioningDriver {
 				bits += ( ((short)Math.pow(2, j))& ip[i]) / Math.pow(2, j);
 
 		return bits;
-	}
+	}*/
 
 	/**
 	 * Retrieve the virtual network id given its fqn.
@@ -1496,6 +1053,15 @@ public class ONEProvisioningDriver implements ProvisioningDriver {
 		List rpcParams = new ArrayList<String>();
 		rpcParams.add(oneSession);
 		rpcParams.add(-2);
+		
+		
+		if (this.oneversion.equals("3.0"))
+		{
+		  
+		  rpcParams.add(-1);
+		  rpcParams.add(-1);
+		  rpcParams.add(-2);
+		}
 
 		HashMap<String, Integer> mapResult = new HashMap<String, Integer>();
 
@@ -1503,6 +1069,7 @@ public class ONEProvisioningDriver implements ProvisioningDriver {
 		try {
 			result = (Object[])xmlRpcClient.execute(VM_GETALL_COMMAND, rpcParams);
 		} catch (XmlRpcException ex) {
+			System.out.println (" getVmIds" + ex.getMessage());
 			throw new IOException ("Error obtaining the VM list: " + ex.getMessage(), ex);
 		}
 
@@ -1553,6 +1120,13 @@ public class ONEProvisioningDriver implements ProvisioningDriver {
 		List rpcParams = new ArrayList();
 		rpcParams.add(oneSession);
 		rpcParams.add(-2);
+		
+		if (this.oneversion.equals("3.0"))
+		{
+		  rpcParams.add(-1);
+		  rpcParams.add(-1);
+		}
+
 
 		Object[] result = null;
 		try {
@@ -1637,8 +1211,12 @@ public class ONEProvisioningDriver implements ProvisioningDriver {
 			environmentRepositoryPath = (String) prop.get(ENVIRONMENT_PROPERTY);
 		}
 
-		if (prop.containsKey(NETWORK_BRIDGE)) {
-			networkBridge = ((String) prop.get(NETWORK_BRIDGE));
+		if (prop.containsKey("oneNetworkBridge")) {
+			networkBridge = ((String) prop.get("oneNetworkBridge"));
+		}
+		
+		if (prop.containsKey(this.ONE_VERSION)) {
+			oneversion = ((String) prop.get(ONE_VERSION));
 		}
 
 		if (prop.containsKey(XEN_DISK)) {
@@ -1677,6 +1255,12 @@ public class ONEProvisioningDriver implements ProvisioningDriver {
 			log.error("Malformed URL: " + oneURL);
 			throw new RuntimeException(e);
 		}
+		
+		String server = null;
+		if (prop.containsKey("com.telefonica.claudia.server.host")) {
+			server = ((String) prop.get("com.telefonica.claudia.server.host"));
+		}
+		
 
 		xmlRpcClient = new XmlRpcClient();
 		log.info("XMLRPC client created");
@@ -1687,8 +1271,11 @@ public class ONEProvisioningDriver implements ProvisioningDriver {
 		text_migrability.put("cross-host", "HOST");
 		text_migrability.put("cross-sitehost", "SITE");
 		text_migrability.put("none", "NONE");
+		operations = new OneOperations(oneSession, xmlRpcClient);
 
-		//  FULL??
+		operations.configOperations(oneversion, networkBridge, environmentRepositoryPath, oneSshKey, customizationPort, hypervisorInitrd, hypervisorKernel, xendisk, ARCH_PROPERTY, server);
+		netUtils = new OneNetUtilities(networkBridge);
+				//  FULL??
 	}
 
 	@SuppressWarnings("unchecked")
@@ -1740,7 +1327,11 @@ public class ONEProvisioningDriver implements ProvisioningDriver {
 			return null;
 		}
 	}
+	
+	
 
+	
+	
 	public String getAtributeVirtualSystem(VirtualSystemType vs, String attribute) throws NumberFormatException {
 		Iterator itr = vs.getOtherAttributes().entrySet().iterator();
 		while (itr.hasNext()) {
@@ -1827,8 +1418,31 @@ public class ONEProvisioningDriver implements ProvisioningDriver {
 
 	@Override
 	public String getVirtualMachine(String fqn) throws IOException {
-		// TODO Auto-generated method stub
-		return null;
+		String id = null;
+		try {
+			id = getVmId(fqn).toString();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		//	deleteVirtualMachine(id);
+		String xml = null;
+		try
+		{
+		String result = operations.getVirtualMachine(id);
+		ONEUtilities utils = new ONEUtilities ();
+		HashMap data = utils.getCpuRamDiskIp (result);
+	
+		 xml = utils.generateXMLVEE (fqn, (String) data.get("IP"), (String)data.get("CPU"), (String)data.get("MEMORY"), (String)data.get("DISK"));
+		}
+		catch (Exception e)
+		{
+			return null;
+		}
+		return xml;
+		
+		
+		
 	}
 
 
