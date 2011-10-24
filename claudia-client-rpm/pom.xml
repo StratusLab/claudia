@@ -139,6 +139,28 @@
             </mapping>
 
           </mappings>
+<!--
+	Fix overwriting custom configuration files:
+-->
+	<preinstallScriptlet>
+		<script>
+export CUSTOM_PR_FILE=${app.home}/conf/claudiaClient.properties
+[ -e $CUSTOM_PR_FILE ] &amp;&amp; mv $CUSTOM_PR_FILE $CUSTOM_PR_FILE.old
+echo ""
+		</script>
+	</preinstallScriptlet>
+	<postinstallScriptlet>
+		<script>
+export OLD_PR_FILE=${app.home}/conf/claudiaClient.properties.old
+export CUSTOM_PR_FILE=${app.home}/conf/claudiaClient.properties
+[ -e $OLD_PR_FILE ] &amp;&amp; mv $CUSTOM_PR_FILE $CUSTOM_PR_FILE.inst &amp;&amp; mv $OLD_PR_FILE $CUSTOM_PR_FILE
+echo ""
+		</script>
+	</postinstallScriptlet>
+<!--
+	End Fix overwriting custom configuration files:
+-->
+
         </configuration>
       </plugin>
 
