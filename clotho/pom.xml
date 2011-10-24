@@ -341,6 +341,17 @@
        <url>http://download.java.net/maven/2/</url>
     </repository>
 
+    <repository>
+       <id>central</id>
+       <name>Central</name>
+       <url>http://repo1.maven.org/maven2/</url>
+    </repository>
+
+   <repository>
+        <id>public</id>
+        <name>JBoss PUblic Nexus Repository</name>
+        <url>https://repository.jboss.org/nexus/content/groups/public/</url>
+      </repository>
   </repositories>
 
 </project>
