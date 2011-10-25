@@ -145,15 +145,26 @@
 	<preinstallScriptlet>
 		<script>
 export CUSTOM_PR_FILE=${app.home}/conf/claudiaClient.properties
-[ -e $CUSTOM_PR_FILE ] &amp;&amp; mv $CUSTOM_PR_FILE $CUSTOM_PR_FILE.old
+export CUSTOM_TEMPLATE_1=${app.home}/conf/templateInterfaces
+export CUSTOM_TEMPLATE_2=${app.home}/conf/templateIptables
+[ -e $CUSTOM_PR_FILE ] &amp;&amp; mv $CUSTOM_PR_FILE $CUSTOM_PR_FILE.oldtmp
+[ -e $CUSTOM_TEMPLATE_1 ] &amp;&amp; mv $CUSTOM_TEMPLATE_1 $CUSTOM_TEMPLATE_1.oldtmp
+[ -e $CUSTOM_TEMPLATE_2 ] &amp;&amp; mv $CUSTOM_TEMPLATE_2 $CUSTOM_TEMPLATE_2.oldtmp
 echo ""
 		</script>
 	</preinstallScriptlet>
 	<postinstallScriptlet>
 		<script>
-export OLD_PR_FILE=${app.home}/conf/claudiaClient.properties.old
+export OLD_PR_FILE=${app.home}/conf/claudiaClient.properties.oldtmp
+export OLD_TEMPLATE_1=${app.home}/conf/templateInterfaces.oldtmp
+export OLD_TEMPLATE_2=${app.home}/conf/templateIptables.oldtmp
 export CUSTOM_PR_FILE=${app.home}/conf/claudiaClient.properties
+export CUSTOM_TEMPLATE_1=${app.home}/conf/templateInterfaces
+export CUSTOM_TEMPLATE_2=${app.home}/conf/templateIptables
+
 [ -e $OLD_PR_FILE ] &amp;&amp; mv $CUSTOM_PR_FILE $CUSTOM_PR_FILE.inst &amp;&amp; mv $OLD_PR_FILE $CUSTOM_PR_FILE
+[ -e $OLD_TEMPLATE_1 ] &amp;&amp; mv $CUSTOM_TEMPLATE_1 $CUSTOM_TEMPLATE_1.inst &amp;&amp; mv $OLD_TEMPLATE_1 $CUSTOM_TEMPLATE_1
+[ -e $OLD_TEMPLATE_2 ] &amp;&amp; mv $CUSTOM_TEMPLATE_2 $CUSTOM_TEMPLATE_2.inst &amp;&amp; mv $OLD_TEMPLATE_2 $CUSTOM_TEMPLATE_2
 echo ""
 		</script>
 	</postinstallScriptlet>
