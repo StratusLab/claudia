@@ -1,0 +1,12 @@
+<Network name="henar"> 
+  <BaseAddress>192.168.2.192</BaseAddress>
+   <Netmask>255.255.255.248</Netmask>
+<LEASE>
+  <IP>192.168.2.195</IP>
+  <MAC>255.255.255.248</MAC>
+</LEASE>
+<LEASE>
+  <IP>192.168.2.193</IP>
+  <MAC>255.255.253.248</MAC>
+</LEASE>
+</Network>
