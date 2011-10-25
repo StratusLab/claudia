@@ -1,0 +1,4 @@
+<Network name="org.tid.customers.otro.services.tel.networks.net"> 
+  <BaseAddress>192.168.2.192</BaseAddress>
+   <Netmask>255.255.255.248</Netmask>
+<MAC_ENABLE>false</MAC_ENABLE></Network>
