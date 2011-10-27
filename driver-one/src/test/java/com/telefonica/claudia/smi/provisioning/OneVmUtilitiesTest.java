@@ -14,8 +14,8 @@ import org.junit.Test;
 
 public class OneVmUtilitiesTest {
 
-	@Test
-	public void testOneVmUtilities() {
+
+	/*public void testOneVmUtilities() {
 		
 		OneOperations oneoperations = prepareOneOperations ();
 		OneVmUtilities vmutils = new OneVmUtilities (oneoperations, "3.0", "br0",  "/opt/claudia/repository", null, "18888",
@@ -34,6 +34,33 @@ public class OneVmUtilitiesTest {
 		System.out.println (xml);
 		try {
 			vmutils.TCloud2ONEVM(xml, "CESGA.customers.laura.services.servi3.vees.dd");
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	}*/
+
+	@Test
+	public void testOneVmUtilitiesVEE() {
+		
+		OneOperations oneoperations = prepareOneOperations ();
+		OneVmUtilities vmutils = new OneVmUtilities (oneoperations, "3.0", "br0",  "/opt/claudia/repository", null, "18888",
+				"/boot/vmlinuz-2.6.26-2-xen-amd64", "/boot/initrd.img-2.6.26-2-xen-amd64", null , null, "10.65.44.44"); //"s"
+		
+		
+		
+		String pathxml = "src/test/resources/ovf.xml";
+		String xml = null;
+		try {
+			xml = readFileAsString(pathxml);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		//System.out.println ("XML " +xml);
+		try {
+			System.out.println (vmutils.TCloud2ONEVM(xml, "henar.customers.cc1.services.ss1.vees.VEEMaster.replicas.1"));
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

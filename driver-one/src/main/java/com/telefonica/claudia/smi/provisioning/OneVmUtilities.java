@@ -263,12 +263,14 @@ public class OneVmUtilities {
 					
 					
 				   
-				   String[] scriptList = scriptListProp.split("/");
+				   if (scriptListProp!= null) {
+					   String[] scriptList = scriptListProp.split("/");
 
 					for (String scrt: scriptList){
 
 						scriptListTemplate = scriptListTemplate + " "+oneScriptPath+"/"+scrt;
 					}
+					   }
 
 					contextarget = this.getPropertyValue(productSection, "TARGET_CONF");
 				}
@@ -328,10 +330,10 @@ public class OneVmUtilities {
 
 				allParametersString.append(ONE_CONTEXT).append(ASSIGNATION_SYMBOL).append(MULT_CONF_LEFT_DELIMITER);
 
-				if(hostname.length()>0) {
+				if(hostname != null && hostname.length()>0) {
 					allParametersString.append("hostname  = \""+hostname+"\"").append(MULT_CONF_SEPARATOR).append(LINE_SEPARATOR);
 				}
-				if(netcontext.length()>0) {
+				if(netcontext != null && netcontext.length()>0) {
 					allParametersString.append(netcontext);
 				}
 				if (oneSshKey!=null && oneSshKey.length()>0)
@@ -339,7 +341,7 @@ public class OneVmUtilities {
 				allParametersString.append("CustomizationUrl").append(ASSIGNATION_SYMBOL).append("\"" + PROTOCOL + serverHost + ":" + customizationPort + "/"+ replicaName+ "\"").append(MULT_CONF_SEPARATOR).append(LINE_SEPARATOR);
 				allParametersString.append("files").append(ASSIGNATION_SYMBOL).append("\"" + environmentRepositoryPath + "/"+ replicaName + "/ovf-env.xml" +scriptListTemplate+ "\"").append(MULT_CONF_SEPARATOR).append(LINE_SEPARATOR);
 
-				if (contextarget.length()>0)
+				if (contextarget!= null && contextarget.length()>0)
 					allParametersString.append("target").append(ASSIGNATION_SYMBOL).append("\"" + contextarget +"\"").append(MULT_CONF_RIGHT_DELIMITER).append(LINE_SEPARATOR);
 				else
 				    allParametersString.append("target").append(ASSIGNATION_SYMBOL).append("\"" + diskRoot + "dd"+ "\"").append(MULT_CONF_RIGHT_DELIMITER).append(LINE_SEPARATOR);
@@ -674,6 +676,8 @@ public class OneVmUtilities {
 					allParametersString.append("ip_eth"+i).append(ASSIGNATION_SYMBOL).append("\"$NIC[IP, NETWORK=\\\""+fqnNet+"\\\"]\"").append(MULT_CONF_SEPARATOR).append(LINE_SEPARATOR);
 					String dns="";
 					String gateway="";
+					
+					
 					if(i==0){
 						dns=eth0Dns;
 						gateway=eth0Gateway;
@@ -684,12 +688,12 @@ public class OneVmUtilities {
 					}
 					
 					
-
-					if(dns.length()>0)
+     
+					if(dns!=null &&dns.length()>0)
 					{
 						allParametersString.append("dns_eth"+i).append(ASSIGNATION_SYMBOL).append(dns).append(MULT_CONF_SEPARATOR).append(LINE_SEPARATOR);
 					}
-					if(gateway.length()>0)
+					if(gateway != null && gateway.length()>0)
 					{
 						allParametersString.append("gateway_eth"+i).append(ASSIGNATION_SYMBOL).append(gateway).append(MULT_CONF_SEPARATOR).append(LINE_SEPARATOR);
 					}
@@ -714,19 +718,19 @@ public class OneVmUtilities {
 
 		StringBuffer scriptexec=new StringBuffer();;
 		if (i==1){
-			if(netInitScript0.length()>0) {
+			if(netInitScript0!= null && netInitScript0.length()>0) {
 				scriptexec.append("SCRIPT_EXEC=\""+netInitScript0);	
 			}
 		}
 		if (i==2){
-			if(netInitScript1.length()>0) {
+			if(netInitScript1!= null && netInitScript1.length()>0) {
 				scriptexec.append("SCRIPT_EXEC=\""+netInitScript1);	
 			}
 		}
 		
 		
 		
-		if (scriptListProp != null & scriptListProp.length()!=0)
+		if (scriptListProp != null && scriptListProp.length()!=0)
 		{
 			String[] scriptList = scriptListProp.split("/");
 

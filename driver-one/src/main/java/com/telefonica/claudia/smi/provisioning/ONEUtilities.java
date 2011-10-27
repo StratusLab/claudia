@@ -46,10 +46,17 @@ public class ONEUtilities {
 	
 	public boolean isFqnIncluded (String vnet, String fqn)
 	{
-		if (vnet.indexOf(fqn)!= -1)
+		if (fqn.indexOf("public")!=-1)
+		{
+			if (vnet.indexOf("public")!= -1)
+				return true;
+		}
+		else if (vnet.indexOf(fqn)!= -1)
 			return true;
 		else
 			return false;
+		
+	     return false;
 	}
 	
 	public String obtainIdFromVnet (String fqn, String vnet)

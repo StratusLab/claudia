@@ -303,7 +303,7 @@ public class ONEProvisioningDriver implements ProvisioningDriver {
 
 			this.fqnVm = fqn;
 			this.ovf = ovf;
-			
+		
 			
 		}
 
@@ -405,7 +405,7 @@ public class ONEProvisioningDriver implements ProvisioningDriver {
 		public DeployNetworkTask(String netFqn, String ovf) {
 			this.fqnNet = netFqn;
 			this.ovf = ovf;
-		//	execute();
+			
 		}
 
 		@Override
@@ -491,7 +491,7 @@ public class ONEProvisioningDriver implements ProvisioningDriver {
 
 		public UndeployVMTask(String vmFqn) {
 			this.fqnVm = vmFqn;
-			execute() ;
+		
 		}
 
 		@Override
@@ -564,7 +564,7 @@ public class ONEProvisioningDriver implements ProvisioningDriver {
 
 		public UndeployNetworkTask(String netFqn) {
 			this.fqnNet = netFqn;
-			execute() ;
+			
 		}
 
 		@Override
@@ -1273,7 +1273,7 @@ public class ONEProvisioningDriver implements ProvisioningDriver {
 		text_migrability.put("none", "NONE");
 		operations = new OneOperations(oneSession, xmlRpcClient);
 
-		operations.configOperations(oneversion, networkBridge, environmentRepositoryPath, oneSshKey, customizationPort, hypervisorInitrd, hypervisorKernel, xendisk, ARCH_PROPERTY, server);
+		operations.configOperations(oneversion, networkBridge, environmentRepositoryPath, oneSshKey, customizationPort, hypervisorInitrd, hypervisorKernel, xendisk, arch, server);
 		netUtils = new OneNetUtilities(networkBridge);
 				//  FULL??
 	}
