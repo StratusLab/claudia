@@ -303,7 +303,10 @@ public class RECManagerClient implements VMIHandler {
 			CommunicationErrorException {
 		
 		
-	   Reference urlReplica = new Reference(serverURL +  URICreationPaaS.getURIVEE((product.getFQN().toString()))+"/pics");
+	   Reference urlReplica = new Reference(serverURL + 
+			   
+			   
+		URICreationPaaS.getURIVEE((product.getFQN().toString()))+"/pics");
 		
 		System.out.println ("URL " +urlReplica);
 
@@ -433,8 +436,9 @@ public class RECManagerClient implements VMIHandler {
 	public Document getInstallProductInVirtualMachine(VEE vee, String ip, String login, String password) throws ParserConfigurationException, XMLException, SAXException, IOException, SectionAlreadyPresentException, InvalidSectionException
 	{
         VirtualSystemType vs = new VirtualSystemType();
-        vs.setId(vee.getVEEName());
-		
+        vs.setId(vee.getVEEName()+"-"+ip.replace(".", "-"));
+        vee.setVEEName (vee.getVEEName()+"-"+ip.replace(".", "-"));
+      //  vs.setId(vee.getVEEName()+"-"+ip.replace(".", "-"));
 		ProductSectionType productsection = new ProductSectionType();
 
 		MsgType category  = new MsgType ();

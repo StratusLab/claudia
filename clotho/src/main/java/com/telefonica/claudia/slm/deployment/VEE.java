@@ -284,6 +284,10 @@ public void setBalancedBy(VEE balancedBy) {
         return veeName;
     }
     
+    public void setVEEName(String veeName) {
+        this.veeName = veeName;
+    }
+    
     public int nextVEEReplicaId() {        
         return ++lastReplicaId;             
     }

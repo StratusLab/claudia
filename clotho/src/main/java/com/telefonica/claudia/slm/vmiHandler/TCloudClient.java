@@ -76,6 +76,8 @@ public class TCloudClient implements VMIHandler {
     private static final long POLLING_INTERVAL = 15000;
     private Client client;
     private String serverURL;
+    
+    int network = 0;
 
     private static Logger logger = Logger.getLogger(TCloudClient.class);
 
@@ -173,17 +175,29 @@ public class TCloudClient implements VMIHandler {
     
     public Document getTCloudNetworkParametersNotIpManagement(Network networkConf) throws ParserConfigurationException {
 
-        logger.info("Obtain XML for network without IP management");
     	DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
         Document doc = builder.newDocument();
         
                
         Element root = doc.createElement(TCloudConstants.TAG_NETWORK_ROOT);
         root.setAttribute(TCloudConstants.ATTR_NETWORK_NAME, networkConf.getFQN().toString());
-      //  root.setAttribute(TCloudConstants.TAG_NETWORK_DNS, dns);
-      //  root.setAttribute(TCloudConstants.TAG_NETWORK_GATEWAY,gw);
-        doc.appendChild(root);
-
+    	
+    	if (networkConf.getPrivateNet())
+    	{
+    		logger.info("Obtain XML for network without IP management private network");  
+    		Element baseAddress = doc.createElement(TCloudConstants.TAG_NETWORK_BASE_ADDRESS);
+    	      baseAddress.appendChild(doc.createTextNode("192.168."+network+".0")); 
+    	      network ++;
+    	      root.appendChild(baseAddress);
+    	      Element netmask = doc.createElement(TCloudConstants.TAG_NETWORK_NETMASK);
+    	      netmask.appendChild(doc.createTextNode("255.255.240.0"));
+    	      root.appendChild(netmask);  
+    	}
+    	else
+    	{
+    		logger.info("Obtain XML for network without IP management public network");  
+    	}
+    	doc.appendChild(root);
 //
 //        Element gateway = doc.createElement(TCloudConstants.TAG_NETWORK_GATEWAY);
 //        gateway.appendChild(doc.createTextNode(gw));
@@ -394,6 +408,7 @@ public class TCloudClient implements VMIHandler {
 		}
         // Display the XML
         System.out.println("XML " + stringOut.toString());
+        logger.info("XML " + stringOut.toString());
         return doc;
     }
 

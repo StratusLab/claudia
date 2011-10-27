@@ -693,12 +693,11 @@ public class FSM extends Thread implements Serializable {
 		Arrays.sort(veeArray);
 
 		// First of all, check the needed networks have been created.
-		if (SMConfiguration.getInstance().getIpManagement())
-		{
+
 			if (!checkAndDeployNetworks()) {
 				abort("Network creation error");
 				return false;
-			}
+			
 		}
 
 
@@ -1427,63 +1426,76 @@ public class FSM extends Thread implements Serializable {
 		logger.info("Checking and deploying networks");
 
 		nicsToDeploy = new HashSet<Network>();
+		
+		if (SMConfiguration.getInstance().getIpManagement())
+		{
+			// Calculate network sizes
+			Map<Network, Integer> networkMaximumSizes = new HashMap<Network, Integer>();
 
-		// Calculate network sizes
-		Map<Network, Integer> networkMaximumSizes = new HashMap<Network, Integer>();
+			for (VEE vee : sap.getVEEs()) {
 
-		for (VEE vee : sap.getVEEs()) {
+				HashMap<String, Integer> ipsNeeded = parser
+				.getNumberOfIpsPerNetwork(vee.getFQN().contexts()[vee
+				                                                  .getFQN().contexts().length - 1]);
 
-			HashMap<String, Integer> ipsNeeded = parser
-			.getNumberOfIpsPerNetwork(vee.getFQN().contexts()[vee
-			                                                  .getFQN().contexts().length - 1]);
+				for (NICConf nic : vee.getNICsConf()) {
 
-			for (NICConf nic : vee.getNICsConf()) {
+					Integer numberOfIps = ipsNeeded.get(nic.getNetwork().getName());
 
-				Integer numberOfIps = ipsNeeded.get(nic.getNetwork().getName());
+					if (numberOfIps == null || numberOfIps == 0)
+						numberOfIps = 1;
 
-				if (numberOfIps == null || numberOfIps == 0)
-					numberOfIps = 1;
+					logger.info(numberOfIps + "(" + vee.getMaxReplicas()
+							* numberOfIps + ")" + " IPs required for vee "
+							+ vee.getVEEName() + " on network "
+							+ nic.getNetwork().getName());
 
-				logger.info(numberOfIps + "(" + vee.getMaxReplicas()
-						* numberOfIps + ")" + " IPs required for vee "
-						+ vee.getVEEName() + " on network "
-						+ nic.getNetwork().getName());
+					if (networkMaximumSizes.containsKey(nic.getNetwork())) {
+						networkMaximumSizes.put(nic.getNetwork(),
+								networkMaximumSizes.get(nic.getNetwork())
+								+ vee.getMaxReplicas() * numberOfIps);
+					} else {
+						networkMaximumSizes.put(nic.getNetwork(), vee
+								.getMaxReplicas());
+					}
+				}
+			}
 
-				if (networkMaximumSizes.containsKey(nic.getNetwork())) {
-					networkMaximumSizes.put(nic.getNetwork(),
-							networkMaximumSizes.get(nic.getNetwork())
-							+ vee.getMaxReplicas() * numberOfIps);
-				} else {
-					networkMaximumSizes.put(nic.getNetwork(), vee
-							.getMaxReplicas());
+			for (Network net : networkMaximumSizes.keySet()) {
+
+				// Update the network size, based on the minumum number of bits
+				// needed to represent the size
+				net.setSize(networkMaximumSizes.get(net));
+
+				if (net.getSize() > 1)
+					net.setSize(net.getSize() + 2);
+
+				logger.info("Asking for a "
+						+ ((net.getPrivateNet()) ? "private" : "public")
+						+ " network with " + net.getSize() + " IPs");
+
+				String[] address = lcc.getNetworkAddress(net.getSize(), !net
+						.getPrivateNet());
+				if (address == null) {
+					logger
+					.error("The lifecycle manager was unable to give enough IPs. It's impossible to deploy all the needed networks. Aborting.");
+					return false;
+				}
+
+				net.setNetworkAddresses(address);
+				nicsToDeploy.add(net);
+			}
+		}
+		else
+		{
+			for (VEE vee : sap.getVEEs()) {
+				for (NICConf nic : vee.getNICsConf()) {
+		
+					nicsToDeploy.add(nic.getNetwork());
 				}
 			}
 		}
-
-		for (Network net : networkMaximumSizes.keySet()) {
-
-			// Update the network size, based on the minumum number of bits
-			// needed to represent the size
-			net.setSize(networkMaximumSizes.get(net));
-
-			if (net.getSize() > 1)
-				net.setSize(net.getSize() + 2);
-
-			logger.info("Asking for a "
-					+ ((net.getPrivateNet()) ? "private" : "public")
-					+ " network with " + net.getSize() + " IPs");
-
-			String[] address = lcc.getNetworkAddress(net.getSize(), !net
-					.getPrivateNet());
-			if (address == null) {
-				logger
-				.error("The lifecycle manager was unable to give enough IPs. It's impossible to deploy all the needed networks. Aborting.");
-				return false;
-			}
-
-			net.setNetworkAddresses(address);
-			nicsToDeploy.add(net);
-		}
+		
 
 		try {
 			vmi.allocateNetwork(nicsToDeploy);
