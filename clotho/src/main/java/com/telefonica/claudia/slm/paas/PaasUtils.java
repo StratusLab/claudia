@@ -214,6 +214,53 @@ public class PaasUtils {
 		
 	}
 	
+	public HashMap  getVeePaaSSetIpFromXML (Document doc)
+	{
+		Node vapp =  doc.getElementsByTagName ("VApp").item(0);
+		HashMap   ips = new HashMap ();
+		Node vh = ((Element)vapp).getElementsByTagName ("VirtualHardwareSection").item(0);
+		
+			
+		Node itemresource = null;
+		NodeList items = vh.getChildNodes();
+		for (int k=0; k<items.getLength();k++)
+		{
+			NodeList dd = items.item(k).getChildNodes();
+					
+			for (int l=0;l<dd.getLength();l++)
+			{
+
+				if (dd.item(l).getNodeName().equals("ResourceType") &&
+								dd.item(l).getFirstChild().getNodeValue().equals("10"))
+				{
+					itemresource = items.item(k);
+					
+					NodeList values = itemresource.getChildNodes();
+					String ip= null;
+					String network = null;
+					for (int z=0;z<values.getLength();z++)
+					{
+						
+						if (values.item(z).getNodeName().equals("IPv4Address"))
+						{
+							ip= values.item(z).getFirstChild().getNodeValue();
+
+						}
+						else if (values.item(z).getNodeName().equals("Connection"))
+						{
+							network = values.item(z).getFirstChild().getNodeValue();
+						}
+					}
+					ips.put(network,ip);
+				}
+								
+			}
+		}
+
+	 return ips;
+		
+	}
+	
 	public String []  getVeePaaSUserNamePaaswordFromXML (String xml)
 	{
 		Document doc = getVEEDocument (xml);
@@ -296,6 +343,13 @@ public class PaasUtils {
 	{
 
 	   return getVeePaaSIpFromXML ( getVEEDocument (xml));
+			
+	}
+	
+	public HashMap  getVeePaaSSetIpFromXML (String xml)
+	{
+
+	   return getVeePaaSSetIpFromXML ( getVEEDocument (xml));
 			
 	}
 	

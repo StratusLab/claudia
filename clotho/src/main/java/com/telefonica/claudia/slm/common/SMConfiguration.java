@@ -125,6 +125,8 @@ public class SMConfiguration extends Properties {
 	private int veemPort = -1;
 	private String veemPath = null;
 	
+	private int networkid = 0;
+	
 	private boolean wasupActive= false;
 	private String wasupHost = null;
 	private int wasupPort = -1;
@@ -534,6 +536,14 @@ public void setSdcUrl(String sdcurl) {
 	
 	public String getNetworkMacEnable() {
 		return macEnabled;
+	}
+	
+	public int getNetworkId() {
+		return networkid;
+	}
+	
+	public void setNetworkId(int networkid) {
+		this.networkid= networkid;
 	}
 	
 	private String[] readCollectionInProperty(String propertyName) throws Exception {

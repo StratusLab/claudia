@@ -61,6 +61,7 @@ import com.telefonica.claudia.slm.deployment.VEE;
 import com.telefonica.claudia.slm.deployment.VEEReplica;
 import com.telefonica.claudia.slm.deployment.hwItems.NIC;
 import com.telefonica.claudia.slm.deployment.hwItems.Network;
+import com.telefonica.claudia.slm.paas.OVFContextualization;
 import com.telefonica.claudia.slm.paas.PaasUtils;
 import com.telefonica.claudia.slm.vmiHandler.exceptions.AccessDeniedException;
 import com.telefonica.claudia.slm.vmiHandler.exceptions.CommunicationErrorException;
@@ -77,7 +78,7 @@ public class TCloudClient implements VMIHandler {
     private Client client;
     private String serverURL;
     
-    int network = 0;
+
 
     private static Logger logger = Logger.getLogger(TCloudClient.class);
 
@@ -178,7 +179,7 @@ public class TCloudClient implements VMIHandler {
     	DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
         Document doc = builder.newDocument();
         
-               
+      
         Element root = doc.createElement(TCloudConstants.TAG_NETWORK_ROOT);
         root.setAttribute(TCloudConstants.ATTR_NETWORK_NAME, networkConf.getFQN().toString());
     	
@@ -186,8 +187,9 @@ public class TCloudClient implements VMIHandler {
     	{
     		logger.info("Obtain XML for network without IP management private network");  
     		Element baseAddress = doc.createElement(TCloudConstants.TAG_NETWORK_BASE_ADDRESS);
-    	      baseAddress.appendChild(doc.createTextNode("192.168."+network+".0")); 
-    	      network ++;
+    	      baseAddress.appendChild(doc.createTextNode("192.168."+SMConfiguration.getInstance().getNetworkId()+".0")); 
+    	     
+    	      SMConfiguration.getInstance().setNetworkId (SMConfiguration.getInstance().getNetworkId()+1);
     	      root.appendChild(baseAddress);
     	      Element netmask = doc.createElement(TCloudConstants.TAG_NETWORK_NETMASK);
     	      netmask.appendChild(doc.createTextNode("255.255.240.0"));
@@ -339,10 +341,18 @@ public class TCloudClient implements VMIHandler {
         doc.appendChild(root);
         root.setAttribute(TCloudConstants.ATTR_INSTANTIATION_PARAMS_NAME, String.valueOf(actualReplica.getFQN().toString()));
 
+        OVFContextualization context = new OVFContextualization();
+
+		System.out.println();
+		
+		String ovfrepresentation = context.updateOvfRepresentation (actualReplica);
+
+		
         // Add the ovf envelope to the root.
-        if (actualReplica.getOvfRepresentation()!=null && !actualReplica.getOvfRepresentation().equals("")) {
+      //  if (actualReplica.getOvfRepresentation()!=null && !actualReplica.getOvfRepresentation().equals("")) {
+		if (ovfrepresentation!=null && !ovfrepresentation.equals("")) {
             try {
-                Document ovfEnvelope = builder.parse(new ByteArrayInputStream(actualReplica.getOvfRepresentation().getBytes()));
+                Document ovfEnvelope = builder.parse(new ByteArrayInputStream(ovfrepresentation.getBytes()));
 
                 root.appendChild(doc.importNode(ovfEnvelope.getFirstChild(), true));
 

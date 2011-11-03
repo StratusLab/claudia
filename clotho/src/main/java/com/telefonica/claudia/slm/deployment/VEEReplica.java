@@ -135,6 +135,9 @@ public class VEEReplica implements DirectoryEntry {
     
 	private String osBoot = null;
 	
+	@Column(columnDefinition = "VARCHAR(32672)")
+	private String customizationFile = null;
+	
 	/**
 	 * OVF document that describe the VM as it was deployed in the underlying infrastructure.
 	 */
@@ -367,6 +370,14 @@ public class VEEReplica implements DirectoryEntry {
 
 	public String getOvfRepresentation() {
 		return ovfRepresentation;
+	}
+	
+	public void setCustomizationFile(String customizationFile) {
+		this.customizationFile = customizationFile;
+	}
+
+	public String getCustomizationFile() {
+		return customizationFile;
 	}
 	
 

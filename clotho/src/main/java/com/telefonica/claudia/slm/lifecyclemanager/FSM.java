@@ -74,6 +74,7 @@ import com.telefonica.claudia.slm.monitoring.MonitoringRestBusConnector;
 import com.telefonica.claudia.slm.monitoring.WasupHierarchy;
 import com.telefonica.claudia.slm.naming.FQN;
 import com.telefonica.claudia.slm.naming.ReservoirDirectory;
+import com.telefonica.claudia.slm.paas.OVFContextualization;
 import com.telefonica.claudia.slm.paas.PaasUtils;
 import com.telefonica.claudia.slm.paas.vmiHandler.MonitoringClient;
 import com.telefonica.claudia.slm.paas.vmiHandler.RECManagerClient;
@@ -717,13 +718,38 @@ public class FSM extends Thread implements Serializable {
 						+ veeArray[j].getFQN() + "]");
 				return false;
 			}
+			PaasUtils paas = new PaasUtils();
+			
+			/*for (VEEReplica rep: replicas)
+			{ ddd
+				String replicaxml = paas.getVEE(rep);
+				HashMap ips = paas.getVeePaaSSetIpFromXML (replicaxml);
+								
+				Iterator it = ips.entrySet().iterator();
+				
+				while (it.hasNext()) {
+				  Map.Entry e = (Map.Entry)it.next();
+				  System.out.println(e.getKey() + " " + e.getValue());
+			
+				  for (NIC nic: rep.getNICs())
+				  {
+							
+						if (e.getKey().equals(nic.getNICConf().getNetwork().getName()))
+						{
+						    System.out.println ("Adding IP  " +  e.getValue() + " from network  " + e.getKey() + " for replica " + rep.getVEE().getVEEName()+rep.getId());
+							nic.addIPAddress((String)e.getValue());
+						}
+				  }
+				}
+			}*/
+			
 
 			if (SMConfiguration.getInstance().isPaaSAware())
 			{
 				
 				logger.info ("Calling REC Manager for installing softwaer in the VM");
 				RECManagerClient rec = new RECManagerClient(SMConfiguration.getInstance().getSdcUrl());
-				PaasUtils paas = new PaasUtils();
+				
 
 				try {
 					rec.installProductsInService (veeArray[j]);
@@ -1564,6 +1590,7 @@ public class FSM extends Thread implements Serializable {
 			// Release the ip addres leased to the replica.
 			for (NIC nic : veeReplica.getNICs())
 				for (String ipAddress : nic.getIPAddresses())
+					if (nic.getNICConf().getNetwork().getNetworkAddresses()!=null)
 					lcc.releaseHostAddress(ipAddress, nic.getNICConf()
 							.getNetwork().getNetworkAddresses()[0]);
 
@@ -1638,7 +1665,8 @@ public class FSM extends Thread implements Serializable {
 				abort("VIM reports error: "+ allocResult.getMessage());
 				return false;
 			}
-
+			
+			getUpdateIpsReplica (veeReplica);
 			// If replica is loadbalanced, balancer should be notified
 
 			VEE balancerVEE = veeReplica.getVEE().getBalancedBy();
@@ -1657,6 +1685,32 @@ public class FSM extends Thread implements Serializable {
 		// update the rollback
 		veesRollBack.addAll(veeReplicasConfs);
 		return true;
+
+	}
+	
+	private void getUpdateIpsReplica (VEEReplica rep)
+	{
+		// Obtain the IP and update
+		PaasUtils paas = new PaasUtils();
+		String replicaxml = paas.getVEE(rep);
+		HashMap ips = paas.getVeePaaSSetIpFromXML (replicaxml);
+						
+		Iterator it = ips.entrySet().iterator();
+		
+		while (it.hasNext()) {
+		  Map.Entry e = (Map.Entry)it.next();
+		  System.out.println(e.getKey() + " " + e.getValue());
+	
+		  for (NIC nic: rep.getNICs())
+		  {
+					
+				if (e.getKey().equals(nic.getNICConf().getNetwork().getName()))
+				{
+				    System.out.println ("Adding IP  " +  e.getValue() + " from network  " + e.getKey() + " for replica " + rep.getVEE().getVEEName()+rep.getId());
+					nic.addIPAddress((String)e.getValue());
+				}
+		  }
+		}
 
 	}
 
@@ -2049,13 +2103,17 @@ public class FSM extends Thread implements Serializable {
 				entryPoints.put(net.getName(), net.getEntryPoints());
 
 			try {
-				veeReplica.setOvfRepresentation(parser
+				OVFContextualization context = new OVFContextualization();
+				/*veeReplica.setOvfRepresentation(parser
 						.inEnvolopeMacroReplacement(originalVEE
 								.getOvfRepresentation(), veeReplica.getId(),
 								SMConfiguration.getInstance().getDomainName(),
 								sap.getFQN().toString(), SMConfiguration
 								.getInstance().getMonitoringAddress(),
-								ips, masks, dnss, gateways, entryPoints));
+								ips, masks, dnss, gateways, entryPoints));*/
+				
+				System.out.println ("VEE REPLICA OVF " + veeReplica.getOvfRepresentation());
+				veeReplica.setOvfRepresentation(context.macroReplacement (veeReplica));
 			} catch (IOException e) {
 				abort("Unable to create environment file: " + e.getMessage());
 			} catch (IllegalArgumentException iae) {
@@ -2075,8 +2133,9 @@ public class FSM extends Thread implements Serializable {
 
 			// generate additional image
 			@SuppressWarnings("unused")
-			String pathToCustomizationFile = createCustomizationFile(veeReplica);
-
+			OVFContextualization context = new OVFContextualization();
+			String pathToCustomizationFile = context.createCustomizationFile(veeReplica); 
+			veeReplica.setCustomizationFile (pathToCustomizationFile);
 			replicas.add(veeReplica);
 		}
 

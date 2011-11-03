@@ -956,6 +956,51 @@ public class LifecycleController  extends UnicastRemoteObject implements SMI, Se
 			}
 
 			break;
+			
+		case DEPLOY_VDC:
+	
+			final String dd = event.get(SMIChannelEvent.FQN_ID);
+			String org3 = URICreation.getOrg(dd);
+
+			logger.info("Org obtained " + org3);
+
+
+
+			//final String seqNumberGetOrg = event.get(SMIChannelEvent.SEQUENCE_NUMBER);
+
+			e = new SMIChannelEvent(System.currentTimeMillis(), 0, SMIAction.GET_ORG);
+			e.setSuccess(false);
+
+			/*System.out.println ("llego evento");
+				String  orga = event.get(SMIChannelEvent.ORG_DESCRIPTION);
+				String  customerName = event.get(SMIChannelEvent.CUSTOMER_NAME);
+				System.out.println ("orga " + orga + customerName);
+				String customerfqn = URICreation.getFQN(orga, customerName);
+				FQN customerFQN = new FQN (customerfqn);
+			
+				if (ReservoirDirectory.getInstance().isNameRegistered(customerFQN)) {
+					logger.info("Customer already present: " + customerFQN.toString());
+					Customer client = (Customer) ReservoirDirectory.getInstance().getObject(customerFQN);
+				} else {
+					logger.info("New customer: " + customerFQN.toString()
+							+ ", registering in directory");
+					Customer client = new Customer(customerName);
+					ReservoirDirectory.getInstance().registerObject(client.getFQN(),
+							client);
+					DbManager.getDbManager().save(client);
+				}
+				
+				e = new SMIChannelEvent(System.currentTimeMillis(), 0, SMIAction.GET_ORG);
+				e.setSuccess(false);
+				System.out.println ("Sendind event");*/
+			/*	e = new SMIChannelEvent(System.currentTimeMillis(), 0, SMIAction.DEPLOY_VDC);
+				e.put(SMIChannelEvent.FQN_ID, "");
+				e.setSuccess(true);
+				System.out.println ("Sucess");*/
+
+				
+				
+			break;
 
 		case UNDEPLOY:
 			undeploy(new FQN(event.get(SMIChannelEvent.FQN_ID)));
@@ -1166,12 +1211,12 @@ public class LifecycleController  extends UnicastRemoteObject implements SMI, Se
 				doc.normalizeDocument();
 				final String xmlCustomerRepresentation = DataTypesUtils.serializeXML(doc);
 
-				final String customerFQN =event.get(SMIChannelEvent.FQN_ID);
+				final String customer =event.get(SMIChannelEvent.FQN_ID);
 				e.put(SMIChannelEvent.CUSTOMER_DESCRIPTION, xmlCustomerRepresentation);
 				try {
 					busMediator.sendEvent(e,
 							new HashMap<String, String>() {{
-								put("customer", customerFQN);
+								put("customer", customer);
 								put("action", SMIAction.GET_VAPP.toString());
 							}});
 

@@ -524,6 +524,8 @@ public class Parser {
 
 				vee.setOvfRepresentation(ovfDocuments.get(vs.getId()));
 				
+				System.out.println ("VS " + ovfDocuments.get(vs.getId()));
+				
 				PaasUtils paas = new PaasUtils(logger);
 				paas.addProductsToVEE (vs,vee);
 
