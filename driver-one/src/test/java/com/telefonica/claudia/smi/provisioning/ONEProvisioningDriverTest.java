@@ -18,7 +18,7 @@ import com.telefonica.claudia.smi.task.Task.TaskStatus;
 
 public class ONEProvisioningDriverTest {
 
-	@Test
+	/*@Test
 	public void testDeployNetwork() {
 		
 		ONEProvisioningDriver one = getPreConditions();
@@ -44,14 +44,14 @@ public class ONEProvisioningDriverTest {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-	}
+	}*/
 	
 	@Test
 	public void testGetVirtualMachine() {
      ONEProvisioningDriver one = getPreConditions();
 		
 		try {
-			String vm = one.getVirtualMachine("org.tid.customers.otro.services.tel.vees.vee");
+			String vm = one.getVirtualMachine("oneadmin CESGA.customers.cc1.services.ss1.vees.webapp-container.replicas.1");
 			System.out.println ("VM deployed " + vm);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -59,7 +59,7 @@ public class ONEProvisioningDriverTest {
 		}
 	}
 	
-	@Test
+/*	@Test
 	public void testDoActionVirtualMachine() {
      ONEProvisioningDriver one = getPreConditions();
 		
@@ -115,7 +115,7 @@ public class ONEProvisioningDriverTest {
 	public void testGetNetworkList() {
 		//fail("Not yet implemented");
 	}
-
+*/
 	
 	
 	private String readFileAsString(String filePath)

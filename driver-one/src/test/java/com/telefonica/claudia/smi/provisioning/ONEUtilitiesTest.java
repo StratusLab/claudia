@@ -3,9 +3,13 @@ package com.telefonica.claudia.smi.provisioning;
 import static org.junit.Assert.*;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.junit.Assert;
 import org.junit.Test;
 import org.xml.sax.SAXException;
 
@@ -73,7 +77,44 @@ public class ONEUtilitiesTest {
 		"<RSTIME>0</RSTIME><RETIME>0</RETIME><ESTIME>0</ESTIME><EETIME>0</EETIME><REASON>1</REASON></HISTORY></HISTORY_RECORDS></VM>";
 		
 		try {
-			util.getCpuRamDiskIp (result);
+			util.getCpuRamDisk (result);
+		} catch (ParserConfigurationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (SAXException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	@Test
+	public void testObtainIpNetwork ()
+	{
+		ONEUtilities util = new ONEUtilities ();
+		String result = "<VM><ID>399</ID><UID>0</UID><GID>0</GID><UNAME>oneadmin</UNAME><GNAME>oneadmin</GNAME><NAME>org.tid.customers.otro.services.tel.vees.vee</NAME>"+
+		"<LAST_POLL>0</LAST_POLL><STATE>7</STATE><LCM_STATE>0</LCM_STATE><STIME>1319470253</STIME><ETIME>1319470277</ETIME><DEPLOY_ID></DEPLOY_ID><MEMORY>0</MEMORY><CPU>0</CPU>"+
+		"<NET_TX>0</NET_TX><NET_RX>0</NET_RX><TEMPLATE><CONTEXT><CUSTOMIZATIONURL><![CDATA[http://localhost:18888/org.tid.customers.otro.services.tel.vees.vee]]></CUSTOMIZATIONURL>"+
+		"<FILES><![CDATA[/home/tcloud/tcloud-server/repository/org.tid.customers.otro.services.tel.vees.vee/ovf-env.xml]]></FILES><TARGET><![CDATA[hdd]]></TARGET></CONTEXT><CPU>"+
+		"<![CDATA[1]]></CPU><DISK><DISK_ID><![CDATA[0]]></DISK_ID><SIZE><![CDATA[50]]></SIZE><SOURCE><![CDATA[http://84.21.173.55:81/disk.img]]></SOURCE><TARGET><![CDATA[hda]]>"+
+		"</TARGET></DISK><ERROR><MESSAGE><![CDATA[Error excuting image transfer script: Error copying /home/tcloud/tcloud-server/repository/org.tid.customers.otro.services.tel.vees.vee/ovf-env.xml to /srv/cloud/one/var/5c0e820f295007951a7033f6a2759ab0/isofiles]]>"+
+		"</MESSAGE><TIMESTAMP><![CDATA[Mon Oct 24 17:31:17 2011]]></TIMESTAMP></ERROR><GRAPHICS><LISTEN><![CDATA[0.0.0.0]]></LISTEN><PORT><![CDATA[6299]]></PORT><TYPE>"+
+		"<![CDATA[vnc]]></TYPE></GRAPHICS><MEMORY><![CDATA[512]]></MEMORY><NAME><![CDATA[org.tid.customers.otro.services.tel.vees.vee]]></NAME><NIC><BRIDGE><![CDATA[br0]]></BRIDGE>" +
+		"<IP><![CDATA[192.168.2.194]]></IP><MAC><![CDATA[02:00:c0:a8:02:c2]]></MAC><NETWORK><![CDATA[org.tid.customers.otro.services.tel.networks.net]]></NETWORK><NETWORK_ID>" +
+		"<![CDATA[457]]></NETWORK_ID></NIC><OS><ARCH><![CDATA[arch]]></ARCH><BOOT><![CDATA[hd]]></BOOT><ROOT><![CDATA[hda1]]></ROOT></OS><REQUIREMENTS><![CDATA[HYPERVISOR=\"kvm\"]]>" +
+		"</REQUIREMENTS><VCPU><![CDATA[1]]></VCPU><VMID><![CDATA[399]]></VMID></TEMPLATE><HISTORY_RECORDS><HISTORY><SEQ>0</SEQ><HOSTNAME>kvm1</HOSTNAME><VM_DIR>/srv/cloud/one/var/" +
+		"</VM_DIR><HID>2</HID><STIME>1319470267</STIME><ETIME>1319470277</ETIME><VMMMAD>vmm_kvm</VMMMAD><TMMAD>tm_ssh</TMMAD><PSTIME>1319470267</PSTIME><PETIME>1319470277</PETIME>" +
+		"<RSTIME>0</RSTIME><RETIME>0</RETIME><ESTIME>0</ESTIME><EETIME>0</EETIME><REASON>1</REASON></HISTORY></HISTORY_RECORDS></VM>";
+		
+		try {
+			HashMap map = util.getNetworksIp(result);
+			Iterator it = map.entrySet().iterator();
+			while (it.hasNext()) {
+			Map.Entry e = (Map.Entry)it.next();
+			System.out.println(e.getKey() + " " + e.getValue());
+			}
 		} catch (ParserConfigurationException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

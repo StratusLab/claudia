@@ -6,6 +6,9 @@ package com.telefonica.claudia.smi.provisioning;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -57,6 +60,31 @@ public class GetOperationsUtils {
 		virtualHardware.appendChild(itemnetwork);
 		
 		
+		return virtualHardware;
+	
+	}
+	
+	public static Element getVirtualHardwareSystem (Document doc, String href, String cpu, String memory, String disk, HashMap ips )
+	{
+		Element virtualHardware = doc.createElementNS("http://schemas.dmtf.org/ovf/envelope/1","VirtualHardwareSection");
+		Element virtualHardwarelink = doc.createElement("Link");
+		virtualHardwarelink.setAttribute("rel", "add");
+		virtualHardwarelink.setAttribute("type", "application/ovf.item+xml");
+		virtualHardwarelink.setAttribute("href", href+"/hw/");
+		
+		virtualHardware.appendChild(virtualHardwarelink);
+		
+		
+		int count = 1;
+		Element itemcpu = getItemElement (doc, href,count++, 0, cpu, null, null);
+		virtualHardware.appendChild(itemcpu);
+		Element itemmemory = getItemElement (doc, href, count++, 1, memory, null, null);
+		virtualHardware.appendChild(itemmemory);
+	
+		Element itemdisk = getItemElement (doc, href,  count++, 2, disk, "ovf://disk/" +"disk"   ,null);
+		virtualHardware.appendChild(itemdisk);
+		getItemNetworksElement (doc, virtualHardware, href, count++, ips);
+
 		return virtualHardware;
 	
 	}
@@ -144,6 +172,61 @@ public class GetOperationsUtils {
 		return item;
 		
 
+	}
+	
+	
+	public static void getItemNetworksElement (Document doc, Element virtualhardware, String href, int instance, HashMap map)
+	{
+		
+		Iterator it = map.entrySet().iterator();
+		while (it.hasNext()) {
+			Map.Entry e = (Map.Entry)it.next();
+			Element item = 	getItemNetwork (doc, instance++, href, (String)e.getValue(), (String)e.getKey());
+			virtualhardware.appendChild(item);
+			System.out.println(e.getKey() + " " + e.getValue());
+		}
+	}
+	
+	public static Element getItemNetwork (Document doc, int instance, String href, String ip, String network)
+	{
+		Element item = doc.createElementNS("http://schemas.dmtf.org/ovf/envelope/1","Item");
+		Element itemlink = doc.createElement("Link");
+		itemlink.setAttribute("rel", "edit");
+		itemlink.setAttribute("type", "application/ovf.item+xml+xml");
+		itemlink.setAttribute("href", href+"/hw/"+instance);
+		item.appendChild(itemlink);
+		
+		
+		Element descriptionCPU = doc.createElementNS("http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData","Description");
+		descriptionCPU.setNodeValue("Number of virtual data");
+		Text test1 = doc.createTextNode("Number of virtual data");
+		descriptionCPU.appendChild(test1);
+		item.appendChild(descriptionCPU);
+		
+		Element instanceCPU = doc.createElementNS("http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData","InstanceID");
+		Text test2 = doc.createTextNode(""+instance);
+		instanceCPU.appendChild(test2);
+		item.appendChild(instanceCPU);
+		
+		Element ResourceTypeCPU = doc.createElementNS("http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData","ResourceType");
+		instanceCPU.appendChild(test2);
+		item.appendChild(instanceCPU);
+		Text test3 = doc.createTextNode(""+10);
+		ResourceTypeCPU.appendChild(test3);
+		item.appendChild(ResourceTypeCPU);
+		
+		Element networkname = doc.createElementNS("http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData","Connection");
+		Text test6 = doc.createTextNode(network);
+		networkname.appendChild(test6);
+		item.appendChild(networkname);
+
+		Element elementip = doc.createElementNS("http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_IPProtocolEndpoint","IPv4Address");
+		Text test7 = doc.createTextNode(ip);
+		elementip.appendChild(test7);
+		item.appendChild(elementip);
+
+		
+		return item;
 	}
 	
 	public static Element getInstallProductInVirtualMachine(Document doc, String username, String password) throws ParserConfigurationException, XMLException, SAXException, IOException, SectionAlreadyPresentException, InvalidSectionException

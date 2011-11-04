@@ -12,6 +12,7 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
@@ -67,7 +68,7 @@ public class ONEUtilities {
 	}
 	
 	
-	public HashMap getCpuRamDiskIp (String xml) throws ParserConfigurationException, SAXException, IOException
+	public HashMap getCpuRamDisk (String xml) throws ParserConfigurationException, SAXException, IOException
 	{
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         HashMap map = new HashMap ();
@@ -91,41 +92,81 @@ public class ONEUtilities {
 				String cpu = ((Element)vm.getElementsByTagName("CPU").item(0)).getTextContent();
 				map.put("CPU", cpu);
 				
-				String ip = ((Element)vm.getElementsByTagName("IP").item(0)).getTextContent();
-				map.put("IP", ip);
-				
 				String disk = ((Element)vm.getElementsByTagName("DISK").item(0)).getElementsByTagName("SIZE").item(0).getTextContent();
 				map.put("DISK", disk);
-				
-				
-				
-				
+
 				System.out.println ("RAM " +ram);
 				System.out.println ("CPU " +cpu);
-				System.out.println ("IP " +ip);
+		
 				
 				System.out.println ("DISK " +disk);
 		}	
 				
 		return map;
-				
-				
-		
 
+	}
+
+	public HashMap getNetworksIp (String xml) throws ParserConfigurationException, SAXException, IOException
+	{
+		
+		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+        HashMap map = new HashMap ();
 	
+		DocumentBuilder builder = factory.newDocumentBuilder();
+		Document doc = builder.parse(new ByteArrayInputStream(xml.getBytes()));
+
+		NodeList nicList = doc.getElementsByTagName("NIC");
+		
+		for (int i = 0; i < nicList.getLength(); i++) 
+		{
+			Node nic = nicList.item(i);
+			
+			NodeList child = nic.getChildNodes();
+			String ip = null;
+			String network = null;
+			for (int j = 0; j < child.getLength(); j++) 
+			{
+				
+				System.out.println (child.item(j).getNodeName());
+				if (child.item(j).getNodeName().equals("IP"))
+				{
+					System.out.println ("Obtained Ip " + child.item(j).getTextContent());
+					ip = child.item(j).getTextContent();
+				
+				}
+				else if (child.item(j).getNodeName().equals("NETWORK"))
+				{
+					System.out.println ("Obtained network " + child.item(j).getTextContent());
+					network = child.item(j).getTextContent();
+				}
+					
+			}
+			map.put(getNetworkName (network), ip);
+			
+		}
+		return map;
 	}
 	
-	public String generateXMLVEE (String fqn, String ip, String cpu, String ram, String disk)
+	private String getNetworkName (String fqnname)
+	{
+		while (fqnname.indexOf(".")!=-1)
+		{
+			fqnname = fqnname.substring(fqnname.indexOf(".")+1, fqnname.length());
+			System.out.println (fqnname);
+		}
+		return fqnname;
+	}
+	public String generateXMLVEE (String fqn, HashMap ips, String cpu, String ram, String disk)
     {
  	   DocumentBuilderFactory dbfac = DocumentBuilderFactory.newInstance();
-	        DocumentBuilder docBuilder;
-	        Document doc = null;
+	   DocumentBuilder docBuilder;
+	   Document doc = null;
 	    	
-	        String organizationId =  URICreation.getOrg(fqn).replace(".", "_");
-	        String vdcid = URICreation.getVDC(fqn).substring(fqn.indexOf("customers")+"customers".length()+1);
+	   String organizationId =  URICreation.getOrg(fqn).replace(".", "_");
+	   String vdcid = URICreation.getVDC(fqn).substring(fqn.indexOf("customers")+"customers".length()+1);
 	        
-	        String vappid =  URICreation.getService(fqn).substring(fqn.indexOf("services")+"services".length()+1);
-	        String veeid =  URICreation.getVEE(fqn).substring(fqn.indexOf("vees")+"vees".length()+1);
+	   String vappid =  URICreation.getService(fqn).substring(fqn.indexOf("services")+"services".length()+1);
+	   String veeid =  URICreation.getVEE(fqn).substring(fqn.indexOf("vees")+"vees".length()+1);
 	        
 	        try {
 				docBuilder = dbfac.newDocumentBuilder();
@@ -156,7 +197,7 @@ public class ONEUtilities {
 		    			
 		    	Element virtuahardware = GetOperationsUtils.getVirtualHardwareSystem(doc, "@HOSTNAME/api/org/" + organizationId + "/vdc/" +  
 		    					vdcid + "/vapp/" + 
-		    					vappid +"/" + veeid + "/" + 1, cpu,ram,disk,ip);
+		    					vappid +"/" + veeid + "/" + 1, cpu,ram,disk,ips);
 		    	
 		    	veeReplicaElement.appendChild(virtuahardware);
 

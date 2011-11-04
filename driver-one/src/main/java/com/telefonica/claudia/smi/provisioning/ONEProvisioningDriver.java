@@ -1273,8 +1273,12 @@ public class ONEProvisioningDriver implements ProvisioningDriver {
 		text_migrability.put("none", "NONE");
 		operations = new OneOperations(oneSession, xmlRpcClient);
 
-		operations.configOperations(oneversion, networkBridge, environmentRepositoryPath, oneSshKey, customizationPort, hypervisorInitrd, hypervisorKernel, xendisk, arch, server);
+		operations.configOperations(oneversion, networkBridge, environmentRepositoryPath, oneSshKey, customizationPort, hypervisorInitrd, hypervisorKernel, 
+				xendisk, arch, server,netInitScript0,netInitScript1);
 		netUtils = new OneNetUtilities(networkBridge);
+		
+		
+		
 				//  FULL??
 	}
 
@@ -1421,6 +1425,7 @@ public class ONEProvisioningDriver implements ProvisioningDriver {
 		String id = null;
 		try {
 			id = getVmId(fqn).toString();
+			
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -1431,9 +1436,10 @@ public class ONEProvisioningDriver implements ProvisioningDriver {
 		{
 		String result = operations.getVirtualMachine(id);
 		ONEUtilities utils = new ONEUtilities ();
-		HashMap data = utils.getCpuRamDiskIp (result);
+		HashMap data = utils.getCpuRamDisk (result);
+		HashMap ips = utils.getNetworksIp(result);
 	
-		 xml = utils.generateXMLVEE (fqn, (String) data.get("IP"), (String)data.get("CPU"), (String)data.get("MEMORY"), (String)data.get("DISK"));
+		 xml = utils.generateXMLVEE (fqn, ips, (String)data.get("CPU"), (String)data.get("MEMORY"), (String)data.get("DISK"));
 		}
 		catch (Exception e)
 		{

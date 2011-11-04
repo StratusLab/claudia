@@ -232,7 +232,7 @@ public class OneOperationsTest {
 		
 	}*/
 	
-	/*@Test
+	@Test
 	public void testGetVirtualMachine ()
 	{
 		OneOperations tester = prepareOneOperations (3);
@@ -240,15 +240,15 @@ public class OneOperationsTest {
 		tester.configOperations("3.0", "br0",  "/opt/claudia/repository", null, "18888",
 				"/boot/vmlinuz-2.6.26-2-xen-amd64", "/boot/initrd.img-2.6.26-2-xen-amd64", "s" , "", "10.65.44.44");
 		try {
-			System.out.println(tester.getVirtualMachine("399"));
+			System.out.println(tester.getVirtualMachine("435"));
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
-	*/
 	
-	@Test
+	
+/*	@Test
 	public void doActionStop ()
 	{
 		OneOperations tester = prepareOneOperations (3);
@@ -276,7 +276,7 @@ public class OneOperationsTest {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-	}
+	}*/
 	
 	
 	

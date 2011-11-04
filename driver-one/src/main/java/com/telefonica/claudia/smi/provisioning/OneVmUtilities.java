@@ -162,7 +162,7 @@ public class OneVmUtilities {
 	
 	public OneVmUtilities (OneOperations operations, String oneversion, String networkBridge,
 			String environmentRepositoryPath ,String  oneSshKey ,String  customizationPort, String hypervisorInitrd, String hypervisorKernel,
-			String xendisk, String arch, String serverHost
+			String xendisk, String arch, String serverHost, String netInitScript0, String netInitScript1
 	     )
 	{
 		this.operations = operations;
@@ -176,6 +176,8 @@ public class OneVmUtilities {
 		this.xendisk = xendisk;
 		this.arch = arch;
 		this.serverHost= serverHost;
+		this.netInitScript0= netInitScript0;
+		this.netInitScript1= netInitScript1;
 	}
 	public String TCloud2ONEVM(String xml,
 			String veeFqn) throws Exception {
@@ -360,7 +362,8 @@ public class OneVmUtilities {
 				char sdaId = 'a';
 
 				List<RASDType> items = vh.getItem();
-				boolean ispaasaware = false;
+				boolean ispaasaware = true;
+			
 				for (Iterator<RASDType> iteratorRASD = items.iterator(); iteratorRASD.hasNext();) {
 					RASDType item = (RASDType) iteratorRASD.next();
 
@@ -429,7 +432,11 @@ public class OneVmUtilities {
 
 									if (fileRef == null) {
 										log.warn("file reference can not be found for disk: " + hostRes);
-										ispaasaware = true;
+										//ispaasaware = true;
+									}
+									else
+									{
+										ispaasaware = false;
 									}
 
 
@@ -716,15 +723,16 @@ public class OneVmUtilities {
 
 		}
 
-		StringBuffer scriptexec=new StringBuffer();;
+		StringBuffer scriptexec=new StringBuffer();
+		scriptexec.append("SCRIPT_EXEC=\"");
 		if (i==1){
 			if(netInitScript0!= null && netInitScript0.length()>0) {
-				scriptexec.append("SCRIPT_EXEC=\""+netInitScript0);	
+				scriptexec.append(netInitScript0);	
 			}
 		}
 		if (i==2){
 			if(netInitScript1!= null && netInitScript1.length()>0) {
-				scriptexec.append("SCRIPT_EXEC=\""+netInitScript1);	
+				scriptexec.append(netInitScript1);	
 			}
 		}
 		
@@ -755,6 +763,7 @@ public class OneVmUtilities {
 				}
 			}
 		}
+		
 		if (scriptexec.length()>0){
 			scriptexec.append("\"").append(MULT_CONF_SEPARATOR).append(LINE_SEPARATOR);
 		}
