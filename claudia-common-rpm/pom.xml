@@ -1,0 +1,188 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+	<modelVersion>4.0.0</modelVersion>
+
+	<groupId>eu.stratuslab.pkgs.claudia</groupId>
+	<artifactId>claudia-common-rpm</artifactId>
+	<version>0.1.0-SNAPSHOT</version>
+	<name>Claudia Common libraries RPM</name>
+<!--
+	<packaging>rpm</packaging>
+-->
+	<parent>
+		<groupId>eu.stratuslab.pkgs.claudia</groupId>
+		<artifactId>claudia-parent</artifactId>
+		<version>1.8-SNAPSHOT</version>
+	</parent>
+
+	<repositories>
+		<repository>
+			<id>maven-restlet</id>
+			<name>Public online Restlet repository</name>
+			<url>http://maven.restlet.org</url>
+		</repository>
+	</repositories>
+
+	<dependencies>
+		<dependency>
+			<groupId>eu.stratuslab.pkgs.claudia</groupId>
+			<artifactId>clotho</artifactId>
+			<version>0.1.8-SNAPSHOT</version>
+			<classifier>environment</classifier>
+			<type>zip</type>
+		</dependency>
+		<dependency> 
+			<groupId>eu.stratuslab.pkgs.claudia</groupId> 
+			<artifactId>claudia-client</artifactId>
+			<version>0.1.8-SNAPSHOT</version>
+			<classifier>environment</classifier>
+			<type>zip</type>
+		</dependency>
+	</dependencies>
+
+
+	<build>
+
+		<plugins>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-resources-plugin</artifactId>
+				<configuration>
+					<encoding>UTF-8</encoding>
+				</configuration>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-dependency-plugin</artifactId>
+
+				<executions>
+
+					<execution>
+						<id>unpack</id>
+						<goals>
+							<goal>unpack</goal>
+						</goals>
+						<configuration>
+							<artifactItems>
+								<artifactItem>
+									<groupId>eu.stratuslab.pkgs.claudia</groupId>
+									<artifactId>clotho</artifactId>
+									<classifier>environment</classifier>
+									<type>zip</type>
+								</artifactItem>
+								<artifactItem> 
+									<groupId>eu.stratuslab.pkgs.claudia</groupId> 
+									<artifactId>claudia-client</artifactId> 
+									<classifier>environment</classifier> 
+									<type>zip</type> 
+								</artifactItem> 
+							</artifactItems>
+						</configuration>
+					</execution>
+
+				</executions>
+
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-deploy-plugin</artifactId>
+			</plugin>
+
+			<plugin>
+
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>rpm-maven-plugin</artifactId>
+				<extensions>true</extensions>
+
+				<executions>
+					<execution>
+						<goals>
+							<goal>attached-rpm</goal>
+						</goals>
+					</execution>
+				</executions>
+
+				<configuration>
+
+					<copyright>2010, NoBody</copyright>
+					<group>Development</group>
+					<description>Maven Recipe: RPM Package.</description>
+
+					<release>${RELEASE}</release>
+
+					<mappings>
+						<mapping>
+							<directory>${app.home}/lib/</directory>
+							<sources>
+								<source>
+									<location>target/dependency/claudia-client/lib</location>
+									<includes>
+									<include>commons-codec-*.jar</include>
+									<include>commons-httpclient-*.jar</include>
+									</includes>
+								</source>
+							</sources>
+						</mapping>
+						<mapping>
+							<directory>${app.home}/lib/</directory>
+							<sources>
+								<source>
+									<location>target/dependency/clotho/lib</location>
+									<includes>
+										<include>activation-*.jar</include> 
+										<include>activeio-core-*.jar</include> 
+										<include>activeio-core-*-tests.jar</include> 
+										<include>activemq-core-*.jar</include> 
+										<include>antlr-*.jar</include> 
+										<include>asm-*.jar</include> 
+										<include>asm-attrs-*.jar</include> 
+										<include>backport-util-concurrent-*.jar</include> 
+										<include>camel-core-*.jar</include> 
+										<include>cglib-*.jar</include> 
+										<include>claudia-commons-*-SNAPSHOT.jar</include> 
+										<include>commons-collections-*.jar</include> 
+										<include>commons-logging-*.jar</include> 
+										<include>commons-logging-api-*.jar</include> 
+										<include>com.noelios.restlet-*.jar</include> 
+										<include>concurrent-*.jar</include> 
+										<include>dom4j-*.jar</include> 
+										<include>geronimo-j2ee-management_1.0_spec-*.jar</include> 
+										<include>geronimo-jms_1.1_spec-*.jar</include> 
+										<include>jaxb-api-*.jar</include> 
+										<include>json-20090211.jar</include> 
+										<include>jta-*.jar</include> 
+										<include>junit-*.jar</include> 
+										<include>log4j-*.jar</include> 
+										<include>org.json-*.jar</include> 
+										<include>org.restlet-*.jar</include> 
+										<include>org.restlet.ext.json-*.jar</include> 
+										<include>ovf-manager-*-SNAPSHOT.jar</include> 
+										<include>persistence-api-*.jar</include> 
+										<include>slf4j-api-*.jar</include> 
+										<include>slf4j-log4j12-*.jar</include> 
+										<include>stax2-api-*.jar</include> 
+										<include>stax-api-*.jar</include> 
+										<include>woodstox-core-asl-*.jar</include> 
+										<include>xml-apis-*.jar</include> 
+									</includes>
+								</source>
+							</sources>
+						</mapping>
+					</mappings>
+				</configuration>
+			</plugin>
+
+		</plugins>
+	</build>
+
+	<properties>
+		<app.home>/opt/claudia/</app.home>
+		<rpm.release>1</rpm.release>
+		<maven.build.timestamp.format>yyyyMMdd.HHmmss</maven.build.timestamp.format>
+		<RELEASE>0.${maven.build.timestamp}</RELEASE>
+	</properties>
+
+</project>
