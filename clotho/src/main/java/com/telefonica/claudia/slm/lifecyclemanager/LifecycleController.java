@@ -970,6 +970,8 @@ public class LifecycleController  extends UnicastRemoteObject implements SMI, Se
 
 			e = new SMIChannelEvent(System.currentTimeMillis(), 0, SMIAction.GET_ORG);
 			e.setSuccess(false);
+			
+			System.out.println ("Sucess");
 
 			/*System.out.println ("llego evento");
 				String  orga = event.get(SMIChannelEvent.ORG_DESCRIPTION);

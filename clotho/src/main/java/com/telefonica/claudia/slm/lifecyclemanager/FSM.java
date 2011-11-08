@@ -1666,7 +1666,8 @@ public class FSM extends Thread implements Serializable {
 				return false;
 			}
 			
-			getUpdateIpsReplica (veeReplica);
+			if (!SMConfiguration.getInstance().getIpManagement())
+			  getUpdateIpsReplica (veeReplica);
 			// If replica is loadbalanced, balancer should be notified
 
 			VEE balancerVEE = veeReplica.getVEE().getBalancedBy();
@@ -2103,17 +2104,24 @@ public class FSM extends Thread implements Serializable {
 				entryPoints.put(net.getName(), net.getEntryPoints());
 
 			try {
+				if (SMConfiguration.getInstance().getIpManagement())
+				{
+					veeReplica.setOvfRepresentation(parser
+							.inEnvolopeMacroReplacement(originalVEE
+									.getOvfRepresentation(), veeReplica.getId(),
+									SMConfiguration.getInstance().getDomainName(),
+									sap.getFQN().toString(), SMConfiguration
+									.getInstance().getMonitoringAddress(),
+									ips, masks, dnss, gateways, entryPoints));
+				}
+				else
+				{
 				OVFContextualization context = new OVFContextualization();
-				/*veeReplica.setOvfRepresentation(parser
-						.inEnvolopeMacroReplacement(originalVEE
-								.getOvfRepresentation(), veeReplica.getId(),
-								SMConfiguration.getInstance().getDomainName(),
-								sap.getFQN().toString(), SMConfiguration
-								.getInstance().getMonitoringAddress(),
-								ips, masks, dnss, gateways, entryPoints));*/
+				/*;*/
 				
 				System.out.println ("VEE REPLICA OVF " + veeReplica.getOvfRepresentation());
 				veeReplica.setOvfRepresentation(context.macroReplacement (veeReplica));
+				}
 			} catch (IOException e) {
 				abort("Unable to create environment file: " + e.getMessage());
 			} catch (IllegalArgumentException iae) {
@@ -2132,10 +2140,14 @@ public class FSM extends Thread implements Serializable {
 				logger.info("Skipping swap disk");
 
 			// generate additional image
-			@SuppressWarnings("unused")
+		//	@SuppressWarnings("unused")
+			if (!SMConfiguration.getInstance().getIpManagement())
+			{
 			OVFContextualization context = new OVFContextualization();
 			String pathToCustomizationFile = context.createCustomizationFile(veeReplica); 
 			veeReplica.setCustomizationFile (pathToCustomizationFile);
+			
+			}
 			replicas.add(veeReplica);
 		}
 
