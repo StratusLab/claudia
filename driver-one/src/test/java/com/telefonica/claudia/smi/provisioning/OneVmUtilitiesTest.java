@@ -45,7 +45,7 @@ public class OneVmUtilitiesTest {
 	public void testOneVmUtilitiesVEE() {
 		
 		OneOperations oneoperations = prepareOneOperations ();
-		OneVmUtilities vmutils = new OneVmUtilities (oneoperations, "3.0", "br0",  "/opt/claudia/repository", null, "18888",
+		OneVmUtilities vmutils = new OneVmUtilities (oneoperations, "3.0", "br0",  "/opt/claudia/repository", "/opt/claudia/extrafiles",null, "18888",
 				"/boot/vmlinuz-2.6.26-2-xen-amd64", "/boot/initrd.img-2.6.26-2-xen-amd64", null , null, "10.65.44.44", null, null); //"s"
 		
 		

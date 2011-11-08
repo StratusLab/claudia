@@ -1211,8 +1211,8 @@ public class ONEProvisioningDriver implements ProvisioningDriver {
 			environmentRepositoryPath = (String) prop.get(ENVIRONMENT_PROPERTY);
 		}
 
-		if (prop.containsKey("oneNetworkBridge")) {
-			networkBridge = ((String) prop.get("oneNetworkBridge"));
+		if (prop.containsKey(NETWORK_BRIDGE)) {
+			networkBridge = ((String) prop.get(NETWORK_BRIDGE));
 		}
 		
 		if (prop.containsKey(this.ONE_VERSION)) {
@@ -1229,6 +1229,7 @@ public class ONEProvisioningDriver implements ProvisioningDriver {
 
 		if (prop.containsKey(SCRIPTPATH_PROPERTY)) {
 			oneScriptPath = ((String) prop.get(SCRIPTPATH_PROPERTY));
+			log.info("oneScriptPath " + oneScriptPath);
 		}
 		if (prop.containsKey(ETH0_GATEWAY_PROPERTY)) {
 			eth0Gateway= ((String) prop.get(ETH0_GATEWAY_PROPERTY));
@@ -1273,7 +1274,7 @@ public class ONEProvisioningDriver implements ProvisioningDriver {
 		text_migrability.put("none", "NONE");
 		operations = new OneOperations(oneSession, xmlRpcClient);
 
-		operations.configOperations(oneversion, networkBridge, environmentRepositoryPath, oneSshKey, customizationPort, hypervisorInitrd, hypervisorKernel, 
+		operations.configOperations(oneversion, networkBridge, environmentRepositoryPath, oneScriptPath,oneSshKey, customizationPort, hypervisorInitrd, hypervisorKernel, 
 				xendisk, arch, server,netInitScript0,netInitScript1);
 		netUtils = new OneNetUtilities(networkBridge);
 		

@@ -39,11 +39,11 @@ public class OneOperations {
 	}
 	
 	public void configOperations (String oneversion, String networkBridge,
-			String environmentRepositoryPath ,String  oneSshKey ,String  customizationPort, String hypervisorInitrd, String hypervisorKernel,
+			String environmentRepositoryPath ,String oneScriptPath, String  oneSshKey ,String  customizationPort, String hypervisorInitrd, String hypervisorKernel,
 			String xendisk, String arch, String server, String netInitScript0, String netInitScript1)
 	{
 		vmutils = new OneVmUtilities (this, oneversion, networkBridge,
-				environmentRepositoryPath , oneSshKey , customizationPort, hypervisorInitrd, hypervisorKernel,
+				environmentRepositoryPath , oneScriptPath, oneSshKey , customizationPort, hypervisorInitrd, hypervisorKernel,
 				xendisk, arch, server, netInitScript0, netInitScript1);
 	}
 	

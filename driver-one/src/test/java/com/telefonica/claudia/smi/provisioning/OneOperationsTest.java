@@ -237,7 +237,7 @@ public class OneOperationsTest {
 	{
 		OneOperations tester = prepareOneOperations (3);
 		
-		tester.configOperations("3.0", "br0",  "/opt/claudia/repository", null, "18888",
+		tester.configOperations("3.0", "br0",  "/opt/claudia/repository", "/opt/claudia/extrafiles",null, "18888",
 				"/boot/vmlinuz-2.6.26-2-xen-amd64", "/boot/initrd.img-2.6.26-2-xen-amd64", "s" , "", "10.65.44.44", null, null);
 		try {
 			System.out.println(tester.getVirtualMachine("435"));

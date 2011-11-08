@@ -161,7 +161,7 @@ public class OneVmUtilities {
 	
 	
 	public OneVmUtilities (OneOperations operations, String oneversion, String networkBridge,
-			String environmentRepositoryPath ,String  oneSshKey ,String  customizationPort, String hypervisorInitrd, String hypervisorKernel,
+			String environmentRepositoryPath ,String oneScriptPath, String  oneSshKey ,String  customizationPort, String hypervisorInitrd, String hypervisorKernel,
 			String xendisk, String arch, String serverHost, String netInitScript0, String netInitScript1
 	     )
 	{
@@ -178,6 +178,7 @@ public class OneVmUtilities {
 		this.serverHost= serverHost;
 		this.netInitScript0= netInitScript0;
 		this.netInitScript1= netInitScript1;
+		this.oneScriptPath=oneScriptPath;
 	}
 	public String TCloud2ONEVM(String xml,
 			String veeFqn) throws Exception {
@@ -341,7 +342,9 @@ public class OneVmUtilities {
 				if (oneSshKey!=null && oneSshKey.length()>0)
 				allParametersString.append("public_key").append(ASSIGNATION_SYMBOL).append(oneSshKey).append(MULT_CONF_SEPARATOR).append(LINE_SEPARATOR);
 				allParametersString.append("CustomizationUrl").append(ASSIGNATION_SYMBOL).append("\"" + PROTOCOL + serverHost + ":" + customizationPort + "/"+ replicaName+ "\"").append(MULT_CONF_SEPARATOR).append(LINE_SEPARATOR);
-				allParametersString.append("files").append(ASSIGNATION_SYMBOL).append("\"" + environmentRepositoryPath + "/"+ replicaName + "/ovf-env.xml" +scriptListTemplate+ "\"").append(MULT_CONF_SEPARATOR).append(LINE_SEPARATOR);
+
+			
+				  allParametersString.append("files").append(ASSIGNATION_SYMBOL).append("\"" + environmentRepositoryPath + "/"+ replicaName + "/ovf-env.xml" +scriptListTemplate+ "\"").append(MULT_CONF_SEPARATOR).append(LINE_SEPARATOR);
 
 				if (contextarget!= null && contextarget.length()>0)
 					allParametersString.append("target").append(ASSIGNATION_SYMBOL).append("\"" + contextarget +"\"").append(MULT_CONF_RIGHT_DELIMITER).append(LINE_SEPARATOR);
