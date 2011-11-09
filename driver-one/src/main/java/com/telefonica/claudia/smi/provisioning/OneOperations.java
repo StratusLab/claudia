@@ -83,7 +83,7 @@ public class OneOperations {
 		List<String> rpcParams = new ArrayList<String>();
 		rpcParams.add(oneSession);
 		String template = vmutils.TCloud2ONEVM(ovf, fqnVm);
-		System.out.println (template);
+		System.out.println ("VIRTUAL MACHINE ONE TEMPLATE \n"+ template);
 		try {
 			rpcParams.add(template);
 		} catch (Exception e) {
@@ -113,6 +113,7 @@ public class OneOperations {
 	
 	public String deployNetwork(String xml) throws Exception {
 
+		System.out.println ("NETWORK TEMPLATE\n" + xml);
 		List<String> rpcParams = new ArrayList<String>();
 		rpcParams.add(oneSession);
 		

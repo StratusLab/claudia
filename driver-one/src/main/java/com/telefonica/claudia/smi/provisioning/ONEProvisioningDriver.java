@@ -405,6 +405,7 @@ public class ONEProvisioningDriver implements ProvisioningDriver {
 		public DeployNetworkTask(String netFqn, String ovf) {
 			this.fqnNet = netFqn;
 			this.ovf = ovf;
+		
 			
 		}
 
@@ -564,6 +565,8 @@ public class ONEProvisioningDriver implements ProvisioningDriver {
 
 		public UndeployNetworkTask(String netFqn) {
 			this.fqnNet = netFqn;
+			log.info("Network fqn " + fqnNet);
+			
 			
 		}
 

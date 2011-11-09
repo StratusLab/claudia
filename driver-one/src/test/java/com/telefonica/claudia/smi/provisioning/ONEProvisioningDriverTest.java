@@ -18,22 +18,27 @@ import com.telefonica.claudia.smi.task.Task.TaskStatus;
 
 public class ONEProvisioningDriverTest {
 
-	/*@Test
+	@Test
 	public void testDeployNetwork() {
 		
 		ONEProvisioningDriver one = getPreConditions();
 		
 		try {
-			long vnet = one.deployNetwork("org.tid.customers.otro.services.tel.networks.net",readFileAsString ("./src/test/resources/network1.xml"));
+		//	long vnet = one.deployNetwork("org.tid.customers.otro.services.tel.networks.net",readFileAsString ("./src/test/resources/network1.xml"));
 			
-			System.out.println ("Network deployed " + vnet);
+		//	System.out.println ("Network deployed " + vnet);
+			
+		//	System.out.println ("Deleting network " + vnet);
+			
+			one.deleteNetwork("org.tid.customers.otro.services.tel.networks.net");
+			System.out.println ("network deleting " );
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
 	
-	@Test
+	/*	@Test
 	public void testDeployVirtualMachine() {
        ONEProvisioningDriver one = getPreConditions();
 		
@@ -46,7 +51,7 @@ public class ONEProvisioningDriverTest {
 		}
 	}*/
 	
-	@Test
+	/*@Test
 	public void testGetVirtualMachine() {
      ONEProvisioningDriver one = getPreConditions();
 		
