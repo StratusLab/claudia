@@ -642,6 +642,9 @@ public class TCloudClient implements VMIHandler {
             throw new IllegalArgumentException("Set of networks configurations to allocate cannot be null");
 
         for (Network networkConf: conf) {
+        	
+        	if (networkConf.getName().equals("public"))
+        	 continue;
 
             Reference urlNetwork = new Reference(serverURL + URICreation.getURINet(networkConf.getFQN().toString()));
 
