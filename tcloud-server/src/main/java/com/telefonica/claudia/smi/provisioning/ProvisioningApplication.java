@@ -76,7 +76,7 @@ public class ProvisioningApplication {
         
         router.attach(URICreation.URI_VDC + "/net", NetworkCollectionResource.class);
         router.attach(URICreation.URI_NET_ADD, NetworkCollectionResource.class);
-        router.attach(URICreation.URI_NET, NetworkResource.class);
+        router.attach(URICreation.URI_VAPP+"/net/{net-id}", NetworkResource.class);
 
         // /api/org/{org-id}/vdc/{vdc-id}/vapp/{vapp-id}/{vee-id}/action/instantiateOvf
         router.attach(URICreation.URI_VAPP3_ADD, ComputeCollectionResource.class);
@@ -86,6 +86,6 @@ public class ProvisioningApplication {
         router.attach(URICreation.URI_VAPP3, ComputeResource.class);
 
 
-        log.info("Routes attached to Provisioning router");
+        log.info("Routes attached to Provisioning router 2");
     }
 }

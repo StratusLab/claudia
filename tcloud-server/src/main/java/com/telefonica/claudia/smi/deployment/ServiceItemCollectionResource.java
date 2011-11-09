@@ -110,7 +110,7 @@ public class ServiceItemCollectionResource extends Resource {
             setAvailable(false);
         } 
         
-        log.info("Services list created");
+        log.info("Services list created " + orgId+ " " +  vdcId);
         
     }
 
@@ -249,7 +249,7 @@ public class ServiceItemCollectionResource extends Resource {
 				
 				taskId = actualDriver.deploy(URICreation.getFQN(orgId, vdcId), serviceName, sw.toString());
 				
-				log.debug("FQN got: " + serviceName);
+				log.debug("FQN got: " + serviceName + "  " + taskId);
 
 	            // Set the response's status and entity
 	            getResponse().setStatus(Status.SUCCESS_CREATED);
