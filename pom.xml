@@ -32,7 +32,6 @@ grid certificates, and VOMS proxies.
 		<module>configurators</module>
 		<module>clotho</module>
 		<module>reportclient</module>
-
 	</modules>
 
 	<profiles>
@@ -44,6 +43,7 @@ grid certificates, and VOMS proxies.
 				</file>
 			</activation>
 			<modules>
+				<module>claudia-common-rpm</module>
 				<module>tcloud-server-rpm</module>
 				<module>claudia-client-rpm</module>
 				<module>clotho-rpm</module>
