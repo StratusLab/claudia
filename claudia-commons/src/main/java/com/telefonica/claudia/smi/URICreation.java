@@ -63,7 +63,7 @@ public class URICreation {
 		
 	public static final String URI_TASK  = URI_ORG   + "/task/{task-id}";
 	
-	public static final String URI_NET_ROOT = URI_VDC + "/net";
+	public static final String URI_NET_ROOT = URI_VAPP + "/net";
 	public static final String URI_NET = URI_NET_ROOT + "/{net-id}";
 	public static final String URI_NET_ADD = URI_VAPP + "/net/action/add";
 
@@ -365,11 +365,15 @@ public class URICreation {
         String parts[] = customer.split("\\.");
         customer = parts[1];
         
+        String service = fqn.substring(fqn.indexOf(FQN_SEPARATOR_SERVICE));
+        String parts2[] = service.split("\\.");
+        service = parts2[1];
+        
         String net = fqn.substring(fqn.indexOf(FQN_SEPARATOR_NET));
         parts = net.split("\\.");
         net = parts[1];
         
-		return URI_NET.replace("{org-id}", org.replace(".", "_")).replace("{vdc-id}", customer).replace("{net-id}", net);
+		return URI_NET.replace("{org-id}", org.replace(".", "_")).replace("{vdc-id}", customer).replace("{vapp-id}", service).replace("{net-id}", net);
 	}
 	
 	public static String getURINetAdd(String fqn) {

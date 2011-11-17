@@ -89,6 +89,9 @@ public class OVFSerializer
     /** Define the allowed objects to be binded from/into the OVF-envelope schema definition. */
     private final JAXBContext contextEnvelope;
     
+    /** Define the allowed objects to be binded from/into the OVF-envelope schema definition. */
+    private final JAXBContext contextVirtualSystem;
+    
     /** Generated factory to create XML elements in OVF-envelope name space. */
     private final ObjectFactory factoryEnvelop;
 
@@ -194,6 +197,7 @@ public class OVFSerializer
     private OVFSerializer() throws JAXBException
     {
         contextEnvelope = JAXBContext.newInstance(EnvelopeType.class);
+        contextVirtualSystem = JAXBContext.newInstance(VirtualSystemType.class);
         factoryEnvelop = new ObjectFactory();
         //contextIndex = JAXBContext.newInstance(new Class[]{EnvelopeType.class});//RepositorySpace.class,OVFIndex.class});
         //factoryIndex = new com.abiquo.repositoryspace.ObjectFactory();      
@@ -434,6 +438,34 @@ public class OVFSerializer
             }
            
             jaxbEnvelope = unmarshall.unmarshal(reader, ProductSectionType.class);
+
+            reader.close();
+        }
+        catch (JAXBException ea)
+        {
+        	ea.printStackTrace(); // TODO remove
+        	throw new XMLException(ea.getLinkedException().getMessage());            
+        }
+        catch (XMLStreamException ex)
+        {
+        	ex.printStackTrace(); // TODO remove
+            throw new XMLException(ex);
+        }
+
+        return jaxbEnvelope.getValue();
+    }
+    
+    public VirtualSystemType readXMLVirtualSystem (InputStream is) throws XMLException
+    {
+        XMLStreamReader reader;
+        Unmarshaller unmarshall;
+        JAXBElement<VirtualSystemType> jaxbEnvelope;
+
+        try
+        {
+            reader = Stax2Factory.getStreamReaderFactory().createXMLStreamReader(is);            
+            unmarshall = contextVirtualSystem.createUnmarshaller();
+            jaxbEnvelope = unmarshall.unmarshal(reader, VirtualSystemType.class);
 
             reader.close();
         }

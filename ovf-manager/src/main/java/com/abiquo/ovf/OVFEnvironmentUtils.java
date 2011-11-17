@@ -190,6 +190,7 @@ public class OVFEnvironmentUtils
 			int instanceNumber,
 			String domain, 
 			String serviceId, 
+			String veeId,
 			String monitoringChannel,
 			HashMap<String,ArrayList<String>> ips,
 			HashMap<String, String> netmasks,
@@ -211,6 +212,7 @@ public class OVFEnvironmentUtils
 				instanceNumber,
 				domain, 
 				serviceId, 
+				veeId,
 				monitoringChannel,
 				ips,
 				netmasks,
@@ -255,6 +257,7 @@ public class OVFEnvironmentUtils
 			int instanceNumber,
 			String domain, 
 			String serviceId, 
+			String veeId,
 			String monitoringChannel,
 			HashMap<String,ArrayList<String>> ips,
 			HashMap<String, String> netmasks,
@@ -282,7 +285,7 @@ public class OVFEnvironmentUtils
 				listProductSection.addAll(OVFEnvelopeUtils.getProductSections(parentVsc));
 			}
 			PropertySectionType propertySection = processListForEnvironment(
-					listProductSection, instanceNumber, domain, serviceId,
+					listProductSection, instanceNumber, domain, serviceId,  veeId,
 					monitoringChannel, ips, netmasks, dnsServers, gateways, entryPoints);
 			OVFEnvironmentUtils.setSectionToEnvironment(env, propertySection);
 
@@ -302,7 +305,7 @@ public class OVFEnvironmentUtils
 						listProductSection = new LinkedList<ProductSectionType>();
 						listProductSection.addAll(OVFEnvelopeUtils.getProductSections(vsSb));					
 						propertySection = processListForEnvironment(
-								listProductSection, instanceNumber, domain, serviceId,
+								listProductSection, instanceNumber, domain, serviceId,veeId,
 								monitoringChannel, null, netmasks, dnsServers, gateways, null);
 						
 						EntityType ent = OVFEnvironmentUtils.createEntity(vsSb.getId());
@@ -332,6 +335,7 @@ public class OVFEnvironmentUtils
 			int instanceNumber,
 			String domain, 
 			String serviceId, 
+			String veeId,
 			String monitoringChannel,
 			HashMap<String,ArrayList<String>> ips,
 			HashMap<String, String> netmasks,
@@ -351,12 +355,13 @@ public class OVFEnvironmentUtils
 			ContentType contentType = (ContentType) iterator.next();
 			if(contentType instanceof VirtualSystemCollectionType){
 				//List<OutputStream> subListOutputStreamEnvironment = createOVFEnvironments((VirtualSystemCollectionType)contentType, instanceNumber, domain, serviceId, monitoringChannel, ips, netmasks, dnsServers, gateways, entryPoints, processSiblings);
-				List<EnvironmentMetaData> subListOutputStreamEnvironment = createOVFEnvironments((VirtualSystemCollectionType)contentType, instanceNumber, domain, serviceId, monitoringChannel, ips, netmasks, dnsServers, gateways, entryPoints, processSiblings);
+				List<EnvironmentMetaData> subListOutputStreamEnvironment = createOVFEnvironments((VirtualSystemCollectionType)contentType, instanceNumber, 
+						domain, serviceId, veeId, monitoringChannel, ips, netmasks, dnsServers, gateways, entryPoints, processSiblings);
 				listOutPutStreamEnvironment.addAll(subListOutputStreamEnvironment);
 			}else if(contentType instanceof VirtualSystemType){
 				try {
 					OutputStream ou = new ByteArrayOutputStream();
-					String idEnvironment = createOVFEnvironment(parentVsc, (VirtualSystemType)contentType, instanceNumber, domain, serviceId, monitoringChannel, ips, netmasks, dnsServers, gateways, entryPoints, ou, processSiblings);
+					String idEnvironment = createOVFEnvironment(parentVsc, (VirtualSystemType)contentType, instanceNumber, domain, serviceId,veeId, monitoringChannel, ips, netmasks, dnsServers, gateways, entryPoints, ou, processSiblings);
 					EnvironmentMetaData idEnvironmentAndOutputStreamEnvironment = new EnvironmentMetaData(idEnvironment,ou);
 					listOutPutStreamEnvironment.add(idEnvironmentAndOutputStreamEnvironment);
 				} catch (IPNotFoundException e) {
@@ -392,6 +397,7 @@ public class OVFEnvironmentUtils
     		int instanceNumber, 
     		String domain, 
     		String serviceId, 
+    		String veeId,
     		String monitoringChannel, 
     		HashMap<String,ArrayList<String>> ips, 
     		HashMap<String, String> netmasks, 
@@ -439,6 +445,7 @@ public class OVFEnvironmentUtils
 							instanceNumber, 
 							domain, 
 							serviceId, 
+							veeId,
 							monitoringChannel, 
 							ips, 
 							netmasks, 

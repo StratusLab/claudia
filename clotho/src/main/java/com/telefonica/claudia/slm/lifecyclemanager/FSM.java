@@ -1719,6 +1719,11 @@ public class FSM extends Thread implements Serializable {
 		// Obtain the IP and update
 		PaasUtils paas = new PaasUtils();
 		String replicaxml = paas.getVEE(rep);
+		if (replicaxml == null)
+		{
+		    logger.error("It is not possible to obtain the replica Id");
+			return;
+		}
 		HashMap ips = paas.getVeePaaSSetIpFromXML (replicaxml);
 						
 		Iterator it = ips.entrySet().iterator();

@@ -52,6 +52,8 @@ public class OVFGeneralUtils {
 	private final static String DNSSERVER_MACRO = "DNSServer";
 	private final static String GATEWAY_MACRO = "Gateway";
 	private final static String SERVICEID_MACRO = "ServiceId";
+	private final static String VEEID_MACRO="VmId";
+	
 	private final static String DOMAIN_MACRO = "Domain";
 	private final static String MONITORINGCHANNEL_MACRO = "MonitoringChannel";
 	private final static String PRECEDENTTIERENTRYPOINT_MACRO = "PrecedentTierEntryPoint";
@@ -65,6 +67,7 @@ public class OVFGeneralUtils {
 			int instanceNumber, 
     		String domain, 
     		String serviceId, 
+    		String veeId,
     		String monitoringChannel, 
     		HashMap<String,ArrayList<String>> ips, 
     		HashMap<String, String> netmasks, 
@@ -214,8 +217,10 @@ public class OVFGeneralUtils {
 			String prefix = "@" + PRECEDENTTIERENTRYPOINT_MACRO + "(";
 			String network = value.substring(value.indexOf(prefix)+prefix.length(),value.indexOf(","));
 			// the +1 is for the ','
+			log.info("Data precedent " + prefix + network);
 			String vs = value.substring(value.indexOf(prefix)+prefix.length()+1+network.length(),value.indexOf(")"));
 
+			
 			if (entryPoints != null) {
 
 				HashMap<String, String> entryPointsPerNetwork = (HashMap<String, String>)entryPoints.get(network);
@@ -251,6 +256,12 @@ public class OVFGeneralUtils {
 		{
 			String prefix = "@" + SERVICEID_MACRO;
 			return value.replace(prefix,serviceId);
+		}
+		else if (value.contains("@" + VEEID_MACRO))
+		{
+			String prefix = "@" + VEEID_MACRO;
+			System.out.println ("VEE MACRO" + prefix);
+			return value.replace(prefix,veeId);
 		}
 		else if (value.contains("@" + MONITORINGCHANNEL_MACRO))
 		{

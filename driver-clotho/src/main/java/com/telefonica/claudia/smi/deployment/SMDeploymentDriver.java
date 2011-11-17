@@ -365,9 +365,62 @@ public class SMDeploymentDriver implements DeploymentDriver {
 //		return -1;
 //	}
 
-public long  createVdc(String fqnCustomer, String vdc) throws IOException
+public long  createVdc(String orgname, String vdc) throws IOException
 {
-  return -1;
+	log.info("Sending deploying VDC message for customer ["+orgname+"] of user [" + vdc +"]");
+	SMIChannelEvent smi = new SMIChannelEvent(System.currentTimeMillis(), 0, SMIAction.DEPLOY_VDC);
+
+	String fqn= "Dddd";
+	//smi.put(SMIChannelEvent.OVF_DOCUMENT, ovf);
+	//smi.put(SMIChannelEvent.ORG_DESCRIPTION, orgname);
+	//smi.put(SMIChannelEvent.CUSTOMER_NAME, vdc);
+	smi.put(SMIChannelEvent.FQN_ID, fqn);
+	//smi.put(SMIChannelEvent.SERVICE_NAME, serviceName);
+	
+	try {
+		smiChannelProducer.send(session.createObjectMessage(smi));
+		// Wait until the Service is deployed.
+		System.out.println ("event received");
+		
+		MessageConsumer messageConsumer = session.createConsumer(smiChannelReply, "org = '" + fqn + "'");
+		System.out.println (messageConsumer);
+		ObjectMessage m = (ObjectMessage) messageConsumer.receive(EVENT_BUS_TIMEOUT);
+		
+		if (m==null) {
+			log.error("Timeout waiting for a server response. Try later.");
+			
+			throw new IOException("Timeout waiting for a server response. Try later.");
+		}
+		
+		System.out.println (m);
+		smi = (SMIChannelEvent) m.getObject();
+		System.out.println (smi);
+		if (smi.isSuccess()){
+			String serviceDescription= smi.get(SMIChannelEvent.ORG_DESCRIPTION);
+		
+			log.info("SMPlugin: Customer data retrieved");
+			messageConsumer.close();
+			
+	        
+			return 2;
+		}
+		
+		
+		
+		String serviceFQN = "0";
+		log.info("SMPlugin: Deployment of service " + serviceFQN + " launched");    	
+		return new Long(serviceFQN).longValue();
+	    
+	} catch (JMSException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	}
+	
+	return -1;
+
+	
+	
+	
 }
 	
 	public String getOrg(String fqn) throws IOException {
