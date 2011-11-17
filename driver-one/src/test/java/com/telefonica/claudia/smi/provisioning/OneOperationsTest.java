@@ -43,15 +43,15 @@ public class OneOperationsTest {
 			
 			System.out.println ("Network deployed " + identificador);
 			
-			System.out.println ("Deploying Virtual Machine " + identificador);
+	//		System.out.println ("Deploying Virtual Machine " + identificador);
 
-			String identificadorvm = tester.deployVirtualMachine(xml, "CESGA.customers.laura.services.servi3.vees.ddd");
+//			String identificadorvm = tester.deployVirtualMachine(xml, "CESGA.customers.laura.services.servi3.vees.ddd");
 			
 		//	assertEquals("Result","374" ,identificadorvm);
 			
-			System.out.println ("VM deployed " + identificadorvm);
+		//	System.out.println ("VM deployed " + identificadorvm);
 			
-			tester.deleteVirtualMachine(identificadorvm );
+		//	tester.deleteVirtualMachine(identificadorvm );
 			
 			tester.deleteNetwork(identificador );
 			

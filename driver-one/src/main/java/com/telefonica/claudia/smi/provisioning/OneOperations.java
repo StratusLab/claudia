@@ -237,12 +237,15 @@ public class OneOperations {
 	{
 		List rpcParams = new ArrayList ();
 		ControlActionType controlAction  = null;
+		
+		log.info("Id for action " + id + " action " + action);
 
-		if (action.equals("power-on"))
+	
+		if (action.equals("powerOn"))
 		{
 		   controlAction = ControlActionType.resume;
 		}
-		else if (action.equals("power-off"))
+		else if (action.equals("powerOff"))
 	    {
 			controlAction = ControlActionType.stop;
 	    }
@@ -251,6 +254,7 @@ public class OneOperations {
 		rpcParams.add(controlAction.toString());
 		rpcParams.add(Integer.parseInt(id));
 		
+		log.info("Sending call for power..");
 		Object[] result = null;
 		
 		try {				
@@ -262,6 +266,7 @@ public class OneOperations {
 		}
 		
 		if (result==null) {
+			log.error("No result returned from XMLRPC call");
 			throw new IOException("No result returned from XMLRPC call");
 		} else {
 			return (Boolean)result[0];

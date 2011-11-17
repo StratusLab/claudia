@@ -17,8 +17,51 @@ import com.telefonica.claudia.smi.task.TaskManager;
 import com.telefonica.claudia.smi.task.Task.TaskStatus;
 
 public class ONEProvisioningDriverTest {
-
+	
+@Test
+	
+	public void getVM() {
+		
+		ONEProvisioningDriver one = getPreConditions();
+		
+		try {
+		//	long vnet = one.deployNetwork("org.tid.customers.otro.services.tel.networks.net",readFileAsString ("./src/test/resources/network1.xml"));
+			
+		//	System.out.println ("Network deployed " + vnet);
+			
+		//	System.out.println ("Deleting network " + vnet);
+			
+			one.getVirtualMachine("CESGA.customers.26-TELEFONICA.services.22-My_Pack_google1.vees.my_app_google.replicas.1");
+			System.out.println ("powering off  " );
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 	@Test
+	
+	public void testStartStop() {
+		
+		ONEProvisioningDriver one = getPreConditions();
+		
+		try {
+		//	long vnet = one.deployNetwork("org.tid.customers.otro.services.tel.networks.net",readFileAsString ("./src/test/resources/network1.xml"));
+			
+		//	System.out.println ("Network deployed " + vnet);
+			
+		//	System.out.println ("Deleting network " + vnet);
+			
+			one.powerActionVirtualMachine("CESGA.customers.dddd.services.dd.vees.VEEMaster.replicas.1","power-on");
+			System.out.println ("powering off  " );
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	
+/*	@Test
+
 	public void testDeployNetwork() {
 		
 		ONEProvisioningDriver one = getPreConditions();
@@ -36,7 +79,7 @@ public class ONEProvisioningDriverTest {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-	}
+	}*/
 	
 	/*	@Test
 	public void testDeployVirtualMachine() {

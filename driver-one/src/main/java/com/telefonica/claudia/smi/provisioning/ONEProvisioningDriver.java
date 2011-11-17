@@ -638,6 +638,8 @@ public class ONEProvisioningDriver implements ProvisioningDriver {
 		public ActionVMTask(String fqnVM, String action) {
 			this.fqnVM = fqnVM;
 			this.action = action;
+			
+			
 		}
 
 		@Override
@@ -670,6 +672,7 @@ public class ONEProvisioningDriver implements ProvisioningDriver {
 				return;
 			} catch (Exception e) {
 				log.error("Unknown error executing action" + action + ": " + e.getMessage() + " -> " + e.getClass().getCanonicalName());
+				e.printStackTrace();
 				this.error = new TaskError();
 				this.error.message = e.getMessage();
 
@@ -1439,6 +1442,8 @@ public class ONEProvisioningDriver implements ProvisioningDriver {
 		try
 		{
 		String result = operations.getVirtualMachine(id);
+		
+		System.out.println ("RESULT " + result);
 		ONEUtilities utils = new ONEUtilities ();
 		HashMap data = utils.getCpuRamDisk (result);
 		HashMap ips = utils.getNetworksIp(result);

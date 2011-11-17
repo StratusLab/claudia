@@ -397,7 +397,8 @@ public class OneVmUtilities {
 						 */
 						String hostRes = item.getHostResource().get(0).getValue();
 						StringTokenizer st = new StringTokenizer(hostRes, "/");
-
+						
+						
 						/*
 						 * Only ovf:/<file|disk>/<n> format is valid, accodring
 						 * OVF spec
@@ -417,6 +418,7 @@ public class OneVmUtilities {
 						String fileRef = null;
 						String capacity = null;
 						String format = null;
+						String target = null;
 						if (hostResType.equals("disk")) {
 							/* This type involves an indirection level */
 							DiskSectionType ds = null;
@@ -432,6 +434,9 @@ public class OneVmUtilities {
 									fileRef = disk.getFileRef();
 									capacity = disk.getCapacity();
 									format = disk.getFormat();
+									Map<QName, String> attributesFile = disk.getOtherAttributes();
+									QName targetAtt = new QName("http://schemas.telefonica.com/claudia/ovf","target");
+									 target  = attributesFile.get(targetAtt);
 
 									if (fileRef == null) {
 										log.warn("file reference can not be found for disk: " + hostRes);
@@ -458,7 +463,7 @@ public class OneVmUtilities {
 
 						URL url = null;
 						String digest = null;
-						String driver = null;
+					  	String driver = null;
 
 						ReferencesType ref = envelope.getReferences();
 						List<FileType> files = ref.getFile();
@@ -524,6 +529,7 @@ public class OneVmUtilities {
 							if (urlDisk.contains("file:/"))
 								urlDisk = urlDisk.replace("file:/", "file:///");
 						}
+						
 
 						File filesystem = new File("/dev/" + diskRoot + "d" + sdaId);
 
@@ -531,6 +537,12 @@ public class OneVmUtilities {
 						if (urlDisk!= null)
 							allParametersString.append(ONE_VM_DISK_PARAM_IMAGE).append(ASSIGNATION_SYMBOL).append(urlDisk).append(MULT_CONF_SEPARATOR);
 
+						if (target != null && target.length()>0)
+						{
+							allParametersString.append(ONE_VM_DISK_PARAM_TARGET).append(ASSIGNATION_SYMBOL).append(target).append(MULT_CONF_SEPARATOR);
+						}
+						else
+						{
 						if (virtualizationType.toLowerCase().equals("kvm")) {
 							allParametersString.append(ONE_VM_DISK_PARAM_TARGET).append(ASSIGNATION_SYMBOL).append(diskRoot + "d" + sdaId).append(MULT_CONF_SEPARATOR);
 						}
@@ -540,7 +552,7 @@ public class OneVmUtilities {
 						}
 						else
 							allParametersString.append(ONE_VM_DISK_PARAM_TARGET).append(ASSIGNATION_SYMBOL).append(filesystem.getAbsolutePath()).append(MULT_CONF_SEPARATOR);
-				    
+						}
 						if (format!=null)
 						{
 
