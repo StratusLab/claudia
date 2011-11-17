@@ -820,8 +820,10 @@ public class FSM extends Thread implements Serializable {
 		// WASUP
 		if (SMConfiguration.getInstance().isMonitoringEnabled()) {
 			try {
-				NUBAMonitoringClient client = new NUBAMonitoringClient (SMConfiguration.getInstance().getMonitoringUrl());
-				client.setUpMonitoring(this.sap.getFQN().toString(),getListIpsService(sap));
+				MonitoringClient client = new MonitoringClient (SMConfiguration.getInstance().getMonitoringUrl());
+				//client.setUpMonitoring(this.sap.getFQN().toString(),getListIpsService(sap));
+				
+				client.setUpMonitoring(this.sap.getFQN().toString());
 			
 			} catch (Throwable e) {
 				logger.error("Unknow error connecting to WASUP: "
