@@ -52,6 +52,7 @@ import org.json.JSONException;
 
 import com.telefonica.claudia.configmanager.ConfiguratorFactory;
 import com.telefonica.claudia.configmanager.lb.LoadBalancerConfigurator;
+
 import com.telefonica.claudia.slm.common.DbManager;
 import com.telefonica.claudia.slm.common.SMConfiguration;
 import com.telefonica.claudia.slm.deployment.Customer;
@@ -77,6 +78,7 @@ import com.telefonica.claudia.slm.naming.ReservoirDirectory;
 import com.telefonica.claudia.slm.paas.OVFContextualization;
 import com.telefonica.claudia.slm.paas.PaasUtils;
 import com.telefonica.claudia.slm.paas.vmiHandler.MonitoringClient;
+import com.telefonica.claudia.slm.paas.vmiHandler.NUBAMonitoringClient;
 import com.telefonica.claudia.slm.paas.vmiHandler.RECManagerClient;
 import com.telefonica.claudia.slm.rulesEngine.RulesEngine;
 import com.telefonica.claudia.slm.serviceconfiganalyzer.ServiceConfigurationAnalyzer;
@@ -818,15 +820,9 @@ public class FSM extends Thread implements Serializable {
 		// WASUP
 		if (SMConfiguration.getInstance().isMonitoringEnabled()) {
 			try {
-				MonitoringClient client = new MonitoringClient (SMConfiguration.getInstance().getMonitoringUrl());
-				wasupClient.createWasupHierarchy(getServiceApplication());
-			} catch (IOException e) {
-				logger
-				.error("Error creating the WASUP monitorization hierarchy: "
-						+ e.getMessage());
-			} catch (JSONException e) {
-				logger.error("Error parsing the response of a WASUP request: "
-						+ e.getMessage());
+				NUBAMonitoringClient client = new NUBAMonitoringClient (SMConfiguration.getInstance().getMonitoringUrl());
+				client.setUpMonitoring(this.sap.getFQN().toString(),getListIpsService(sap));
+			
 			} catch (Throwable e) {
 				logger.error("Unknow error connecting to WASUP: "
 						+ e.getMessage(), e);
@@ -851,6 +847,27 @@ public class FSM extends Thread implements Serializable {
 
 
 		return true;
+	}
+	
+	private String getListIpsService (ServiceApplication sap)
+	{
+		String listips = "";
+		for (VEE vee: sap.getVEEs())
+		{
+			for (VEEReplica replica: vee.getVEEReplicas() )
+			{
+				for (NIC nic: replica.getNICs())
+				{
+					if (nic.getNICConf().getNetwork().getPrivateNet())
+						continue;
+					
+				     listips = listips + nic.getIPAddresses().get(0)+" ";
+				}
+			}
+		}
+		return listips;
+		
+		
 	}
 
 	public boolean elasticityCreateReplica(String veeType, int replicaNumber,
@@ -996,8 +1013,8 @@ public class FSM extends Thread implements Serializable {
 			logger.info("Is a replica balanced por" + replica.getVEE().getBalancedBy());
 			if (balancerVEE!= null)
 			{
-
-				return getReplicaCandiatesLoadBalancer ( replicas);
+				return getReplicaCandiatesLastElement (replicas);
+			//	return getReplicaCandiatesLoadBalancer ( replicas);
 			}
 			else
 				return getReplicaCandiatesLastElement (replicas);
@@ -1077,6 +1094,12 @@ public class FSM extends Thread implements Serializable {
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			return null;
+		}
+		
+		if (ipreplica==null)
+		{
+			logger.error("No node obtained to be removed " );
 			return null;
 		}
 
@@ -2110,7 +2133,7 @@ public class FSM extends Thread implements Serializable {
 							.inEnvolopeMacroReplacement(originalVEE
 									.getOvfRepresentation(), veeReplica.getId(),
 									SMConfiguration.getInstance().getDomainName(),
-									sap.getFQN().toString(), SMConfiguration
+									sap.getFQN().toString(),originalVEE.getFQN().toString(), SMConfiguration
 									.getInstance().getMonitoringAddress(),
 									ips, masks, dnss, gateways, entryPoints));
 				}
@@ -2203,16 +2226,32 @@ public class FSM extends Thread implements Serializable {
 						return;
 					}
 
-					try
+					int i =0 ;
+					
+					do 
 					{
-						int result = this.lbConfigurator.addNode(ip, balancerVEE.getLbManagementPort(),
+						try{
+							  //do what you want to do before sleeping
+							  Thread.currentThread().sleep(SMConfiguration.getInstance().getWaitingSecond());//sleep for 1000 ms
+							  //do what you want to do after sleeptig
+							}
+							catch(Exception ie){
+							//If this thread was intrrupted by nother thread 
+							}
+							try
+							{
+								int result = this.lbConfigurator.addNode(ip, balancerVEE.getLbManagementPort(),
 								veeReplica.getFQN() .toString(), replicaIP);
-					}
-					catch (Exception e)
-					{
-						logger.error("It was impossible to send the load balancer " + balancerVEE.getVEEName() + " " +
+								i = 5;
+							}
+							catch (Exception e)
+							{
+								logger.error("It was impossible to send the load balancer " + balancerVEE.getVEEName() + " " +
 								ip+" : "+balancerVEE.getLbManagementPort()+" the IP information " + replicaIP);
-					}
+							}
+					i++;
+					
+					}while (i<SMConfiguration.getInstance().getNumberOfReint());
 
 
 				} } } }

@@ -234,10 +234,13 @@ public class OVFContextualization {
 	ByteArrayOutputStream output = new ByteArrayOutputStream();
 	try {
 		OVFEnvironmentUtils.createOVFEnvironment( vs,
-				0,
+				replica.getId(),
 				SMConfiguration.getInstance().getDomainName(),
 				URICreation.getFQN(SMConfiguration.getInstance().getSiteRoot(), replica.getVEE().getServiceApplication().getCustomer().getCustomerName(),
 						 replica.getVEE().getServiceApplication().getSerAppName()),
+						 URICreation.getFQN(SMConfiguration.getInstance().getSiteRoot(), replica.getVEE().getServiceApplication().getCustomer().getCustomerName(),
+								 replica.getVEE().getServiceApplication().getSerAppName(), replica.getVEE().getVEEName()),
+						 
 						 SMConfiguration.getInstance().getMonitoringAddress(), 
 				map,
 				null,
@@ -303,13 +306,21 @@ public class OVFContextualization {
 		
 	}
 	
-	public List<String> getNetworksVEE (VEE vee)
+	public List<String> getNetworksVEE (VEE vm)
 	{
 		List<String> networks = new ArrayList ();
+		for (VEE vee: vm.getServiceApplication().getVEEs())
+		{
 		for (NICConf nicconf : vee.getNICsConf())
 		{
-			networks.add(nicconf.getNetwork().getName());
 			
+			if (!networks.contains(nicconf.getNetwork().getName()))
+			{
+				networks.add(nicconf.getNetwork().getName());
+				System.out.println("adding net " + nicconf.getNetwork().getName());
+			}
+			
+		}
 		}
 		return networks;
 	}
@@ -423,10 +434,12 @@ public class OVFContextualization {
 		HashMap<String, HashMap<String, String> > entry = getEntryPoints(replica);
 		
 		return inEnvolopeMacroReplacement(replica.getVEE().getOvfRepresentation(),    
-				0, 
+				replica.getId(), 
 				SMConfiguration.getInstance().getDomainName(), 
 				URICreation.getFQN(SMConfiguration.getInstance().getSiteRoot(), replica.getVEE().getServiceApplication().getCustomer().getCustomerName(),
 						 replica.getVEE().getServiceApplication().getSerAppName()), 
+				URICreation.getFQN(SMConfiguration.getInstance().getSiteRoot(), replica.getVEE().getServiceApplication().getCustomer().getCustomerName(),
+							 replica.getVEE().getServiceApplication().getSerAppName(), replica.getVEE().getVEEName()), 
 						 SMConfiguration.getInstance().getMonitoringAddress(), 
 						 map, 
 				null, 
@@ -439,6 +452,7 @@ public class OVFContextualization {
 			int instanceNumber, 
 			String domain, 
 			String serviceId, 
+			String veeId,
 			String monitoringChannel, 
 			HashMap<String,ArrayList<String>> ips, 
 			HashMap<String, String> netmasks, 
@@ -461,7 +475,7 @@ public class OVFContextualization {
 				return "";
 			} else if (entityInstance instanceof VirtualSystemType) {
 
-				OVFEnvelopeUtils.inEnvolopeMacroReplacement(envVee, (VirtualSystemType) entityInstance, instanceNumber, domain, serviceId, monitoringChannel, ips,
+				OVFEnvelopeUtils.inEnvolopeMacroReplacement(envVee, (VirtualSystemType) entityInstance, instanceNumber, domain, serviceId, veeId, monitoringChannel, ips,
 						netmasks, dnsServers, gateways, entryPoints);	
 				// Serialize the ovf
 				ByteArrayOutputStream sob = new ByteArrayOutputStream();
@@ -544,6 +558,7 @@ public class OVFContextualization {
 		{
 			netwoksips = getIpsNetwork (replica.getVEE().getServiceApplication(), net);
 			entry.put(net, netwoksips);
+			System.out.println ("adding " + net + " " + netwoksips + " for replica" + replica.getVEE().getVEEName());
 		}
 		return entry;
 	}

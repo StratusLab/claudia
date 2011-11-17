@@ -172,6 +172,10 @@ public class SMConfiguration extends Properties {
 	
 	private String monitoringurl = "";
 	
+	private int numberofreintent = 5;
+	
+	private int waitingsecond = 5000;
+	
 	private SMConfiguration() throws Exception {		
 		readSMProperties();
 	}
@@ -358,7 +362,44 @@ public class SMConfiguration extends Properties {
 		}
 		logger.info("Property [" + "monitoringurl" + "] with value [" + monitoringurl + "]");
 		
+		try
+		{
+			numberofreintent = Integer.parseInt(readProperty("numberofreintent"));
+		}
+		catch (Throwable t) {
+			logger.error("Parsing error on " +  "numberofreintent" + "property: not found");
+		}
+		logger.info("Property [" + "numberofreintent" + "] with value [" + numberofreintent + "]");
 		
+		try
+		{
+			waitingsecond = Integer.parseInt(readProperty("waitingsecond"));
+		}
+		catch (Throwable t) {
+			logger.error("Parsing error on " +  "waitingsecond" + "property: not found");
+		}
+		logger.info("Property [" + "waitingsecond" + "] with value [" + waitingsecond + "]");
+		
+		
+		
+		
+		
+	}
+	
+	public int getNumberOfReint() {
+	    	return numberofreintent;
+	 }
+	    
+	public void setNumberOfReint(int numberofreintent) {
+	    	 this.numberofreintent = numberofreintent;
+	}
+	
+	public int getWaitingSecond() {
+    	return waitingsecond;
+ }
+    
+	public void setWaitingSecond(int waitingsecond) {
+    	 this.waitingsecond = waitingsecond;
 	}
 	
 	 public boolean isMonitoringEnabled() {

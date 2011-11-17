@@ -126,6 +126,7 @@ import com.telefonica.claudia.slm.deployment.hwItems.Network;
 import com.telefonica.claudia.slm.deployment.paas.Product;
 import com.telefonica.claudia.slm.lifecyclemanager.DeploymentException;
 import com.telefonica.claudia.slm.paas.PaasUtils;
+import com.telefonica.claudia.smi.URICreation;
 
 
 public class Parser {
@@ -408,6 +409,8 @@ public class Parser {
 							contInstanceNumber,
 							SMConfiguration.getInstance().getDomainName(),
 							sa.getFQN().toString(),
+							URICreation.getFQN(SMConfiguration.getInstance().getSiteRoot(), sa.getCustomer().getCustomerName(),
+									 sa.getSerAppName(), vsId), 
 							SMConfiguration.getInstance().getMonitoringAddress(), 
 							ips,
 							netmask,
@@ -1470,6 +1473,7 @@ public class Parser {
 			int instanceNumber, 
 			String domain, 
 			String serviceId, 
+			String veeId,
 			String monitoringChannel, 
 			HashMap<String,ArrayList<String>> ips, 
 			HashMap<String, String> netmasks, 
@@ -1492,7 +1496,7 @@ public class Parser {
 				return "";
 			} else if (entityInstance instanceof VirtualSystemType) {
 
-				OVFEnvelopeUtils.inEnvolopeMacroReplacement(envVee, (VirtualSystemType) entityInstance, instanceNumber, domain, serviceId, monitoringChannel, ips,
+				OVFEnvelopeUtils.inEnvolopeMacroReplacement(envVee, (VirtualSystemType) entityInstance, instanceNumber, domain, serviceId, veeId, monitoringChannel, ips,
 						netmasks, dnsServers, gateways, entryPoints);	
 				// Serialize the ovf
 				ByteArrayOutputStream sob = new ByteArrayOutputStream();

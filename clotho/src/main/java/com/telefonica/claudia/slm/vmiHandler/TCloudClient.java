@@ -192,7 +192,7 @@ public class TCloudClient implements VMIHandler {
     	      SMConfiguration.getInstance().setNetworkId (SMConfiguration.getInstance().getNetworkId()+1);
     	      root.appendChild(baseAddress);
     	      Element netmask = doc.createElement(TCloudConstants.TAG_NETWORK_NETMASK);
-    	      netmask.appendChild(doc.createTextNode("255.255.240.0"));
+    	      netmask.appendChild(doc.createTextNode("255.255.255.0"));
     	      root.appendChild(netmask);  
     	}
     	else

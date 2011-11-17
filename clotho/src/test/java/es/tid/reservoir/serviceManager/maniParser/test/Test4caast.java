@@ -29,6 +29,7 @@ import com.telefonica.claudia.slm.deployment.Customer;
 import com.telefonica.claudia.slm.deployment.ServiceApplication;
 import com.telefonica.claudia.slm.deployment.VEE;
 import com.telefonica.claudia.slm.deployment.VEEReplica;
+import com.telefonica.claudia.slm.deployment.hwItems.NIC;
 import com.telefonica.claudia.slm.deployment.hwItems.NICConf;
 import com.telefonica.claudia.slm.deployment.hwItems.Network;
 import com.telefonica.claudia.slm.deployment.paas.Product;
@@ -50,7 +51,7 @@ public class Test4caast {
 	@Test
 	public void testParser2_sun() {
 
-		String xmlFileName = "src/test/resources/4caastpaas.xml";
+		String xmlFileName = "src/test/resources/4caastpaascontextualization.xml";
 
 		try {
 			
@@ -66,23 +67,45 @@ public class Test4caast {
 			ServiceApplication sa = p.getServiceApplication();
 			Iterator<VEE> vees = sa.getVEEs().iterator();
 			VEE master = vees.next();
-		//	VEE executor = vees.next();
+			VEE executor = vees.next();
 
 			VEEReplica vee1 = new VEEReplica(master);
-		//	VEEReplica vee2 = new VEEReplica(executor);
+			VEEReplica vee2 = new VEEReplica(executor);
 
 			master.registerVEEReplica(vee1);
-	//		executor.registerVEEReplica(vee2);
+			executor.registerVEEReplica(vee2);
 			
 			for (VEE vee: sa.getVEEs())
 			{
-				for (NICConf nic: vee.getNICsConf())
+				for (VEEReplica rep: vee.getVEEReplicas())
 				{
-					Network net = nic.getNetwork();
-					net.setNetworkAddresses( new String [] {"109.231.79.228", "245.456.456.456"});
+				for (NIC nic: rep.getNICs())
+				{
+					
+					nic.addIPAddress("109.231.79.228");
+					
+				}
 				}
 			}
 			
+	
+				String listips = "";
+				for (VEE vee: sa.getVEEs())
+				{
+					for (VEEReplica replica: vee.getVEEReplicas() )
+					{
+						for (NIC nic: replica.getNICs())
+						{
+							if (nic.getNICConf().getNetwork().getPrivateNet())
+								continue;
+							
+						     listips = listips + nic.getIPAddresses().get(0)+" ";
+						}
+					}
+				}
+				System.out.println (listips);
+				
+	
 			for (VEE vee: sa.getVEEs() )
 			{
 				RECManagerClient d = new RECManagerClient("http://109.231.79.226:8080/ovfserver/");
@@ -90,7 +113,7 @@ public class Test4caast {
 				//   d.installProductsInVm (vee);
 			   for (Product product: vee.getProducts())
 			   {
-				   System.out.println (product.getProductXML());
+				//   System.out.println (product.getProductXML());
 				   
 				  // d.installProduct(product, "109.231.79.228");
 			   }
