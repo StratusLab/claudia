@@ -187,6 +187,46 @@
 							<sources>
 								<source>
 									<location>target/dependency/tcloud-server/lib</location>
+									<excludes> 
+										<exclude>commons-codec-*.jar</exclude> 
+										<exclude>commons-httpclient-*.jar</exclude> 
+										<exclude>activation-*.jar</exclude> 
+										<exclude>activeio-core-*.jar</exclude> 
+										<exclude>activeio-core-*-tests.jar</exclude> 
+										<exclude>activemq-core-*.jar</exclude> 
+										<exclude>antlr-*.jar</exclude> 
+										<exclude>asm-*.jar</exclude> 
+										<exclude>asm-attrs-*.jar</exclude> 
+										<exclude>backport-util-concurrent-*.jar</exclude> 
+										<exclude>camel-core-*.jar</exclude> 
+										<exclude>cglib-*.jar</exclude> 
+										<exclude>claudia-commons-*-SNAPSHOT.jar</exclude> 
+										<exclude>commons-collections-*.jar</exclude> 
+										<exclude>commons-logging-*.jar</exclude> 
+										<exclude>commons-logging-api-*.jar</exclude> 
+										<exclude>com.noelios.restlet-*.jar</exclude> 
+										<exclude>concurrent-*.jar</exclude> 
+										<exclude>dom4j-*.jar</exclude> 
+										<exclude>geronimo-j2ee-management_1.0_spec-*.jar</exclude> 
+										<exclude>geronimo-jms_1.1_spec-*.jar</exclude> 
+										<exclude>jaxb-api-*.jar</exclude> 
+										<exclude>json-20090211.jar</exclude> 
+										<exclude>jta-*.jar</exclude> 
+										<exclude>junit-*.jar</exclude> 
+										<exclude>log4j-*.jar</exclude> 
+										<exclude>org.json-*.jar</exclude> 
+										<exclude>org.restlet-*.jar</exclude> 
+										<exclude>org.restlet.ext.json-*.jar</exclude> 
+										<exclude>ovf-manager-*-SNAPSHOT.jar</exclude> 
+										<exclude>persistence-api-*.jar</exclude> 
+										<exclude>slf4j-api-*.jar</exclude> 
+										<exclude>slf4j-log4j12-*.jar</exclude> 
+										<exclude>stax2-api-*.jar</exclude> 
+										<exclude>stax-api-*.jar</exclude> 
+										<exclude>woodstox-core-asl-*.jar</exclude> 
+										<exclude>xml-apis-*.jar</exclude> 
+										<exclude>backport-util-concurrent-*.jar</exclude>
+									</excludes>
 								</source>
 							</sources>
 						</mapping>
