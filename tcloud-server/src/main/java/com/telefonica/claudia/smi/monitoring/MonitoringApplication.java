@@ -136,6 +136,7 @@ public class MonitoringApplication {
 		router.attach(URICreation.URI_HWIT3_MON + URICreation.MEASURE_ID + URICreation.VALUES, MeasureResource.class);
 		//URI:/org/{org-id}/vdc/{vdc-id}/net/{net-id}/monitor/{measure-id}/values
 		router.attach(URICreation.URI_NET_MON + URICreation.MEASURE_ID + URICreation.VALUES, MeasureResource.class);
+		router.attach(URICreation.URI_VAPP3_MON + URICreation.MEASURE_ID+ URICreation.VALUES, MeasureResource.class);
 
         log.info("Routes attached to Monitoring router");
 	}

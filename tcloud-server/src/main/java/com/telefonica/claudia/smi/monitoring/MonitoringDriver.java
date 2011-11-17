@@ -49,6 +49,8 @@ public interface MonitoringDriver {
 	public MeasuredValueList getMeasuredValueList(MeasureDescriptor md, MeasuredValueFilter filter)
 	throws MonitorException;
 	
+	public MeasuredValueList getMeasuredValueList(MeasureDescriptor md, int samples)  	throws MonitorException;
+	
 	public List<MeasuredValueList> getMeasuredValueList(List<MeasureDescriptor> md, MeasuredValueFilter filter)
 	throws MonitorException;
 
