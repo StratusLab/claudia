@@ -1,0 +1,149 @@
+K 25
+svn:wc:ra_dav:version-url
+V 120
+/repositorio/boi/!svn/ver/9748/claudia/branch/EuroIaaS/claudia-model/src/main/java/com/telefonica/claudia/slm/deployment
+END
+GeographicDomain.java
+K 25
+svn:wc:ra_dav:version-url
+V 142
+/repositorio/boi/!svn/ver/9748/claudia/branch/EuroIaaS/claudia-model/src/main/java/com/telefonica/claudia/slm/deployment/GeographicDomain.java
+END
+DiskConf.java
+K 25
+svn:wc:ra_dav:version-url
+V 134
+/repositorio/boi/!svn/ver/9748/claudia/branch/EuroIaaS/claudia-model/src/main/java/com/telefonica/claudia/slm/deployment/DiskConf.java
+END
+HWComponent.java
+K 25
+svn:wc:ra_dav:version-url
+V 137
+/repositorio/boi/!svn/ver/9748/claudia/branch/EuroIaaS/claudia-model/src/main/java/com/telefonica/claudia/slm/deployment/HWComponent.java
+END
+MeasuredValue.java
+K 25
+svn:wc:ra_dav:version-url
+V 139
+/repositorio/boi/!svn/ver/9748/claudia/branch/EuroIaaS/claudia-model/src/main/java/com/telefonica/claudia/slm/deployment/MeasuredValue.java
+END
+Memory.java
+K 25
+svn:wc:ra_dav:version-url
+V 132
+/repositorio/boi/!svn/ver/9748/claudia/branch/EuroIaaS/claudia-model/src/main/java/com/telefonica/claudia/slm/deployment/Memory.java
+END
+NIC.java
+K 25
+svn:wc:ra_dav:version-url
+V 129
+/repositorio/boi/!svn/ver/9748/claudia/branch/EuroIaaS/claudia-model/src/main/java/com/telefonica/claudia/slm/deployment/NIC.java
+END
+Zone.java
+K 25
+svn:wc:ra_dav:version-url
+V 130
+/repositorio/boi/!svn/ver/9748/claudia/branch/EuroIaaS/claudia-model/src/main/java/com/telefonica/claudia/slm/deployment/Zone.java
+END
+VDC.java
+K 25
+svn:wc:ra_dav:version-url
+V 129
+/repositorio/boi/!svn/ver/9748/claudia/branch/EuroIaaS/claudia-model/src/main/java/com/telefonica/claudia/slm/deployment/VDC.java
+END
+MemoryConf.java
+K 25
+svn:wc:ra_dav:version-url
+V 136
+/repositorio/boi/!svn/ver/9748/claudia/branch/EuroIaaS/claudia-model/src/main/java/com/telefonica/claudia/slm/deployment/MemoryConf.java
+END
+NICConf.java
+K 25
+svn:wc:ra_dav:version-url
+V 133
+/repositorio/boi/!svn/ver/9748/claudia/branch/EuroIaaS/claudia-model/src/main/java/com/telefonica/claudia/slm/deployment/NICConf.java
+END
+VEE.java
+K 25
+svn:wc:ra_dav:version-url
+V 129
+/repositorio/boi/!svn/ver/9748/claudia/branch/EuroIaaS/claudia-model/src/main/java/com/telefonica/claudia/slm/deployment/VEE.java
+END
+VEEReplica.java
+K 25
+svn:wc:ra_dav:version-url
+V 136
+/repositorio/boi/!svn/ver/9748/claudia/branch/EuroIaaS/claudia-model/src/main/java/com/telefonica/claudia/slm/deployment/VEEReplica.java
+END
+CloudProvider.java
+K 25
+svn:wc:ra_dav:version-url
+V 139
+/repositorio/boi/!svn/ver/9748/claudia/branch/EuroIaaS/claudia-model/src/main/java/com/telefonica/claudia/slm/deployment/CloudProvider.java
+END
+HWStatus.java
+K 25
+svn:wc:ra_dav:version-url
+V 134
+/repositorio/boi/!svn/ver/9748/claudia/branch/EuroIaaS/claudia-model/src/main/java/com/telefonica/claudia/slm/deployment/HWStatus.java
+END
+RuleSet.java
+K 25
+svn:wc:ra_dav:version-url
+V 133
+/repositorio/boi/!svn/ver/9748/claudia/branch/EuroIaaS/claudia-model/src/main/java/com/telefonica/claudia/slm/deployment/RuleSet.java
+END
+ServiceApplication.java
+K 25
+svn:wc:ra_dav:version-url
+V 144
+/repositorio/boi/!svn/ver/9748/claudia/branch/EuroIaaS/claudia-model/src/main/java/com/telefonica/claudia/slm/deployment/ServiceApplication.java
+END
+Notification.java
+K 25
+svn:wc:ra_dav:version-url
+V 138
+/repositorio/boi/!svn/ver/9748/claudia/branch/EuroIaaS/claudia-model/src/main/java/com/telefonica/claudia/slm/deployment/Notification.java
+END
+CPU.java
+K 25
+svn:wc:ra_dav:version-url
+V 129
+/repositorio/boi/!svn/ver/9748/claudia/branch/EuroIaaS/claudia-model/src/main/java/com/telefonica/claudia/slm/deployment/CPU.java
+END
+Resource.java
+K 25
+svn:wc:ra_dav:version-url
+V 134
+/repositorio/boi/!svn/ver/9748/claudia/branch/EuroIaaS/claudia-model/src/main/java/com/telefonica/claudia/slm/deployment/Resource.java
+END
+Network.java
+K 25
+svn:wc:ra_dav:version-url
+V 133
+/repositorio/boi/!svn/ver/9748/claudia/branch/EuroIaaS/claudia-model/src/main/java/com/telefonica/claudia/slm/deployment/Network.java
+END
+Disk.java
+K 25
+svn:wc:ra_dav:version-url
+V 130
+/repositorio/boi/!svn/ver/9748/claudia/branch/EuroIaaS/claudia-model/src/main/java/com/telefonica/claudia/slm/deployment/Disk.java
+END
+ISOImage.java
+K 25
+svn:wc:ra_dav:version-url
+V 134
+/repositorio/boi/!svn/ver/9748/claudia/branch/EuroIaaS/claudia-model/src/main/java/com/telefonica/claudia/slm/deployment/ISOImage.java
+END
+Capacity.java
+K 25
+svn:wc:ra_dav:version-url
+V 134
+/repositorio/boi/!svn/ver/9748/claudia/branch/EuroIaaS/claudia-model/src/main/java/com/telefonica/claudia/slm/deployment/Capacity.java
+END
+CPUConf.java
+K 25
+svn:wc:ra_dav:version-url
+V 133
+/repositorio/boi/!svn/ver/9748/claudia/branch/EuroIaaS/claudia-model/src/main/java/com/telefonica/claudia/slm/deployment/CPUConf.java
+END

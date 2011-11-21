@@ -1,0 +1,35 @@
+K 25
+svn:wc:ra_dav:version-url
+V 116
+/repositorio/boi/!svn/ver/9748/claudia/branch/EuroIaaS/claudia-model/src/main/java/com/telefonica/claudia/slm/naming
+END
+Directory.java
+K 25
+svn:wc:ra_dav:version-url
+V 131
+/repositorio/boi/!svn/ver/9748/claudia/branch/EuroIaaS/claudia-model/src/main/java/com/telefonica/claudia/slm/naming/Directory.java
+END
+FQN.java
+K 25
+svn:wc:ra_dav:version-url
+V 125
+/repositorio/boi/!svn/ver/9748/claudia/branch/EuroIaaS/claudia-model/src/main/java/com/telefonica/claudia/slm/naming/FQN.java
+END
+ReservoirDirectory.java
+K 25
+svn:wc:ra_dav:version-url
+V 140
+/repositorio/boi/!svn/ver/9748/claudia/branch/EuroIaaS/claudia-model/src/main/java/com/telefonica/claudia/slm/naming/ReservoirDirectory.java
+END
+DirectoryEntry.java
+K 25
+svn:wc:ra_dav:version-url
+V 136
+/repositorio/boi/!svn/ver/9748/claudia/branch/EuroIaaS/claudia-model/src/main/java/com/telefonica/claudia/slm/naming/DirectoryEntry.java
+END
+LifecycleEventListener.java
+K 25
+svn:wc:ra_dav:version-url
+V 144
+/repositorio/boi/!svn/ver/9748/claudia/branch/EuroIaaS/claudia-model/src/main/java/com/telefonica/claudia/slm/naming/LifecycleEventListener.java
+END
