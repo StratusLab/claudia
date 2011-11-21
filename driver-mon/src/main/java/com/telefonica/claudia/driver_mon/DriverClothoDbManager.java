@@ -1,0 +1,441 @@
+package com.telefonica.claudia.driver_mon;
+
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+import javax.persistence.EntityManager;
+import javax.persistence.EntityTransaction;
+import javax.persistence.Query;
+
+import com.telefonica.claudia.slm.common.DbManager;
+import com.telefonica.claudia.slm.deployment.VDC;
+import com.telefonica.claudia.slm.deployment.NIC;
+import com.telefonica.claudia.slm.deployment.ServiceApplication;
+import com.telefonica.claudia.slm.monitoring.monitoringsample;
+import com.telefonica.claudia.slm.monitoring.nodedirectory;
+import com.telefonica.claudia.smi.DataTypesUtils;
+import com.telefonica.claudia.smi.URICreation;
+import com.telefonica.claudia.smi.monitoring.bean.MeasureDescriptor;
+import com.telefonica.claudia.smi.monitoring.bean.MeasuredValue;
+
+public class DriverClothoDbManager extends DbManager {
+
+	public DriverClothoDbManager(String DBUrl, boolean recreate, String user, String password) {
+		super(DBUrl, recreate, user, password);
+	}
+
+	public static DriverClothoDbManager createDbManager(String DBUrl, boolean recreate, String user, String password) {
+		if (instance==null) {		
+			instance = new DriverClothoDbManager(DBUrl, recreate, user, password);
+		}
+
+		return getInstance();
+	}
+
+	public static DriverClothoDbManager getInstance() {
+		return (DriverClothoDbManager) instance;
+	}
+
+	public synchronized VDC getVdc(String fqn) {
+		EntityManager em = emf.createEntityManager();
+		EntityTransaction t = em.getTransaction();
+
+		VDC result = null;
+		t.begin();
+
+		try {
+			Query queryResult = em.createQuery("from " + VDC.class.getName() + " as vdctable "
+					+ " left join fetch vdctable.services service"  
+					+ " where vdctable.fqn='" + fqn + "'"
+					);
+
+			@SuppressWarnings("unchecked")
+			List<VDC> resultList = (List<VDC>) queryResult.getResultList();
+
+			for (VDC resultCandidate: resultList) {
+				result = resultCandidate;
+			}
+
+			t.commit();
+
+			return result;
+		} catch (Error e) {
+			t.rollback();
+
+			throw e;
+		} finally {
+			em.clear();
+			em.close();
+		}
+	}
+
+	public synchronized MeasureDescriptor getMeasureDescriptors(nodedirectory subject, String measure) {
+		EntityManager em= emf.createEntityManager();
+		EntityTransaction t =em.getTransaction();
+		
+		t.begin();
+		
+		try {
+			Query queryResult = em.createQuery("select mon.measure_type, mon.unit from "+monitoringsample.class.getName()+" mon " + 
+												"where mon.associatedObject.fqn IN (:fqns) " +
+												"and mon.measure_type= :measure_type ");
+			
+		/*	System.out.println ("select measurType, unit from "+monitoringsample.class.getName() + 
+					" where associatedObject_internalId = " +subject.getInternalNodeId()+
+					" and measure_type='"+measure+"'");
+			Query queryResult = em.createQuery("select measure_type, unit from "+monitoringsample.class.getName() + 
+					" where associatedObject_internalId = " +111 + " and measure_type='"+measure+"'");*/
+			
+			
+			
+			
+			Set <String> fqns = new HashSet<String>();
+			fqns.add(subject.getFqnString());
+			
+			for (Object de: subject.getAllDescendants()) {
+				nodedirectory nd = (nodedirectory) de;
+				
+				fqns.add(nd.getFqnString());
+			}
+			
+			queryResult.setParameter("measure_type", measure);
+			queryResult.setParameter("fqns", fqns);
+			
+			List<?> result = queryResult.getResultList();
+			MeasureDescriptor md=null;
+			
+			if (result.size()>0) {
+				md = new MeasureDescriptor((String) ((Object[])result.get(0))[0], subject.getFqnString() + "." + URICreation.FQN_SEPARATOR_MEASURE + "." + (String)((Object[])result.get(0))[0], "", (String)((Object[])result.get(0))[1], "0", "0", "");
+			}
+			
+			t.commit();
+			
+			return md;
+		} catch (Error e) {
+			t.rollback();
+			
+			throw e;
+		} finally {
+			em.clear();
+			em.close();
+		}
+	}
+	
+	public ServiceApplication getServiceApplication(String fqn) {
+		EntityManager em= emf.createEntityManager();
+		EntityTransaction t =em.getTransaction();
+		
+		ServiceApplication result=null;
+		t.begin();
+		
+		try {
+			Query queryResult = em.createQuery("from ServiceApplication sap left join fetch sap.networks where sap.fqn='" + fqn + "'");
+			
+			List<ServiceApplication> resultList = queryResult.getResultList();
+			
+			for (ServiceApplication resultCandidate: resultList) {
+				result = resultCandidate;
+			}
+				
+			t.commit();
+
+			return result;
+			
+		} catch (Error e) {
+			t.rollback();
+			
+			throw e;
+		} finally {
+			em.clear();
+			em.close();
+		}	
+	}
+	
+	@SuppressWarnings("unchecked")
+	public synchronized List<MeasureDescriptor> getMeasureDescriptorsList(nodedirectory subject) {
+		EntityManager em= emf.createEntityManager();
+		EntityTransaction t =em.getTransaction();
+		
+		t.begin();
+		
+		try {
+			Query queryResult = em.createQuery("select distinct(ms.measure_type), max(ms.unit) " +
+											   "from "+monitoringsample.class.getName()+ " ms " +
+											   "where associatedObject.fqn IN (:fqns) " +
+											   "group by ms.measure_type");
+			
+			Set <String> fqns = new HashSet<String>();
+			fqns.add(subject.getFqnString());
+			
+			for (Object de: subject.getAllDescendants()) {
+				nodedirectory nd = (nodedirectory) de;
+				
+				fqns.add(nd.getFqnString());
+			}
+			
+			queryResult.setParameter("fqns", fqns);
+			
+			List<?> result = queryResult.getResultList();
+			
+			List<MeasureDescriptor> mdList = new ArrayList<MeasureDescriptor>();
+			
+			for (Object o: result) {
+				Object[] fields = (Object[]) o;
+				mdList.add(new MeasureDescriptor((String)fields[0], subject.getFqnString() + "." + URICreation.FQN_SEPARATOR_MEASURE + "." + (String)fields[0], "", (String)fields[1], "0", "0", ""));
+			}
+			
+			t.commit();
+			
+			return mdList;
+		} catch (Error e) {
+			t.rollback();
+			
+			throw e;
+		} finally {
+			em.clear();
+			em.close();
+		}
+	}
+	
+	@SuppressWarnings("unchecked")
+	public synchronized List<MeasuredValue> getMeasureValues(nodedirectory subject, Date from, Date to, int samples, long interval, String measureName, String type) {
+		EntityManager em= emf.createEntityManager();
+		EntityTransaction t =em.getTransaction();
+		
+		t.begin();
+		
+		try {
+			Query queryResult;
+			
+			if (interval==86400) {
+				queryResult = em.createQuery("select new com.telefonica.claudia.smi.monitoring.bean.MeasuredValue(avg(ms.value), min(ms.datetime), max(ms.unit), '1d') from "+monitoringsample.class.getName()+" ms " +
+						" where ms.associatedObject.fqn IN (:subject)" +
+						" and ms.measure_type= :type " +
+						" and ms.datetime between :from and :to group by ms.year, ms.month, ms.day, ms.associatedObject.internalId" +
+						" order by ms.datetime desc");				
+			} else if (interval==3600) {
+				queryResult = em.createQuery("select  new com.telefonica.claudia.smi.monitoring.bean.MeasuredValue(avg(ms.value), min(ms.datetime), max(ms.unit), '1h') from "+monitoringsample.class.getName()+" ms " +
+						" where ms.associatedObject.fqn IN (:subject)" +
+						" and ms.measure_type= :type " +
+						" and ms.datetime between :from and :to group by ms.year, ms.month, ms.day, ms.hour, ms.associatedObject.internalId" +
+						" order by ms.datetime desc");				
+			} else {
+				queryResult = em.createQuery("select  new com.telefonica.claudia.smi.monitoring.bean.MeasuredValue(ms.value, ms.datetime, ms.unit) from "+monitoringsample.class.getName()+" ms " +
+						" where ms.associatedObject.fqn IN (:subject)" +
+						" and ms.measure_type= :type " +
+						" and ms.datetime between :from and :to " +
+						" order by ms.datetime desc");
+			}
+			
+			System.out.println ("select  new com.telefonica.claudia.smi.monitoring.bean.MeasuredValue(ms.value, ms.datetime, ms.unit) from "+monitoringsample.class.getName()+" ms " +
+					" where ms.associatedObject.fqn IN (:subject)" +
+					" and ms.measure_type= :type " +
+					" and ms.datetime between :from and :to " +
+					" order by ms.datetime desc");
+					
+			Set <String> internalIds = new HashSet<String>();
+			internalIds.add(subject.getFqnString());
+			
+			for (Object de: subject.getAllDescendants()) {
+				nodedirectory nd = (nodedirectory) de;
+				
+				internalIds.add(nd.getFqnString());
+			}
+			
+			queryResult.setParameter("subject", internalIds);
+			queryResult.setParameter("type", measureName);
+				
+			if (from==null)
+				queryResult.setParameter("from", new Date(0l));
+			else
+				queryResult.setParameter("from", from);
+			
+			if (to==null)
+				queryResult.setParameter("to", Calendar.getInstance().getTime());
+			else
+				queryResult.setParameter("to", to);
+			
+			List<MeasuredValue> result = queryResult.getResultList();
+			
+			List<MeasuredValue> mvList = new ArrayList<MeasuredValue>();
+			
+			HashMap<Date, MeasuredValue> calculatedValues= new HashMap<Date, MeasuredValue>(); 
+			
+			for (MeasuredValue o: result) {
+				
+				if (calculatedValues.containsKey(o.getRegisterDate())) {
+					MeasuredValue value=calculatedValues.get(o.getRegisterDate());
+					
+					value.setValue(String.valueOf(Double.parseDouble(value.getValue())+ Double.parseDouble(o.getValue())));
+					
+					if (type.equalsIgnoreCase("percent")) {
+						value.setValue(String.valueOf(Double.parseDouble(value.getValue())/2));
+					}
+					
+				} else {
+					if (calculatedValues.isEmpty()||calculatedValues.size()<= samples||interval!=0)
+						mvList.add(o);
+					
+					calculatedValues.put(o.getRegisterDate(), o);
+				}
+			}
+			
+			t.commit();
+			
+			return mvList;
+		} catch (Error e) {
+			t.rollback();
+			
+			throw e;
+		} finally {
+			em.clear();
+			em.close();
+		}
+	}
+
+	public List<MeasuredValue> getNetworkValues(nodedirectory nd, Date from,
+			Date to, int samples, long interval, String name, String valueType) {
+		
+		EntityManager em= emf.createEntityManager();
+		EntityTransaction t =em.getTransaction();
+		
+		t.begin();
+		
+		try {
+			Query queryResult;
+			
+			if (interval==86400) {
+				queryResult = em.createQuery("select new com.telefonica.claudia.smi.monitoring.bean.MeasuredValue(avg(ms.value), min(ms.datetime), max(ms.unit), '1d') from "+monitoringsample.class.getName()+" ms " +
+						" where ms.associatedObject.fqn IN (:subject)" +
+						" and ms.measure_type= :type " +
+						" and ms.datetime between :from and :to group by ms.year, ms.month, ms.day, ms.associatedObject.internalId" +
+						" order by ms.datetime desc");				
+			} else if (interval==3600) {
+				queryResult = em.createQuery("select  new com.telefonica.claudia.smi.monitoring.bean.MeasuredValue(avg(ms.value), min(ms.datetime), max(ms.unit), '1h') from "+monitoringsample.class.getName()+" ms " +
+						" where ms.associatedObject.fqn IN (:subject)" +
+						" and ms.measure_type= :type " +
+						" and ms.datetime between :from and :to group by ms.year, ms.month, ms.day, ms.hour, ms.associatedObject.internalId" +
+						" order by ms.datetime desc");				
+			} else {
+				queryResult = em.createQuery("select  new com.telefonica.claudia.smi.monitoring.bean.MeasuredValue(ms.value, ms.datetime, ms.unit) from "+monitoringsample.class.getName()+" ms " +
+						" where ms.associatedObject.fqn IN (:subject)" +
+						" and ms.measure_type= :type " +
+						" and ms.datetime between :from and :to " +
+						" order by ms.datetime desc");
+			}
+					
+			Set <String> internalIds = new HashSet<String>();
+			
+			String networkName = name.substring(name.indexOf("_")+1);
+			
+			for (Object de: nd.getAllDescendants()) {
+				nodedirectory descendant = (nodedirectory) de;
+				
+				if (descendant.getType()!=nodedirectory.TYPE_NIC) continue;
+				
+				NIC nic = em.find(NIC.class, descendant.getInternalNodeId());
+				
+				if (nic==null||!nic.getNicConf().getNetwork().getName().equals(networkName)) continue;
+				internalIds.add(descendant.getFqnString());
+			}
+			
+			name = name.substring(0, name.indexOf("_"));
+			queryResult.setParameter("subject", internalIds);
+			queryResult.setParameter("type", name);
+				
+			if (from==null)
+				queryResult.setParameter("from", new Date(0l));
+			else
+				queryResult.setParameter("from", from);
+			
+			if (to==null)
+				queryResult.setParameter("to", Calendar.getInstance().getTime());
+			else
+				queryResult.setParameter("to", to);
+			
+			List<MeasuredValue> result = queryResult.getResultList();
+			
+			List<MeasuredValue> mvList = new ArrayList<MeasuredValue>();
+			
+			HashMap<Date, MeasuredValue> calculatedValues= new HashMap<Date, MeasuredValue>(); 
+			
+			for (MeasuredValue o: result) {
+				
+				if (calculatedValues.containsKey(o.getRegisterDate())) {
+					MeasuredValue value=calculatedValues.get(o.getRegisterDate());
+					
+					value.setValue(String.valueOf(Double.parseDouble(value.getValue())+ Double.parseDouble(o.getValue())));
+					
+				} else {
+					if (calculatedValues.isEmpty()||calculatedValues.size()<= samples||interval!=0)
+						mvList.add(o);
+					
+					calculatedValues.put(o.getRegisterDate(), o);
+				}
+			}
+			
+			t.commit();
+			
+			return mvList;
+		} catch (Error e) {
+			t.rollback();
+			
+			throw e;
+		} finally {
+			em.clear();
+			em.close();
+		}
+	}
+
+	public MeasureDescriptor getDiskMeasureDescriptor(nodedirectory subject) {
+		EntityManager em= emf.createEntityManager();
+		EntityTransaction t =em.getTransaction();
+		
+		t.begin();
+		
+		try {
+			Query queryResult = em.createQuery("select sum(diskTable.capacity) " +
+											   "from VEE as veeTable left join veeTable.disksConf diskTable " +
+											   "where veeTable.fqn IN (:fqns)");
+			
+			Set <String> fqns = new HashSet<String>();
+			
+			if (subject.getType()==nodedirectory.TYPE_REPLICA) {
+				fqns.add(subject.getParent().getFqnString());
+			} else if (subject.getType()==nodedirectory.TYPE_VEE) {
+				fqns.add(subject.getFqnString());
+			} else {
+				for (Object de: subject.getAllDescendants()) {
+					nodedirectory nd = (nodedirectory) de;
+					
+					if (nd.getType()==nodedirectory.TYPE_VEE)
+						fqns.add(nd.getFqnString());
+				}
+			}
+			
+			queryResult.setParameter("fqns", fqns);
+			
+			Double fields = (Double) queryResult.getSingleResult();
+			
+			MeasureDescriptor result = new MeasureDescriptor("diskUsage", 
+												subject.getFqnString() + "." + URICreation.FQN_SEPARATOR_MEASURE + ".diskUsage", 
+												"", DataTypesUtils.STANDARD_STORAGE_UNIT_DEFAULT, "0", String.valueOf(fields), "");
+			
+			t.commit();
+			
+			return result;
+		} catch (Error e) {
+			t.rollback();
+			
+			throw e;
+		} finally {
+			em.clear();
+			em.close();
+		}
+	}
+}

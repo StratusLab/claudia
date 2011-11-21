@@ -1,0 +1,39 @@
+package com.telefonica.claudia.driver_mon;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Properties;
+
+import com.telefonica.claudia.slm.monitoring.nodedirectory;
+import com.telefonica.claudia.smi.monitoring.bean.MeasureDescriptor;
+import com.telefonica.claudia.driver_mon.SMMonitoringNoJMSDriver;
+import com.telefonica.claudia.driver_mon.DriverClothoDbManager;
+
+public class Test {
+	public static void main(String args[]) throws Exception, Exception,
+	Exception {
+/*
+ * Properties prop = new Properties(); try { prop.load(new
+ * FileInputStream("./conf/tcloud.properties")); } catch
+ * (FileNotFoundException e1) { // TODO Auto-generated catch block
+ * e1.printStackTrace(); } catch (IOException e1) { // TODO
+ * Auto-generated catch block e1.printStackTrace(); }
+ */
+Properties prop = null;
+SMMonitoringNoJMSDriver fd = new SMMonitoringNoJMSDriver(prop);
+DriverClothoDbManager db =fd.getDB();
+//nodedirectory d = db.get(nodedirectory.class, "tid.customers.4caast.services.demo.vees.monitorized.replica.1");
+//System.out.println (d.getFqnString());
+List<String> vappNames = new ArrayList();
+vappNames.add("monitoring");
+vappNames.add("collector");
+vappNames.add("1");
+MeasureDescriptor md = fd.getHwItemMeasureDescriptor("tid", "tid", vappNames, "cpu", "cpuNice");
+System.out.println (md.getHref());
+System.out.println (md.getName());
+System.out.println (md.getValueType());
+
+
+	}
+
+}

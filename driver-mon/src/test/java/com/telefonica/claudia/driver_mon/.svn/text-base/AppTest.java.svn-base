@@ -1,0 +1,82 @@
+package com.telefonica.claudia.driver_mon;
+
+import java.util.Properties;
+
+import junit.framework.Test;
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
+
+/**
+ * Unit test for simple App.
+ */
+public class AppTest extends TestCase {
+
+	public static void main(String args[]) throws Exception, Exception,
+			Exception {
+		/*
+		 * Properties prop = new Properties(); try { prop.load(new
+		 * FileInputStream("./conf/tcloud.properties")); } catch
+		 * (FileNotFoundException e1) { // TODO Auto-generated catch block
+		 * e1.printStackTrace(); } catch (IOException e1) { // TODO
+		 * Auto-generated catch block e1.printStackTrace(); }
+		 */
+		Properties prop = null;
+		SMMonitoringNoJMSDriver fd = new SMMonitoringNoJMSDriver(prop);
+
+		try {
+			//getVdcMeasureDescriptorList(orgId, vdcId,);
+			System.out.println(fd.getVdcMeasureDescriptorList("tid", "4caast"));
+			//getVappMeasureDescriptorList(orgId, vdcId, vappIds);
+			//comprobar vappId en vez de Ids
+			//System.out.println(fd.getVappMeasureDescriptorList("tid", "4caast",  "demo"));
+			//getHwItemMeasureDescriptorList(orgId, vdcId,vappIds, hwItemId);
+			//System.out.println(fd.getHwItemMeasureDescriptorList("tid", "4caast", "demo","monitorized"));
+			//getVappMeasureDescriptorList(orgId, vdcId, vappIds);
+			//comprobar vappIds 
+			//System.out.println(fd.getVappMeasureDescriptorList("tid", "4caast", ["demo","monitorized"]));
+			//getHwItemMeasureDescriptorList(orgId, vdcId,vappIds, hwItemId);
+			//System.out.println(fd.getHwItemMeasureDescriptorList("tid", "4caast", ["demo","monitorized"]));
+			//
+			//
+			//getNetMeasureDescriptorList(orgId, vdcId, netId);
+			//System.out.println(fd.getNetMeasureDescriptorList("tid", "4caast", ));
+			//getVdcMeasureDescriptor(orgId, vdcId,measureId);
+			//System.out.println(fd.getVdcMeasureDescriptor("tid", "4caast", ));
+			//getMeasuredValueList(md, valueFilter);
+			//System.out.println(fd.getMeasuredValueList(, ));
+			
+			
+			
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+
+		}
+	}
+
+	/**
+	 * Create the test case
+	 * 
+	 * @param testName
+	 *            name of the test case
+	 */
+	public AppTest(String testName) {
+
+		super(testName);
+
+	}
+
+	/**
+	 * @return the suite of tests being tested
+	 */
+	public static Test suite() {
+		return new TestSuite(AppTest.class);
+	}
+
+	/**
+	 * Rigourous Test :-)
+	 */
+	public void testApp() {
+		assertTrue(true);
+	}
+}
