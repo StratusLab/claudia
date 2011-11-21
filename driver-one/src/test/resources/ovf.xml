@@ -4,32 +4,33 @@
 	xmlns:vssd="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_VirtualSystemSettingData"
 	xmlns:rasd="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData"
 	xmlns:tcloudx="http://schemas.tcloud.telefonica.com/tcloud-ext/0.1"
+	xmlns:dd="http://schemas.telefonica.com/claudia/ovf"
 	xsi:schemaLocation="http://schemas.tcloud.telefonica.com/tcloud/0.1 tcloud.xsd http://schemas.tcloud.telefonica.com/tcloud-ext/0.1 tcloud-ext.xsd"
 	name="org.tid.customers.otro.services.tel.vees.vee">
 	<Description>Development infrastructure for Wonder Software Ltd.
 	</Description>
 	<ovf:Envelope>
 		<ovf:References>
-			<ovf:File ovf:id="file-001" ovf:href="http://84.21.173.55:81/disk.img" />
+			<ovf:File ovf:id="file-001" ovf:href="http://84.21.173.55:81/disk.img"/>
 		</ovf:References>
 		<ovf:DiskSection>
-			<ovf:Info>Description of logical disks</ovf:Info>
+			
 			<ovf:Disk ovf:diskId="dsk-001" ovf:fileRef="file-001"
-				ovf:capacity="50" ovf:capacityAllocationUnits="byte * 2 ^30" />
+				ovf:capacity="50" dd:target="DDD" ovf:capacityAllocationUnits="byte * 2 ^30" />
 
 		</ovf:DiskSection>
 		<ovf:NetworkSection>
-			<ovf:Info>Description for logical networks</ovf:Info>
+	
 
 			<ovf:Network ovf:name="net" />
 		</ovf:NetworkSection>
 		<ovf:VirtualSystem ovf:id="vapp1">
-			<ovf:Info>info de la mv</ovf:Info>
+		
 			<ovf:Name>nombre de la mv</ovf:Name>
 			<ovf:VirtualHardwareSection>
-				<ovf:Info>Virtual hardware description</ovf:Info>
+			
 				<ovf:OperatingSystemSection ovf:id="76">
-					<Info>Specifies the operating system installed</Info>
+					
 					<ovf:Description>Ubuntu 10</ovf:Description>
 				</ovf:OperatingSystemSection>
 				<ovf:System>
@@ -76,39 +77,14 @@
 	</ovf:Envelope>
 	<InstantiationParams>
 		<NetworkConfigSection>
-			<ovf:Info>Instantiation configuration for networks described in OVF
-			</ovf:Info>
+		
 
 			<NetworkConfig name="admin_net">
 				<NetworkAssociation
 					href="http://84.21.173.28:8183/api/org/es_tid/vdc/luis/vapp/eimrt5/net/admin_net" />
 			</NetworkConfig>
 		</NetworkConfigSection>
-		<!--
-			<AspectsSection> <ovf:Info>Instantiation aspects for VApps described
-			in OVF</ovf:Info> <Aspect required="true"
-			vsystem="root-vsc/200013-001" name="Association">
-			<Description>Association between logical firewall and its supporting
-			resources</Description> <Property type="string"> <Key>ref</Key> The
-			following value means that logical firewall root-vsc/2000013-001 will
-			be supported by physical firewall named Bilbo, virtual context 913
-
-			<Value>tcloud:resources:firewall:bilbo:ctx913</Value> </Property>
-			</Aspect> <Aspect required="true" vsystem="root-vsc/200013-001"
-			name="IP Config"> <Description>IP configuration for public
-			firewall</Description> <Property type="string">
-			<Key>es.tid.customers.luis.services.eimrt52.networks.sge_net</Key>
-			<Value>192.168.0.9</Value> </Property> </Aspect> <Aspect
-			vsystem="root-vsc/100201-001" name="Target Clusters" required="true">
-			<Description>Target clusters candidate to host the VM</Description>
-			<Property type="string"> <Key>cluster-id</Key>
-			<Value>INSIDE_ZONE-001</Value> </Property> </Aspect> <Aspect
-			vsystem="root-vsc/100201-002" name="Target Clusters" required="true">
-			<Description>Target clusters candidate to host the VM</Description>
-			<Property type="string"> <Key>cluster-id</Key>
-			<Value>INSIDE_ZONE-001</Value> </Property> </Aspect>
-			</AspectsSection>
-		-->
+		
 		<AspectsSection>
 			<Aspect name="IP Config" required="true"
 				vsystem="org.tid.customers.otro.services.tel.networks.net">

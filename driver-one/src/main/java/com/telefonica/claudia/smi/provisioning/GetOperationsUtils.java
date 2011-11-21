@@ -37,6 +37,8 @@ import com.abiquo.ovf.xml.OVFSerializer;
 public class GetOperationsUtils {
 
 
+
+
 	public static Element getVirtualHardwareSystem (Document doc, String href, String cpu, String memory, String disk, String ip )
 	{
 		Element virtualHardware = doc.createElementNS("http://schemas.dmtf.org/ovf/envelope/1","VirtualHardwareSection");
@@ -64,6 +66,7 @@ public class GetOperationsUtils {
 	
 	}
 	
+		
 	public static Element getVirtualHardwareSystem (Document doc, String href, String cpu, String memory, String disk, HashMap ips )
 	{
 		Element virtualHardware = doc.createElementNS("http://schemas.dmtf.org/ovf/envelope/1","VirtualHardwareSection");

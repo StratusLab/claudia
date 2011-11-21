@@ -1,5 +1,5 @@
 NETWORK_SIZE=6
 NETWORK_ADDRESS=192.168.2.192
-NAME=test30
+NAME=CESGA.customers.laura.services.servi3.networks.net
 TYPE=RANGED
 BRIDGE=br0

@@ -740,14 +740,18 @@ public class OneVmUtilities {
 
 		StringBuffer scriptexec=new StringBuffer();
 		scriptexec.append("SCRIPT_EXEC=\"");
-		if (i==1){
-			if(netInitScript0!= null && netInitScript0.length()>0) {
-				scriptexec.append(netInitScript0);	
+		
+		if (getNetInitScript(scriptListProp))
+		{
+			if (i==1){
+				if(netInitScript0!= null && netInitScript0.length()>0) {
+					scriptexec.append(netInitScript0);	
+				}
 			}
-		}
-		if (i==2){
-			if(netInitScript1!= null && netInitScript1.length()>0) {
-				scriptexec.append(netInitScript1);	
+			if (i==2){
+				if(netInitScript1!= null && netInitScript1.length()>0) {
+					scriptexec.append(netInitScript1);	
+				}
 			}
 		}
 		
@@ -807,6 +811,24 @@ public class OneVmUtilities {
 			
 		}
 		return value;
+	}
+	
+	protected static boolean getNetInitScript (String scriptListProp)
+	{
+
+		if (scriptListProp== null)
+			return false;
+		String[] scriptList = scriptListProp.split("/");
+	
+		for (String scrt: scriptList){
+
+			if (scrt.indexOf("netinit")!=-1)
+			{
+				return true;
+			}
+		}
+		return false;
+	
 	}
 	
 

@@ -333,9 +333,11 @@ public class PaasUtils {
 		} catch (AccessDeniedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			return null;
 		} catch (CommunicationErrorException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			return null;
 		}
 		return xmlvee;
 	}

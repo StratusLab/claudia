@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:tcloud="http://schemas.telefonica.com/claudia/ovf" xmlns:ovf="http://schemas.dmtf.org/ovf/envelope/1" targetNamespace="http://schemas.telefonica.com/claudia/ovf" elementFormDefault="qualified" attributeFormDefault="unqualified">
-	<xs:import namespace="http://schemas.dmtf.org/ovf/envelope/1" schemaLocation="http://schemas.dmtf.org/ovf/envelope/1/dsp8023_1.0.0.xsd"/>
+	<xs:import namespace="http://schemas.dmtf.org/ovf/envelope/1" schemaLocation="dsp8023_1.0.0.xsd"/>
 	<!-- Describe a diskmapping section -->
 	<xs:element name="DiskMappingSection" type="tcloud:DiskMappingSection_Type" substitutionGroup="ovf:Section">
 		<xs:annotation>

@@ -22,7 +22,7 @@
     attributeFormDefault="qualified" 
     elementFormDefault="qualified">
 
-    <xs:import namespace="http://www.w3.org/XML/1998/namespace"
+   <!--   <xs:import namespace="http://www.w3.org/XML/1998/namespace"
         schemaLocation="http://www.w3.org/2001/xml.xsd"/>
 
     <xs:import namespace="http://schemas.dmtf.org/wbem/wscim/1/common" 
@@ -33,7 +33,21 @@
         schemaLocation="http://schemas.dmtf.org/wbem/wscim/1.0.0/cim-schema/2.19.0+/CIM_VirtualSystemSettingData.xsd"/>
     <xs:import
         namespace="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData"
-        schemaLocation="http://schemas.dmtf.org/wbem/wscim/1.0.0/cim-schema/2.19.0+/CIM_ResourceAllocationSettingData.xsd"/>
+        schemaLocation="http://schemas.dmtf.org/wbem/wscim/1.0.0/cim-schema/2.19.0+/CIM_ResourceAllocationSettingData.xsd"/>-->
+        
+        
+        <xs:import namespace="http://www.w3.org/XML/1998/namespace"
+        schemaLocation="xml.xsd"/>
+
+    <xs:import namespace="http://schemas.dmtf.org/wbem/wscim/1/common" 
+        schemaLocation="common.xsd"/>
+    
+    <xs:import
+        namespace="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_VirtualSystemSettingData"
+        schemaLocation="CIM_VirtualSystemSettingData.xsd"/>
+    <xs:import
+        namespace="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData"
+        schemaLocation="CIM_ResourceAllocationSettingData.xsd"/>
 
     <xs:attribute name="required" type="xs:boolean" default="true">
         <xs:annotation>

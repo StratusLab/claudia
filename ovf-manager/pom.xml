@@ -104,7 +104,7 @@
 				</dependency>
 			</dependencies>
 		</profile>
-		<!-- <profile> <id>generate-sources</id> <build> <plugins> <plugin> <groupId>org.jvnet.jaxb2.maven2</groupId> 
+		 <profile> <id>generate-sources</id> <build> <plugins> <plugin> <groupId>org.jvnet.jaxb2.maven2</groupId> 
 			<artifactId>maven-jaxb2-plugin</artifactId> <executions> <execution> <goals> 
 			<goal>generate</goal> </goals> </execution> </executions> </plugin> <plugin> 
 			<groupId>org.codehaus.mojo</groupId> <artifactId>build-helper-maven-plugin</artifactId> 
@@ -112,7 +112,7 @@
 			<goals> <goal>add-source</goal> </goals> <configuration> <sources> <source>${project.build.directory}/generated-sources/xjc</source> 
 			</sources> </configuration> </execution> </executions> </plugin> </plugins> 
 			</build> <activation> <file> <missing>target/generated-sources/xjc</missing> 
-			</file> </activation> </profile> -->
+			</file> </activation> </profile> 
 	</profiles>
 
 	<dependencies>

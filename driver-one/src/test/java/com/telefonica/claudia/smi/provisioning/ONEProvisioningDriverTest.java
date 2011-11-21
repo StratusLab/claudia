@@ -31,7 +31,7 @@ public class ONEProvisioningDriverTest {
 			
 		//	System.out.println ("Deleting network " + vnet);
 			
-			one.getVirtualMachine("CESGA.customers.26-TELEFONICA.services.22-My_Pack_google1.vees.my_app_google.replicas.1");
+			one.getVirtualMachine("grnet.customers.dd.services.ssss.vees.VEEMaster.replicas.1");
 			System.out.println ("powering off  " );
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
