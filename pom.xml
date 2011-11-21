@@ -32,6 +32,8 @@ grid certificates, and VOMS proxies.
 		<module>configurators</module>
 		<module>clotho</module>
 		<module>reportclient</module>
+		<module>claudia-model</module>
+		<module>driver-mon</module>
 
 	</modules>
 
