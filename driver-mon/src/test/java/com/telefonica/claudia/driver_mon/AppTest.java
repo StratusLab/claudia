@@ -93,7 +93,7 @@ public class AppTest  {
 	      
 	        
 	        
-		Properties prop = null;
+	/*	Properties prop = null;
 		SMMonitoringNoJMSDriver fd = new SMMonitoringNoJMSDriver(prop);
 
 		try {
@@ -161,7 +161,7 @@ public class AppTest  {
 				}
 			}*/
 			
-				MeasureDescriptor henar = 	list.getMeasureDescriptors().get(0);
+	/*			MeasureDescriptor henar = 	list.getMeasureDescriptors().get(0);
 				List<MeasureDescriptor> array = new ArrayList<MeasureDescriptor>();
 				array.add(henar);
 				
@@ -214,7 +214,7 @@ public class AppTest  {
 			
 			
 			
-		} catch (Exception e) {
+/*		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 
@@ -233,7 +233,7 @@ public class AppTest  {
 	/**
 	 * @return the suite of tests being tested
 	 */
-	public static Test suite() {
+/*	public static Test suite() {
 		return new TestSuite(AppTest.class);
 	}
 
@@ -242,7 +242,7 @@ public class AppTest  {
 	 */
 	
 	
-	 private static Set<PersistenceProvider>  findAllProviders()  {
+/*	 private static Set<PersistenceProvider>  findAllProviders()  {
 		   Set<PersistenceProvider> providers = new HashSet<PersistenceProvider>();
 	        ClassLoader loader = Thread.currentThread().getContextClassLoader();
 	        Enumeration<URL> resources = null;
@@ -303,5 +303,6 @@ public class AppTest  {
 	            }
 	        }
 	        return names;
-	    }
+	    }*/
+	}
 }
