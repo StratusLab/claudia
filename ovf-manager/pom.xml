@@ -134,6 +134,38 @@
 	<properties>
 		<env>dev</env>
 	</properties>
+	
+	  <repositories>
+    <repository>
+       <id>maven-restlet</id>
+       <name>Public online Restlet repository</name>
+       <url>http://maven.restlet.org</url>
+    </repository>
+
+    <repository>
+       <id>maven-drools</id>
+       <name>Public online Drools repository</name>
+       <url>http://repository.jboss.com/maven2</url>
+    </repository>
+
+    <repository>
+       <id>maven2-repository.dev.java.net</id>
+       <name>Public online Java net repository</name>
+       <url>http://download.java.net/maven/2/</url>
+    </repository>
+
+    <repository>
+       <id>central</id>
+       <name>Central</name>
+       <url>http://repo1.maven.org/maven2/</url>
+    </repository>
+
+   <repository>
+        <id>public</id>
+        <name>JBoss PUblic Nexus Repository</name>
+        <url>https://repository.jboss.org/nexus/content/groups/public/</url>
+      </repository>
+  </repositories>
 
 
 
