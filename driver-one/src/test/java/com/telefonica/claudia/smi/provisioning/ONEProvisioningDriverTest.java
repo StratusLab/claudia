@@ -94,12 +94,12 @@ public class ONEProvisioningDriverTest {
 		}
 	}*/
 	
-	/*@Test
+	@Test
 	public void testGetVirtualMachine() {
      ONEProvisioningDriver one = getPreConditions();
 		
 		try {
-			String vm = one.getVirtualMachine("oneadmin CESGA.customers.cc1.services.ss1.vees.webapp-container.replicas.1");
+			String vm = one.getVirtualMachine("CESGA.customers.26-TELEFONICA.services.48-test2.vees.LastApp.replicas.1");
 			System.out.println ("VM deployed " + vm);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
