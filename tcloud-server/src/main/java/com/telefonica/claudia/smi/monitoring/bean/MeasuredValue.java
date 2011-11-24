@@ -72,15 +72,16 @@ public class MeasuredValue implements Serializable{
 		Element md = doc.createElement("Sample");
         md.setAttribute("unit", this.unit);
         md.setAttribute("timestamp", this.registerDate.toString());
+        md.setAttribute("value", this.value);
 
         
-        Element value = doc.createElement("Value");
-        value.appendChild(doc.createTextNode(this.value));
-        md.appendChild(value);
+      //  Element value = doc.createElement("Value");
+      //  value.appendChild(doc.createTextNode(this.value));
+      //  md.appendChild(value);
         
-        Element capacity = doc.createElement("Capacity");
-        value.appendChild(doc.createTextNode(""));
-        md.appendChild(value);
+    //    Element capacity = doc.createElement("Capacity");
+     //   value.appendChild(doc.createTextNode(""));
+     //   md.appendChild(value);
         
         return md;
 	}

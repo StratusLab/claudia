@@ -173,7 +173,7 @@ public class MeasureResource extends BasicResource {
 			MeasuredValueList mvl = null;
 
 			try {
-				mvl = actualDriver.getMeasuredValueList(md, 1);
+				mvl = actualDriver.getMeasuredValueList(md, 10);
 			} catch (MonitorException e) {
 				log.debug(e.getMessage());
 				es.add(new UnknownElementsError(e.getMessage(), getIdentifier()));
