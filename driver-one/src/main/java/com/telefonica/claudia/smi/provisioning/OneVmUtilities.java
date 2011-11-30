@@ -606,8 +606,8 @@ public class OneVmUtilities {
 						}
 						else
 							allParametersString.append(ONE_VM_NIC_PARAM_NETWORK).append(ASSIGNATION_SYMBOL).append(fqnNet);
-						//if (ipOnNetworkMap.get(fqnNet)!=null)
-							//allParametersString.append(MULT_CONF_SEPARATOR).append(LINE_SEPARATOR).append(ONE_VM_NIC_PARAM_IP).append(ASSIGNATION_SYMBOL).append(ipOnNetworkMap.get(fqnNet)).append(LINE_SEPARATOR);
+						if (ipOnNetworkMap.get(fqnNet)!=null)
+							allParametersString.append(MULT_CONF_SEPARATOR).append(LINE_SEPARATOR).append(ONE_VM_NIC_PARAM_IP).append(ASSIGNATION_SYMBOL).append(ipOnNetworkMap.get(fqnNet)).append(LINE_SEPARATOR);
 						allParametersString.append(MULT_CONF_RIGHT_DELIMITER).append(LINE_SEPARATOR);
 
 						break;
