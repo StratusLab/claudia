@@ -35,7 +35,7 @@ import com.telefonica.claudia.slm.vmiHandler.exceptions.CommunicationErrorExcept
 import com.telefonica.claudia.smi.TCloudConstants;
 import com.telefonica.claudia.smi.URICreation;
 
-public class MonitoringClient {
+public class MonitoringClient extends MonitoringVMIHandler{
 	
 	private static final long POLLING_INTERVAL = 15000;
     private Client client;
@@ -56,7 +56,7 @@ public class MonitoringClient {
 
 	
 
-	public void setUpMonitoring(String fqn) throws AccessDeniedException,
+	public void setUpMonitoring(String fqn, String ip) throws AccessDeniedException,
 			CommunicationErrorException {
         
         String md5 = this.getMd5FromFQN(fqn);
@@ -159,6 +159,14 @@ public class MonitoringClient {
  
       
 		return sb.toString();
+	}
+
+
+
+	public void deleteSetupMonitoring(String fqn) throws AccessDeniedException,
+			CommunicationErrorException {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

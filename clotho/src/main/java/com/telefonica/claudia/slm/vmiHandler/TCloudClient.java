@@ -383,12 +383,14 @@ public class TCloudClient implements VMIHandler {
         aspectsSection.appendChild(aspect);
 
         for (NIC nicItr: actualReplica.getNICs()) {
+        	System.out.println ("NICsss " + nicItr.getIPAddresses());
         	  if (nicItr != null && nicItr.getIPAddresses()!= null && nicItr.getIPAddresses().size()>0 
               		&& nicItr.getIPAddresses().get(0)!= null)
               {
-            Element netConfigAssociation = doc.createElement(TCloudConstants.TAG_NETWORK_ASSOCIATION);
-            netConfigSection.appendChild(netConfigAssociation);
-            netConfigSection.setAttribute(TCloudConstants.ATTR_NETWORK_ASSOCIATION_HREF, serverURL + URICreation.getURINet(nicItr.getNICConf().getNetwork().getFQN().toString()));
+        		  
+               Element netConfigAssociation = doc.createElement(TCloudConstants.TAG_NETWORK_ASSOCIATION);
+               netConfigSection.appendChild(netConfigAssociation);
+               netConfigSection.setAttribute(TCloudConstants.ATTR_NETWORK_ASSOCIATION_HREF, serverURL + URICreation.getURINet(nicItr.getNICConf().getNetwork().getFQN().toString()));
 
             
             	Element property = doc.createElement(TCloudConstants.TAG_ASPECT_PROPERTY);

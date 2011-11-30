@@ -1106,6 +1106,7 @@ public class Parser {
 									if(skpi.getKPIName().equals(rule.getKPIName())){
 										logger.info("PONG found KPIName equal= " + rule.getKPIName());
 										skpi.setKPIType("VEEHW");
+										sRule.setKpi(skpi);
 									}
 									
 								}

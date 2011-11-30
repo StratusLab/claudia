@@ -49,7 +49,7 @@ import com.telefonica.claudia.slm.vmiHandler.exceptions.CommunicationErrorExcept
 import com.telefonica.claudia.smi.TCloudConstants;
 import com.telefonica.claudia.smi.URICreation;
 
-public class NUBAMonitoringClient {
+public class NUBAMonitoringClient extends MonitoringVMIHandler {
 	
 	private static final long POLLING_INTERVAL = 15000;
     private Client client;
@@ -67,6 +67,8 @@ public class NUBAMonitoringClient {
 
         client = new Client(Protocol.HTTP);
     }
+    
+   
 
 	
 
@@ -296,5 +298,17 @@ public class NUBAMonitoringClient {
 	    return sw.toString();
 
 	}
+
+
+
+	public void removeMonitoring(String fqn) throws AccessDeniedException,
+			CommunicationErrorException {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+
+	
 
 }

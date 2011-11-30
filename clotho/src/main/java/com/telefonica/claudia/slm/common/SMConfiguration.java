@@ -172,6 +172,8 @@ public class SMConfiguration extends Properties {
 	
 	private String monitoringurl = "";
 	
+	private String monitoringclass ="";
+	
 	private int numberofreintent = 5;
 	
 	private int waitingsecond = 5000;
@@ -364,6 +366,15 @@ public class SMConfiguration extends Properties {
 		
 		try
 		{
+			monitoringclass = readProperty("monitoringclass");
+		}
+		catch (Throwable t) {
+			logger.error("Parsing error on " +  "monitoringclass" + "property: not found");
+		}
+		logger.info("Property [" + "monitoringclass" + "] with value [" + monitoringclass + "]");
+		
+		try
+		{
 			numberofreintent = Integer.parseInt(readProperty("numberofreintent"));
 		}
 		catch (Throwable t) {
@@ -432,6 +443,14 @@ public class SMConfiguration extends Properties {
 	public void setMonitoringUrl(String sdcurl) {
 	    	 this.monitoringurl = monitoringurl;
 	}
+	
+	public String getMonitoringClass() {
+    	return monitoringclass;
+   }
+    
+   public void setMonitoringClass(String sdcurl) {
+    	 this.monitoringclass = monitoringclass;
+   }
 	
 	public String getSdcUrl() {
     	return sdcurl;

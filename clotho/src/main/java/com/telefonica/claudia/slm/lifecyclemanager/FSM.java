@@ -75,11 +75,13 @@ import com.telefonica.claudia.slm.monitoring.MonitoringRestBusConnector;
 import com.telefonica.claudia.slm.monitoring.WasupHierarchy;
 import com.telefonica.claudia.slm.naming.FQN;
 import com.telefonica.claudia.slm.naming.ReservoirDirectory;
+import com.telefonica.claudia.slm.paas.Monitoring;
 import com.telefonica.claudia.slm.paas.OVFContextualization;
 import com.telefonica.claudia.slm.paas.PaasUtils;
 import com.telefonica.claudia.slm.paas.vmiHandler.MonitoringClient;
 import com.telefonica.claudia.slm.paas.vmiHandler.NUBAMonitoringClient;
 import com.telefonica.claudia.slm.paas.vmiHandler.RECManagerClient;
+import com.telefonica.claudia.slm.report.MonitoringReportObtainKPI;
 import com.telefonica.claudia.slm.rulesEngine.RulesEngine;
 import com.telefonica.claudia.slm.serviceconfiganalyzer.ServiceConfigurationAnalyzer;
 import com.telefonica.claudia.slm.vmiHandler.TCloudClient;
@@ -262,10 +264,10 @@ public class FSM extends Thread implements Serializable {
 	 * interactions with Wasup (whenever a measurement reaches de SM it is
 	 * redirected to Wasup for data mining).
 	 */
-	private WasupHierarchy wasupClient;
+	private Monitoring claudiaMonitoring;
 
 	private boolean setSwap = false;
-
+	
 	/**
 	 * Property map defining the customization info for the vees.
 	 *
@@ -498,15 +500,10 @@ public class FSM extends Thread implements Serializable {
 		vmi = new TCloudClient(oneURL.toString());
 
 		// Initialize the WASUP client.
-		if (SMConfiguration.getInstance().isWasupActive()) {
-			try {
-				wasupClient = WasupHierarchy.getWasupHierarchy();
-			} catch (Exception e) {
-				logger.error("Error login to the WASUP: " + e.getMessage());
-			} catch (Throwable e) {
-				logger.error("Unknow error connecting to WASUP: "
-						+ e.getMessage(), e);
-			}
+		if (SMConfiguration.getInstance().isMonitoringEnabled()) {
+			
+			claudiaMonitoring = new Monitoring ();
+			
 		}
 
 		// Initialize the lastElasticityInterval Map
@@ -572,7 +569,7 @@ public class FSM extends Thread implements Serializable {
 		vmi = new TCloudClient(oneURL.toString());
 
 		// Initialize the WASUP client.
-		if (SMConfiguration.getInstance().isWasupActive()) {
+	/*	if (SMConfiguration.getInstance().isWasupActive()) {
 			try {
 				wasupClient = WasupHierarchy.getWasupHierarchy();
 			} catch (Exception e) {
@@ -581,7 +578,7 @@ public class FSM extends Thread implements Serializable {
 				logger.error("Unknow error connecting to WASUP: "
 						+ e.getMessage(), e);
 			}
-		}
+		}*/
 
 		// Initialize the lastElasticityInterval Map
 		for (VEE veeItr : sap.getVEEs())
@@ -815,62 +812,38 @@ public class FSM extends Thread implements Serializable {
 		rle.run();
 		logger.info("DONE with ALL replicas and ALL VEEs ");
 
-		// Once all the VEES are working, it's time to replicate its structure
+		// Oundence all the VEES are working, it's time to replicate its structure
 		// in
-		// WASUP
-		if (SMConfiguration.getInstance().isMonitoringEnabled()) {
-			try {
-				MonitoringClient client = new MonitoringClient (SMConfiguration.getInstance().getMonitoringUrl());
-				//client.setUpMonitoring(this.sap.getFQN().toString(),getListIpsService(sap));
-				
-				client.setUpMonitoring(this.sap.getFQN().toString());
+		// MONITORING
+		if (SMConfiguration.getInstance().isMonitoringEnabled() &&
+				 !claudiaMonitoring.setupMonitoring(sap))
+		{
+			logger.error("Problems to set up monitoring ");
+		}
+		
+		for (VEE vee: sap.getVEEs())
+		{
+			if (vee.getBalancedBy()!= null)
+			{
+				for (ServiceKPI kpi: sap.getServiceKPIs())
+				{
+					MonitoringReportObtainKPI report = null;
+
+					report = new MonitoringReportObtainKPI(kpi.getKPIType(), vee, kpi.getKPIName(), kpi.getKPIName());
+					
+				    report.run();
+				}
+				return true;
+			}
 			
-			} catch (Throwable e) {
-				logger.error("Unknow error connecting to WASUP: "
-						+ e.getMessage(), e);
-			}
 		}
 
-		if (SMConfiguration.getInstance().isWasupActive()) {
-			try {
-				wasupClient.createWasupHierarchy(getServiceApplication());
-			} catch (IOException e) {
-				logger
-				.error("Error creating the WASUP monitorization hierarchy: "
-						+ e.getMessage());
-			} catch (JSONException e) {
-				logger.error("Error parsing the response of a WASUP request: "
-						+ e.getMessage());
-			} catch (Throwable e) {
-				logger.error("Unknow error connecting to WASUP: "
-						+ e.getMessage(), e);
-			}
-		}
-
+		
 
 		return true;
 	}
 	
-	private String getListIpsService (ServiceApplication sap)
-	{
-		String listips = "";
-		for (VEE vee: sap.getVEEs())
-		{
-			for (VEEReplica replica: vee.getVEEReplicas() )
-			{
-				for (NIC nic: replica.getNICs())
-				{
-					if (nic.getNICConf().getNetwork().getPrivateNet())
-						continue;
-					
-				     listips = listips + nic.getIPAddresses().get(0)+" ";
-				}
-			}
-		}
-		return listips;
-		
-		
-	}
+	
 
 	public boolean elasticityCreateReplica(String veeType, int replicaNumber,
 			long initialTime, boolean checkinterval) {
@@ -1313,6 +1286,12 @@ public class FSM extends Thread implements Serializable {
 			DbManager.getDbManager().remove(sap);
 			DbManager.getDbManager().remove(fqnService);
 			retorno = FSM.FINISHED;
+			
+			if (SMConfiguration.getInstance().isMonitoringEnabled() && !claudiaMonitoring.deletingMonitoring(sap))
+			{
+				logger.error("Problems deleting monitoring ");
+			}
+			
 			break;
 
 		case SMControlEvent.START_SERVICE:
@@ -2072,6 +2051,29 @@ public class FSM extends Thread implements Serializable {
 					gateways.put(net.getName(), net.getNetworkAddresses()[3]);
 			}
 
+			String staticIpProp = parser.getStaticIpProperty(originalVEE.getVEEName());
+			
+			
+			logger.info("STatic IP property " +staticIpProp );
+			
+			if (staticIpProp != null && !SMConfiguration.getInstance().getIpManagement())
+			{
+				for (NIC nic : veeReplica.getNICs()) {
+					
+				if (nic.getNICConf().getNetwork().getName().contains("public"))
+				{
+				   nic.addIPAddress(staticIpProp);
+				   System.out.println ("adding " +staticIpProp );
+				}
+				}
+			}
+
+			scaleUpPercentage = parser.getScaleUpPercentage(originalVEE.getVEEName());
+
+			scaleDownPercentage = parser.getScaleDownPercentage(originalVEE.getVEEName());
+
+			lazyScaleDownTime = parser.getScaleDownTime(originalVEE.getVEEName());
+			
 			if (SMConfiguration.getInstance().getIpManagement())
 			{
 
@@ -2086,13 +2088,7 @@ public class FSM extends Thread implements Serializable {
 					if (iterations == null || iterations == 0)
 						iterations = 1;
 
-					String staticIpProp = parser.getStaticIpProperty(originalVEE.getVEEName());
-
-					scaleUpPercentage = parser.getScaleUpPercentage(originalVEE.getVEEName());
-
-					scaleDownPercentage = parser.getScaleDownPercentage(originalVEE.getVEEName());
-
-					lazyScaleDownTime = parser.getScaleDownTime(originalVEE.getVEEName());
+					
 
 					for (int i = 0; i < iterations; i++) {
 
