@@ -46,11 +46,12 @@ public class MeasureResource extends BasicResource {
 	private static Logger log = Logger.getLogger(MeasureResource.class);
 
 	private MeasuredValueFilter valueFilter;
+	private int numberSamples = 1;
 
 	public MeasureResource(Context context, Request request, Response response) {
 		super(context, request, response);
 		log.info("MeasureResource created");
-
+        
 		valueFilter = new MeasuredValueFilter();
 		
 		Reference resourceRef = request.getResourceRef();
@@ -59,6 +60,7 @@ public class MeasureResource extends BasicResource {
 			String s = form.getFirstValue("samples");
 			if (Util.isNumber(s)) {
 				valueFilter.setSamples(Integer.parseInt(s));
+				numberSamples = Integer.parseInt(s);
 			} else {
 				valueFilter.setSamples(0);
 			}
@@ -173,7 +175,7 @@ public class MeasureResource extends BasicResource {
 			MeasuredValueList mvl = null;
 
 			try {
-				mvl = actualDriver.getMeasuredValueList(md, 10);
+				mvl = actualDriver.getMeasuredValueList(md, numberSamples);
 			} catch (MonitorException e) {
 				log.debug(e.getMessage());
 				es.add(new UnknownElementsError(e.getMessage(), getIdentifier()));

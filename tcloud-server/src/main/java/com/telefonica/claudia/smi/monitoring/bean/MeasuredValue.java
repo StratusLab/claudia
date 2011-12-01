@@ -71,7 +71,10 @@ public class MeasuredValue implements Serializable{
 		// TODO Auto-generated method stub
 		Element md = doc.createElement("Sample");
         md.setAttribute("unit", this.unit);
-        md.setAttribute("timestamp", this.registerDate.toString());
+        String pattern = "yyyy-MM-dd'T'HH:mm:ss";
+        java.text.SimpleDateFormat sdf=new java.text.SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+		String date = sdf.format(this.registerDate);
+        md.setAttribute("timestamp", date);
         md.setAttribute("value", this.value);
 
         
