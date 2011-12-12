@@ -142,7 +142,7 @@ public class MonitoringReportObtainKPI extends Thread {
 	
 	public void run() {
 		
-		String urlmonitor  = null;
+	/*	String urlmonitor  = null;
 		if (type.equals("AGENT"))
 		{
 		   String uriservice = URICreation.getURIService(sap.getFQN().toString());
@@ -167,7 +167,7 @@ public class MonitoringReportObtainKPI extends Thread {
 			 catch(Exception ie){
 			 //If this thread was intrrupted by nother thread
 			 }
-		}
+		}*/
         
     }
 	

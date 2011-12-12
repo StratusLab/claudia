@@ -16,7 +16,7 @@ public class SMDeploymentDriverTest {
 
 	@Test
 	public void testCreateVdc() {
-		Properties props = new Properties();
+		/*Properties props = new Properties();
 		 
 	    FileInputStream fis;
 		try {
@@ -47,6 +47,7 @@ public class SMDeploymentDriverTest {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}*/
 	}
 
 }
