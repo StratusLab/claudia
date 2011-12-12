@@ -334,13 +334,7 @@
        <url>http://maven.restlet.org</url>
     </repository>
 
-    <repository>
-       <id>maven-drools</id>
-       <name>Public online Drools repository</name>
-       <url>http://repository.jboss.com/maven2</url>
-    </repository>
-
-    <repository>
+      <repository>
        <id>maven2-repository.dev.java.net</id>
        <name>Public online Java net repository</name>
        <url>http://download.java.net/maven/2/</url>
