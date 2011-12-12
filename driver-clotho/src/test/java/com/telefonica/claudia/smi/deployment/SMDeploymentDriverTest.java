@@ -40,7 +40,7 @@ public class SMDeploymentDriverTest {
 		} catch (JMSException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} catch (ClassNotFoundException e) {
+		} catch (ClassNotFoundException e) {  
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IOException e) {
