@@ -33,7 +33,7 @@ grid certificates, and VOMS proxies.
 		<module>clotho</module>
 		<module>reportclient</module>
 		<module>claudia-model</module>
-		<module>driver-mon</module>
+		<!--  <module>driver-mon</module>-->
         <module>tcloud-server-rpm</module>
 		<module>claudia-client-rpm</module>
 		<module>clotho-rpm</module>
@@ -191,7 +191,7 @@ grid certificates, and VOMS proxies.
 				<version>1.0</version>
 			</dependency>
 
-			<dependency>
+		<!-- 	<dependency>
 				<groupId>hibernate-annotations</groupId>
 				<artifactId>hibernate-annotations</artifactId>
 				<version>3.2.1.GA</version>
@@ -207,13 +207,31 @@ grid certificates, and VOMS proxies.
 				<groupId>hibernate-entitymanager</groupId>
 				<artifactId>hibernate-entitymanager</artifactId>
 				<version>3.2.1.GA</version>
-			</dependency>
+			</dependency> -->
+			
+			   <dependency>
+     <groupId>org.hibernate</groupId>
+     <artifactId>hibernate-annotations</artifactId>
+     <version>3.2.1.ga</version>
+    </dependency>
+
+  <dependency>
+	<groupId>org.hibernate</groupId>
+	<artifactId>ejb3-persistence</artifactId>
+	<version>1.0.2.GA</version>
+</dependency>
+
+   <dependency>
+	<groupId>org.hibernate</groupId>
+	<artifactId>hibernate-entitymanager</artifactId>
+	<version>3.6.8.Final</version>
+</dependency>
 
 			<dependency>
-				<groupId>hibernate</groupId>
-				<artifactId>hibernate3</artifactId>
-				<version>3.2.3.GA</version>
-			</dependency>
+	<groupId>org.hibernate</groupId>
+	<artifactId>hibernate</artifactId>
+	<version>3.2.3.ga</version>
+</dependency>
 
 			<dependency>
 				<groupId>dom4j</groupId>
