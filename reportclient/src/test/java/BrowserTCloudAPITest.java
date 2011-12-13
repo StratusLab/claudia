@@ -2,13 +2,17 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import org.junit.Test;
 import org.restlet.Client;
 import org.restlet.data.Protocol;
 import org.restlet.data.Reference;
 
 import com.telefonica.claudia.slm.monitoring.PersistenceClient;
 public class BrowserTCloudAPITest {
-	public static void main (String [] args) throws IOException
+	
+	@Test
+	public void reportclient ()
+	
 	{
 		PersistenceClient per = new PersistenceClient();
 		ArrayList<String>vdcs = new ArrayList<String>();
@@ -35,7 +39,14 @@ public class BrowserTCloudAPITest {
 			String vdcfqn = "http://62.217.120.136:8182"+vdc.substring(i,vdc.length());
 			Reference  vdcURL  = new Reference(vdcfqn);
 			//	    logger.info("PONG VDC: " + vdcURL);
-			String vmurl=per.get(client,vdcURL);
+			String vmurl = null;
+			try {
+				vmurl = per.get(client,vdcURL);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				return;
+			}
 			
 			System.out.println (vmurl);
 			//		logger.info("PONG GET VM: " + vmurl); 
