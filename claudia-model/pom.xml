@@ -63,6 +63,12 @@
       <artifactId>hibernate-annotations</artifactId>
      <!-- <version>3.2.1.GA</version> --> 
     </dependency>
+    
+     <dependency>
+       <groupId>org.hibernate</groupId>
+	<artifactId>hibernate3</artifactId>
+	<version>3.2.3.GA</version>
+    </dependency>
 
     <dependency>
       <groupId>hibernate-entitymanager</groupId>
@@ -76,11 +82,11 @@
       <!--  <version>3.2.1.GA</version> --> 
     </dependency>
 
-    <dependency>
+<!--    <dependency>
         <groupId>hibernate</groupId>
         <artifactId>hibernate3</artifactId>
-       <!--  <version>3.2.3.GA</version>--> 
-    </dependency>
+       <!--  <version>3.2.3.GA</version>
+    </dependency> --> 
 	<dependency>
 		<groupId>jboss</groupId>
 		<artifactId>jboss-archive-browsing</artifactId>
