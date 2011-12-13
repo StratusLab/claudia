@@ -23,7 +23,8 @@ public class TestFlexiscale {
 	/**
 	 * @param args
 	 */
-	public static void main(String[] args) {
+	@Test
+	public void testFlexiscale () {
 		
 		Properties prop = new Properties ();
 		FileInputStream is;
