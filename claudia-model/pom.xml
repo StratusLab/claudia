@@ -34,31 +34,53 @@
       <artifactId>persistence-api</artifactId>
       <version>1.0</version>
     </dependency>
+   <!-- 
+      <dependency>
+     <groupId>org.hibernate</groupId>
+     <artifactId>hibernate-annotations</artifactId>
+     <version>3.2.1.ga</version>
+    </dependency>
+
+  <dependency>
+	<groupId>org.hibernate</groupId>
+	<artifactId>ejb3-persistence</artifactId>
+	<version>1.0.2.GA</version>
+</dependency>
 
    <dependency>
+	<groupId>org.hibernate</groupId>
+	<artifactId>hibernate-entitymanager</artifactId>
+	<version>3.6.8.Final</version>
+</dependency>
+
+    <dependency>
+       <groupId>hibernate</groupId>
+	<artifactId>hibernate3</artifactId>
+    </dependency>
+-->
+    <dependency>
       <groupId>hibernate-annotations</groupId>
       <artifactId>hibernate-annotations</artifactId>
-      <version>3.2.1.GA</version>
+     <!-- <version>3.2.1.GA</version> --> 
     </dependency>
 
     <dependency>
       <groupId>hibernate-entitymanager</groupId>
       <artifactId>ejb3-persistence</artifactId>
-      <version>3.3.2.GA</version>
+     <!-- <version>3.3.2.GA</version> --> 
     </dependency>
 
     <dependency>
         <groupId>hibernate-entitymanager</groupId>
         <artifactId>hibernate-entitymanager</artifactId>
-        <version>3.2.1.GA</version>
+      <!--  <version>3.2.1.GA</version> --> 
     </dependency>
 
     <dependency>
         <groupId>hibernate</groupId>
         <artifactId>hibernate3</artifactId>
-        <version>3.2.3.GA</version>
+       <!--  <version>3.2.3.GA</version>--> 
     </dependency>
-
 	<dependency>
 		<groupId>jboss</groupId>
 		<artifactId>jboss-archive-browsing</artifactId>
