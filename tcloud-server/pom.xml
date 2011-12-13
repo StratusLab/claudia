@@ -128,13 +128,13 @@
 			<version>1.5.3</version>
 		</dependency>
 
-		<!-- 
+		
 	<dependency>
-			<groupId>com.telefonica.claudia</groupId>
-  			<artifactId>claudia-model</artifactId>
-  			<version>0.1.1</version>
+			<groupId>eu.stratuslab.pkgs.claudia</groupId>
+            <artifactId>claudia-model</artifactId>
+            <version>0.1.8-SNAPSHOT</version>
 
-		</dependency>  -->
+		</dependency>  
 
 
 		<dependency>
