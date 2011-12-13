@@ -66,7 +66,8 @@ public class PersistenceClient {
 
     private static HttpClient httpClient = new HttpClient();
 
-    public static final String PATH_TO_PROPERTIES_FILE = "./conf/reportClient.properties";
+    public static final String PATH_TO_PROPERTIES_FILE = "."+File.separator+"src"+File.separator+
+    "main"+File.separator+"config"+File.separator+"reportClient.properties";
 
     private static final Properties properties = new Properties();
 
