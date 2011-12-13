@@ -36,6 +36,10 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
 
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.PersistenceException;
+import javax.persistence.spi.PersistenceProvider;
+
 
 import org.apache.log4j.Logger;
 import org.restlet.Application;
@@ -56,6 +60,7 @@ import com.telefonica.claudia.smi.templateManagement.TemplateManagementApplicati
 
 public class Main {
 
+	protected static final Set<PersistenceProvider> providers = new HashSet<PersistenceProvider>();
 	private static final int ERROR_CODE_INITIALIZATION = 1;
 	private static final int ERROR_CODE_DRIVERS = 2;
 
@@ -206,6 +211,18 @@ public class Main {
 	public static void main(String[] args) throws Exception {
 
 		// Load the configuration file
+		Map <String, Object> configuration = new HashMap<String, Object>();
+		configuration.put("hibernate.connection.url", "jdbc:mysql://62.217.120.136:3306/monitoring?noDatetimeStringSync=true");
+		configuration.put("hibernate.connection.driver_class", "com.mysql.jdbc.Driver");
+		configuration.put("hibernate.connection.username", "claudia");
+		configuration.put("hibernate.connection.password", "ClaudiaPass");
+		configuration.put("hibernate.dialect", "org.hibernate.dialect.MySQLDialect");
+		
+		configuration.put("hibernate.c3p0.min_size", "5");
+		configuration.put("hibernate.c3p0.max_size", "50");
+		configuration.put("hibernate.c3p0.timeout", "5000");
+		configuration.put("hibernate.c3p0.max_statements", "100");
+		createEntityManagerFactory("ClaudiaPU",configuration);
 		Properties prop = new Properties();
 		prop.load(new FileInputStream(PATH_TO_PROPERTIES_FILE));
 
@@ -276,7 +293,7 @@ public class Main {
 				
 				
 				
-			     /*   for (String s : names) {
+			  /*    for (String s : names) {
 			            try{
 			                providers.add((PersistenceProvider)loader.loadClass(s).newInstance());
 			            } catch (ClassNotFoundException exc){
@@ -411,6 +428,64 @@ public class Main {
 		log.info("Service started");
 	}
 	
+	 private static void findAllProviders() throws IOException {
+	        ClassLoader loader = Thread.currentThread().getContextClassLoader();
+	        Enumeration<URL> resources = 
+	            loader.getResources("META-INF/services/" + PersistenceProvider.class.getName());
+	        Set<String> names = new HashSet<String>();
+	        while (resources.hasMoreElements()) {
+	            URL url = resources.nextElement();
+	            InputStream is = url.openStream();
+	            try {
+	                names.addAll(providerNamesFromReader(new BufferedReader(new InputStreamReader(is))));
+	            } finally {
+	                is.close();
+	            }
+	        }
+	        for (String s : names) {
+	            try{
+	                providers.add((PersistenceProvider)loader.loadClass(s).newInstance());
+	                
+	                System.out.println ("Provider " + s);
+	            } catch (ClassNotFoundException exc){
+	            } catch (InstantiationException exc){
+	            } catch (IllegalAccessException exc){
+	            }
+	        }
+	    }
+	 private static final Pattern nonCommentPattern = Pattern.compile("^([^#]+)");
+	 private static Set<String> providerNamesFromReader(BufferedReader reader) throws IOException {
+	        Set<String> names = new HashSet<String>();
+	        String line;
+	        while ((line = reader.readLine()) != null) {
+	            line = line.trim();
+	            Matcher m = nonCommentPattern.matcher(line);
+	            if (m.find()) {
+	                names.add(m.group().trim());
+	            }
+	        }
+	        return names;
+	    }
+	 
+	 public static EntityManagerFactory createEntityManagerFactory(
+	            String persistenceUnitName, Map properties) {
+	        EntityManagerFactory emf = null;
+	        if (providers.size() == 0) {
+	            try{
+	                findAllProviders();
+	            } catch (IOException exc){};
+	        }
+	        for (PersistenceProvider provider : providers) {
+	            emf = provider.createEntityManagerFactory(persistenceUnitName, properties);
+	            if (emf != null){
+	                break;
+	            }
+	        }
+	        if (emf == null) {
+	            throw new PersistenceException("No Persistence provider for EntityManager named " + persistenceUnitName);
+	        }
+	        return emf;
+	    }
 	
 
 }
