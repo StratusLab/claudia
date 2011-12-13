@@ -209,7 +209,7 @@ grid certificates, and VOMS proxies.
 				<version>3.2.1.GA</version>
 			</dependency> -->
 			
-			   <dependency>
+<!--  		   <dependency>
      <groupId>org.hibernate</groupId>
      <artifactId>hibernate-annotations</artifactId>
      <version>3.2.1.ga</version>
@@ -228,11 +228,33 @@ grid certificates, and VOMS proxies.
 </dependency>
 
 			<dependency>
-	<groupId>org.hibernate</groupId>
-	<artifactId>hibernate</artifactId>
+	<groupId>hibernate</groupId>
+	<artifactId>hibernate3</artifactId>
 	<version>3.2.3.ga</version>
-</dependency>
+</dependency>-->	
+ <dependency>
+      <groupId>hibernate-annotations</groupId>
+      <artifactId>hibernate-annotations</artifactId>
+    <version>3.2.1.GA</version> 
+    </dependency>
 
+    <dependency>
+      <groupId>hibernate-entitymanager</groupId>
+      <artifactId>ejb3-persistence</artifactId>
+     <version>3.3.2.GA</version> 
+    </dependency>
+
+    <dependency>
+        <groupId>hibernate-entitymanager</groupId>
+        <artifactId>hibernate-entitymanager</artifactId>
+       <version>3.2.1.GA</version> 
+    </dependency>
+
+    <dependency>
+        <groupId>hibernate</groupId>
+        <artifactId>hibernate3</artifactId>
+       <version>3.2.3.GA</version>
+    </dependency>
 			<dependency>
 				<groupId>dom4j</groupId>
 				<artifactId>dom4j</artifactId>
