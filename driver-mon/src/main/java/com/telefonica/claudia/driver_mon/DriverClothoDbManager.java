@@ -85,10 +85,10 @@ public class DriverClothoDbManager extends DbManager {
 												"where mon.associatedObject.fqn IN (:fqns) " +
 												"and mon.measure_type= :measure_type ");
 			
-		/*	System.out.println ("select measurType, unit from "+monitoringsample.class.getName() + 
+			System.out.println ("select measurType, unit from "+monitoringsample.class.getName() + 
 					" where associatedObject_internalId = " +subject.getInternalNodeId()+
 					" and measure_type='"+measure+"'");
-			Query queryResult = em.createQuery("select measure_type, unit from "+monitoringsample.class.getName() + 
+		/*	Query queryResult = em.createQuery("select measure_type, unit from "+monitoringsample.class.getName() + 
 					" where associatedObject_internalId = " +111 + " and measure_type='"+measure+"'");*/
 			
 			
@@ -97,11 +97,11 @@ public class DriverClothoDbManager extends DbManager {
 			Set <String> fqns = new HashSet<String>();
 			fqns.add(subject.getFqnString());
 			
-			for (Object de: subject.getAllDescendants()) {
+		/*	for (Object de: subject.getAllDescendants()) {
 				nodedirectory nd = (nodedirectory) de;
 				
 				fqns.add(nd.getFqnString());
-			}
+			}*/
 			
 			queryResult.setParameter("measure_type", measure);
 			queryResult.setParameter("fqns", fqns);

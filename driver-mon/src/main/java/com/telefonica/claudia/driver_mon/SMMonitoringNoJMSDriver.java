@@ -54,7 +54,7 @@ public class SMMonitoringNoJMSDriver implements MonitoringDriver {
 	private final static String USER_PROPERTY = "monitoring.login";
 	private final static String PASSWORD_PROPERTY = "monitoring.password";	
 	private final static String URL_PROPERTY = "monitoring.uri";
-	private  static String url = "jdbc:mysql://109.231.67.227:3306/monitoring?noDatetimeStringSync=true";
+	private  static String url = "jdbc:mysql://62.217.120.136:3306/monitoring?noDatetimeStringSync=true";
 	private  static String username = "claudia";
 	private  static String password = "ClaudiaPass";
 	
@@ -155,6 +155,7 @@ public class SMMonitoringNoJMSDriver implements MonitoringDriver {
 			String measureId, String hwItem, String networkName) throws MonitorException {
 		
         String[] elementHref = getElementAndHref(orgName, vdcName, vappNames, hwItem, networkName);
+        System.out.println (elementHref[0]);
 		
 		nodedirectory nd = db.get(nodedirectory.class, elementHref[0]);
 		
