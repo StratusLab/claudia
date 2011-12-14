@@ -129,7 +129,7 @@ grid certificates, and VOMS proxies.
 			<dependency>
 			<groupId>eu.stratuslab.pkgs.claudia</groupId>
             <artifactId>claudia-model</artifactId>
-             <version>0.1.8-SNAPSHOT</version>
+             <version>0.1.9-SNAPSHOT</version>
 		    </dependency>  
 			
 
@@ -172,18 +172,18 @@ grid certificates, and VOMS proxies.
 			<dependency>
 				<groupId>eu.stratuslab.pkgs.claudia</groupId>
 				<artifactId>ovf-manager</artifactId>
-				<version>0.8-SNAPSHOT</version>
+				<version>0.9-SNAPSHOT</version>
 			</dependency>
 
 			<dependency>
 				<groupId>eu.stratuslab.pkgs.claudia</groupId>
 				<artifactId>claudia-commons</artifactId>
-				<version>0.1.8-SNAPSHOT</version>
+				<version>0.1.9-SNAPSHOT</version>
 			</dependency>
 			<dependency>
 				<groupId>eu.stratuslab.pkgs.claudia</groupId>
 				<artifactId>clotho</artifactId>
-				<version>0.1.8-SNAPSHOT</version>
+				<version>0.1.9-SNAPSHOT</version>
 			</dependency>
 
 			<dependency>
@@ -399,7 +399,7 @@ grid certificates, and VOMS proxies.
 			<dependency>
 				<groupId>eu.stratuslab.pkgs.claudia</groupId>
 				<artifactId>tcloud-server</artifactId>
-				<version>0.1.8-SNAPSHOT</version>
+				<version>0.1.9-SNAPSHOT</version>
 				<scope>provided</scope>
 			</dependency>
 
