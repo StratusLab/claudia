@@ -180,12 +180,12 @@
   </build>
 
   <repositories>
-    <repository>
-       <id>jboss</id>
-       <name>Public online JBoss repository</name>
-       <url>http://repository.jboss.org/nexus/content/groups/public-jboss/</url>
-    </repository>
-    <repository>
+     <repository> 
+        <id>JBoss</id>
+        <name>jboss-maven2-release-repository</name>
+        <url>https://repository.jboss.org/nexus/content/repositories/deprecated</url>
+      </repository>
+   <!--   <repository>
 
             <id>maven-nuxeo</id>
 
@@ -211,7 +211,7 @@
 
             </snapshots>
 
-        </repository>
+        </repository>-->
 
   </repositories>
   
