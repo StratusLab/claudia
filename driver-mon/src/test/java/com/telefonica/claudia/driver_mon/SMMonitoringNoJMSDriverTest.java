@@ -51,11 +51,11 @@ public class SMMonitoringNoJMSDriverTest {
 			MeasuredValueList d = dd.getMeasuredValueList(mea, 1);
 			
 			
-			for (MeasuredValue tt:d.getMeasuredValues())
+		/*	for (MeasuredValue tt:d.getMeasuredValues())
 			{
 				System.out.println ( "value" +  tt.getValue());
 			
-			}
+			}*/
 		} catch (MonitorException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
