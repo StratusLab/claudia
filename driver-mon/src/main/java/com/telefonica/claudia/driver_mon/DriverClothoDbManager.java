@@ -169,14 +169,24 @@ public class DriverClothoDbManager extends DbManager {
 											   "where associatedObject.fqn IN (:fqns) " +
 											   "group by ms.measure_type");
 			
+			System.out.println ("select distinct(ms.measure_type), max(ms.unit) " +
+					   "from "+monitoringsample.class.getName()+ " ms " +
+					   "where associatedObject.fqn="+subject.getInternalNodeId()+
+					   " group by ms.measure_type"); 
+		/*	Query queryResult = em.createQuery("select distinct(ms.measure_type), max(ms.unit) " +
+					   "from "+monitoringsample.class.getName()+ " ms " +
+					   "where associatedObject.fqn="+subject.getInternalNodeId() +
+					   " group by ms.measure_type");*/
+			
+			 
 			Set <String> fqns = new HashSet<String>();
 			fqns.add(subject.getFqnString());
 			
-			for (Object de: subject.getAllDescendants()) {
+/*	for (Object de: subject.getAllDescendants()) {
 				nodedirectory nd = (nodedirectory) de;
 				
 				fqns.add(nd.getFqnString());
-			}
+			}*/
 			
 			queryResult.setParameter("fqns", fqns);
 			
