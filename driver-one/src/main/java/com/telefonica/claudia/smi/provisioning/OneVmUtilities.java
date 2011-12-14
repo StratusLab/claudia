@@ -780,6 +780,12 @@ public class OneVmUtilities {
 						scriptexec.append("; /etc/init.d/probe start");
 					}
 				}
+				else if (scrt.indexOf(".sh")!=-1)
+				{
+					
+					scriptexec.append("; /mnt/stratuslab/"+scrt);
+
+				}
 			}
 		}
 		
