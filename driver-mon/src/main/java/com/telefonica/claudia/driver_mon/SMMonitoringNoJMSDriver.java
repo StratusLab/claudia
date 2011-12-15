@@ -474,7 +474,13 @@ public class SMMonitoringNoJMSDriver implements MonitoringDriver {
 	public MeasuredValueList getMeasuredValueList(MeasureDescriptor md,
 			int samples) throws MonitorException {
 		// TODO Auto-generated method stub
-		return null;
+		MeasuredValueFilter filter = new MeasuredValueFilter ();
+		filter.setFrom(new java.util.Date(0));
+		filter.setTo(new java.util.Date());
+		filter.setSamples(samples);
+		filter.setInterval(new Long(0));
+		
+		return getMeasuredValueListBD(md, filter);
 	}
 
 	

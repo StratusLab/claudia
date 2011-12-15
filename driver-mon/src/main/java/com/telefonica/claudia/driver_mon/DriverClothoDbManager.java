@@ -251,11 +251,11 @@ public class DriverClothoDbManager extends DbManager {
 			Set <String> internalIds = new HashSet<String>();
 			internalIds.add(subject.getFqnString());
 			
-			for (Object de: subject.getAllDescendants()) {
+			/*for (Object de: subject.getAllDescendants()) {
 				nodedirectory nd = (nodedirectory) de;
 				
 				internalIds.add(nd.getFqnString());
-			}
+			}*/
 			
 			queryResult.setParameter("subject", internalIds);
 			queryResult.setParameter("type", measureName);
@@ -278,6 +278,7 @@ public class DriverClothoDbManager extends DbManager {
 			
 			for (MeasuredValue o: result) {
 				
+				System.out.println (o.getRegisterDate());
 				if (calculatedValues.containsKey(o.getRegisterDate())) {
 					MeasuredValue value=calculatedValues.get(o.getRegisterDate());
 					
@@ -288,10 +289,15 @@ public class DriverClothoDbManager extends DbManager {
 					}
 					
 				} else {
-					if (calculatedValues.isEmpty()||calculatedValues.size()<= samples||interval!=0)
+					System.out.println (calculatedValues.size() + " " + samples);
+					if (calculatedValues.isEmpty()||calculatedValues.size()< samples||interval!=0)
+					{
 						mvList.add(o);
+						System.out.println ("adding " +o.getValue());
+					}
 					
 					calculatedValues.put(o.getRegisterDate(), o);
+					System.out.println ("adding " +o.getRegisterDate()+  " " + o.getValue());
 				}
 			}
 			

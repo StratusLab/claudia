@@ -11,6 +11,7 @@ import com.telefonica.claudia.slm.monitoring.MeasurableElement.MeasureDescriptor
 import com.telefonica.claudia.smi.monitoring.MonitorException;
 import com.telefonica.claudia.smi.monitoring.bean.MeasureDescriptorList;
 import com.telefonica.claudia.smi.monitoring.bean.MeasuredValue;
+import com.telefonica.claudia.smi.monitoring.bean.MeasuredValueFilter;
 import com.telefonica.claudia.smi.monitoring.bean.MeasuredValueList;
 
 
@@ -42,20 +43,22 @@ public class SMMonitoringNoJMSDriverTest {
 		}
 		
 		try {
-			com.telefonica.claudia.smi.monitoring.bean.MeasureDescriptor mea = dd.getVappMeasureDescriptor ("grnet", "cc", t, "dd");
+			com.telefonica.claudia.smi.monitoring.bean.MeasureDescriptor mea = dd.getVappMeasureDescriptor ("grnet", "cc", t, "disk");
 			
 			System.out.println ("dd" + mea.getMaxValue());
 			System.out.println (mea.getMinValue());
 			System.out.println (mea.getName());
 			
-			MeasuredValueList d = dd.getMeasuredValueList(mea, 1);
+			MeasuredValueFilter filter = new MeasuredValueFilter ();
 			
+			MeasuredValueList d = dd.getMeasuredValueList(mea, 3);
 			
-		/*	for (MeasuredValue tt:d.getMeasuredValues())
+			System.out.println ("Values form etrics dd");
+			for (MeasuredValue tt:d.getMeasuredValues())
 			{
 				System.out.println ( "value" +  tt.getValue());
 			
-			}*/
+			}
 		} catch (MonitorException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

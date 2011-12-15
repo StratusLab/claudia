@@ -67,6 +67,7 @@ public class LoadBalancerConfiguratorRESTImpl implements LoadBalancerConfigurato
 		response.getEntity().release();
 		response.release();
 		return response.getStatus().getCode();
+	
 	}
 	
 
