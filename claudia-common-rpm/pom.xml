@@ -167,6 +167,8 @@
 										<include>stax-api-*.jar</include> 
 										<include>woodstox-core-asl-*.jar</include> 
 										<include>xml-apis-*.jar</include> 
+										<include>hibernate3-3.2.3.GA.jar</include> 
+										
 									</includes>
 								</source>
 							</sources>
