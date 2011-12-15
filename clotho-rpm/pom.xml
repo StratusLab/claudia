@@ -161,6 +161,9 @@
 										<exclude>woodstox-core-asl-*.jar</exclude> 
 										<exclude>xml-apis-*.jar</exclude>
 										<exclude>backport-util-concurrent-*.jar</exclude>
+										<exclude>hibernate3-3.2.3.GA.jar</exclude>
+										
+									
 									</excludes>
 								</source>
 							</sources>
