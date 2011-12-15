@@ -191,7 +191,8 @@ public class Parser {
 
 		// Build the rule vector
 		buildRuleVector(sa);
-
+		
+		
 		return true;
 	}
 
@@ -1136,6 +1137,7 @@ public class Parser {
 				}
 			}
 		}
+		
 	}
 
 	/**
@@ -1153,7 +1155,7 @@ public class Parser {
 					String id = kpi.getKPIname();
 					String type = kpi.getKPItype();
 					String name = kpi.getKPIVmname();
-					logger.debug("kpi-name = " + id);
+					logger.debug("kpi-name = " + id + " type " + type + " " + "vm name " + name);
 					ServiceKPI skpi = new ServiceKPI(sa, id);
 					skpi.setKPIType(type);
 					skpi.setKPIVmname(name);

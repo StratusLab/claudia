@@ -156,10 +156,16 @@ public class Rule implements DirectoryEntry {
 
 	public String buildRule(boolean up){
 		String bodyUp, bodyDown, rule;
+		System.out.println ("building rule" );
 		String actionUp= "actions.createReplica(\""+associatedVee+"\")";
+		System.out.println (actionUp);
 		String actionDown="actions.removeReplica(\""+associatedVee+"\")";
+		System.out.println (actionDown);
 		String header="package com.telefonica.claudia.slm.rulesEngine;"+"\n"+"// Imports for all types of events should be here..."+"\n"+"import com.telefonica.claudia.slm.eventsBus.events.VeeHwMeasureEvent;"+"\n"+"import com.telefonica.claudia.slm.eventsBus.events.AgentMeasureEvent;"+"\n"+"import com.telefonica.claudia.slm.eventsBus.events.ProbeMeasureEvent;"+"\n"+"global com.telefonica.claudia.slm.rulesEngine.Actions actions; \n";
-		
+		System.out.println (header);
+		System.out.println ("kpi" + kpi);
+		System.out.println (kpi.getFQN());
+		System.out.println (" event " + eventType + " " + kpi.getFQN());
         if (up){
         	// add rule name	        
             bodyUp="rule"+" \""+ruleFQN.toString();
@@ -246,10 +252,12 @@ public class Rule implements DirectoryEntry {
 	}
 	
 	public void setKpi(ServiceKPI kpi) {
+		System.out.println ("Adding kpi " + kpi.getKPIName() + " " + this.getName());
 		this.kpi = kpi;
 	}
 
 	public ServiceKPI getKpi() {
+		System.out.println ("Getting kpi " + kpi.getKPIName() + " " + this.getName());
 		return kpi;
 	}
     

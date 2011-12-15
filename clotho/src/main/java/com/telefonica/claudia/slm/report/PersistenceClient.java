@@ -6,6 +6,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.sql.Timestamp;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -20,6 +21,7 @@ import java.util.TreeSet;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpException;
@@ -38,6 +40,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
 
 import com.telefonica.claudia.slm.common.SMConfiguration;
 
@@ -324,11 +327,11 @@ public class PersistenceClient {
         return -1;
     }
 
-    public void sendvalue(String valuexml, String monitorfqn, String measure, String type) {
+    public void sendvalue(String valuexml, String monitorfqn, String measure, String type) throws SAXException, IOException, ParserConfigurationException, ParseException {
 
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 
-        try {
+        
             DocumentBuilder builder = factory.newDocumentBuilder();
             Document doc = builder.parse(new ByteArrayInputStream(valuexml
                     .getBytes()));
@@ -399,11 +402,7 @@ public class PersistenceClient {
                 System.out.println("Sending values: " + unit + " " + timestamp + " " + value);
                 
             }
-        } catch (Exception spe) {
-            // Algún tipo de error: fichero no accesible, formato de XML
-            // incorrecto, etc.
-        	spe.printStackTrace();
-        }
+        
     }
 
     public List<String> getVMs() throws IOException {

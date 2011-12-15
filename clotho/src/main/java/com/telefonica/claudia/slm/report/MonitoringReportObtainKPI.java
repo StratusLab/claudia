@@ -1,8 +1,13 @@
 package com.telefonica.claudia.slm.report;
 
 import java.io.IOException;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Iterator;
+
+import javax.xml.parsers.ParserConfigurationException;
+
+import org.xml.sax.SAXException;
 
 import com.telefonica.claudia.slm.common.SMConfiguration;
 import com.telefonica.claudia.slm.deployment.Customer;
@@ -14,25 +19,27 @@ import com.telefonica.claudia.slm.deployment.VEEReplica;
 import com.telefonica.claudia.slm.deployment.hwItems.NIC;
 import com.telefonica.claudia.slm.maniParser.Parser;
 import com.telefonica.claudia.slm.report.PersistenceClient;
+import com.telefonica.claudia.slm.rulesEngine.RulesEngine;
 import com.telefonica.claudia.smi.URICreation;
 
 public class MonitoringReportObtainKPI extends Thread {
 	
-	private VEE sap= null;
+	private String fqnentity= null;
 	private String metric = null;
 	private String kpi = null;
 	private String type = null;
-	public MonitoringReportObtainKPI (String type, VEE sap, String metric, String kpi)
+	public MonitoringReportObtainKPI (String type, String fqnentity, String metric, String kpi)
 	{
+		System.out.println ("monitoring "  + metric + " " + type);
 		this.metric = metric;
 		this.kpi = kpi;
-		this.sap=sap;
+		this.fqnentity=fqnentity;
 		this.type=type;
 	}
 	
 	
 	
-	public  void obtainMetricsValue(String urlmonitor) throws IOException {
+	public  void obtainMetricsValue(String urlmonitor) throws IOException, SAXException, ParserConfigurationException, ParseException {
 
 		
 		// monitor http://84.21.173.142:8182/api/org/CESGA/vdc/test/vapp/dd/node/1/monitor
@@ -57,12 +64,12 @@ public class MonitoringReportObtainKPI extends Thread {
 
 	}
 	
-	static Runnable periodicGetMonValues= new Runnable(){
+	/*static Runnable periodicGetMonValues= new Runnable(){
 		public void run() {
 			PersistenceClient pc = new PersistenceClient();
 			
 		}	
-	};
+	};*/
 	
 	public static void main(String args [])
 	{
@@ -72,7 +79,7 @@ public class MonitoringReportObtainKPI extends Thread {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
-		String xmlFileName = "src/test/resources/4caastpaascontextualization.xml";
+		String xmlFileName = "src/test/resources/eimrtv4_5.xml";
 		VEE executor = null;
 		VEE master =null;
 		ServiceApplication sa=null;
@@ -86,6 +93,12 @@ public class MonitoringReportObtainKPI extends Thread {
 			
 			Parser p = new Parser(xmlFileName, new Customer("ccc"), "ss");
 			p.parse();
+			
+			RulesEngine rle = new RulesEngine  (xmlFileName);
+			rle.sap = p.getServiceApplication();
+			//rle.configure(p.getServiceApplication());
+			System.out.println ("claudia rules");
+			rle.claudiaRules2Drools();
 
 			// Manually populate the replicas to continue the test
 			sa = p.getServiceApplication();
@@ -129,7 +142,7 @@ public class MonitoringReportObtainKPI extends Thread {
 				{
 					MonitoringReportObtainKPI report = null;
 
-					report = new MonitoringReportObtainKPI(kpi.getKPIType(), executor, kpi.getKPIName(), kpi.getKPIName());
+					report = new MonitoringReportObtainKPI(kpi.getKPIType(), "fqnentity", kpi.getKPIName(), kpi.getKPIName());
 					
 				    report.run();
 				}
@@ -142,23 +155,38 @@ public class MonitoringReportObtainKPI extends Thread {
 	
 	public void run() {
 		
-	/*	String urlmonitor  = null;
+		String urlmonitor  = null;
 		if (type.equals("AGENT"))
 		{
-		   String uriservice = URICreation.getURIService(sap.getFQN().toString());
+		   String uriservice = URICreation.getURIService(fqnentity);
 		   urlmonitor = "http://"+SMConfiguration.getInstance().getSMIHost() + ":" +
 		   SMConfiguration.getInstance().getSMIPort() + uriservice+"/monitor";
 		}
 		else
 		{
-			String uriservice = URICreation.getURIVEE(sap.getFQN().toString()+"/1");
+			String uriservice = URICreation.getURIVEE(fqnentity+"/1");
 			urlmonitor = "http://"+SMConfiguration.getInstance().getSMIHost() + ":" +
 			SMConfiguration.getInstance().getSMIPort() + uriservice+"/monitor";
 		}
 		
-		while (true)
+		boolean deploy = true;
+		System.out.println ("starting thread");
+		while (deploy)
 		{
-		   obtainData(urlmonitor);
+		   try {
+			   System.out.println ("url monitoring " + urlmonitor);
+			   obtainData(urlmonitor);
+		   } 
+		   catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			this.stop();
+			System.out.println ("stoping thread");
+			
+			deploy=false;
+			return;
+			
+		   }
 		   try{
 			   //do what you want to do before sleeping
 			   Thread.currentThread().sleep(10000);//sleep for 1000 ms
@@ -166,12 +194,16 @@ public class MonitoringReportObtainKPI extends Thread {
 			 }
 			 catch(Exception ie){
 			 //If this thread was intrrupted by nother thread
+				 this.stop();
+				 deploy=false;
+				 return;
 			 }
-		}*/
+			 System.out.println("continuing");
+		}
         
     }
 	
-	public void obtainData (String urlmonitor)
+	public void obtainData (String urlmonitor) throws IOException, SAXException, ParserConfigurationException, ParseException
 	{
 		PersistenceClient pc = new PersistenceClient();
 		if (type.equals("AGENT"))
@@ -179,13 +211,9 @@ public class MonitoringReportObtainKPI extends Thread {
 		
 
 		String valuexml = null;
-		try {
-			valuexml = pc.getmeasure(urlmonitor, metric);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			return;
-		}
+		System.out.println ("getting meassure for " + metric);
+		valuexml = pc.getmeasure(urlmonitor, metric);
+		
 		String measurefqn = urlmonitor+"/"+metric;
 			//logger.info(" monitor values: " + monitor+ " "+measure); 
 		pc.sendvalue(valuexml,measurefqn,kpi, "AGENT");

@@ -83,7 +83,7 @@ public class RulesEngine {
     
     private HashSet<String> ruleSet= new HashSet<String>();
     
-    private ServiceApplication sap;
+    public ServiceApplication sap;
     
     private LifecycleController lcc;
     
@@ -343,14 +343,19 @@ public class RulesEngine {
        Iterator<Rule> ruleIterator;
 
        Set<Rule> ruleVector = sap.getServiceRules();
+       System.out.println (ruleVector.size());
 	   for(ruleIterator=ruleVector.iterator();ruleIterator.hasNext();){
 	       rule=((Rule)ruleIterator.next());
 	
 	       // IN Y2 a rule is associated with a single KPI: univocal association
 	       // build upscaling rule first
+	       System.out.println ("nombre regla " + rule + " " + rule.getName());
+	       System.out.println (rule.getKpi());
+	       System.out.println ("ruling up");
 	       ruleUp=rule.buildRule(up);
 	
 	       // build donwscaling rule
+	       System.out.println ("ruling down");
 	       ruleDown=rule.buildRule(!up);
 	
 	       //write to Drools

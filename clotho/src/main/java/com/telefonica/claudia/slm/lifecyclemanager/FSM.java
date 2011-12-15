@@ -406,11 +406,17 @@ public class FSM extends Thread implements Serializable {
 			logger.info("No Rules defined");
 		while (ruleIterator.hasNext()) {
 			rule = (Rule) ruleIterator.next();
-			logger.info("Rule " + rule.getName());
-			rule.configure((ServiceKPI) ReservoirDirectory.getInstance()
+			logger.info("Rule for configuring " + rule.getName());
+			System.out.println (rule.getKPIName() + " " + rule.getKpi() + "  test " + (ServiceKPI) ReservoirDirectory.getInstance()
 					.getObject(new FQN(rule.getKPIName())));
+			//rule.configure((ServiceKPI) ReservoirDirectory.getInstance()
+				//	.getObject(new FQN(rule.getKPIName())));
+			
+			rule.configure(rule.getKpi());
 			ReservoirDirectory.getInstance()
 			.registerObject(rule.getFQN(), rule);
+			ReservoirDirectory.getInstance()
+			.registerObject(rule.getKpi().getFQN(), rule.getKpi());
 		}
 	}
 
@@ -455,9 +461,25 @@ public class FSM extends Thread implements Serializable {
 					+ xmlFile, ex);
 		}
 		logger.info("Manifest file successfully parsed");
-
+		
+		
 		sap = parser.getServiceApplication();
 		client.registerService(sap);
+		
+		System.out.println ("antes de registro ");
+		Iterator<Rule> ruleIterator;
+		Set<Rule> ruleVector = sap.getServiceRules();
+	       System.out.println (ruleVector.size());
+		   for(ruleIterator=ruleVector.iterator();ruleIterator.hasNext();){
+		       Rule rule=((Rule)ruleIterator.next());
+		
+		       // IN Y2 a rule is associated with a single KPI: univocal association
+		       // build upscaling rule first
+		       System.out.println ("nombre regla " + rule + " " + rule.getName());
+		       System.out.println (rule.getKpi());
+		       System.out.println ("ruling up");
+		   }
+
 
 		registerInDirectory();
 
@@ -466,10 +488,23 @@ public class FSM extends Thread implements Serializable {
 		.info("Reporting to Lifecycle Controler the FSM has been created for Service Application");
 		lcc.registerFSM(sap.getFQN(), this);
 
+		
+	
 		this.lcc.addCustomer(client);
 
+	
 		rle.configure(this);
-		rle.claudiaRules2Drools();
+
+	   ruleVector = sap.getServiceRules();
+	       
+		try
+		{
+		   rle.claudiaRules2Drools();
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+		}
 
 		boolean callSCA = false;
 		if (callSCA) {
@@ -487,6 +522,7 @@ public class FSM extends Thread implements Serializable {
 		} else
 			logger.info("Skipping SCA call...");
 
+		System.out.println ("one rules");
 		URL oneURL = null;
 		try {
 			oneURL = new URL("http", SMConfiguration.getInstance()
@@ -821,24 +857,30 @@ public class FSM extends Thread implements Serializable {
 			logger.error("Problems to set up monitoring ");
 		}
 		
-		for (VEE vee: sap.getVEEs())
+		if (SMConfiguration.getInstance().getReportingKpiEnable())
 		{
-			if (vee.getBalancedBy()!= null)
+		   System.out.println ("Reporting ");
+
+			for (ServiceKPI kpi: sap.getServiceKPIs())
 			{
-				for (ServiceKPI kpi: sap.getServiceKPIs())
-				{
-					MonitoringReportObtainKPI report = null;
-
-					report = new MonitoringReportObtainKPI(kpi.getKPIType(), vee, kpi.getKPIName(), kpi.getKPIName());
 					
-				    report.run();
-				}
-				return true;
-			}
-			
-		}
+			  System.out.println ("KPI " + kpi.getKPIName());
+			  MonitoringReportObtainKPI report = null;
+					
+			  if (kpi.getKPIType().equals("AGENT"))
+			  {
 
-		
+			     report = new MonitoringReportObtainKPI(kpi.getKPIType(), sap.getFQN().toString(), kpi.getKPIName(), kpi.getKPIName());
+			  }
+			  else
+			  {
+				report = new MonitoringReportObtainKPI(kpi.getKPIType(), sap.getFQN().toString()+".vees."+kpi.getKPIVmname(), kpi.getKPIName(), kpi.getKPIName());
+			  }
+					
+			  report.run();
+		   }
+
+		}
 
 		return true;
 	}

@@ -178,6 +178,8 @@ public class SMConfiguration extends Properties {
 	
 	private int waitingsecond = 5000;
 	
+	private boolean reportingkpi = false;
+	
 	private SMConfiguration() throws Exception {		
 		readSMProperties();
 	}
@@ -391,12 +393,24 @@ public class SMConfiguration extends Properties {
 		}
 		logger.info("Property [" + "waitingsecond" + "] with value [" + waitingsecond + "]");
 		
-		
+		try
+		{
+		reportingkpi = Boolean.parseBoolean(readProperty("reportingkpi"));
+		}
+		catch (Throwable t) {
+			logger.error("Parsing error on " +  "reportingkpi" + "property: not found");
+		}
+		logger.info("Property [" + "reportingkpi" + "] with value [" + reportingkpi + "]");
 		
 		
 		
 	}
 	
+	public boolean getReportingKpiEnable () {
+    	return reportingkpi;
+   }
+    
+ 
 	public int getNumberOfReint() {
 	    	return numberofreintent;
 	 }
