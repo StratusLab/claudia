@@ -4,13 +4,13 @@
 
   <groupId>eu.stratuslab.pkgs.claudia</groupId>
   <artifactId>driver-flexiscale</artifactId>
-  <version>0.1.10</version>
+  <version>0.1.11-SNAPSHOT</version>
   <name>OpenNebula driver for TCloud</name>
 
   <parent>
     <groupId>eu.stratuslab.pkgs.claudia</groupId>
     <artifactId>claudia-parent</artifactId>
-    <version>1.10</version>
+    <version>1.11-SNAPSHOT</version>
   </parent>
 
    <properties>

@@ -5,7 +5,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>eu.stratuslab.pkgs.claudia</groupId>
 	<artifactId>claudia-parent</artifactId>
-	<version>1.10</version>
+	<version>1.11-SNAPSHOT</version>
 	<name>claudia-parent</name>
 
 	<url>http://claudia.morfeo-project.org</url>
@@ -129,7 +129,7 @@ grid certificates, and VOMS proxies.
 			<dependency>
 			<groupId>eu.stratuslab.pkgs.claudia</groupId>
             <artifactId>claudia-model</artifactId>
-             <version>0.1.10</version>
+             <version>0.1.11-SNAPSHOT</version>
 		    </dependency>  
 			
 
@@ -172,18 +172,18 @@ grid certificates, and VOMS proxies.
 			<dependency>
 				<groupId>eu.stratuslab.pkgs.claudia</groupId>
 				<artifactId>ovf-manager</artifactId>
-				<version>0.10</version>
+				<version>0.11-SNAPSHOT</version>
 			</dependency>
 
 			<dependency>
 				<groupId>eu.stratuslab.pkgs.claudia</groupId>
 				<artifactId>claudia-commons</artifactId>
-				<version>0.1.10</version>
+				<version>0.1.11-SNAPSHOT</version>
 			</dependency>
 			<dependency>
 				<groupId>eu.stratuslab.pkgs.claudia</groupId>
 				<artifactId>clotho</artifactId>
-				<version>0.1.10</version>
+				<version>0.1.11-SNAPSHOT</version>
 			</dependency>
 
 			<dependency>
@@ -399,7 +399,7 @@ grid certificates, and VOMS proxies.
 			<dependency>
 				<groupId>eu.stratuslab.pkgs.claudia</groupId>
 				<artifactId>tcloud-server</artifactId>
-				<version>0.1.10</version>
+				<version>0.1.11-SNAPSHOT</version>
 				<scope>provided</scope>
 			</dependency>
 
