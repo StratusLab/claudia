@@ -234,9 +234,9 @@ grid certificates, and VOMS proxies.
 	<version>3.2.3.ga</version>
 </dependency>-->	
  <dependency>
-      <groupId>hibernate-annotations</groupId>
-      <artifactId>hibernate-annotations</artifactId>
-    <version>3.2.1.GA</version> 
+    <groupId>hibernate-annotations</groupId>
+    <artifactId>hibernate-annotations</artifactId>
+    <version>3.2.1.GA</version>
     </dependency>
 
     <dependency>

@@ -386,11 +386,11 @@
         <url>https://repository.jboss.org/nexus/content/repositories/deprecated</url>
       </repository>
 
-   <repository>
+    <repository>
         <id>public</id>
         <name>JBoss PUblic Nexus Repository</name>
         <url>https://repository.jboss.org/nexus/content/groups/public</url>
-      </repository>
-  </repositories>
+      </repository> 
+      </repositories>
 
 </project>
