@@ -30,6 +30,7 @@
 package com.telefonica.claudia.slm.vmiHandler;
 
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.util.HashMap;
@@ -41,6 +42,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.log4j.Logger;
+import org.dom4j.Namespace;
 import org.dom4j.Node;
 import org.restlet.Client;
 import org.restlet.data.MediaType;
@@ -48,9 +50,13 @@ import org.restlet.data.Protocol;
 import org.restlet.data.Reference;
 import org.restlet.data.Response;
 import org.restlet.resource.DomRepresentation;
+import org.w3c.dom.DOMImplementation;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
+import org.w3c.dom.ls.DOMImplementationLS;
+import org.w3c.dom.ls.LSOutput;
+import org.w3c.dom.ls.LSSerializer;
 import org.xml.sax.SAXException;
 
 import com.sun.org.apache.xml.internal.serialize.OutputFormat;
@@ -174,32 +180,47 @@ public class TCloudClient implements VMIHandler {
 
     }
     
-    public Document getTCloudNetworkParametersNotIpManagement(Network networkConf) throws ParserConfigurationException {
+    public Document getTCloudNetworkParametersNotIpManagement(Network networkConf) throws Exception {
 
-    	DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-        Document doc = builder.newDocument();
+    //	DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+     //   Document doc = builder.newDocument();
+       
+     /*   DocumentBuilderFactory factory          = DocumentBuilderFactory.newInstance();
+        factory.setNamespaceAware(true);
+        DocumentBuilder builder = factory.newDocumentBuilder();
+        DOMImplementation impl = builder.getDOMImplementation();
+        Document doc = impl.createDocument("http://nuba.morfeo-project.org/network",TCloudConstants.TAG_NETWORK_ROOT, null);*/
+       
+        DOMImplementation domImpl = getDomImplementation(); 
         
-      
-        Element root = doc.createElement(TCloudConstants.TAG_NETWORK_ROOT);
-        root.setAttribute(TCloudConstants.ATTR_NETWORK_NAME, networkConf.getFQN().toString());
+        Document document = domImpl.createDocument("http://nuba.morfeo-project.org/network",
+                "ns1:"+TCloudConstants.TAG_NETWORK_ROOT, null);
+        
+              
+        document.getDocumentElement().setAttributeNS("http://nuba.morfeo-project.org/network","ns1:"+TCloudConstants.ATTR_NETWORK_NAME, networkConf.getName());
+
     	
     	if (networkConf.getPrivateNet())
     	{
     		logger.info("Obtain XML for network without IP management private network");  
-    		Element baseAddress = doc.createElement(TCloudConstants.TAG_NETWORK_BASE_ADDRESS);
-    	      baseAddress.appendChild(doc.createTextNode("192.168."+SMConfiguration.getInstance().getNetworkId()+".0")); 
+    		
+    		  Element baseAddress = document.createElementNS("http://nuba.morfeo-project.org/network","ns1:"+TCloudConstants.TAG_NETWORK_BASE_ADDRESS);
+    	      baseAddress.appendChild(document.createTextNode("192.168."+SMConfiguration.getInstance().getNetworkId()+".0")); 
     	     
     	      SMConfiguration.getInstance().setNetworkId (SMConfiguration.getInstance().getNetworkId()+1);
-    	      root.appendChild(baseAddress);
-    	      Element netmask = doc.createElement(TCloudConstants.TAG_NETWORK_NETMASK);
-    	      netmask.appendChild(doc.createTextNode("255.255.255.0"));
-    	      root.appendChild(netmask);  
+    	      document.getDocumentElement().appendChild(baseAddress);
+    	      Element netmask = document.createElementNS("http://nuba.morfeo-project.org/network","ns1:"+TCloudConstants.TAG_NETWORK_NETMASK);
+    	      netmask.appendChild(document.createTextNode("255.255.255.0"));
+    	      document.getDocumentElement().appendChild(netmask);  
     	}
     	else
     	{
     		logger.info("Obtain XML for network without IP management public network");  
     	}
-    	doc.appendChild(root);
+    	
+    	
+    	this.serialize(domImpl, document);
+    	 
 //
 //        Element gateway = doc.createElement(TCloudConstants.TAG_NETWORK_GATEWAY);
 //        gateway.appendChild(doc.createTextNode(gw));
@@ -221,7 +242,7 @@ public class TCloudClient implements VMIHandler {
         
 
 
-        return doc;
+        return document;
 
     }
 
@@ -246,6 +267,7 @@ public class TCloudClient implements VMIHandler {
         		continue;
         	}
             Reference urlNetwork = new Reference(serverURL + URICreation.getURINetAdd(networkConf.getFQN().toString()));
+            System.out.println (" Url network " + urlNetwork);
 
             // Create de DOM Representation for the network configuration
             DomRepresentation data;
@@ -258,7 +280,11 @@ public class TCloudClient implements VMIHandler {
             } catch (ParserConfigurationException e) {
                 logger.error("Error creating parser: " + e.getMessage());
                 return;
-            }
+            } catch (Exception e) {
+				// TODO Auto-generated catch block
+            	logger.error("Error creating parser: " + e.getMessage());
+                return;
+			}
 
             // Call the server with the URI and the data
             logger.debug("Posting network allocation request for network: " + networkConf);
@@ -292,6 +318,8 @@ public class TCloudClient implements VMIHandler {
                     try {
                         responseXml = response.getEntityAsDom().getDocument();
 
+                        
+                        this.serialize(this.getDomImplementation(), responseXml);
                         NodeList tasks = responseXml.getElementsByTagName(TCloudConstants.TAG_TASK);
 
                         if (tasks.getLength() != 0 && ((Element)tasks.item(0)).getAttribute("href")!= null) {
@@ -303,7 +331,10 @@ public class TCloudClient implements VMIHandler {
                         logger.info("Network " + networkConf + "successfully allocated.");
                     } catch (IOException e) {
                         logger.error("Error parsing the response from the server: " + e.getMessage());
-                    }
+                    } catch (Exception e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 
                     break;
             }
@@ -857,4 +888,40 @@ public class TCloudClient implements VMIHandler {
 
         return result;
     }
+    
+    public DOMImplementation getDomImplementation() throws Exception {
+    	DocumentBuilderFactory dbf = DocumentBuilderFactory
+        .newInstance();
+        DocumentBuilder db = dbf.newDocumentBuilder();
+        DOMImplementation domImpl = db.getDOMImplementation();
+        return domImpl;
+        
+    }
+
+    private Document buildNetworksWithNamespaces(
+            DOMImplementation domImpl) {
+        Document document = domImpl.createDocument("http://nuba.morfeo-project.org/network",
+                "ns1:Network", null);
+       
+        document.getDocumentElement().setAttributeNS("http://nuba.morfeo-project.org/network","ns1:name", "value");
+        Element element = document.createElementNS("http://nuba.morfeo-project.org/network",
+                "ns1:Base");
+        element.appendChild(document.createTextNode("10.22.22.22"));
+        
+        Element element2 = document.createElementNS("http://nuba.morfeo-project.org/network",
+        "ns1:Mask");
+        element2.appendChild(document.createTextNode("255.555.555.555."));
+        document.getDocumentElement().appendChild(element);
+        document.getDocumentElement().appendChild(element2);
+        return document;
+    }
+
+    private void serialize(DOMImplementation domImpl, Document document) {
+        DOMImplementationLS ls = (DOMImplementationLS) domImpl;
+        LSSerializer lss = ls.createLSSerializer();
+        LSOutput lso = ls.createLSOutput();
+        lso.setByteStream(System.out);
+        lss.write(document, lso);
+    }
+
 }

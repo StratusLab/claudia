@@ -8,10 +8,14 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.FactoryConfigurationError;
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.w3c.dom.DOMImplementation;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.w3c.dom.ls.DOMImplementationLS;
+import org.w3c.dom.ls.LSOutput;
+import org.w3c.dom.ls.LSSerializer;
 
 import com.telefonica.claudia.smi.TCloudConstants;
 
@@ -44,13 +48,15 @@ public class OneNetUtilities {
 	protected  String TCloud2ONENet(String xml) throws Exception {
 
 
+		System.out.println (xml);
 		try {
 			DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
 			Document doc = builder.parse(new ByteArrayInputStream(xml.getBytes()));
 
 
 			Element root = (Element) doc.getFirstChild();
-			String fqn = root.getAttribute(TCloudConstants.ATTR_NETWORK_NAME);
+			//String fqn = root.getAttributeNS("http://nuba.morfeo-project.org/network",TCloudConstants.ATTR_NETWORK_NAME);
+			String fqn = root.getAttribute("ns1:"+TCloudConstants.ATTR_NETWORK_NAME);
 			StringBuffer allParametersString  = new StringBuffer();
 
 			NodeList macEnabled = doc.getElementsByTagName(TCloudConstants.TAG_NETWORK_MAC_ENABLED);
@@ -63,8 +69,8 @@ public class OneNetUtilities {
 					macenabled= ((Node)textMacenList.item(0)).getNodeValue().trim();
 			}
 
-			NodeList netmaskList = doc.getElementsByTagName(TCloudConstants.TAG_NETWORK_NETMASK);
-			NodeList baseAddressList = doc.getElementsByTagName(TCloudConstants.TAG_NETWORK_BASE_ADDRESS);
+			NodeList netmaskList = doc.getElementsByTagName("ns1:"+TCloudConstants.TAG_NETWORK_NETMASK);
+			NodeList baseAddressList = doc.getElementsByTagName("ns1:"+TCloudConstants.TAG_NETWORK_BASE_ADDRESS);
 
 			NodeList ipLeaseList = doc.getElementsByTagName("LEASE");
 			 if (ipLeaseList.getLength()>0)
@@ -219,5 +225,6 @@ public class OneNetUtilities {
 		}
 		return allParametersString.toString();
 	}
-
+	
+   
 }

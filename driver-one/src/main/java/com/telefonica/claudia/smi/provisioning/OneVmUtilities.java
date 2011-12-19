@@ -605,7 +605,8 @@ public class OneVmUtilities {
 							allParametersString.append(ONE_VM_NIC_PARAM_NETWORK).append(ASSIGNATION_SYMBOL).append("public");
 						}
 						else
-							allParametersString.append(ONE_VM_NIC_PARAM_NETWORK).append(ASSIGNATION_SYMBOL).append(fqnNet);
+							//allParametersString.append(ONE_VM_NIC_PARAM_NETWORK).append(ASSIGNATION_SYMBOL).append(fqnNet);
+						    allParametersString.append(ONE_VM_NIC_PARAM_NETWORK).append(ASSIGNATION_SYMBOL).append(item.getConnection().get(0).getValue());
 						if (ipOnNetworkMap.get(fqnNet)!=null)
 							allParametersString.append(MULT_CONF_SEPARATOR).append(LINE_SEPARATOR).append(ONE_VM_NIC_PARAM_IP).append(ASSIGNATION_SYMBOL).append(ipOnNetworkMap.get(fqnNet)).append(LINE_SEPARATOR);
 						allParametersString.append(MULT_CONF_RIGHT_DELIMITER).append(LINE_SEPARATOR);
@@ -695,7 +696,8 @@ public class OneVmUtilities {
 
 					String fqnNet = URICreation.getService(veeFqn) + ".networks." + item.getConnection().get(0).getValue();
 
-					allParametersString.append("ip_eth"+i).append(ASSIGNATION_SYMBOL).append("\"$NIC[IP, NETWORK=\\\""+fqnNet+"\\\"]\"").append(MULT_CONF_SEPARATOR).append(LINE_SEPARATOR);
+					//allParametersString.append("ip_eth"+i).append(ASSIGNATION_SYMBOL).append("\"$NIC[IP, NETWORK=\\\""+fqnNet+"\\\"]\"").append(MULT_CONF_SEPARATOR).append(LINE_SEPARATOR);
+					allParametersString.append("ip_eth"+i).append(ASSIGNATION_SYMBOL).append("\"$NIC[IP, NETWORK=\\\""+item.getConnection().get(0).getValue()+"\\\"]\"").append(MULT_CONF_SEPARATOR).append(LINE_SEPARATOR);
 					String dns="";
 					String gateway="";
 					
@@ -741,7 +743,7 @@ public class OneVmUtilities {
 		StringBuffer scriptexec=new StringBuffer();
 		scriptexec.append("SCRIPT_EXEC=\"");
 		
-		if (getNetInitScript(scriptListProp))
+		/*if (getNetInitScript(scriptListProp))
 		{
 			if (i==1){
 				if(netInitScript0!= null && netInitScript0.length()>0) {
@@ -753,7 +755,7 @@ public class OneVmUtilities {
 					scriptexec.append(netInitScript1);	
 				}
 			}
-		}
+		}*/
 		
 		
 		
@@ -769,21 +771,25 @@ public class OneVmUtilities {
 				{
 					if (scrt.equals("OVFParser.py")) {
 						System.out.println ("python /mnt/stratuslab/"+scrt);
-						scriptexec.append("; python /mnt/stratuslab/"+scrt+"");
+						scriptexec.append("python /mnt/stratuslab/"+scrt+"; ");
 					}
-					if (scrt.equals("restful-server.py")) {
+					else if (scrt.equals("restful-server.py")) {
 						System.out.println ("/etc/init.d/lb_server start");
-						scriptexec.append("; /etc/init.d/lb_server start");
+						scriptexec.append("/etc/init.d/lb_server start; ");
 					}
-					if (scrt.equals("torqueProbe.py")) {
+					else if (scrt.equals("torqueProbe.py")) {
 						System.out.println ("/etc/init.d/probe start");
-						scriptexec.append("; /etc/init.d/probe start");
+						scriptexec.append("/etc/init.d/probe start; ");
+					}
+					else  {
+						System.out.println ("python /mnt/stratuslab/"+scrt);
+						scriptexec.append("python /mnt/stratuslab/"+scrt+"; ");
 					}
 				}
 				else if (scrt.indexOf(".sh")!=-1)
 				{
 					
-					scriptexec.append("; /mnt/stratuslab/"+scrt);
+					scriptexec.append("/mnt/stratuslab/"+scrt +";");
 
 				}
 			}

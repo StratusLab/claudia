@@ -357,6 +357,59 @@ public class PersistenceClient {
                 // logger.info(" date: " +date);
                 MeasuredValue mv = new MeasuredValue(value, date, unit);
 
+                String monitor = getMonitorFQN (monitorfqn, measure, type);
+                
+                // logger.info("sending : " + monitor);
+
+           //     String replicanamelimit=replica + ".replicas." + number;
+            //    String monitornamelimit=measure;
+
+             //   if ((replicanamelimit.equals(vmMonName) || vmMonName.equals("all"))
+               //         && (monitornamelimit.equals(monitorName) || monitorName.equals("all"))){
+
+                try { 
+                sendRESTMessage(type, mv.getRegisterDate().getTime(), 4,
+                        monitor, Double.parseDouble(mv.getValue()));}
+                catch (Exception e){}
+                // sendRESTMessage("AGENT", mv.getRegisterDate().getTime(), 4,
+                // monitorfqn, Double.parseDouble(mv.getValue()));
+                logger.info(" monitor: " + monitor + " " + measure);
+                System.out.println("Sending values: " + unit + " " + timestamp + " " + value);
+                
+            }
+        
+    }
+    
+    public void sendvalueVEEHW(String valuexml, String monitorfqn, String measure, String type) throws SAXException, IOException, ParserConfigurationException, ParseException {
+
+        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+
+        
+            DocumentBuilder builder = factory.newDocumentBuilder();
+            Document doc = builder.parse(new ByteArrayInputStream(valuexml
+                    .getBytes()));
+
+            NodeList valueList = doc.getElementsByTagName("Sample");
+
+            for (int i = 0; i < valueList.getLength(); i++) {
+
+                Node node = valueList.item(i);
+                NamedNodeMap atributes = node.getAttributes();
+                Node unitAtribute = atributes.getNamedItem("unit");
+                String unit = unitAtribute.getNodeValue();
+                Node timestampAtribute = atributes.getNamedItem("timestamp");
+                String timestamp = timestampAtribute.getNodeValue();
+                Node valueAtribute = atributes.getNamedItem("value");
+                String value = valueAtribute.getNodeValue();
+
+                // logger.info(" values: " + unit+" "+timestamp+" "+ value);
+
+                String pattern = "yyyy-MM-dd'T'HH:mm:ss";
+                SimpleDateFormat sdf = new SimpleDateFormat(pattern);
+                Date date = sdf.parse(timestamp);
+                // logger.info(" date: " +date);
+                MeasuredValue mv = new MeasuredValue(value, date, unit);
+
                 int j = monitorfqn.indexOf("vdc");
                 int k = monitorfqn.indexOf("vapp");
                 String customer = monitorfqn.substring(j + 4, k - 1);
@@ -454,6 +507,47 @@ public class PersistenceClient {
         }
 
         return result;
+    }
+    
+    private String getMonitorFQN (String monitorfqn, String measure, String type)
+    {
+    	String monitor = null; 
+    	String customer = monitorfqn.substring(monitorfqn.indexOf("vdc") +1+ "vdc".length(), monitorfqn.indexOf("vapp") - 1);
+
+        int l = nthIndexOf(monitorfqn, '/', 10);
+
+        // logger.info("k : " + k);
+        // logger.info("l : " + l);
+        // logger.info("customer : " + customer);
+
+        String service = monitorfqn.substring(monitorfqn.indexOf("vapp") + 5, l);
+        
+        System.out.println ("customer " + customer + " " + "service " + service);
+
+        // logger.info("service : " + service);
+        
+        
+        if (type.equals("AGENT"))
+        {
+         
+          monitor = SITE_ROOT + ".customers." + customer
+          + ".services." + service + ".kpis." + measure;
+        }
+        
+        else 
+        {
+          int m = nthIndexOf(monitorfqn, '/', 11);
+          String vee = monitorfqn.substring(l + 1, m);
+
+          int n = nthIndexOf(monitorfqn, '/', 12);
+          String replica = monitorfqn.substring(m + 1, n);
+          
+          monitor = SITE_ROOT + ".customers." + customer
+          + ".services." + service + ".vees." + vee
+          + ".replicas." + replica + ".kpis." + measure;
+        }
+
+        return monitor;
     }
 
     public static void main(String[] args) {

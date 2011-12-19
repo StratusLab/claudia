@@ -184,7 +184,14 @@ public class Parser {
 		buildNetworks(sa);
 
 		// Build the VEE vector
+		try
+		{
 		buildVEEVector(sa);
+		}
+		catch (Exception e2)
+		{
+			e2.printStackTrace();
+		}
 
 		// Build the KPI vector
 		buildKPIVector(sa);
@@ -586,9 +593,10 @@ public class Parser {
 				
 				if (balanced != null && balanced != "")
 				{
-					
-				   vee.setBalancedBy(balancer);
-					logger.info("Replica balanced " + vee.getVEEName() + " by " + vee.getBalancedBy().getVEEName());
+				
+					balancedVEEs.get(balanced);
+			       vee.setBalancedBy(balancer);
+					logger.info("Replica balanced " + vee.getVEEName() + " by " + vee.getBalancedBy());
 				}
 				
 				
@@ -617,6 +625,7 @@ public class Parser {
 				// Adds balancer for current vee in local map so at the end of
 				// the method, real VEEs can be updated
 				if (balanced != null && balanced != "") {
+					System.out.println (" adding " + vs.getId() + " " + balanced);
 					balancedVEEs.put(vs.getId(), balanced);
 				}
 
@@ -1025,13 +1034,38 @@ public class Parser {
 					logger.debug("no Affinity Section found");
 				}
 
-				
+				for (VEE ve: sa.getVEEs())
+				{
+				   System.out.println (ve.getVEEName() + " " + ve.getBalancedBy() + " " + ve.getBalancer());
+				   if (balancedVEEs.get(ve.getVEEName())!=null)
+				   {
+					  
+					   VEE balan = getBalancer (balancedVEEs.get(ve.getVEEName())); 
+					   System.out.println (balancedVEEs.get(ve.getVEEName()) + " " + balan);
+					   System.out.println (balancedVEEs.get(ve.getVEEName()) + " " + balan.getVEEName());
+					   vee.setBalancedBy(balan);
+				   }
+				}
+				balancedVEEs.put(vs.getId(), balanced);
 
 				/* Finally, register the vee */
 				sa.registerVEE(vee);
 			}//End for
 		} //End else-if
 
+	}
+	
+	private VEE getBalancer (String balanced)
+	{
+		for (VEE balan:sa.getVEEs() )
+		   {
+			   if (balan.getVEEName().equals(balanced))
+			   {
+				   return balan;
+				   
+			   }
+		   }
+		return null;
 	}
 	
 	

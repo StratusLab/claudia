@@ -407,16 +407,18 @@ public class FSM extends Thread implements Serializable {
 		while (ruleIterator.hasNext()) {
 			rule = (Rule) ruleIterator.next();
 			logger.info("Rule for configuring " + rule.getName());
-			System.out.println (rule.getKPIName() + " " + rule.getKpi() + "  test " + (ServiceKPI) ReservoirDirectory.getInstance()
-					.getObject(new FQN(rule.getKPIName())));
-			//rule.configure((ServiceKPI) ReservoirDirectory.getInstance()
-				//	.getObject(new FQN(rule.getKPIName())));
 			
-			rule.configure(rule.getKpi());
+			if (rule.getKpi()!=null)
+				ReservoirDirectory.getInstance()
+				.registerObject(rule.getKpi().getFQN(), rule.getKpi());
+			
+			rule.configure((ServiceKPI) ReservoirDirectory.getInstance()
+					.getObject(new FQN(rule.getKPIName())));
+		//	if (rule.getKpi()!=null)
+			//  rule.configure(rule.getKpi());
 			ReservoirDirectory.getInstance()
 			.registerObject(rule.getFQN(), rule);
-			ReservoirDirectory.getInstance()
-			.registerObject(rule.getKpi().getFQN(), rule.getKpi());
+			
 		}
 	}
 
@@ -463,43 +465,27 @@ public class FSM extends Thread implements Serializable {
 		logger.info("Manifest file successfully parsed");
 		
 		
-		sap = parser.getServiceApplication();
-		client.registerService(sap);
 		
-		System.out.println ("antes de registro ");
-		Iterator<Rule> ruleIterator;
-		Set<Rule> ruleVector = sap.getServiceRules();
-	       System.out.println (ruleVector.size());
-		   for(ruleIterator=ruleVector.iterator();ruleIterator.hasNext();){
-		       Rule rule=((Rule)ruleIterator.next());
-		
-		       // IN Y2 a rule is associated with a single KPI: univocal association
-		       // build upscaling rule first
-		       System.out.println ("nombre regla " + rule + " " + rule.getName());
-		       System.out.println (rule.getKpi());
-		       System.out.println ("ruling up");
-		   }
 
-
-		registerInDirectory();
-
-		// inform its lcc that the service FSM has been created
-		logger
-		.info("Reporting to Lifecycle Controler the FSM has been created for Service Application");
-		lcc.registerFSM(sap.getFQN(), this);
-
-		
-	
-		this.lcc.addCustomer(client);
-
-	
-		rle.configure(this);
-
-	   ruleVector = sap.getServiceRules();
-	       
+		       
 		try
 		{
-		   rle.claudiaRules2Drools();
+			sap = parser.getServiceApplication();
+			client.registerService(sap);
+			
+			registerInDirectory();
+
+			// inform its lcc that the service FSM has been created
+			logger
+			.info("Reporting to Lifecycle Controler the FSM has been created for Service Application");
+			lcc.registerFSM(sap.getFQN(), this);
+		
+		
+			this.lcc.addCustomer(client);
+
+		
+			rle.configure(this);
+			rle.claudiaRules2Drools();
 		}
 		catch (Exception e)
 		{
@@ -522,12 +508,16 @@ public class FSM extends Thread implements Serializable {
 		} else
 			logger.info("Skipping SCA call...");
 
-		System.out.println ("one rules");
+		logger.info ("one rules");
 		URL oneURL = null;
 		try {
+			String url = "http://"+ SMConfiguration.getInstance()
+					.getVEEMHost()+":"+
+					SMConfiguration.getInstance().getVEEMPort()+ SMConfiguration.getInstance().getVEEMPath(); 
+			logger.info(url);
 			oneURL = new URL("http", SMConfiguration.getInstance()
 					.getVEEMHost(),
-					SMConfiguration.getInstance().getVEEMPort(), "/");
+					SMConfiguration.getInstance().getVEEMPort(), SMConfiguration.getInstance().getVEEMPath());
 			logger.info("VEEM listening on URL " + oneURL);
 		} catch (MalformedURLException ex) {
 
@@ -857,32 +847,31 @@ public class FSM extends Thread implements Serializable {
 			logger.error("Problems to set up monitoring ");
 		}
 		
-		if (SMConfiguration.getInstance().getReportingKpiEnable())
-		{
-		   System.out.println ("Reporting ");
-
-			for (ServiceKPI kpi: sap.getServiceKPIs())
-			{
-					
-			  System.out.println ("KPI " + kpi.getKPIName());
-			  MonitoringReportObtainKPI report = null;
-					
-			  if (kpi.getKPIType().equals("AGENT"))
-			  {
-
-			     report = new MonitoringReportObtainKPI(kpi.getKPIType(), sap.getFQN().toString(), kpi.getKPIName(), kpi.getKPIName());
-			  }
-			  else
-			  {
-				report = new MonitoringReportObtainKPI(kpi.getKPIType(), sap.getFQN().toString()+".vees."+kpi.getKPIVmname(), kpi.getKPIName(), kpi.getKPIName());
-			  }
-					
-			  report.run();
-		   }
-
-		}
-
 		return true;
+	}
+	
+	private void reportKPIValue ()
+	{
+		System.out.println ("Reporting ");
+
+		for (ServiceKPI kpi: sap.getServiceKPIs())
+		{
+				
+		  System.out.println ("KPI " + kpi.getKPIName());
+		  MonitoringReportObtainKPI report = null;
+				
+		  if (kpi.getKPIType().equals("AGENT"))
+		  {
+
+		     report = new MonitoringReportObtainKPI(kpi.getKPIType(), sap.getFQN().toString(), kpi.getKPIName(), kpi.getKPIName());
+		  }
+		  else
+		  {
+			report = new MonitoringReportObtainKPI(kpi.getKPIType(), sap.getFQN().toString()+".vees."+kpi.getKPIVmname(), kpi.getKPIName(), kpi.getKPIName());
+		  }
+				
+		  report.run();
+	   }
 	}
 	
 	
@@ -1338,7 +1327,13 @@ public class FSM extends Thread implements Serializable {
 
 		case SMControlEvent.START_SERVICE:
 			if (startService())
+			{
 				retorno = FSM.RUNNING;
+				if (SMConfiguration.getInstance().getReportingKpiEnable())
+				{
+					this.reportKPIValue();
+				}
+			}
 			else
 				retorno = FSM.ERROR;
 			break;

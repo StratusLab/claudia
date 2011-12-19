@@ -80,7 +80,7 @@ public interface ProvisioningDriver {
 	 * 
 	 * @throws IOException
 	 */
-	public long deployNetwork(String netFqn, String ovf) throws IOException;
+	public long deployNetwork(String org, String vdc, String network, String ovf) throws IOException;
 	
 	/**
 	 * Gets information about the selected network resource.

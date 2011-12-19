@@ -28,6 +28,8 @@ public class URICreation {
 	public static final String URI_MONITORING_CALLBACK = "/api/callback/monitoring";
 	
 	public static final String URI_API = "/api";
+	
+	
 	public static final String URI_ORG = URI_API + "/org/{org-id}";
 	public static final String URI_VDC_ADD_MODIFIER = "/action/instantiateVdc";
 	public static final String URI_VDC_ADD = URI_ORG + URI_VDC_ADD_MODIFIER;
@@ -65,7 +67,9 @@ public class URICreation {
 	
 	public static final String URI_NET_ROOT = URI_VAPP + "/net";
 	public static final String URI_NET = URI_NET_ROOT + "/{net-id}";
-	public static final String URI_NET_ADD = URI_VAPP + "/net/action/add";
+	//public static final String URI_NET_ADD = URI_VAPP + "/net/action/add";
+	
+	public static final String URI_NET_ADD = URI_VDC + "/net/action/add";
 
 	public static final String MONITOR = "/monitor";
 	public static final String URI_VDC_MON  =  URI_VDC +   MONITOR;
@@ -365,15 +369,16 @@ public class URICreation {
         String parts[] = customer.split("\\.");
         customer = parts[1];
         
-        String service = fqn.substring(fqn.indexOf(FQN_SEPARATOR_SERVICE));
+    /*    String service = fqn.substring(fqn.indexOf(FQN_SEPARATOR_SERVICE));
         String parts2[] = service.split("\\.");
-        service = parts2[1];
+        service = parts2[1];*/
         
         String net = fqn.substring(fqn.indexOf(FQN_SEPARATOR_NET));
         parts = net.split("\\.");
         net = parts[1];
         
-		return URI_NET.replace("{org-id}", org.replace(".", "_")).replace("{vdc-id}", customer).replace("{vapp-id}", service).replace("{net-id}", net);
+	//	return URI_NET.replace("{org-id}", org.replace(".", "_")).replace("{vdc-id}", customer).replace("{vapp-id}", service).replace("{net-id}", net);
+		return URI_NET.replace("{org-id}", org.replace(".", "_")).replace("{vdc-id}", customer).replace("{net-id}", net);
 	}
 	
 	public static String getURINetAdd(String fqn) {

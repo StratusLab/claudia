@@ -164,8 +164,8 @@ public class Rule implements DirectoryEntry {
 		String header="package com.telefonica.claudia.slm.rulesEngine;"+"\n"+"// Imports for all types of events should be here..."+"\n"+"import com.telefonica.claudia.slm.eventsBus.events.VeeHwMeasureEvent;"+"\n"+"import com.telefonica.claudia.slm.eventsBus.events.AgentMeasureEvent;"+"\n"+"import com.telefonica.claudia.slm.eventsBus.events.ProbeMeasureEvent;"+"\n"+"global com.telefonica.claudia.slm.rulesEngine.Actions actions; \n";
 		System.out.println (header);
 		System.out.println ("kpi" + kpi);
-		System.out.println (kpi.getFQN());
-		System.out.println (" event " + eventType + " " + kpi.getFQN());
+		
+		
         if (up){
         	// add rule name	        
             bodyUp="rule"+" \""+ruleFQN.toString();
@@ -257,7 +257,7 @@ public class Rule implements DirectoryEntry {
 	}
 
 	public ServiceKPI getKpi() {
-		System.out.println ("Getting kpi " + kpi.getKPIName() + " " + this.getName());
+		
 		return kpi;
 	}
     

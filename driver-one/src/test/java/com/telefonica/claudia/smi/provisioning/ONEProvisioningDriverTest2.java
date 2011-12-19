@@ -24,7 +24,7 @@ public class ONEProvisioningDriverTest2 {
 		ONEProvisioningDriver one = getPreConditions();
 		
 		try {
-			long vnet = one.deployNetwork("org.tid.customers.otro.services.tel.networks.net",readFileAsString ("./src/test/resources/network1.xml"));
+			long vnet = one.deployNetwork("otro","dos", "red", readFileAsString ("./src/test/resources/network1.xml"));
 			
 			System.out.println ("Network deployed " + vnet);
 		} catch (IOException e) {

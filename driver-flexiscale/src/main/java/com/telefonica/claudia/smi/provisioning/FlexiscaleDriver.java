@@ -1687,13 +1687,14 @@ public class UndeployNetworkTask extends Task
 	}
 
 	//@Override
-	public long deployNetwork(String netFqn, String ovf) throws IOException {
+	public long deployNetwork(String org, String vdc, String network, String ovf) throws IOException {
 		//return TaskManager().addTask(new DeployNetworkTask(netFqn, ovf), URICreation.getVDC(netFqn)).getTaskId();
 		// TODO Auto-generated method stub
 	/*	DeployNetworkTask dnt=new DeployNetworkTask(netFqn, ovf);
 		dnt.execute();
 		return 0;*/
 		System.out.println("aquí llega?");
+		String netFqn = URICreation.getNetworkFQN(org, vdc, network);
 		return TaskManager.getInstance().addTask(new DeployNetworkTask(netFqn, ovf), URICreation.getVDC(netFqn)).getTaskId();
 	}
 

@@ -7,8 +7,16 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+
 import org.apache.log4j.Logger;
+import org.w3c.dom.DOMImplementation;
 import org.w3c.dom.Document;
+import org.w3c.dom.ls.DOMImplementationLS;
+import org.w3c.dom.ls.LSOutput;
+import org.w3c.dom.ls.LSSerializer;
 
 import com.sun.org.apache.xml.internal.serialize.OutputFormat;
 import com.sun.org.apache.xml.internal.serialize.XMLSerializer;
@@ -137,19 +145,27 @@ public class PaaSTest {
 		}
 		 Document doc = sa.toXML();
 		 
-		 OutputFormat format    = new OutputFormat (doc); 
-            // as a String
-            StringWriter stringOut = new StringWriter ();    
-            XMLSerializer serial   = new XMLSerializer (stringOut, 
-                                                        format);
-            try {
-    			serial.serialize(doc);
-    		} catch (IOException e) {
-    			// TODO Auto-generated catch block
-    			e.printStackTrace();
-    		}
-            // Display the XML
-            System.out.println("XML " + stringOut.toString());
-            
+		 DocumentBuilderFactory dbf = DocumentBuilderFactory
+	        .newInstance();
+	        DocumentBuilder db = null;
+			try {
+				db = dbf.newDocumentBuilder();
+			} catch (ParserConfigurationException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+	        DOMImplementation domImpl = db.getDOMImplementation();
+	    
+		 
+		 
+		DOMImplementationLS ls = (DOMImplementationLS) domImpl;
+		 LSSerializer lss = ls.createLSSerializer();
+		LSOutput lso = ls.createLSOutput();
+		lso.setByteStream(System.out);
+		 lss.write(doc, lso);
+		 
+          
 	}
+	
+	
 }

@@ -349,9 +349,7 @@ public class RulesEngine {
 	
 	       // IN Y2 a rule is associated with a single KPI: univocal association
 	       // build upscaling rule first
-	       System.out.println ("nombre regla " + rule + " " + rule.getName());
-	       System.out.println (rule.getKpi());
-	       System.out.println ("ruling up");
+	      
 	       ruleUp=rule.buildRule(up);
 	
 	       // build donwscaling rule

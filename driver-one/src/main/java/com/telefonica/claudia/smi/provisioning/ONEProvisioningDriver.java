@@ -1402,7 +1402,8 @@ public class ONEProvisioningDriver implements ProvisioningDriver {
 	}
 
 	@Override
-	public long deployNetwork(String netFqn, String ovf) throws IOException {
+	public long deployNetwork(String org, String vdc, String network, String ovf) throws IOException {
+		String netFqn = URICreation.getNetworkFQN(org, vdc, network);
 		return TaskManager.getInstance().addTask(new DeployNetworkTask(netFqn, ovf), URICreation.getVDC(netFqn)).getTaskId();
 	}
 

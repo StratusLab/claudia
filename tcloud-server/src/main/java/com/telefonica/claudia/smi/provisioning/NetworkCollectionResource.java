@@ -151,7 +151,7 @@ public class NetworkCollectionResource extends Resource {
     			
     			ProvisioningDriver actualDriver= (ProvisioningDriver) getContext().getAttributes().get(ProvisioningApplication.ATTR_PLUGIN_PROVISIONING);
     			
-				taskId = actualDriver.deployNetwork(networkName, ovf);
+				taskId = actualDriver.deployNetwork(orgId, vdcId,networkName, ovf);
 				
 			} catch (IOException e) {
 				log.error(ERROR_VM_COMMUNICATION + e.getMessage());
