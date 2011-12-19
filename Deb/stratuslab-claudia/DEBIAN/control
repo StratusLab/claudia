@@ -1,6 +1,0 @@
-Package: stratuslab-claudia
-Version: 0.1.2
-Architecture: all
-Depends: stratuslab-claudia-lib, stratuslab-clotho, stratuslab-claudia-client, stratuslab-tcloud-server
-Maintainer: Diego Pérez Fabado <diegoperezw@gmail.com>
-Description: Metapackage for Claudia Stratuslab.

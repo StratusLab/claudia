@@ -1,5 +1,0 @@
-Package: stratuslab-claudia-lib
-Version: 0.1.3
-Architecture: all
-Maintainer: Diego Pérez Fabado <diegoperezw@gmail.com>
-Description: Claudia common libraries for Stratuslab. This package provide libraries that are shared between different claudia packages.

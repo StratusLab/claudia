@@ -1,6 +1,0 @@
-Package: stratuslab-clotho
-Version: 0.2.5
-Architecture: all
-Depends: stratuslab-claudia-lib (>= 0.1-1) 
-Maintainer: Diego Pérez Fabado <diegoperezw@gmail.com>
-Description: Clotho for Stratuslab. The Service Lifecycle Manager (SLM) (also known as Clotho) and the Scalability and Optimization Module are the core elements of Claudia. They create services, manage monitoring events and scalability rules. Both components share a common library called Claudia Commons, which holds event formats and some common utilities.
