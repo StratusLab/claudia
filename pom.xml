@@ -466,11 +466,13 @@ grid certificates, and VOMS proxies.
 
 	<reporting>
 		<plugins>
-			<plugin>
+<!--
+     <plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>findbugs-maven-plugin</artifactId>
 			</plugin>
-			<plugin>
+-->
+      <plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-javadoc-plugin</artifactId>
 				<configuration>
@@ -540,11 +542,13 @@ grid certificates, and VOMS proxies.
 					<artifactId>build-helper-maven-plugin</artifactId>
 					<version>1.5</version>
 				</plugin>
+<!--
 				<plugin>
 					<groupId>org.codehaus.mojo</groupId>
 					<artifactId>findbugs-maven-plugin</artifactId>
 					<version>2.3.1</version>
 				</plugin>
+-->
 				<plugin>
 					<groupId>org.codehaus.mojo</groupId>
 					<artifactId>rpm-maven-plugin</artifactId>
