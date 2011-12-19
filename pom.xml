@@ -5,7 +5,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>eu.stratuslab.pkgs.claudia</groupId>
 	<artifactId>claudia-parent</artifactId>
-	<version>1.12-SNAPSHOT</version>
+	<version>1.13-SNAPSHOT</version>
 	<name>claudia-parent</name>
 
 	<url>http://claudia.morfeo-project.org</url>
@@ -129,7 +129,7 @@ grid certificates, and VOMS proxies.
 			<dependency>
 			<groupId>eu.stratuslab.pkgs.claudia</groupId>
             <artifactId>claudia-model</artifactId>
-             <version>0.1.12-SNAPSHOT</version>
+             <version>0.1.13-SNAPSHOT</version>
 		    </dependency>  
 			
 
@@ -172,18 +172,18 @@ grid certificates, and VOMS proxies.
 			<dependency>
 				<groupId>eu.stratuslab.pkgs.claudia</groupId>
 				<artifactId>ovf-manager</artifactId>
-				<version>0.12-SNAPSHOT</version>
+				<version>0.13-SNAPSHOT</version>
 			</dependency>
 
 			<dependency>
 				<groupId>eu.stratuslab.pkgs.claudia</groupId>
 				<artifactId>claudia-commons</artifactId>
-				<version>0.1.12-SNAPSHOT</version>
+				<version>0.1.13-SNAPSHOT</version>
 			</dependency>
 			<dependency>
 				<groupId>eu.stratuslab.pkgs.claudia</groupId>
 				<artifactId>clotho</artifactId>
-				<version>0.1.12-SNAPSHOT</version>
+				<version>0.1.13-SNAPSHOT</version>
 			</dependency>
 
 			<dependency>
@@ -399,7 +399,7 @@ grid certificates, and VOMS proxies.
 			<dependency>
 				<groupId>eu.stratuslab.pkgs.claudia</groupId>
 				<artifactId>tcloud-server</artifactId>
-				<version>0.1.12-SNAPSHOT</version>
+				<version>0.1.13-SNAPSHOT</version>
 				<scope>provided</scope>
 			</dependency>
 
@@ -466,11 +466,13 @@ grid certificates, and VOMS proxies.
 
 	<reporting>
 		<plugins>
-			<plugin>
+<!--
+     <plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>findbugs-maven-plugin</artifactId>
 			</plugin>
-			<plugin>
+-->
+      <plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-javadoc-plugin</artifactId>
 				<configuration>
@@ -540,11 +542,13 @@ grid certificates, and VOMS proxies.
 					<artifactId>build-helper-maven-plugin</artifactId>
 					<version>1.5</version>
 				</plugin>
+<!--
 				<plugin>
 					<groupId>org.codehaus.mojo</groupId>
 					<artifactId>findbugs-maven-plugin</artifactId>
 					<version>2.3.1</version>
 				</plugin>
+-->
 				<plugin>
 					<groupId>org.codehaus.mojo</groupId>
 					<artifactId>rpm-maven-plugin</artifactId>

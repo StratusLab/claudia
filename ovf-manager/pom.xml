@@ -7,12 +7,12 @@
 	<artifactId>ovf-manager</artifactId>
 	<packaging>jar</packaging>
 	<name>ovf-manager</name>
-	<version>0.12-SNAPSHOT</version>
+	<version>0.13-SNAPSHOT</version>
 
 	<parent>
 		<groupId>eu.stratuslab.pkgs.claudia</groupId>
 		<artifactId>claudia-parent</artifactId>
-		<version>1.12-SNAPSHOT</version>
+		<version>1.13-SNAPSHOT</version>
 	</parent>
 
 
