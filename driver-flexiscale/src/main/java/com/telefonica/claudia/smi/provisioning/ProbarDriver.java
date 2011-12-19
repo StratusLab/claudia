@@ -34,7 +34,7 @@ public class ProbarDriver {
 			//fd.deployNetwork("es.tid.customers.cc1.networks.admin_net", "iop");
 	    //
 	
-		System.out.println(fd.deployNetwork("public", "./conf/net.xml"));
+		System.out.println(fd.deployNetwork("public", "d", "d", "./conf/net.xml"));
 		
 		//
 		//  fd.deleteNetwork("es.tid.customers.cc1.services.s2.networks.admin_net");
