@@ -4,13 +4,13 @@
 
   <groupId>eu.stratuslab.pkgs.claudia</groupId>
   <artifactId>claudia-commons</artifactId>
-  <version>0.1.12-SNAPSHOT</version>
+  <version>0.1.12</version>
   <name>Claudia Common libraries</name>
 
   <parent>
     <groupId>eu.stratuslab.pkgs.claudia</groupId>
     <artifactId>claudia-parent</artifactId>
-    <version>1.12-SNAPSHOT</version>
+    <version>1.12</version>
   </parent>
 
   <dependencies>

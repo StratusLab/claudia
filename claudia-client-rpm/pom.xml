@@ -4,14 +4,14 @@
 
   <groupId>eu.stratuslab.pkgs.claudia</groupId>
   <artifactId>claudia-client-rpm</artifactId>
-  <version>0.1.12-SNAPSHOT</version>
+  <version>0.1.12</version>
   <name>Claudia Client RPM Packaging</name>
   <packaging>rpm</packaging>
 
   <parent>
     <groupId>eu.stratuslab.pkgs.claudia</groupId>
     <artifactId>claudia-parent</artifactId>
-    <version>1.12-SNAPSHOT</version>
+    <version>1.12</version>
   </parent>
 
   <repositories>
@@ -27,7 +27,7 @@
     <dependency>
       <groupId>eu.stratuslab.pkgs.claudia</groupId>
       <artifactId>claudia-client</artifactId>
-      <version>0.1.12-SNAPSHOT</version>
+      <version>0.1.12</version>
       <classifier>environment</classifier>
       <type>zip</type>
     </dependency>
