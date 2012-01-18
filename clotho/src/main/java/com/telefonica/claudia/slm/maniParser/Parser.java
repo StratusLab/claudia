@@ -1033,24 +1033,25 @@ public class Parser {
 				} catch (SectionNotPresentException e) {
 					logger.debug("no Affinity Section found");
 				}
-
-				for (VEE ve: sa.getVEEs())
-				{
-				   System.out.println (ve.getVEEName() + " " + ve.getBalancedBy() + " " + ve.getBalancer());
-				   if (balancedVEEs.get(ve.getVEEName())!=null)
-				   {
-					  
-					   VEE balan = getBalancer (balancedVEEs.get(ve.getVEEName())); 
-					   System.out.println (balancedVEEs.get(ve.getVEEName()) + " " + balan);
-					   System.out.println (balancedVEEs.get(ve.getVEEName()) + " " + balan.getVEEName());
-					   vee.setBalancedBy(balan);
-				   }
-				}
-				balancedVEEs.put(vs.getId(), balanced);
+				//balancedVEEs.put(vs.getId(), balanced);
+				
+				
 
 				/* Finally, register the vee */
 				sa.registerVEE(vee);
 			}//End for
+			for (VEE ve: sa.getVEEs())
+			{
+			   System.out.println ("test " + ve.getVEEName() + " " + ve.getBalancedBy() + " " + ve.getBalancer());
+			   if (balancedVEEs.get(ve.getVEEName())!=null)
+			   {
+				  
+				   VEE balan = getBalancer (balancedVEEs.get(ve.getVEEName())); 
+				   System.out.println (balancedVEEs.get(ve.getVEEName()) + " " + balan);
+				   System.out.println (balancedVEEs.get(ve.getVEEName()) + " " + balan.getVEEName());
+				   ve.setBalancedBy(balan);
+			   }
+			}
 		} //End else-if
 
 	}

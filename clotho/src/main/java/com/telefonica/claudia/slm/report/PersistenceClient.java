@@ -46,7 +46,7 @@ import com.telefonica.claudia.slm.common.SMConfiguration;
 
 public class PersistenceClient {
 
-    private static final Logger logger = Logger
+    private static  Logger logger = Logger
             .getLogger(PersistenceClient.class);
     private static String TCloudServerURL;
 
@@ -78,6 +78,25 @@ public class PersistenceClient {
     public static Client client;
 
     public PersistenceClient() {
+        try {
+            properties.load(new FileInputStream(PATH_TO_PROPERTIES_FILE));
+            TCloudServerURL = properties.getProperty("TServer.url");
+            SITE_ROOT = properties.getProperty("SiteRoot");
+            restPath = properties.getProperty("restPath");
+            restServerPort = properties.getProperty("restServerPort");
+            restServerHost = properties.getProperty("restServerHost");
+            vmMonName = properties.getProperty("vmMonName");
+            monitorName = properties.getProperty("monitorName");
+        } catch (IOException e) {
+            logger.error("Unable to load properties from "
+                    + PATH_TO_PROPERTIES_FILE);
+            throw new RuntimeException("Unable to load properties from "
+                    + PATH_TO_PROPERTIES_FILE);
+        }
+    }
+    
+    public PersistenceClient(Logger logger) {
+    	this.logger = logger;
         try {
             properties.load(new FileInputStream(PATH_TO_PROPERTIES_FILE));
             TCloudServerURL = properties.getProperty("TServer.url");
@@ -374,7 +393,7 @@ public class PersistenceClient {
                 // sendRESTMessage("AGENT", mv.getRegisterDate().getTime(), 4,
                 // monitorfqn, Double.parseDouble(mv.getValue()));
                 logger.info(" monitor: " + monitor + " " + measure);
-                System.out.println("Sending values: " + unit + " " + timestamp + " " + value);
+                logger.info("Sending values: " + unit + " " + timestamp + " " + value);
                 
             }
         

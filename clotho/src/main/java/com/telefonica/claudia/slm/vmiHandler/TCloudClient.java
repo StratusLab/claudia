@@ -218,7 +218,21 @@ public class TCloudClient implements VMIHandler {
     		logger.info("Obtain XML for network without IP management public network");  
     	}
     	
-    	
+    	  OutputFormat format    = new OutputFormat (document); 
+          // as a String
+          StringWriter stringOut = new StringWriter ();    
+          XMLSerializer serial   = new XMLSerializer (stringOut, 
+                                                      format);
+          try {
+  			serial.serialize(document);
+  		} catch (IOException e) {
+  			// TODO Auto-generated catch block
+  			e.printStackTrace();
+  		}
+          // Display the XML
+          System.out.println("XML " + stringOut.toString());
+          logger.info("XML " + stringOut.toString());
+          
     	this.serialize(domImpl, document);
     	 
 //
@@ -321,6 +335,11 @@ public class TCloudClient implements VMIHandler {
                         
                         this.serialize(this.getDomImplementation(), responseXml);
                         NodeList tasks = responseXml.getElementsByTagName(TCloudConstants.TAG_TASK);
+                        
+                        if (tasks.getLength()==0)
+                        {
+                        	tasks = responseXml.getElementsByTagName("ns24:Task");
+                        }
 
                         if (tasks.getLength() != 0 && ((Element)tasks.item(0)).getAttribute("href")!= null) {
                             urlTasks.put(networkConf, ((Element)tasks.item(0)).getAttribute("href"));
@@ -362,16 +381,101 @@ public class TCloudClient implements VMIHandler {
             } catch (InterruptedException e) {}
         }
     }
+    
+    private Document getFictiousService (VEEReplica actualReplica)
+    {
+    	
+    	
+    	DOMImplementation domImpl = null;
+		try {
+			domImpl = getDomImplementation();
+		} catch (Exception e1) {
+			// TODO Auto-generated catch block
+			logger.error("Error retrieving OVF from the data model: " + e1.getMessage());
+		} 
+        
+   
+        Document doc = domImpl.createDocument("http://schemas.telefonica.com/tcloud/1.0",
+                TCloudConstants.TAG_INSTANTIATE_OVF, null);
+        
+        try {
+			DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+		} catch (ParserConfigurationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+       	Element root = doc.getDocumentElement();
+             	
+       	root.setAttribute(
+       			"xmlns",
+       			"http://schemas.telefonica.com/tcloud/1.0");
+           
+         root.setAttribute(TCloudConstants.ATTR_INSTANTIATION_PARAMS_NAME, String.valueOf(actualReplica.getVEE().getServiceApplication().getSerAppName()));
+        
+         Element envelope = doc.createElementNS("http://schemas.dmtf.org/ovf/envelope/1", "ns2:Envelope");
+         
+         Element virtualSystemCollection = doc.createElementNS("http://schemas.dmtf.org/ovf/envelope/1", "ns2:VirtualSystemCollection");
+         
+         envelope.appendChild(virtualSystemCollection);
+         
+         root.appendChild(envelope);
+         
+         OutputFormat format    = new OutputFormat (doc); 
+         // as a String
+         StringWriter stringOut = new StringWriter ();    
+         XMLSerializer serial   = new XMLSerializer (stringOut, 
+                                                     format);
+         try {
+ 			serial.serialize(doc);
+ 		} catch (IOException e) {
+ 			// TODO Auto-generated catch block
+ 			e.printStackTrace();
+ 		}
+         // Display the XML
+         System.out.println("XML " + stringOut.toString());
+         logger.info("XML " + stringOut.toString());
+         return doc;
+        
+    	
+    }
 
     private Document getTCloudVMParameters(VEEReplica actualReplica) throws ParserConfigurationException {
 
-        DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-        Document doc = builder.newDocument();
+        
+        DOMImplementation domImpl = null;
+		try {
+			domImpl = getDomImplementation();
+		} catch (Exception e1) {
+			// TODO Auto-generated catch block
+			logger.error("Error retrieving OVF from the data model: " + e1.getMessage());
+		} 
+        
+       // Document doc = domImpl.createDocument("http://schemas.telefonica.com/tcloud/1.0",
+        //        "ns0:"+TCloudConstants.TAG_INSTANTIATE_OVF, null);
+        
+        Document doc = domImpl.createDocument("http://schemas.telefonica.com/tcloud/1.0",
+                TCloudConstants.TAG_INSTANTIATE_OVF, null);
+        
+     //   Element root = doc.createElement(TCloudConstants.TAG_INSTANTIATE_OVF);
+        
+              
+     //   doc.getDocumentElement().setAttributeNS("http://nuba.morfeo-project.org/network","ns1:"+TCloudConstants.ATTR_NETWORK_NAME, networkConf.getName());
 
-        Element root = doc.createElement(TCloudConstants.TAG_INSTANTIATE_OVF);
-        doc.appendChild(root);
+    	
+    	DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+     //   Document doc = builder.newDocument();
+
+    	Element root = doc.getDocumentElement();
+      //  doc.appendChild(root);
+    	
+    	root.setAttribute(
+    			"xmlns",
+    			"http://schemas.telefonica.com/tcloud/1.0");
+        
+       // root.setAttributeNS("http://nuba.morfeo-project.org/network","ns0:"+TCloudConstants.ATTR_INSTANTIATION_PARAMS_NAME, String.valueOf(actualReplica.getFQN().toString()));
         root.setAttribute(TCloudConstants.ATTR_INSTANTIATION_PARAMS_NAME, String.valueOf(actualReplica.getFQN().toString()));
 
+        
         OVFContextualization context = new OVFContextualization();
 
 		System.out.println();
@@ -394,19 +498,57 @@ public class TCloudClient implements VMIHandler {
             }
         }
 
+			   
+   //     Element instantiationParams  = doc.createElementNS("http://nuba.morfeo-project.org/network","ns0:"+TCloudConstants.TAG_INSTANTIATION_PARAMS);
         Element instantiationParams  = doc.createElement(TCloudConstants.TAG_INSTANTIATION_PARAMS);
         root.appendChild(instantiationParams);
 
+        //Element netConfigSection = doc.createElementNS("http://nuba.morfeo-project.org/network","ns0:"+TCloudConstants.TAG_NETWORK_CONFIG_SECTION);
         Element netConfigSection = doc.createElement(TCloudConstants.TAG_NETWORK_CONFIG_SECTION);
         instantiationParams.appendChild(netConfigSection);
 
-        Element netConfig = doc.createElement(TCloudConstants.TAG_NETWORK_CONFIG);
-        netConfigSection.appendChild(netConfig);
+       // Element netConfig = doc.createElementNS("http://nuba.morfeo-project.org/network","ns0:"+TCloudConstants.TAG_NETWORK_CONFIG);
+       
+        
+        for (NIC nicItr: actualReplica.getNICs()) {
+        	 System.out.println ("NICsss " + nicItr.getNICConf().getNetwork().getName());
+        	  
+        	 Element netConfig = doc.createElement(TCloudConstants.TAG_NETWORK_CONFIG);
+             netConfigSection.appendChild(netConfig);  
+             netConfig.setAttribute("name", nicItr.getNICConf().getNetwork().getName());
+             
+             
+           //  <NetworkAssociation name="bsc.vdc.test.net.net1"
+            //     href="http://localhost:8080/fco/api/org/bsc/vdc/test/net/net1" />
+             
+             //  Element netConfigAssociation = doc.createElementNS("http://nuba.morfeo-project.org/network","ns0:"+TCloudConstants.TAG_NETWORK_ASSOCIATION);
+               Element netConfigAssociation = doc.createElement(TCloudConstants.TAG_NETWORK_ASSOCIATION);
+               netConfig.appendChild(netConfigAssociation);
+              // netConfigSection.setAttributeNS("http://nuba.morfeo-project.org/network","ns0:"+TCloudConstants.ATTR_NETWORK_ASSOCIATION_HREF, serverURL + URICreation.getURINet(nicItr.getNICConf().getNetwork().getFQN().toString()));
+               netConfigAssociation.setAttribute(TCloudConstants.ATTR_NETWORK_ASSOCIATION_HREF, serverURL + URICreation.getURINet(nicItr.getNICConf().getNetwork().getFQN().toString()));
+               netConfigAssociation.setAttribute("name", nicItr.getNICConf().getNetwork().getName());
+  
+            }
+        
+        
+        
+     /*   <NetworkConfigSection>
+        <ovf:Info>Logical networks configuration</ovf:Info>
+
+        <NetworkConfig name="Network 1">
+         <NetworkAssociation name="bsc.vdc.test.net.net1"
+          href="http://localhost:8080/fco/api/org/bsc/vdc/test/net/net1" />
+        </NetworkConfig>*/
 
         
+      //  Element aspectsSection = doc.createElementNS("http://nuba.morfeo-project.org/network","ns0:"+TCloudConstants.TAG_ASPECTS_SECTION);
         Element aspectsSection = doc.createElement(TCloudConstants.TAG_ASPECTS_SECTION);
         instantiationParams.appendChild(aspectsSection);
 
+       // Element aspect = doc.createElementNS("http://nuba.morfeo-project.org/network","ns0:"+TCloudConstants.TAG_ASPECT);
+       // aspect.setAttributeNS("http://nuba.morfeo-project.org/network","ns0:"+"required", "true");
+       // aspect.setAttributeNS("http://nuba.morfeo-project.org/network","ns0:"+TCloudConstants.ATTR_ASPECT_VSYSTEM, actualReplica.getFQN().toString());
+       // aspect.setAttributeNS("http://nuba.morfeo-project.org/network","ns0:"+"name", "IP Config");
         Element aspect = doc.createElement(TCloudConstants.TAG_ASPECT);
         aspect.setAttribute("required", "true");
         aspect.setAttribute(TCloudConstants.ATTR_ASPECT_VSYSTEM, actualReplica.getFQN().toString());
@@ -419,19 +561,26 @@ public class TCloudClient implements VMIHandler {
               		&& nicItr.getIPAddresses().get(0)!= null)
               {
         		  
+             //  Element netConfigAssociation = doc.createElementNS("http://nuba.morfeo-project.org/network","ns0:"+TCloudConstants.TAG_NETWORK_ASSOCIATION);
                Element netConfigAssociation = doc.createElement(TCloudConstants.TAG_NETWORK_ASSOCIATION);
                netConfigSection.appendChild(netConfigAssociation);
+              // netConfigSection.setAttributeNS("http://nuba.morfeo-project.org/network","ns0:"+TCloudConstants.ATTR_NETWORK_ASSOCIATION_HREF, serverURL + URICreation.getURINet(nicItr.getNICConf().getNetwork().getFQN().toString()));
                netConfigSection.setAttribute(TCloudConstants.ATTR_NETWORK_ASSOCIATION_HREF, serverURL + URICreation.getURINet(nicItr.getNICConf().getNetwork().getFQN().toString()));
-
             
+            //	Element property = doc.createElementNS("http://nuba.morfeo-project.org/network","ns0:"+TCloudConstants.TAG_ASPECT_PROPERTY);
             	Element property = doc.createElement(TCloudConstants.TAG_ASPECT_PROPERTY);
                 aspect.appendChild(property);
+               // property.setAttributeNS("http://nuba.morfeo-project.org/network","ns0:"+"type", "string");
                 property.setAttribute("type", "string");
 
+
+             //   Element key = doc.createElementNS("http://nuba.morfeo-project.org/network","ns0:"+TCloudConstants.TAG_ASPECT_KEY);
                 Element key = doc.createElement(TCloudConstants.TAG_ASPECT_KEY);
-                key.appendChild(doc.createTextNode(nicItr.getNICConf().getNetwork().getFQN().toString()));
+             //   key.appendChild(doc.createTextNode(nicItr.getNICConf().getNetwork().getFQN().toString()));
+                key.appendChild(doc.createTextNode(nicItr.getNICConf().getNetwork().getName()));
                 property.appendChild(key);
                 
+            //	Element value = doc.createElementNS("http://nuba.morfeo-project.org/network","ns0:"+TCloudConstants.TAG_ASPECT_VALUE);
             	Element value = doc.createElement(TCloudConstants.TAG_ASPECT_VALUE);
             value.appendChild(doc.createTextNode(nicItr.getIPAddresses().get(0)));
             property.appendChild(value);
@@ -476,10 +625,44 @@ public class TCloudClient implements VMIHandler {
         Map<VEEReplica, String> urlTasks = new HashMap<VEEReplica, String> ();
 
         for (VEEReplica actualReplica: veeReplicasConfs) {
+        	
+            
+            
 
+            // create the ficticious service
+            
+            if (SMConfiguration.getInstance().getNullVAppVm())
+            {
+            	logger.info("Gettting fictious");
+            	
+            	if (!checkServiceDeployed(actualReplica))
+            	{
+            	  boolean result2 = getFicticiousService (actualReplica);
+            	  logger.info("Get fictions service " +result2);
+            	  if (!result2)
+            	  {
+            		
+            		throw new CommunicationErrorException("Error to create the null service");
+            	  }
+            	}
+            	else
+            	{
+            		logger.info("The service is already created ");
+            	}
+            }
+            
+            Reference urlReplica = null;
             // Compose the URL for the replica.
-            Reference urlReplica = new Reference(serverURL + URICreation.getURIVapp(actualReplica.getFQN().toString())  + "/action/instantiateOvf");
-
+        	if (SMConfiguration.getInstance().getNullVAppVm())
+        	{
+        		urlReplica = new Reference(serverURL + URICreation.getURIService(actualReplica.getFQN().toString())  + "/action/instantiateOvf");
+        	}
+        	else
+        	{
+                urlReplica = new Reference(serverURL + URICreation.getURIVapp(actualReplica.getFQN().toString())  + "/action/instantiateOvf");
+        	}
+            logger.info (urlReplica.toString());
+            
             // Create de DOM Representation for the replica
             DomRepresentation data;
             try {
@@ -494,6 +677,7 @@ public class TCloudClient implements VMIHandler {
             Response response = client.post(urlReplica, data);
 
             // Depending on the response code, return with an error, or wait for a response
+            System.out.println ("Respuseta " + response.getStatus().getCode());
             switch (response.getStatus().getCode()) {
 
                 case 401:    // Unauthorized
@@ -522,9 +706,14 @@ public class TCloudClient implements VMIHandler {
 
                     try {
                         Document responseXml = response.getEntityAsDom().getDocument();
-                        System.out.println (PaasUtils.tooString(responseXml));
+                        logger.info(" tewst" + PaasUtils.tooString(responseXml));
 
                         NodeList tasks = responseXml.getElementsByTagName(TCloudConstants.TAG_TASK);
+                        
+                        if (tasks.getLength()==0)
+                        {
+                        	tasks = responseXml.getElementsByTagName("ns24:Task");
+                        }
 
                         if (tasks.getLength() != 0 && ((Element)tasks.item(0)).getAttribute("href")!= null) {
                             urlTasks.put(actualReplica, ((Element)tasks.item(0)).getAttribute("href"));
@@ -535,6 +724,7 @@ public class TCloudClient implements VMIHandler {
                     } catch (IOException e) {
                         throw new CommunicationErrorException(response.getStatus().getDescription(), new Exception(response.getStatus().getName()));
                     } catch (Throwable e) {
+                    	e.printStackTrace();
                         throw new CommunicationErrorException("Internal error while decoding the answer", e);
                     }
 
@@ -556,6 +746,7 @@ public class TCloudClient implements VMIHandler {
                 Document xml = getTask (urlTasks.get(actualReplica));
 
                 String status = getTaskStatus(xml);
+                System.out.println ("Status" + status);
 
                 if (status.toLowerCase().equals("success")) {
                     deploymentResult = new VEEReplicaAllocationResult(actualReplica.getId(), "Deployed", true);
@@ -563,7 +754,7 @@ public class TCloudClient implements VMIHandler {
                 } else if (status.toLowerCase().equals("error")) {
                 	String error = this.getTaskMessageError(xml);
                     deploymentResult = new VEEReplicaAllocationResult(actualReplica.getId(), "Failed:"+error, false);
-                   
+                    System.out.println ("Error in the operation " +deploymentResult);
                     result.put(actualReplica, deploymentResult);
                 }
             }
@@ -574,6 +765,108 @@ public class TCloudClient implements VMIHandler {
         }
         return result;
     }
+    
+    private boolean checkServiceDeployed (VEEReplica actualReplica) 
+    {
+    	
+    	Reference urlReplica = new Reference(serverURL + URICreation.getURIVDC(actualReplica.getFQN().toString())  + "/"+actualReplica.getVEE().getServiceApplication().getSerAppName());
+    	logger.info(urlReplica.toString());
+    	// Create de DOM Representation for the replica
+               // Call the server with the URI and the data
+    	Response response = null;
+    	try
+    	{
+    		response = client.get(urlReplica);
+    	}
+    	catch (Exception e)
+    	{
+    		logger.info("Error al obtener si existe el servicio " + e.getMessage());
+    		return false;
+    	}
+       
+
+        // Depending on the response code, return with an error, or wait for a response
+        System.out.println ("Respuseta " + response.getStatus().getCode());
+        switch (response.getStatus().getCode()) {
+
+            case 401:    // Unauthorized
+            case 403:    // Forbidden
+                // Throw an Access Denied Exception
+             
+
+            case 400:    // Bad Request
+            case 404:    // Not found
+             
+
+            case 501:
+            case 500:
+                return false;
+
+
+            case 202:
+                // The VEE has been accepted to be deployed, but the response will be asynchronous.
+                // Wait for the response actively.
+
+            case 201:
+
+            case 200:
+                // The VirtualMachine has been started without errors. Parse the response and
+                // get the task id.
+
+               return true;
+        
+               
+        }
+        return false;
+    }
+    
+    private boolean getFicticiousService (VEEReplica actualReplica) throws AccessDeniedException, CommunicationErrorException
+    {
+    	
+    	Reference urlReplica = new Reference(serverURL + URICreation.getURIVDC(actualReplica.getFQN().toString())  + "/action/instantiateOvf");
+    	logger.info(urlReplica.toString());
+    	// Create de DOM Representation for the replica
+        DomRepresentation data;
+        data = new DomRepresentation(MediaType.APPLICATION_XML, getFictiousService(actualReplica));
+       
+
+        // Call the server with the URI and the data
+        Response response = client.post(urlReplica, data);
+
+        // Depending on the response code, return with an error, or wait for a response
+        System.out.println ("Respuseta " + response.getStatus().getCode());
+        switch (response.getStatus().getCode()) {
+
+            case 401:    // Unauthorized
+            case 403:    // Forbidden
+                // Throw an Access Denied Exception
+                throw new AccessDeniedException(response.getStatus().getDescription(), actualReplica, null);
+
+            case 400:    // Bad Request
+            case 404:    // Not found
+                throw new CommunicationErrorException(response.getStatus().getDescription(), new Exception(response.getStatus().getName()));
+
+            case 501:
+            case 500:
+                throw new CommunicationErrorException(response.getStatus().getDescription(), new Exception(response.getStatus().getName()));
+
+
+            case 202:
+                // The VEE has been accepted to be deployed, but the response will be asynchronous.
+                // Wait for the response actively.
+
+            case 201:
+
+            case 200:
+                // The VirtualMachine has been started without errors. Parse the response and
+                // get the task id.
+
+               return true;
+        
+               
+        }
+        return false;
+    }
 
     private String   getTaskStatus(Document responseXml) throws AccessDeniedException, CommunicationErrorException {
     	
@@ -581,6 +874,11 @@ public class TCloudClient implements VMIHandler {
     	if (responseXml == null)
     		return "unknown";
     	 NodeList tasks = responseXml.getElementsByTagName(TCloudConstants.TAG_TASK);
+    	 
+    	 if (tasks.getLength()==0)
+    	 {
+    		 tasks = responseXml.getElementsByTagName("ns24:Task");
+    	 }
 
          if (tasks.getLength() != 0 && ((Element)tasks.item(0)).getAttribute("status")!= null) {
 
@@ -598,6 +896,10 @@ public class TCloudClient implements VMIHandler {
     		return "unknown";
     	 NodeList tasks = responseXml.getElementsByTagName(TCloudConstants.TAG_TASK);
 
+    	 if (tasks.getLength()==0)
+    	 {
+    		 tasks = responseXml.getElementsByTagName("ns24:Task");
+    	 }
          if (tasks.getLength() != 0 && ((Element)tasks.item(0)).getAttribute("status")!= null) {
 
              // If the task is Success or Error, store the result.
@@ -605,6 +907,21 @@ public class TCloudClient implements VMIHandler {
 
          } 
          return "unknown";
+    }
+    
+    public static void main (String [] args)
+    {
+    	TCloudClient d = new TCloudClient ("http://");
+    	try {
+			System.out.println (d.getTaskStatus("http://84.21.173.137:8080/fco/api/org/CESGA/vdc/dddd/task/1"));
+		} catch (AccessDeniedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (CommunicationErrorException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    	
     }
 
     private Document getTask(String url) throws AccessDeniedException, CommunicationErrorException {
@@ -657,6 +974,11 @@ public class TCloudClient implements VMIHandler {
 
 
         NodeList tasks = message.getElementsByTagName("error");
+        
+        if (tasks.getLength()==0)
+        {
+        	tasks = message.getElementsByTagName("ns24:Error") ;
+        }
 
         if (tasks.getLength() != 0 && ((Element)tasks.item(0)).getAttribute("message")!= null) {
 
@@ -876,7 +1198,9 @@ public class TCloudClient implements VMIHandler {
                     deploymentResult = new VEEReplicaUpdateResult(actualReplica.getId(), "Deployed", true);
                     result.put(actualReplica, deploymentResult);
                 } else if (status.toLowerCase().equals("error")) {
+                	
                     deploymentResult = new VEEReplicaUpdateResult(actualReplica.getId(), "Failed", false);
+                    System.out.println ("Error in the operation " +deploymentResult);
                     result.put(actualReplica, deploymentResult);
                 }
             }

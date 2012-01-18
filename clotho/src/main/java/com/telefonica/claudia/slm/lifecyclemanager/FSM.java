@@ -278,6 +278,8 @@ public class FSM extends Thread implements Serializable {
 	private HashMap<String, String> replicaCustomInfo;
 
 	private LoadBalancerConfigurator lbConfigurator;
+	
+	private static Logger reportLog = Logger.getLogger("ReportingKPI");
 
 	/**
 	 * Determines the kind of events permitted in each of the different FSM
@@ -706,17 +708,34 @@ public class FSM extends Thread implements Serializable {
 	public boolean startService() {
 
 		// in this case we use an Array so as to sort it properly
-		int g = 0;
+		int caux =0;
 		veeArray = new VEE[sap.getVEEs().size()];
-		for (Iterator<VEE> veeIt = sap.getVEEs().iterator(); veeIt.hasNext();) {
-			veeArray[g] = veeIt.next();
-			g++;
+		for (VEE aux: sap.getVEEs())
+		{
+			for (int g=0; g<sap.getVEEs().size(); g++) {
+			
+		    if (aux.getDeploymentOrder()==-1&& caux==g)
+		    {
+			  System.out.println ("adding to position " + g+ " node " + aux.getVEEName());
+			  veeArray[g] = aux;
+			  caux++;
+			  continue;
+		    }
+		    else if (aux.getDeploymentOrder()==g)
+		    {
+			
+			  System.out.println ("adding to position " + g+ " node " + aux.getVEEName());
+			  veeArray[g] = aux;
+			  continue;
+		   }
+		  }
+			
 		}
 
 		// rearrange the array according to the order field in the VEE
 		// object
 		// VEE implements Comparable
-		Arrays.sort(veeArray);
+		//Arrays.sort(veeArray);
 
 		// First of all, check the needed networks have been created.
 
@@ -852,25 +871,26 @@ public class FSM extends Thread implements Serializable {
 	
 	private void reportKPIValue ()
 	{
-		System.out.println ("Reporting ");
+		
 
 		for (ServiceKPI kpi: sap.getServiceKPIs())
 		{
+			reportLog.info ("Reporting KPI " + kpi.getKPIName());	
+			
+		    MonitoringReportObtainKPI report = null;
 				
-		  System.out.println ("KPI " + kpi.getKPIName());
-		  MonitoringReportObtainKPI report = null;
-				
-		  if (kpi.getKPIType().equals("AGENT"))
-		  {
+		    if (kpi.getKPIType().equals("AGENT"))
+		    {
 
-		     report = new MonitoringReportObtainKPI(kpi.getKPIType(), sap.getFQN().toString(), kpi.getKPIName(), kpi.getKPIName());
-		  }
-		  else
-		  {
-			report = new MonitoringReportObtainKPI(kpi.getKPIType(), sap.getFQN().toString()+".vees."+kpi.getKPIVmname(), kpi.getKPIName(), kpi.getKPIName());
-		  }
+		     report = new MonitoringReportObtainKPI(kpi.getKPIType(), sap.getFQN().toString(), kpi.getKPIName(), kpi.getKPIName(),reportLog);
+		    }
+		    else
+		    {
+			  report = new MonitoringReportObtainKPI(kpi.getKPIType(), sap.getFQN().toString()+".vees."+kpi.getKPIVmname(), 
+					  kpi.getKPIName(), kpi.getKPIName(),reportLog);
+		    }
 				
-		  report.run();
+		    report.run();
 	   }
 	}
 	
@@ -1331,6 +1351,7 @@ public class FSM extends Thread implements Serializable {
 				retorno = FSM.RUNNING;
 				if (SMConfiguration.getInstance().getReportingKpiEnable())
 				{
+					System.out.println ("Enabliong KPIs reporting");
 					this.reportKPIValue();
 				}
 			}

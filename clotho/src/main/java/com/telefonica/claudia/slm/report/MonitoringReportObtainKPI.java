@@ -7,6 +7,7 @@ import java.util.Iterator;
 
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.apache.log4j.Logger;
 import org.xml.sax.SAXException;
 
 import com.telefonica.claudia.slm.common.SMConfiguration;
@@ -28,13 +29,16 @@ public class MonitoringReportObtainKPI extends Thread {
 	private String metric = null;
 	private String kpi = null;
 	private String type = null;
-	public MonitoringReportObtainKPI (String type, String fqnentity, String metric, String kpi)
+	private Logger reportLog = null;
+	public MonitoringReportObtainKPI (String type, String fqnentity, String metric, String kpi, Logger reportLog )
 	{
-		System.out.println ("monitoring "  + metric + " " + type);
+		this.reportLog =  reportLog;
+		reportLog.info ("monitoring "  + metric + " " + type);
 		this.metric = metric;
 		this.kpi = kpi;
 		this.fqnentity=fqnentity;
 		this.type=type;
+		
 	}
 	
 	
@@ -137,12 +141,13 @@ public class MonitoringReportObtainKPI extends Thread {
 	//	for (VEE vee: sa.getVEEs())
 	//	{
 		//	if (vee.getBalancedBy()!= null)
+		Logger reportLog = Logger.getLogger("ReportingKPI");
 		//	{
 				for (ServiceKPI kpi: sa.getServiceKPIs())
 				{
 					MonitoringReportObtainKPI report = null;
 
-					report = new MonitoringReportObtainKPI(kpi.getKPIType(), "fqnentity", kpi.getKPIName(), kpi.getKPIName());
+					report = new MonitoringReportObtainKPI(kpi.getKPIType(), "fqnentity", kpi.getKPIName(), kpi.getKPIName(), reportLog);
 					
 				    report.run();
 				}
@@ -170,18 +175,18 @@ public class MonitoringReportObtainKPI extends Thread {
 		}
 		
 		boolean deploy = true;
-		System.out.println ("starting thread");
+		reportLog.info ("starting thread");
 		while (deploy)
 		{
 		   try {
-			   System.out.println ("url monitoring " + urlmonitor);
+			   reportLog.info ("url monitoring " + urlmonitor);
 			   obtainData(urlmonitor);
 		   } 
 		   catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 			this.stop();
-			System.out.println ("stoping thread");
+			reportLog.info  ("stoping thread");
 			
 			deploy=false;
 			return;
@@ -198,20 +203,20 @@ public class MonitoringReportObtainKPI extends Thread {
 				 deploy=false;
 				 return;
 			 }
-			 System.out.println("continuing");
+			 reportLog.info ("continuing");
 		}
         
     }
 	
 	public void obtainData (String urlmonitor) throws IOException, SAXException, ParserConfigurationException, ParseException
 	{
-		PersistenceClient pc = new PersistenceClient();
+		PersistenceClient pc = new PersistenceClient(reportLog);
 		if (type.equals("AGENT"))
 			metric=kpi;
 		
 
 		String valuexml = null;
-		System.out.println ("getting meassure for " + metric);
+		reportLog.info  ("getting meassure for " + metric);
 		valuexml = pc.getmeasure(urlmonitor, metric);
 		
 		String measurefqn = urlmonitor+"/"+metric;

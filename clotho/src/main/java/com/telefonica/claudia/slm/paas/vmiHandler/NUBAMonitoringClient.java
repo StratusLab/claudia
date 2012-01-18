@@ -161,14 +161,28 @@ public class NUBAMonitoringClient extends MonitoringVMIHandler {
 	CommunicationErrorException {
 
 
-		Reference urlMonitoring = new Reference(serverURL +"/"+fqn);
+		Reference urlMonitoring = new Reference(serverURL);
 
 		System.out.println ("URL " +urlMonitoring );
 
 		
 		// Call the server with the URI and the data
 		logger.debug("Deleing Monitoring information for "+ fqn );
-		Response response = client.delete(urlMonitoring);
+		DomRepresentation data;
+		
+        try {
+
+        	Document doc = getMonitoringParams(fqn);	
+        	Element root = doc.getDocumentElement();
+        	String s = root.toString();
+        	System.out.println ("Data sent " + getString(doc));
+        	data = new DomRepresentation(MediaType.APPLICATION_XML,doc);
+
+        } catch (ParserConfigurationException e) {
+            logger.error("Error creating parser: " + e.getMessage());
+            return;
+        }
+		Response response = client.put(urlMonitoring, data);
 
 		// Depending on the response code, return with an error, or wait for a response
 		System.out.println ("Response " + response.getStatus().getCode());
@@ -202,7 +216,7 @@ public class NUBAMonitoringClient extends MonitoringVMIHandler {
 
 }
 	
-	public Document getMonitoringParams(String fqn) throws ParserConfigurationException
+	public Document getMonitoringParams2(String fqn) throws ParserConfigurationException
 	{
 		logger.info("Obtain XML for monitoring data for " +fqn);
 		String md5 = this.getMd5FromFQN(fqn);
@@ -218,6 +232,8 @@ public class NUBAMonitoringClient extends MonitoringVMIHandler {
       
 		return doc;
 	}
+	
+	
 	
 	public String getMd5FromFQN (String fqn) 
 	{
@@ -256,6 +272,23 @@ public class NUBAMonitoringClient extends MonitoringVMIHandler {
         Element DatasourceData  = doc.createElement("DatasourceData");
         DatasourceData.setAttribute("name", fqn);
         DatasourceData.setAttribute("source", ip);
+        root.appendChild(DatasourceData);
+        return doc;
+        
+	}
+	
+	public Document getMonitoringParams (String fqn) throws ParserConfigurationException
+	{
+		logger.info("Obtain XML for installing Product");
+        DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+        Document doc = builder.newDocument();
+       
+        Element root = doc.createElement("DatasourceList");
+        doc.appendChild(root);
+        
+        Element DatasourceData  = doc.createElement("DatasourceData");
+        DatasourceData.setAttribute("name", fqn);
+       
         root.appendChild(DatasourceData);
         return doc;
         

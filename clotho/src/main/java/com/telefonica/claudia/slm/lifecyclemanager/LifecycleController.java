@@ -108,6 +108,8 @@ public class LifecycleController  extends UnicastRemoteObject implements SMI, Se
 	private static Logger logger = Logger.getLogger(LifecycleController.class); 
 
 	private static Logger monitoringLog = Logger.getLogger("Monitoring");
+	
+	
 
 	static {
 		Logger.getLogger("com.telefonica.claudia.slm.lifecyclemanager").setLevel(Level.INFO); 
@@ -856,6 +858,18 @@ public class LifecycleController  extends UnicastRemoteObject implements SMI, Se
 		ServiceApplication sa;
 		VEE vee;
 		Document doc=null;
+		DocumentBuilderFactory dbfac = DocumentBuilderFactory.newInstance();
+        DocumentBuilder docBuilder= null;
+	
+		try {
+			docBuilder = dbfac.newDocumentBuilder();
+		} catch (ParserConfigurationException e3) {
+			// TODO Auto-generated catch block
+			e3.printStackTrace();
+		}
+	
+		
+		doc = docBuilder.newDocument();
 
 		switch(event.getAction()) {
 
@@ -1065,13 +1079,7 @@ public class LifecycleController  extends UnicastRemoteObject implements SMI, Se
 				
 				Element element = null;
 				try {
-					DocumentBuilderFactory dbfac = DocumentBuilderFactory.newInstance();
-			        DocumentBuilder docBuilder= null;
-				
-					docBuilder = dbfac.newDocumentBuilder();
-				
 					
-					doc = docBuilder.newDocument();
 					Element r = doc.createElement("ErrorSet");
 					doc.appendChild(r);
 
@@ -1085,10 +1093,7 @@ public class LifecycleController  extends UnicastRemoteObject implements SMI, Se
 					element.setAttribute("ref", "http://" + SMConfiguration.getInstance().getSMIHost() + ":" + SMConfiguration.getInstance().getSMIPort()  + "/" + URICreation.getURIService(serviceFQN));
 				} catch (IllegalArgumentException iae) {
 					element.appendChild(doc.createElement(event.get(SMIChannelEvent.FQN_ID)));
-				} catch (ParserConfigurationException e2) {
-					// TODO Auto-generated catch block
-					element.appendChild(doc.createElement(event.get(SMIChannelEvent.FQN_ID)));
-				}
+				} 
 			}
 
 
@@ -1168,8 +1173,8 @@ public class LifecycleController  extends UnicastRemoteObject implements SMI, Se
 				cust = ((Customer)ReservoirDirectory.getInstance().getObject(new FQN(event.get(SMIChannelEvent.FQN_ID))));
 				e = new SMIChannelEvent(System.currentTimeMillis(), 0, SMIAction.GET_VDC);
 
-				DocumentBuilderFactory dbfac = DocumentBuilderFactory.newInstance();
-				DocumentBuilder docBuilder;
+			//	DocumentBuilderFactory dbfac = DocumentBuilderFactory.newInstance();
+			//	DocumentBuilder docBuilder;
 
 				docBuilder = dbfac.newDocumentBuilder();
 				doc = docBuilder.newDocument();

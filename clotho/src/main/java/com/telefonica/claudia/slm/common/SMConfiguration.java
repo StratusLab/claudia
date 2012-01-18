@@ -180,6 +180,8 @@ public class SMConfiguration extends Properties {
 	
 	private boolean reportingkpi = false;
 	
+	private boolean nullvappvm = false;
+	
 	private SMConfiguration() throws Exception {		
 		readSMProperties();
 	}
@@ -402,6 +404,17 @@ public class SMConfiguration extends Properties {
 		}
 		logger.info("Property [" + "reportingkpi" + "] with value [" + reportingkpi + "]");
 		
+		try
+		{
+			nullvappvm = Boolean.parseBoolean(readProperty("nullvappvm"));
+		}
+		catch (Throwable t) {
+			logger.error("Parsing error on " +  "nullvappvm" + "property: not found");
+		}
+		logger.info("Property [" + "nullvappvm" + "] with value [" + nullvappvm + "]");
+		
+		
+		
 		
 		
 	}
@@ -414,6 +427,13 @@ public class SMConfiguration extends Properties {
 	public int getNumberOfReint() {
 	    	return numberofreintent;
 	 }
+	
+	public boolean getNullVAppVm () {
+    	return nullvappvm;
+   }
+    
+ 
+	
 	    
 	public void setNumberOfReint(int numberofreintent) {
 	    	 this.numberofreintent = numberofreintent;
