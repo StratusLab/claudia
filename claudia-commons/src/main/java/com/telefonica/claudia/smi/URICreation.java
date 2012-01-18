@@ -65,7 +65,8 @@ public class URICreation {
 		
 	public static final String URI_TASK  = URI_ORG   + "/task/{task-id}";
 	
-	public static final String URI_NET_ROOT = URI_VAPP + "/net";
+	//public static final String URI_NET_ROOT = URI_VAPP + "/net";
+	public static final String URI_NET_ROOT = URI_VDC + "/net";
 	public static final String URI_NET = URI_NET_ROOT + "/{net-id}";
 	//public static final String URI_NET_ADD = URI_VAPP + "/net/action/add";
 	
