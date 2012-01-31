@@ -42,7 +42,7 @@ public class SMMonitoringNoJMSDriverTest {
 			
 		}
 		
-		try {
+	/*	try {
 			com.telefonica.claudia.smi.monitoring.bean.MeasureDescriptor mea = dd.getVappMeasureDescriptor ("grnet", "cc", t, "disk");
 			
 			System.out.println ("dd" + mea.getMaxValue());
@@ -62,7 +62,7 @@ public class SMMonitoringNoJMSDriverTest {
 		} catch (MonitorException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}
+		}*/
 		
 		
 	}
