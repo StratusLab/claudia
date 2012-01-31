@@ -30,11 +30,36 @@
 
 		</dependency>
 
-		<dependency>
-			<groupId>org.restlet</groupId>
-			<artifactId>org.restlet</artifactId>
+	<!--  	<dependency>
+		<groupId>com.noelios.restlet</groupId>
+		<artifactId>com.noelios.restlet</artifactId>
+	</dependency>-->
+	<dependency>
+		<groupId>org.restlet</groupId>
+		<artifactId>org.restlet</artifactId>
+	</dependency>
 
-		</dependency>
+	<!--  <dependency>
+		<groupId>commons-betwixt</groupId>
+		<artifactId>commons-betwixt</artifactId>
+	</dependency>
+	
+	  <dependency>
+               <groupId>javax.xml.bind</groupId>
+               <artifactId>jaxb-api</artifactId>
+               <exclusions>
+                       <exclusion>
+                               <groupId>javax.xml.stream</groupId>
+                               <artifactId>stax-api</artifactId>
+                       </exclusion>
+               </exclusions>
+       </dependency>
+       
+       	<dependency>
+			<groupId>cglib</groupId>
+			<artifactId>cglib</artifactId>
+			
+		</dependency>-->
 <!--  
 		<dependency>
 			<groupId>org.freemarker</groupId>
