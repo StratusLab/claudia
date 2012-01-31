@@ -592,7 +592,7 @@ public class OneVmUtilities {
 							
 							String idnet = null;
 							try {
-								idnet = operations.getOneNetworkId(fqnNet);
+								idnet = operations.getOneNetworkId(item.getConnection().get(0).getValue());
 								log.info("Network information " + fqnNet + " " + idnet);
 								allParametersString.append("NETWORK_ID").append(ASSIGNATION_SYMBOL).append(idnet);
 							} catch (IOException e) {
@@ -781,10 +781,10 @@ public class OneVmUtilities {
 						System.out.println ("/etc/init.d/probe start");
 						scriptexec.append("/etc/init.d/probe start; ");
 					}
-					else  {
+					/*else  {
 						System.out.println ("python /mnt/stratuslab/"+scrt);
 						scriptexec.append("python /mnt/stratuslab/"+scrt+"; ");
-					}
+					}*/
 				}
 				else if (scrt.indexOf(".sh")!=-1)
 				{

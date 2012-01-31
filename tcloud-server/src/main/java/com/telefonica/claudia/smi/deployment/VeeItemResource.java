@@ -72,6 +72,7 @@ public class VeeItemResource extends Resource  {
         this.vdcId = (String) getRequest().getAttributes().get("vdc-id");
         this.orgId = (String) getRequest().getAttributes().get("org-id");
         this.veeId = (String) getRequest().getAttributes().get("vee-id");
+        
 
         // Get the item directly from the "persistence layer".
         if (this.orgId != null && this.vdcId!=null && this.vappId!=null && this.veeId!=null) {

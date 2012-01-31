@@ -4,8 +4,13 @@ import static com.telefonica.claudia.configmanager.common.ReturnCode.ERROR_INTER
 import static com.telefonica.claudia.configmanager.common.ReturnCode.ERROR_NOT_AVAILABLE_NODE;
 import static com.telefonica.claudia.configmanager.common.ReturnCode.SUCCESS_NODE_DELETE;
 
+import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -55,19 +60,68 @@ public class LoadBalancerConfiguratorRESTImpl implements LoadBalancerConfigurato
 		// The URI of the load balancer
 		Reference lbUri = new Reference(Protocol.HTTP, ipLb, portLb);
 		
+		System.out.println ("Adding node to " + ipLb+":"+ portLb + " " + fqnNode + " " + ipNode);
+		
+		
 		// Fill the form for adding the new node
 		Form newNodeForm = new Form();
 		newNodeForm.add("fqn", fqnNode);
 		newNodeForm.add("ip", ipNode);
 		Representation representation = newNodeForm.getWebRepresentation();
-	//	System.out.println (representation.getText());
+		
+		try {
+			System.out.println (lbUri.toString() + " " + representation.getText());
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
 		// Make the post operation sending the form an get the response
 		Response response = client.post(lbUri, representation);
+		System.out.println ("Response " +response.getStatus().getCode());
 		response.getEntity().release();
 		response.release();
 		return response.getStatus().getCode();
-	
+		
+	/*	URLConnection conn = null;
+		OutputStreamWriter writer = null;
+		try {
+            
+            // Send the request
+            URL url = new URL("http://"+ipLb+":"+portLb);
+            conn = url.openConnection();
+            conn.setDoOutput(true);
+            writer = new OutputStreamWriter(conn.getOutputStream());
+            
+            
+            String data = "fqn="+fqnNode+"&ip="+ipNode;
+            System.out.println ("Sendind " + data);
+            //write parameters
+            writer.write(data);
+            writer.flush();
+            
+            // Get the response
+            StringBuffer answer = new StringBuffer();
+            BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+            String line;
+            while ((line = reader.readLine()) != null) {
+                answer.append(line);
+            }
+            writer.close();
+            reader.close();
+            
+            
+            //Output the response
+            System.out.println("Anser " + answer.toString());
+            return 200;
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+			return 500;
+		}*/
+		
+		
 	}
 	
 
