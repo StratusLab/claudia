@@ -5,14 +5,14 @@
  
   <groupId>eu.stratuslab.pkgs.claudia</groupId>
   <artifactId>reportclient</artifactId>
-  <version>0.1.13-SNAPSHOT</version>
+  <version>0.1.13</version>
   <name>ReportClient: Claudia Report Rest Client</name>
 
 
  <parent>
     <groupId>eu.stratuslab.pkgs.claudia</groupId>
     <artifactId>claudia-parent</artifactId>
-    <version>1.13-SNAPSHOT</version>
+    <version>1.13</version>
   </parent>
   
   
