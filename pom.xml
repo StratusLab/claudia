@@ -78,7 +78,7 @@ grid certificates, and VOMS proxies.
 
 	<ciManagement>
 		<system>Hudson</system>
-		<url>http://hudson.stratuslab.eu:8080/</url>
+		<url>${ciManagement.url}</url>
 	</ciManagement>
 
 	<scm>
@@ -459,6 +459,7 @@ grid certificates, and VOMS proxies.
       <url>${nexus.release.url}/content/repositories/${nexus.release.repository.name}</url>
     </repository>
     <snapshotRepository>
+      <uniqueVersion>false</uniqueVersion>
       <id>stratuslab.snapshots</id>
       <name>Snapshots</name>
       <url>${nexus.release.url}/content/repositories/${nexus.snapshot.repository.name}</url>
@@ -469,11 +470,20 @@ grid certificates, and VOMS proxies.
     </site>
   </distributionManagement>
 
-  <properties>
-    <!-- <nexus.release.url>http://repo.stratuslab.eu:8081</nexus.release.url> -->
-    <nexus.release.url>http://jiccentos:8081</nexus.release.url>
+  <properties> 
+  <!--  FOR LOCAL COMPILATION 
+       <nexus.release.url>http://jiccentos:8081/nexus</nexus.release.url> 
+       <ciManagement.url>http://jiccentos:8080/</ciManagement.url>
+    END LOCAL COMPILATION --> 
+
+  <!-- FOR STRATUSLAB COMPILATION--> 
+       <nexus.release.url>http://repo.stratuslab.eu:8081</nexus.release.url> 
+       <ciManagement.url>http://hudson.stratuslab.eu:8080/</ciManagement.url>
+  <!-- END STRATUSLAB COMPILATION -->
+
     <nexus.release.repository.name>fedora-14-releases</nexus.release.repository.name>
     <nexus.snapshot.repository.name>fedora-14-snapshots</nexus.snapshot.repository.name>
+
   </properties>
 
 	<reporting>
