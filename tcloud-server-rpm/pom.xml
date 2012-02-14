@@ -50,6 +50,14 @@
 
 		<dependency>
 			<groupId>eu.stratuslab.pkgs.claudia</groupId>
+			<artifactId>driver-mon</artifactId>
+			<version>0.1.14-SNAPSHOT</version>
+			<classifier>deployable</classifier>
+			<type>zip</type>
+		</dependency>
+
+		<dependency>
+			<groupId>eu.stratuslab.pkgs.claudia</groupId>
 			<artifactId>driver-flexiscale</artifactId>
 			<version>0.1.14-SNAPSHOT</version>
 			<classifier>deployable</classifier>
@@ -130,6 +138,12 @@
 								<artifactItem>
 									<groupId>eu.stratuslab.pkgs.claudia</groupId>
 									<artifactId>driver-one</artifactId>
+									<classifier>deployable</classifier>
+									<type>zip</type>
+								</artifactItem>
+								<artifactItem>
+									<groupId>eu.stratuslab.pkgs.claudia</groupId>
+									<artifactId>driver-mon</artifactId>
 									<classifier>deployable</classifier>
 									<type>zip</type>
 								</artifactItem>

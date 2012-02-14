@@ -71,10 +71,12 @@ grid certificates, and VOMS proxies.
 		<url>http://stratuslab.eu/</url>
 	</organization>
 
+<!-- COMMENT THIS FOR LOCAL COMPILATION -->
 	<issueManagement>
 		<system>JIRA</system>
 		<url>http://jira.stratuslab.eu:8080/</url>
 	</issueManagement>
+    <!-- END COMMENT -->
 
 	<ciManagement>
 		<system>Hudson</system>
@@ -82,8 +84,8 @@ grid certificates, and VOMS proxies.
 	</ciManagement>
 
 	<scm>
-		<connection>scm:git:ssh://apache@code.stratuslab.eu/ext/git/claudia.git</connection>
-		<developerConnection>scm:git:ssh://apache@code.stratuslab.eu/ext/git/claudia.git</developerConnection>
+		<connection>${scm.connection}</connection>
+		<developerConnection>${scm.developerConnection}</developerConnection>
 	</scm>
 
 	<dependencyManagement>
@@ -454,32 +456,45 @@ grid certificates, and VOMS proxies.
 
   <distributionManagement>
     <repository>
-      <id>stratuslab.releases</id>
+      <id>${nexus.release.id}</id>
       <name>Releases</name>
       <url>${nexus.release.url}/content/repositories/${nexus.release.repository.name}</url>
     </repository>
     <snapshotRepository>
-      <uniqueVersion>false</uniqueVersion>
-      <id>stratuslab.snapshots</id>
+      <id>${nexus.snapshot.id}</id>
       <name>Snapshots</name>
       <url>${nexus.release.url}/content/repositories/${nexus.snapshot.repository.name}</url>
     </snapshotRepository>
+
+
+<!-- COMMENT THIS FOR LOCAL COMPILATION  -->
     <site>
       <id>hudson.webserver</id>
       <url>scp://hudson.stratuslab.eu/var/www/one</url>
     </site>
+<!--    END COMMENT -->
+
+
   </distributionManagement>
 
   <properties> 
-  <!--  FOR LOCAL COMPILATION 
-       <nexus.release.url>http://jiccentos:8081/nexus</nexus.release.url> 
+  <!--  FOR LOCAL COMPILATION  
        <ciManagement.url>http://jiccentos:8080/</ciManagement.url>
+       <scm.connection>scm:git:ssh://git@jiccentos/lhome/git/claudia.git</scm.connection>
+       <scm.developerConnection>scm:git:ssh://git@jiccentos/lhome/git/claudia.git</scm.developerConnection>
+       <nexus.release.url>http://jiccentos:8081/nexus</nexus.release.url> 
+       <nexus.release.id>fedora-14-releases</nexus.release.id>
+       <nexus.snapshot.id>fedora-14-snapshots</nexus.snapshot.id>
     END LOCAL COMPILATION --> 
 
-  <!-- FOR STRATUSLAB COMPILATION--> 
-       <nexus.release.url>http://repo.stratuslab.eu:8081</nexus.release.url> 
+  <!-- FOR STRATUSLAB COMPILATION  -->
        <ciManagement.url>http://hudson.stratuslab.eu:8080/</ciManagement.url>
-  <!-- END STRATUSLAB COMPILATION -->
+       <scm.connection>scm:git:ssh://apache@code.stratuslab.eu/ext/git/claudia.git</scm.connection>
+       <scm.developerConnection>scm:git:ssh://apache@code.stratuslab.eu/ext/git/claudia.git</scm.developerConnection>
+       <nexus.release.url>http://repo.stratuslab.eu:8081</nexus.release.url> 
+       <nexus.release.id>stratuslab.releases</nexus.release.id>
+       <nexus.snapshot.id>stratuslab.snapshots</nexus.snapshot.id>
+  <!--  END STRATUSLAB COMPILATION -->
 
     <nexus.release.repository.name>fedora-14-releases</nexus.release.repository.name>
     <nexus.snapshot.repository.name>fedora-14-snapshots</nexus.snapshot.repository.name>

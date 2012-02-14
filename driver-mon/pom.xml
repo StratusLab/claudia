@@ -4,7 +4,7 @@
 
     <groupId>eu.stratuslab.pkgs.claudia</groupId>
     <artifactId>driver-mon</artifactId>
-    <version>0.1.8-SNAPSHOT</version>
+    <version>0.1.14-SNAPSHOT</version>
     <name>OpenNebula driver for TCloud</name>
 
 
