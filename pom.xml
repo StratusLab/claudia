@@ -33,13 +33,12 @@ grid certificates, and VOMS proxies.
 		<module>clotho</module>
 		<module>reportclient</module>
 		<module>claudia-model</module>
-		<!--   <module>driver-mon</module>-->
-        <module>tcloud-server-rpm</module>
+		<module>driver-mon</module>
+		<module>tcloud-server-rpm</module>
 		<module>claudia-client-rpm</module>
 		<module>clotho-rpm</module>
 		<module>reportclient-rpm</module>
 		<module>claudia-common-rpm</module>
-
 	</modules>
 
 	<profiles>
@@ -267,7 +266,18 @@ grid certificates, and VOMS proxies.
 				<artifactId>jboss-archive-browsing</artifactId>
 				<version>5.0.0alpha-200607201-119</version>
 			</dependency>
-
+			<dependency> 
+				<groupId>org.jboss.cache</groupId> 
+				<artifactId>jbosscache-core</artifactId> 
+				<version>3.0.3.GA</version> 
+				<scope>provided</scope> 
+			</dependency>
+			 <dependency> 
+				 <groupId>org.jboss.cache</groupId> 
+				 <artifactId>jbosscache-pojo</artifactId> 
+				 <version>3.0.0.GA</version> 
+				 <scope>provided</scope> 
+			 </dependency> 
 			<dependency>
 				<groupId>javassist</groupId>
 				<artifactId>javassist</artifactId>
@@ -446,12 +456,12 @@ grid certificates, and VOMS proxies.
     <repository>
       <id>stratuslab.releases</id>
       <name>Releases</name>
-      <url>http://repo.stratuslab.eu:8081/content/repositories/${nexus.release.repository.name}</url>
+      <url>${nexus.release.url}/content/repositories/${nexus.release.repository.name}</url>
     </repository>
     <snapshotRepository>
       <id>stratuslab.snapshots</id>
       <name>Snapshots</name>
-      <url>http://repo.stratuslab.eu:8081/content/repositories/${nexus.snapshot.repository.name}</url>
+      <url>${nexus.release.url}/content/repositories/${nexus.snapshot.repository.name}</url>
     </snapshotRepository>
     <site>
       <id>hudson.webserver</id>
@@ -460,6 +470,8 @@ grid certificates, and VOMS proxies.
   </distributionManagement>
 
   <properties>
+    <!-- <nexus.release.url>http://repo.stratuslab.eu:8081</nexus.release.url> -->
+    <nexus.release.url>http://jiccentos:8081</nexus.release.url>
     <nexus.release.repository.name>fedora-14-releases</nexus.release.repository.name>
     <nexus.snapshot.repository.name>fedora-14-snapshots</nexus.snapshot.repository.name>
   </properties>

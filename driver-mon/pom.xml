@@ -11,7 +11,7 @@
   <parent>
     <groupId>eu.stratuslab.pkgs.claudia</groupId>
     <artifactId>claudia-parent</artifactId>
-    <version>1.9-SNAPSHOT</version>
+    <version>1.14-SNAPSHOT</version> 
   </parent>
   
 	<dependencies>
@@ -37,39 +37,29 @@
 		<dependency>
 			<groupId>com.noelios.restlet</groupId>
 			<artifactId>com.noelios.restlet</artifactId>
-			<version>1.1.7</version>
-		
 		</dependency>
 		<dependency>
 			<groupId>org.restlet</groupId>
 			<artifactId>org.restlet</artifactId>
-			<version>1.1.7</version>
-			
 		</dependency>
 		
 		<dependency>
-			 <groupId>eu.stratuslab.pkgs.claudia</groupId>
-    		<artifactId>claudia-model</artifactId>
-    		
-
+			 <groupId>eu.stratuslab.pkgs.claudia</groupId> 
+			 <artifactId>claudia-model</artifactId>
 		</dependency>
 		
 		<dependency>
 			<groupId>org.jboss.cache</groupId>
 			<artifactId>jbosscache-core</artifactId>
-			<version>3.0.3.GA</version>
 			<scope>provided</scope>
 		</dependency>
 
 		<dependency>
 			<groupId>org.jboss.cache</groupId>
 			<artifactId>jbosscache-pojo</artifactId>
-			<version>3.0.0.GA</version>
 			<scope>provided</scope>
 		</dependency>
 
-
-		
 		<dependency>
 			<groupId>org.apache.activemq</groupId>
 			<artifactId>activemq-core</artifactId>
@@ -124,7 +114,8 @@
   </dependencies>
 
 	<properties>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding> 
+		<skipTests>true</skipTests>
 	</properties>
 
 	<build>
@@ -141,6 +132,14 @@
 						</goals>
 					</execution>
 				</executions>
+			</plugin>
+			<plugin> 
+				<groupId>org.apache.maven.plugins</groupId> 
+				<artifactId>maven-surefire-plugin</artifactId> 
+				<version>2.11</version> 
+				<configuration> 
+					<skipTests>${skipTests}</skipTests> 
+				</configuration> 
 			</plugin>
 
 			<plugin>
