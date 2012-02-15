@@ -136,7 +136,8 @@ public class RulesEngine {
      *  init the first rule to be evaluated and loaded
      */
     public void startRule(String startRule){
-        // add Rule to a Set to load it 
+        // add Rule to a Set to load it
+    	System.out.println ("add rule " + startRule);
         ruleSet.add(startRule);    
     }
     
@@ -158,6 +159,7 @@ public class RulesEngine {
         Iterator <String> it=ruleSet.iterator();
         while (it.hasNext()){
             ruleFile=it.next();
+            System.out.println ("rule example " + ruleFile);
             addRule(ruleFile);
         }
     }
@@ -343,7 +345,7 @@ public class RulesEngine {
        Iterator<Rule> ruleIterator;
 
        Set<Rule> ruleVector = sap.getServiceRules();
-       System.out.println (ruleVector.size());
+       System.out.println ("numero de reglas " + ruleVector.size());
 	   for(ruleIterator=ruleVector.iterator();ruleIterator.hasNext();){
 	       rule=((Rule)ruleIterator.next());
 	

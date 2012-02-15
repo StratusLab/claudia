@@ -1131,7 +1131,7 @@ public class Parser {
 							}
 							
 							if (rule.getKPIType().equals("VEEHW")){
-								sRule.setKPIName(sa + ".vees." + vs.getId()+ ".replicas.1"+ ".kpis." + rule.getKPIName());
+								sRule.setKPIName(sa + ".vees." + vs.getId()+  ".kpis." + rule.getKPIName());
 								sRule.setEventType("VeeHwMeasureEvent");
 
 								Set<ServiceKPI> kpis = sa.getServiceKPIs();
@@ -1194,6 +1194,8 @@ public class Parser {
 					ServiceKPI skpi = new ServiceKPI(sa, id);
 					skpi.setKPIType(type);
 					skpi.setKPIVmname(name);
+					
+					System.out.println ("KPI fqn obtaiend "+  skpi.getFQN().toString());
 					
 					sa.registerServiceKPI(skpi);
 				}

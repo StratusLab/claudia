@@ -112,7 +112,7 @@ public class EventsReceptor implements BusListener {
 
     public void onEvent(final Event event) {    
         
-    	logger.debug("Event reached Rules Engine: " + event.getEventType());
+    	logger.debug("Event reached Rules Engine: " + event.getEventType() + " " + fsm.getStateText());
         
     	if (!fsm.getStateText().equals("RUNNING")) {
     		logger.warn("Measure got when the service is not already deployed");

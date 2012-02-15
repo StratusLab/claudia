@@ -524,8 +524,12 @@ public class OVFContextualization {
 		ArrayList<String> ipsvm = new ArrayList ();
 		HashMap<String,ArrayList<String>> map = new HashMap();
 		
+		System.out.println ("getIpsForMacros for replica " + replica.getVEE().getVEEName() + " " + replica.getNICs().size());
+		
 		for (NIC nic: replica.getNICs())
 		{
+			
+			System.out.println ("NIC  " + nic.getNICConf().getNetwork().getName());
 			if (nic.getIPAddresses() == null || nic.getIPAddresses().size()==0)
 				continue;
 			

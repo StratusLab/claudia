@@ -29,6 +29,8 @@
  */
 package com.telefonica.claudia.slm.lifecyclemanager;
 
+
+
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -82,6 +84,7 @@ import com.telefonica.claudia.slm.paas.vmiHandler.MonitoringClient;
 import com.telefonica.claudia.slm.paas.vmiHandler.NUBAMonitoringClient;
 import com.telefonica.claudia.slm.paas.vmiHandler.RECManagerClient;
 import com.telefonica.claudia.slm.report.MonitoringReportObtainKPI;
+import com.telefonica.claudia.slm.report.ReportKPIValue;
 import com.telefonica.claudia.slm.rulesEngine.RulesEngine;
 import com.telefonica.claudia.slm.serviceconfiganalyzer.ServiceConfigurationAnalyzer;
 import com.telefonica.claudia.slm.vmiHandler.TCloudClient;
@@ -174,6 +177,7 @@ public class FSM extends Thread implements Serializable {
 	public static final int ERROR = 3;
 	public static final int RECONFIGURED = 4;
 	public static final int FINISHED = 5;
+	public static final int POLLING = 6;
 
 	/**
 	 * Determines the polling frequency the FSM will use to check the event
@@ -234,7 +238,7 @@ public class FSM extends Thread implements Serializable {
 	 */
 	private LifecycleController lcc;
 
-	private RulesEngine rle;
+	public RulesEngine rle;
 
 	/**
 	 * OVF Parser. The parser is used for two kinds of actions: it is used first
@@ -279,7 +283,9 @@ public class FSM extends Thread implements Serializable {
 
 	private LoadBalancerConfigurator lbConfigurator;
 	
-	private static Logger reportLog = Logger.getLogger("ReportingKPI");
+	
+	
+	
 
 	/**
 	 * Determines the kind of events permitted in each of the different FSM
@@ -304,6 +310,7 @@ public class FSM extends Thread implements Serializable {
 		stateEventMatrix.put(ERROR, new ArrayList<Integer>());
 		stateEventMatrix.put(RECONFIGURED, new ArrayList<Integer>());
 		stateEventMatrix.put(FINISHED, new ArrayList<Integer>());
+		stateEventMatrix.put(POLLING, new ArrayList<Integer>());
 	}
 
 	public FSM(LifecycleController lcc, String endPoint) {
@@ -346,6 +353,8 @@ public class FSM extends Thread implements Serializable {
 			return "RECONFIGURED";
 		case FINISHED:
 			return "FINISHED";
+		case POLLING:
+			return "POLLING";
 		default:
 			return "UNKNOWN";
 		}
@@ -399,6 +408,7 @@ public class FSM extends Thread implements Serializable {
 		while (kpiIterator.hasNext()) {
 			kpi = (ServiceKPI) kpiIterator.next();
 			logger.info("KPI " + kpi.getKPIName());
+			System.out.println ("storing " +kpi.getFQN());
 			ReservoirDirectory.getInstance().registerObject(kpi.getFQN(), kpi);
 		}
 
@@ -414,6 +424,7 @@ public class FSM extends Thread implements Serializable {
 				ReservoirDirectory.getInstance()
 				.registerObject(rule.getKpi().getFQN(), rule.getKpi());
 			
+		//	System.out.println ("Looking for " +new FQN(rule.getKPIName()) + " " +rule.getKpi().getFQN() + " " + rule.getKPIName());
 			rule.configure((ServiceKPI) ReservoirDirectory.getInstance()
 					.getObject(new FQN(rule.getKPIName())));
 		//	if (rule.getKpi()!=null)
@@ -873,25 +884,7 @@ public class FSM extends Thread implements Serializable {
 	{
 		
 
-		for (ServiceKPI kpi: sap.getServiceKPIs())
-		{
-			reportLog.info ("Reporting KPI " + kpi.getKPIName());	
-			
-		    MonitoringReportObtainKPI report = null;
-				
-		    if (kpi.getKPIType().equals("AGENT"))
-		    {
-
-		     report = new MonitoringReportObtainKPI(kpi.getKPIType(), sap.getFQN().toString(), kpi.getKPIName(), kpi.getKPIName(),reportLog);
-		    }
-		    else
-		    {
-			  report = new MonitoringReportObtainKPI(kpi.getKPIType(), sap.getFQN().toString()+".vees."+kpi.getKPIVmname(), 
-					  kpi.getKPIName(), kpi.getKPIName(),reportLog);
-		    }
-				
-		    report.run();
-	   }
+		
 	}
 	
 	
@@ -1352,8 +1345,9 @@ public class FSM extends Thread implements Serializable {
 				if (SMConfiguration.getInstance().getReportingKpiEnable())
 				{
 					System.out.println ("Enabliong KPIs reporting");
-					this.reportKPIValue();
+					new Thread ( new ReportKPIValue(sap)).start();
 				}
+				System.out.println ("Con estado running ");
 			}
 			else
 				retorno = FSM.ERROR;
@@ -1363,6 +1357,8 @@ public class FSM extends Thread implements Serializable {
 			retorno = FSM.ERROR;
 			break;
 		}
+		
+		System.out.println ("Devolviendo running ");
 
 		return retorno;
 	}
@@ -1408,7 +1404,7 @@ public class FSM extends Thread implements Serializable {
 			logger.info("\n\n\n\n* Processing State: RECONFIGURED");
 			retorno = FSM.RUNNING;
 			break;
-
+			
 		case FINISHED:
 			try {
 				finishExecution = true;
@@ -1767,11 +1763,11 @@ public class FSM extends Thread implements Serializable {
 		
 		while (it.hasNext()) {
 		  Map.Entry e = (Map.Entry)it.next();
-		  System.out.println(e.getKey() + " " + e.getValue());
+		  System.out.println("network name " + e.getKey() + " " + e.getValue());
 	
 		  for (NIC nic: rep.getNICs())
 		  {
-					
+				System.out.println (" for networking ... " + nic.getNICConf().getNetwork().getName());
 				if (e.getKey().equals(nic.getNICConf().getNetwork().getName()))
 				{
 				    System.out.println ("Adding IP  " +  e.getValue() + " from network  " + e.getKey() + " for replica " + rep.getVEE().getVEEName()+rep.getId());
@@ -2052,7 +2048,7 @@ public class FSM extends Thread implements Serializable {
 				NIC nic = (NIC) iter.next();
 				ReservoirDirectory.getInstance().registerObject(nic.getFQN(),
 						nic);
-				logger.info("PONG NIC FQN: " + nic.getFQN());
+				logger.info("PONG NIC FQN: " + nic.getFQN() + " for " + nic.getNICConf().getNetwork().getName());
 			}
 
 			MonitoringRestBusConnector restBusConnector = MonitoringRestBusConnector

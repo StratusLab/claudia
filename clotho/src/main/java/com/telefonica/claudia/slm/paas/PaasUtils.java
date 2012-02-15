@@ -252,6 +252,7 @@ public class PaasUtils {
 						}
 					}
 					ips.put(network,ip);
+					System.out.println ("Adding ip " + ip + " network " + network);
 				}
 								
 			}

@@ -7,7 +7,10 @@ import java.util.Iterator;
 
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.apache.log4j.ConsoleAppender;
+import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
+import org.apache.log4j.PatternLayout;
 import org.xml.sax.SAXException;
 
 import com.telefonica.claudia.slm.common.SMConfiguration;
@@ -30,10 +33,12 @@ public class MonitoringReportObtainKPI extends Thread {
 	private String kpi = null;
 	private String type = null;
 	private Logger reportLog = null;
+	
+	
 	public MonitoringReportObtainKPI (String type, String fqnentity, String metric, String kpi, Logger reportLog )
 	{
 		this.reportLog =  reportLog;
-		reportLog.info ("monitoring "  + metric + " " + type);
+		reportLog.info ("monitoring "  + metric + " " + type + " " + fqnentity);
 		this.metric = metric;
 		this.kpi = kpi;
 		this.fqnentity=fqnentity;
@@ -43,7 +48,7 @@ public class MonitoringReportObtainKPI extends Thread {
 	
 	
 	
-	public  void obtainMetricsValue(String urlmonitor) throws IOException, SAXException, ParserConfigurationException, ParseException {
+	public  void obtainMetricsValue(String urlmonitor) throws Exception {
 
 		
 		// monitor http://84.21.173.142:8182/api/org/CESGA/vdc/test/vapp/dd/node/1/monitor
@@ -176,6 +181,7 @@ public class MonitoringReportObtainKPI extends Thread {
 		
 		boolean deploy = true;
 		reportLog.info ("starting thread");
+		int count = 0;
 		while (deploy)
 		{
 		   try {
@@ -185,16 +191,21 @@ public class MonitoringReportObtainKPI extends Thread {
 		   catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			this.stop();
-			reportLog.info  ("stoping thread");
+			count++;
 			
-			deploy=false;
-			return;
+			if (count>10)
+			{
+			  this.stop();
+			  reportLog.info  ("stoping thread");
+			
+			  deploy=false;
+			  return;
+			}
 			
 		   }
 		   try{
 			   //do what you want to do before sleeping
-			   Thread.currentThread().sleep(10000);//sleep for 1000 ms
+			   Thread.currentThread().sleep(15000);//sleep for 1000 ms
 			   //do what you want to do after sleeptig
 			 }
 			 catch(Exception ie){
@@ -208,7 +219,7 @@ public class MonitoringReportObtainKPI extends Thread {
         
     }
 	
-	public void obtainData (String urlmonitor) throws IOException, SAXException, ParserConfigurationException, ParseException
+	public void obtainData (String urlmonitor) throws Exception
 	{
 		PersistenceClient pc = new PersistenceClient(reportLog);
 		if (type.equals("AGENT"))
@@ -221,7 +232,7 @@ public class MonitoringReportObtainKPI extends Thread {
 		
 		String measurefqn = urlmonitor+"/"+metric;
 			//logger.info(" monitor values: " + monitor+ " "+measure); 
-		pc.sendvalue(valuexml,measurefqn,kpi, "AGENT");
+		pc.sendvalue(valuexml,measurefqn,kpi, type);
 	}
 		
 

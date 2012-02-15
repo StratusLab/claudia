@@ -44,7 +44,8 @@ import org.xml.sax.SAXException;
 
 import com.telefonica.claudia.slm.common.SMConfiguration;
 
-public class PersistenceClient {
+public class PersistenceClient 
+{
 
     private static  Logger logger = Logger
             .getLogger(PersistenceClient.class);
@@ -76,43 +77,10 @@ public class PersistenceClient {
     private static final Properties properties = new Properties();
 
     public static Client client;
-
-    public PersistenceClient() {
-        try {
-            properties.load(new FileInputStream(PATH_TO_PROPERTIES_FILE));
-            TCloudServerURL = properties.getProperty("TServer.url");
-            SITE_ROOT = properties.getProperty("SiteRoot");
-            restPath = properties.getProperty("restPath");
-            restServerPort = properties.getProperty("restServerPort");
-            restServerHost = properties.getProperty("restServerHost");
-            vmMonName = properties.getProperty("vmMonName");
-            monitorName = properties.getProperty("monitorName");
-        } catch (IOException e) {
-            logger.error("Unable to load properties from "
-                    + PATH_TO_PROPERTIES_FILE);
-            throw new RuntimeException("Unable to load properties from "
-                    + PATH_TO_PROPERTIES_FILE);
-        }
-    }
     
-    public PersistenceClient(Logger logger) {
-    	this.logger = logger;
-        try {
-            properties.load(new FileInputStream(PATH_TO_PROPERTIES_FILE));
-            TCloudServerURL = properties.getProperty("TServer.url");
-            SITE_ROOT = properties.getProperty("SiteRoot");
-            restPath = properties.getProperty("restPath");
-            restServerPort = properties.getProperty("restServerPort");
-            restServerHost = properties.getProperty("restServerHost");
-            vmMonName = properties.getProperty("vmMonName");
-            monitorName = properties.getProperty("monitorName");
-        } catch (IOException e) {
-            logger.error("Unable to load properties from "
-                    + PATH_TO_PROPERTIES_FILE);
-            throw new RuntimeException("Unable to load properties from "
-                    + PATH_TO_PROPERTIES_FILE);
-        }
-    }
+  
+
+   
 
     public static void sendRESTMessage(String eventType, long t_0,
             long delta_t, String fqn, double value) {
@@ -346,7 +314,7 @@ public class PersistenceClient {
         return -1;
     }
 
-    public void sendvalue(String valuexml, String monitorfqn, String measure, String type) throws SAXException, IOException, ParserConfigurationException, ParseException {
+    public void sendvalue(String valuexml, String monitorfqn, String measure, String type) throws Exception {
 
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 
@@ -356,6 +324,11 @@ public class PersistenceClient {
                     .getBytes()));
 
             NodeList valueList = doc.getElementsByTagName("Sample");
+            
+            if (valueList.getLength() == 0)
+            {
+            	throw new Exception ("No data obtained");
+            }
 
             for (int i = 0; i < valueList.getLength(); i++) {
 
@@ -530,7 +503,7 @@ public class PersistenceClient {
     
     private String getMonitorFQN (String monitorfqn, String measure, String type)
     {
-    	String monitor = null; 
+    	String kpiname = null; 
     	String customer = monitorfqn.substring(monitorfqn.indexOf("vdc") +1+ "vdc".length(), monitorfqn.indexOf("vapp") - 1);
 
         int l = nthIndexOf(monitorfqn, '/', 10);
@@ -549,7 +522,7 @@ public class PersistenceClient {
         if (type.equals("AGENT"))
         {
          
-          monitor = SITE_ROOT + ".customers." + customer
+        	kpiname = SMConfiguration.getInstance().getSiteRoot() + ".customers." + customer
           + ".services." + service + ".kpis." + measure;
         }
         
@@ -561,20 +534,15 @@ public class PersistenceClient {
           int n = nthIndexOf(monitorfqn, '/', 12);
           String replica = monitorfqn.substring(m + 1, n);
           
-          monitor = SITE_ROOT + ".customers." + customer
+          kpiname = SITE_ROOT + ".customers." + customer
           + ".services." + service + ".vees." + vee
-          + ".replicas." + replica + ".kpis." + measure;
+          +  ".kpis." + measure;
         }
+        
+        System.out.println ("KPI fqn obtaiend "+  kpiname);
 
-        return monitor;
+        return kpiname;
     }
 
-    public static void main(String[] args) {
-        // PersistenceClient pc = new PersistenceClient();
-        // String fqn =
-        // pc.getFqnNIC("http://10.95.129.34:8183/api/org/tid34/vdc/joseldCPD/vapp/joseldServ/AnaVM1/1/hw/networks-4001/monitor/values?measures=netPacketstxSummation,netInput,netOutput,netPacketsrxSummation&from=2011-02-03T11:48:00Z&to=2011-02-03T12:18:00Z&interval=5m");
-        // List<String> nics = pc.getNics();
-        // System.out.println("Nic"+nics.size());
-
-    }
+  
 }
