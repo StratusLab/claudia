@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Envelope xmlns:ovf="http://schemas.dmtf.org/ovf/envelope/1" 
+          xmlns="http://schemas.dmtf.org/ovf/envelope/1" 
+	  xmlns:rsrvr="http://schemas.telefonica.com/claudia/ovf" 
+	  xmlns:vssd="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_VirtualSystemSettingData" 
+	  xmlns:rasd="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData" 
+	  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	  xsi:schemaLocation="http://schemas.telefonica.com/claudia/ovf reservoir.xsd">
+
+	<References>
+		<File ovf:id="Fedora14Base" ovf:href="http://62.217.120.136/images/fedora-14.0-x86_64-base-1.1.LiGh_UhY978TmA5TCD7WrMuQFL2.img.gz" rsrvr:digest="c33a1384fff7697890bc06aa162f6760"/>
+<!--
+		<File ovf:id="Fedora14Base" ovf:href="http://appliances.stratuslab.eu/images/base/fedora-14.0-x86_64-base/1.1.LiGh_UhY978TmA5TCD7WrMuQFL2/fedora-14.0-x86_64-base-1.1.LiGh_UhY978TmA5TCD7WrMuQFL2.img.gz" rsrvr:digest="c33a1384fff7697890bc06aa162f6760"/>
+-->
+	</References>
+
+	<DiskSection>
+		<Info>Just 1 image for our needs in monitoring</Info>
+		<Disk ovf:diskId="Fedora14Base" ovf:fileRef="Fedora14Base" ovf:capacity="1536MB" ovf:format="http://www.gnome.org/~markmc/qcow-image-format.html"/>
+	</DiskSection>
+
+	<NetworkSection>
+		<Info>Only one network is needed for monitoring platform (public)</Info>
+		<Network ovf:name="public" rsrvr:public="true">
+			<Description>Network to provide access to Public ONE net</Description>
+		</Network>
+	</NetworkSection>
+
+	<rsrvr:KPISection>
+		<Info>this doesn't use KPIs, but one KPI is left as a example</Info>
+		<rsrvr:KPI KPIname="cpuIdleOrNiceSeconds"/>		
+	</rsrvr:KPISection>
+
+	<!--  VM descriptions -->
+	<VirtualSystemCollection ovf:id="Fedora14BaseMonit">
+		<Info>Just one Fedora 14 host to try deployment/undeployment and monitoring tools installation</Info>
+		<StartupSection>
+			<Info>Machines have to be launched in reverse-layer order</Info>
+			<Item ovf:id="Fedora14monit-1" ovf:order="0" ovf:waitingForGuest="true"/>
+		</StartupSection>		   
+		<VirtualSystem ovf:id="Fedora14monit-1-ovf" rsrvr:min="1" rsrvr:max="1" rsrvr:initial="1">
+			<Info>Fedora 14 definition</Info>
+			<ProductSection ovf:class="com.sun.frontend">
+				<Info>Product customization Fedora 14</Info>
+				<Product>Fedora 14 Monitorization</Product>
+				<Version>1.0</Version>				
+				<Property ovf:key="HostIP" ovf:type="string" rsrvr:cloudConfigurable="true" ovf:value="62.217.120.136"/>
+<!--
+				<Property ovf:key="BackendPort" ovf:type="string" rsrvr:cloudConfigurable="true" ovf:value="8009"/>
+-->
+				<Property ovf:key="SCRIPT_LIST" ovf:type="string" rsrvr:cloudConfigurable="true" ovf:value="netinit0.sh/Fedora14Collector.sh"/>
+			</ProductSection>
+                        <rsrvr:ElasticArraySection>
+                        <Info>There are two elasticity rules, to scale up and down VEEExecutor components</Info><rsrvr:Rule><rsrvr:KPIName>cpuIdleOrNiceSeconds</rsrvr:KPIName><rsrvr:Window unit="minute">5</rsrvr:Window><rsrvr:Frequency>20</rsrvr:Frequency><rsrvr:Quota>45</rsrvr:Quota><rsrvr:Tolerance>55.55</rsrvr:Tolerance></rsrvr:Rule></rsrvr:ElasticArraySection>
+			<VirtualHardwareSection>
+				<Info>Virtual Hardware Requirements: 448MB, 1 CPU, 1 disk, 1 nic</Info>
+				<System>
+					<vssd:ElementName>Virtual Hardware Family</vssd:ElementName>
+					<vssd:InstanceID>0</vssd:InstanceID>
+					<vssd:VirtualSystemType>kvm</vssd:VirtualSystemType>
+				</System>
+				<Item>
+					<rasd:Description>Number of virtual CPUs</rasd:Description>
+					<rasd:ElementName>1 virtual CPU</rasd:ElementName>
+					<rasd:InstanceID>1</rasd:InstanceID>
+					<rasd:ResourceType>3</rasd:ResourceType>
+					<rasd:VirtualQuantity>1</rasd:VirtualQuantity>
+				</Item>
+				<Item>
+					<rasd:AllocationUnits>MegaBytes</rasd:AllocationUnits>
+					<rasd:Description>Memory Size</rasd:Description>
+					<rasd:ElementName>448MB of memory</rasd:ElementName>
+					<rasd:InstanceID>2</rasd:InstanceID>
+					<rasd:ResourceType>4</rasd:ResourceType>
+					<rasd:VirtualQuantity>448</rasd:VirtualQuantity>
+				</Item>
+				<Item>
+					<rasd:AutomaticAllocation>true</rasd:AutomaticAllocation>
+					<rasd:Connection>public</rasd:Connection>
+					<rasd:ElementName>Ethernet adapter on public network</rasd:ElementName>
+					<rasd:InstanceID>4</rasd:InstanceID>
+					<rasd:ResourceType>10</rasd:ResourceType>
+				</Item>
+				<Item>
+					<rasd:ElementName>Harddisk 1</rasd:ElementName>
+					<rasd:HostResource>ovf://disk/Fedora14Base</rasd:HostResource>
+					<rasd:InstanceID>5</rasd:InstanceID>
+					<rasd:Parent>4</rasd:Parent>
+					<rasd:ResourceType>17</rasd:ResourceType>
+				</Item>
+			</VirtualHardwareSection>
+		</VirtualSystem>
+	</VirtualSystemCollection>
+</Envelope>
