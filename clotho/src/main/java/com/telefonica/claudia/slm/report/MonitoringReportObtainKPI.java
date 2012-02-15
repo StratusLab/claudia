@@ -221,7 +221,7 @@ public class MonitoringReportObtainKPI extends Thread {
 	
 	public void obtainData (String urlmonitor) throws Exception
 	{
-		PersistenceClient pc = new PersistenceClient(reportLog);
+		PersistenceClient pc = new PersistenceClient();
 		if (type.equals("AGENT"))
 			metric=kpi;
 		
