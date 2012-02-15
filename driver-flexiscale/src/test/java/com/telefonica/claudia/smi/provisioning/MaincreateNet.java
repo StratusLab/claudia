@@ -32,7 +32,7 @@ import sun.util.logging.resources.logging;
 
 public class MaincreateNet  {
 
-	public static final String PATH_TO_PROPERTIES_FILE = "./conf/cliente.properties";
+	public static final String PATH_TO_PROPERTIES_FILE = "./src/main/config/cliente.properties";
 	public static final String KEY_PORT="hostPort";
 	public static final String KEY_HOST="hostName";
 	//NO lo ha utilizado

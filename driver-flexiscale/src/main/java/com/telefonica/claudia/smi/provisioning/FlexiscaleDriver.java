@@ -289,6 +289,29 @@ if (VLAN.containsKey(fqnNet))
 		
 	}
 	
+	protected String getVLANName (long network) throws IOException
+	{
+		if (network == 0)
+			return null;
+		String sCadena;
+		FileReader fr = new FileReader("./conf/networks.txt");
+
+		BufferedReader bf = new BufferedReader(fr);
+		sCadena = bf.readLine();
+		System.out.println(sCadena);
+		if (sCadena==null || sCadena.indexOf(""+network) == -1)
+		{
+			return null;
+			
+		}
+		String vlan = sCadena.substring(sCadena.indexOf("=")+1, sCadena.length());
+	
+		fr.close();
+
+		System.out.println ("vlan name " + vlan);
+		return vlan;
+	}
+	
 	
 	//deleteVM
 	protected Long getVDCId(String fqnVDC) throws Exception{
@@ -335,7 +358,7 @@ if (VLAN.containsKey(fqnNet))
 		String codigo = sCadena.substring(0,sCadena.indexOf("="));
 	
 		fr.close();
-		
+
 		Long vlan_id = new Long(codigo);
 		System.out.println("Vlan id " + vlan_id);
 		return vlan_id;
@@ -1773,8 +1796,10 @@ public class UndeployNetworkTask extends Task
 		
 		
 		String ip = "";
+		String net="";
 		for (NetworkInterface n : server.getNetwork_interfaces())
 		{
+			net = getVLANName (n.getVlan_id());
 			String ips [] = n.getIp_list();
 			if (ips != null && ips.length>0)
 			{
@@ -1791,7 +1816,7 @@ public class UndeployNetworkTask extends Task
 		
 		// obtener stado VM
 		
-		return generateXMLVEE (fqn, ip, user, password);
+		return generateXMLVEE (fqn, ip, net, user, password);
 
 	}
 	
@@ -2033,7 +2058,7 @@ public class UndeployNetworkTask extends Task
         return mapResult;
 }
        
-       String generateXMLVEE (String fqn, String ip, String user, String password)
+       String generateXMLVEE (String fqn, String ip, String net, String user, String password)
        {
     	   DocumentBuilderFactory dbfac = DocumentBuilderFactory.newInstance();
 	        DocumentBuilder docBuilder;
@@ -2074,7 +2099,7 @@ public class UndeployNetworkTask extends Task
 		    			
 		    	Element virtuahardware = GetOperationsUtils.getVirtualHardwareSystem(doc, "@HOSTNAME/api/org/" + organizationId + "/vdc/" +  
 		    					vdcid + "/vapp/" + 
-		    					vappid +"/" + veeid + "/" + 1, 1,512,2,ip);
+		    					vappid +"/" + veeid + "/" + 1, 1,512,2,ip, net);
 		    	
 		    	veeReplicaElement.appendChild(virtuahardware);
 

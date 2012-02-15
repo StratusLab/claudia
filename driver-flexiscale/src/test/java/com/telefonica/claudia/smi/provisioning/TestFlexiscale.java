@@ -13,6 +13,8 @@ import com.flexiant.extility.FlexiScaleServiceLocator;
 import com.flexiant.extility.FlexiScaleSoapBindingStub;
 import com.flexiant.extility.Server;
 import com.flexiant.extility.VDC;
+import com.flexiant.extility.Vlan;
+
 import org.junit.Test;
 
 public class TestFlexiscale {
@@ -47,11 +49,11 @@ public class TestFlexiscale {
 		 String pass;
 		 String endpointAddress;
 		 FlexiScaleSoapBindingStub service = null;
-		 dd.generateXMLVEE ("es.tid.customers.cc1.dd.services.ser.vees.dd.replicas.1", "10.98.56.54", "user", "password");
+		 dd.generateXMLVEE ("es.tid.customers.cc1.dd.services.ser.vees.dd.replicas.1", "10.98.56.54", "net" , "user", "password");
 		
 
-		 user="4caast@flexiant.com";
-		 pass="tn5AW7Bx";
+		 user="eod@tid.es";
+		 pass="5rCnVqie";
 		    	
 		    	endpointAddress="https://api2.flexiscale.com/?wsdl";
 			FlexiScaleServiceLocator locator = new FlexiScaleServiceLocator();
@@ -66,6 +68,8 @@ public class TestFlexiscale {
 			}
 			System.out.println ("user" + user);
 			System.out.println ("paas" + pass);
+			
+			
 			
 			System.out.println ("url" + endpointAddress);
 			
@@ -82,6 +86,23 @@ public class TestFlexiscale {
 			}
 			
 			for (VDC vdc: vdcs)
+			{
+				try {
+					Vlan vlan = service.createVLAN(vdc.getVdc_id(), false);
+					System.out.println (vlan.getVlan_name() + " " + vlan.getVlan_id() + " " + vlan.getVlan_uuid());
+
+				
+				} catch (RemoteException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+					
+				}
+				
+			}
+			
+			return;
+			
+		/*	for (VDC vdc: vdcs)
 			{
 			  Server[] dde = null; 
 			  try {
@@ -103,7 +124,7 @@ public class TestFlexiscale {
 					}
 			  }
 			}
-			
+			*/
 			
 			
 			

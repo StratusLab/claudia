@@ -34,7 +34,7 @@ import com.abiquo.ovf.xml.OVFSerializer;
 public class GetOperationsUtils {
 
 
-	public static Element getVirtualHardwareSystem (Document doc, String href, int cpu, int memory, int disk, String ip )
+	public static Element getVirtualHardwareSystem (Document doc, String href, int cpu, int memory, int disk, String ip, String net )
 	{
 		Element virtualHardware = doc.createElementNS("http://schemas.dmtf.org/ovf/envelope/1","VirtualHardwareSection");
 		Element virtualHardwarelink = doc.createElement("Link");
@@ -46,14 +46,14 @@ public class GetOperationsUtils {
 		
 		
 		int count = 1;
-		Element itemcpu = getItemElement (doc, href,count++, 0, cpu, null, null);
+		Element itemcpu = getItemElement (doc, href,count++, 0, cpu, null, null, null);
 		virtualHardware.appendChild(itemcpu);
-		Element itemmemory = getItemElement (doc, href, count++, 1, memory, null, null);
+		Element itemmemory = getItemElement (doc, href, count++, 1, memory, null, null, null);
 		virtualHardware.appendChild(itemmemory);
 	
-		Element itemdisk = getItemElement (doc, href,  count++, 2, disk, "ovf://disk/" +"disk"   ,null);
+		Element itemdisk = getItemElement (doc, href,  count++, 2, disk, "ovf://disk/" +"disk"   ,null, null);
 		virtualHardware.appendChild(itemdisk);
-		Element itemnetwork = getItemElement (doc, href,  count++, 3, 0, null  ,ip);
+		Element itemnetwork = getItemElement (doc, href,  count++, 3, 0, null  ,ip, net);
 		virtualHardware.appendChild(itemnetwork);
 		
 		
@@ -61,7 +61,7 @@ public class GetOperationsUtils {
 	
 	}
 	
-	public static Element getItemElement (Document doc, String href, int instance, int type, int value, String diskhost, String ip)
+	public static Element getItemElement (Document doc, String href, int instance, int type, int value, String diskhost, String ip, String net)
 	{
 		// "@HOSTNAME/api/org/"+organizationId+"/vdc/" + sa.getCustomer().getCustomerName() + "/vapp/" + sa.getSerAppName() +
 		//"/" + "veename"+ "/" + "veeReplica.getId()"
@@ -130,6 +130,14 @@ public class GetOperationsUtils {
 			elementip.appendChild(test6);
 		
 			item.appendChild(elementip);
+			
+			Element networkname = doc.createElementNS("http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData",
+					"Connection");
+			Text test7 = doc.createTextNode(net);
+			networkname.appendChild(test7);
+			item.appendChild(networkname);
+		
+			
 		}
 		
 		
