@@ -51,7 +51,7 @@ public class PersistenceClient
             .getLogger(PersistenceClient.class);
     private static String TCloudServerURL;
 
-    private final String SITE_ROOT;
+    private final String SITE_ROOT = null;
 
     public static final String ROOT_MONITORING_TAG_NAME = "MonitoringInformation";
     public static final String EVENT_TYPE_TAG_NAME = "EventType";
