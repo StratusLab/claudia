@@ -4,6 +4,8 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -216,9 +218,26 @@ public class PaasUtils {
 	
 	public HashMap  getVeePaaSSetIpFromXML (Document doc)
 	{
-		Node vapp =  doc.getElementsByTagName ("VApp").item(0);
 		HashMap   ips = new HashMap ();
-		Node vh = ((Element)vapp).getElementsByTagName ("VirtualHardwareSection").item(0);
+
+		Node vapp =  doc.getElementsByTagName ("VApp").item(0);
+		System.out.println (vapp);
+		
+		if (vapp==null)
+		{
+			vapp =  doc.getElementsByTagName ("ns24:VApp").item(0);
+			System.out.println (vapp);
+		}
+
+		
+		 Node vh = ((Element)vapp).getElementsByTagName ("VirtualHardwareSection").item(0);
+		 System.out.println (vh);
+		 
+		 if (vh==null)
+			{
+			 vh = ((Element)vapp).getElementsByTagName ("ns2:VirtualHardwareSection").item(0);
+			 System.out.println (vh);
+			}
 		
 			
 		Node itemresource = null;
@@ -230,7 +249,7 @@ public class PaasUtils {
 			for (int l=0;l<dd.getLength();l++)
 			{
 
-				if (dd.item(l).getNodeName().equals("ResourceType") &&
+				if ((dd.item(l).getNodeName().equals("ResourceType") ||dd.item(l).getNodeName().equals("ns5:ResourceType")) &&
 								dd.item(l).getFirstChild().getNodeValue().equals("10"))
 				{
 					itemresource = items.item(k);
@@ -241,12 +260,12 @@ public class PaasUtils {
 					for (int z=0;z<values.getLength();z++)
 					{
 						
-						if (values.item(z).getNodeName().equals("IPv4Address"))
+						if (values.item(z).getNodeName().equals("IPv4Address")||values.item(z).getNodeName().equals("ns19:IPv4Address"))
 						{
 							ip= values.item(z).getFirstChild().getNodeValue();
 
 						}
-						else if (values.item(z).getNodeName().equals("Connection"))
+						else if (values.item(z).getNodeName().equals("Connection")|| values.item(z).getNodeName().equals("ns5:Connection"))
 						{
 							network = values.item(z).getFirstChild().getNodeValue();
 						}
@@ -327,7 +346,25 @@ public class PaasUtils {
 	
 	public String getVEE (VEEReplica veeReplica)
 	{
-		TCloudClient vmi = new TCloudClient("http://"+SMConfiguration.getInstance().getVEEMHost()+":"+SMConfiguration.getInstance().getVEEMPort());
+		//TCloudClient vmi = new TCloudClient("http://"+MSMConfiguration.getInstance().getVEEMHost()+":"+SMConfiguration.getInstance().getVEEMPort());
+		
+		URL tcloudURL = null;
+		try {
+			String url = "http://"+ SMConfiguration.getInstance()
+					.getVEEMHost()+":"+
+					SMConfiguration.getInstance().getVEEMPort()+ SMConfiguration.getInstance().getVEEMPath(); 
+			System.out.println(url);
+			tcloudURL = new URL("http", SMConfiguration.getInstance()
+					.getVEEMHost(),
+					SMConfiguration.getInstance().getVEEMPort(), SMConfiguration.getInstance().getVEEMPath());
+			
+		} catch (MalformedURLException ex) {
+
+		}
+
+		TCloudClient vmi = new TCloudClient(tcloudURL.toString());
+		
+		
 		String xmlvee = null;
 		try {
 			xmlvee = vmi.getVEEReplicaXML(veeReplica);

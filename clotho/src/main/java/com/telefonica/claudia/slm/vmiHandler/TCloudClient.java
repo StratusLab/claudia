@@ -281,7 +281,7 @@ public class TCloudClient implements VMIHandler {
         		continue;
         	}
             Reference urlNetwork = new Reference(serverURL + URICreation.getURINetAdd(networkConf.getFQN().toString()));
-            System.out.println (" Url network " + urlNetwork);
+            logger.info (" Url network " + urlNetwork);
 
             // Create de DOM Representation for the network configuration
             DomRepresentation data;
@@ -1065,6 +1065,70 @@ public class TCloudClient implements VMIHandler {
 		return text;*/
 		
     	Reference urlReplica = new Reference(serverURL + URICreation.getURIVEEReplica(veeReplica.getFQN().toString()));
+    	
+    	logger.info (" Url network " + urlReplica.toString());
+
+        // Call the server with the URI and the data
+        Response response = client.get(urlReplica);
+
+        // Depending on the response code, return with an error, or wait for a response
+        switch (response.getStatus().getCode()) {
+
+            case 401:    // Unauthorized
+            case 403:    // Forbidden
+                // Throw an Access Denied Exception
+                logger.error("Not enough privileges to access the VM information.");
+                throw new AccessDeniedException(response.getStatus().getDescription(), null, null);
+
+            case 400:    // Bad Request
+            case 404:    // Not found
+                logger.error("The resource was not found on the server; the tcloud server may be misconfigured, or the URL may be wrong.");
+                
+                try
+                {
+                  return getVEEReplicaXMLForNUBA (veeReplica);
+                }
+                catch (Exception e)
+                {
+                    throw new CommunicationErrorException(response.getStatus().getDescription(), new Exception(response.getStatus().getName()));
+                }
+            case 501:
+            case 500:
+                logger.error("Internal error in the VEEM tcloud server: " + response.getStatus().getDescription());
+                throw new CommunicationErrorException(response.getStatus().getDescription(), new Exception(response.getStatus().getName()));
+
+            case 202:
+            case 201:
+            case 200:
+                logger.info("Operation suceesfully done.");
+                
+                try {
+                    Document responseXml = response.getEntityAsDom().getDocument();
+                    return com.telefonica.claudia.slm.paas.PaasUtils.tooString(responseXml);
+                } 
+                catch (Throwable e) 
+                {
+                       throw new CommunicationErrorException("Internal error while decoding the answer", e);
+                }
+                    
+                
+        }
+        return null;
+   }
+    
+    public String getVEEReplicaXMLForNUBA (VEEReplica veeReplica)
+    throws CommunicationErrorException, AccessDeniedException {
+    	
+     /*  GetVEE vee = new GetVEE ();
+		String fqn = veeReplica.getFQN().toString();
+		String ip = vee.getIp(fqn);
+		Document doc = vee.obtainXMLVEE (fqn,ip);
+		String text = vee.tooString(doc);
+		if (true)
+		return text;*/
+		
+    	Reference urlReplica = new Reference(serverURL + URICreation.getURIVEE(veeReplica.getVEE().getFQN().toString()));
+    	logger.info (serverURL + URICreation.getURIVEE(veeReplica.getVEE().getFQN().toString()));
 
         // Call the server with the URI and the data
         Response response = client.get(urlReplica);

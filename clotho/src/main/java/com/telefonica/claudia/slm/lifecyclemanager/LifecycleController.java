@@ -84,6 +84,7 @@ import com.telefonica.claudia.slm.eventsBus.events.SMIChannelEvent;
 import com.telefonica.claudia.slm.eventsBus.events.VeeHwMeasureEvent;
 import com.telefonica.claudia.slm.eventsBus.events.Event.EventType;
 import com.telefonica.claudia.slm.eventsBus.events.SMIChannelEvent.SMIAction;
+import com.telefonica.claudia.slm.monitoring.ContextualizationListener;
 import com.telefonica.claudia.slm.monitoring.MonitoringRestBusConnector;
 import com.telefonica.claudia.slm.monitoring.WasupClient;
 import com.telefonica.claudia.slm.monitoring.WasupHierarchy;
@@ -179,6 +180,9 @@ public class LifecycleController extends UnicastRemoteObject implements SMI,
 		MonitoringRestBusConnector restBusConnector = MonitoringRestBusConnector
 				.getInstance();
 		restBusConnector.start();
+		
+		ContextualizationListener contextListener = ContextualizationListener.getInstance();
+		contextListener.start ();
 
 		// Connecting to JMS bus
 		try {
