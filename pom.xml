@@ -512,6 +512,7 @@ grid certificates, and VOMS proxies.
       <plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-javadoc-plugin</artifactId>
+				<version>2.8</version>
 				<configuration>
 					<show>public</show>
 				</configuration>
@@ -519,6 +520,7 @@ grid certificates, and VOMS proxies.
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>jdepend-maven-plugin</artifactId>
+				<version>2.0-beta-2</version>
 			</plugin>
 		</plugins>
 	</reporting>
@@ -596,6 +598,27 @@ grid certificates, and VOMS proxies.
 					<artifactId>exec-maven-plugin</artifactId>
 					<version>1.2</version>
 				</plugin>
+
+                                <plugin>
+                                  <groupId>org.apache.maven.plugins</groupId>
+                                  <artifactId>maven-compiler-plugin</artifactId>
+                                  <version>2.3.2</version>
+                                </plugin>
+                                <plugin>
+                                  <groupId>org.apache.maven.plugins</groupId>
+                                  <artifactId>maven-javadoc-plugin</artifactId>
+                                  <version>2.8</version>
+                                </plugin>
+                                <plugin>
+                                  <groupId>org.apache.maven.plugins</groupId>
+                                  <artifactId>maven-jar-plugin</artifactId>
+                                  <version>2.3.2</version>
+                                </plugin>
+                                <plugin>
+                                  <groupId>org.codehaus.mojo</groupId>
+                                  <artifactId>tomcat-maven-plugin</artifactId>
+                                  <version>1.1</version>
+                                </plugin>
 
 			</plugins>
 

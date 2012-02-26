@@ -102,11 +102,6 @@
       <artifactId>persistence-api</artifactId>
     </dependency>
     
-      <dependency>
-      <groupId>javax.persistence</groupId>
-      <artifactId>persistence-api</artifactId>
-    </dependency>
-    
    <dependency>
       <groupId>hibernate-annotations</groupId>
       <artifactId>hibernate-annotations</artifactId>
