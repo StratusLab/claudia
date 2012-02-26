@@ -496,6 +496,7 @@ grid certificates, and VOMS proxies.
        <nexus.snapshot.id>stratuslab.snapshots</nexus.snapshot.id>
   <!--  END STRATUSLAB COMPILATION -->
 
+    <package.os>fc14</package.os>
     <nexus.release.repository.name>fedora-14-releases</nexus.release.repository.name>
     <nexus.snapshot.repository.name>fedora-14-snapshots</nexus.snapshot.repository.name>
 

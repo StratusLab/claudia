@@ -222,7 +222,7 @@ echo ""
     <app.home>/opt/claudia/</app.home>
     <rpm.release>1</rpm.release>
     <maven.build.timestamp.format>yyyyMMdd.HHmmss</maven.build.timestamp.format>
-    <RELEASE>0.${maven.build.timestamp}</RELEASE>
+    <RELEASE>0.${maven.build.timestamp}.${package.os}</RELEASE>
   </properties>
 
 </project>
