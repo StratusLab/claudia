@@ -6,7 +6,7 @@
 	<artifactId>reportclient-rpm</artifactId>
 	<version>0.1.14-SNAPSHOT</version>
 	<name>Report client RPM Package</name>
-	<packaging>pom</packaging>
+	<packaging>rpm</packaging>
 
 	<parent>
 		<groupId>eu.stratuslab.pkgs.claudia</groupId>
@@ -84,14 +84,6 @@
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>rpm-maven-plugin</artifactId>
 				<extensions>true</extensions>
-
-				<executions>
-					<execution>
-						<goals>
-							<goal>attached-rpm</goal>
-						</goals>
-					</execution>
-				</executions>
 
 				<configuration>
 
