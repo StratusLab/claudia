@@ -6,7 +6,7 @@
   <artifactId>claudia-client-rpm</artifactId>
   <version>0.1.14-SNAPSHOT</version>
   <name>Claudia Client RPM Packaging</name>
-  <packaging>pom</packaging>
+  <packaging>rpm</packaging>
 
   <parent>
     <groupId>eu.stratuslab.pkgs.claudia</groupId>
@@ -14,14 +14,6 @@
     <version>1.14-SNAPSHOT</version>
   </parent>
 
-  <repositories>
-    <repository>  
-      <id>maven-restlet</id>  
-      <name>Public online Restlet repository</name>  
-      <url>http://maven.restlet.org</url>  
-    </repository>
-  </repositories>
-  
   <dependencies>
 
     <dependency>
