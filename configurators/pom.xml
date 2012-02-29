@@ -4,13 +4,13 @@
  <modelVersion>4.0.0</modelVersion>
   <groupId>eu.stratuslab.pkgs.claudia</groupId>
   <artifactId>configurators</artifactId>
-  <version>0.1.14</version>
+  <version>0.1.15-SNAPSHOT</version>
   <name>TCloud REST configuration modules for VJSC and LB</name>
 
   <parent>
     <groupId>eu.stratuslab.pkgs.claudia</groupId>
     <artifactId>claudia-parent</artifactId>
-    <version>1.14</version>
+    <version>1.15-SNAPSHOT</version>
   </parent>
   
    <properties>
