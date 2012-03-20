@@ -55,7 +55,7 @@ public class OneOperations {
 		rpcParams.add(-1);
 		rpcParams.add(-1);
 
-		log.debug("Get info about all networks: " );
+		log.debug("Get info about all networks: tests " );
 
 		Object[] result = null;
 		try {
@@ -66,11 +66,12 @@ public class OneOperations {
 		}
 
 		boolean completed = (Boolean) result[0];
+		log.debug("completed:  " + completed + " " + (String) result[1] );
 
 		if (completed) {
 
 			String resultList = (String) result[1];
-			
+			log.debug("resultList:  " + resultList );
 			return resultList;
 	    }
 		else 
@@ -198,6 +199,7 @@ public class OneOperations {
 	public String getOneNetworkId (String fqn) throws IOException
 	{
 		String info = getOneNetworkListInfo ();
+		System.out.println ("Get network info " + info);
 		ONEUtilities util = new ONEUtilities ();
 		String id = util.obtainIdOneNetworkFromFQN(fqn, info);
 	

@@ -46,9 +46,10 @@ import com.telefonica.claudia.smi.TCloudConstants;
 import com.telefonica.claudia.smi.URICreation;
 
 public class OneVmUtilities {
-	
+
 	public static final String ASSIGNATION_SYMBOL = "=";
-	public static final String LINE_SEPARATOR = System.getProperty("line.separator");
+	public static final String LINE_SEPARATOR = System
+			.getProperty("line.separator");
 
 	public static final String ONE_VM_ID = "NAME";
 	public static final String ONE_VM_TYPE = "TYPE";
@@ -82,7 +83,6 @@ public class OneVmUtilities {
 	public static final String ONE_VM_DISK_PARAM_TYPE = "type";
 	public static final String ONE_VM_DISK_PARAM_DRIVER = "driver";
 
-
 	public static final String ONE_VM_NIC_COLLECTION = "NICS";
 	public static final String ONE_VM_NIC = "NIC";
 	public static final String ONE_VM_NIC_PARAM_IP = "ip";
@@ -98,8 +98,6 @@ public class OneVmUtilities {
 	public static final String ONE_NET_IP = "IP";
 	public static final String ONE_NET_MAC = "MAC";
 
-
-
 	public static final String ONE_DISK_ID = "ID";
 	public static final String ONE_DISK_NAME = "NAME";
 	public static final String ONE_DISK_URL = "URL";
@@ -107,7 +105,7 @@ public class OneVmUtilities {
 
 	public static final String ONE_OVF_URL = "OVF";
 	public static final String ONE_CONTEXT = "CONTEXT";
-	
+
 	public static final String ONE_VERSION = "ONEVERSION";
 
 	public static final String RESULT_NET_ID = "ID";
@@ -120,85 +118,89 @@ public class OneVmUtilities {
 	public static final String MULT_CONF_RIGHT_DELIMITER = "]";
 	public static final String MULT_CONF_SEPARATOR = ",";
 	public static final String QUOTE = "\"";
-	
-	
+
 	private static final int ResourceTypeCPU = 3;
 	private static final int ResourceTypeMEMORY = 4;
 	private static final int ResourceTypeNIC = 10;
 	private static final int ResourceTypeDISK = 17;
-	
-	
+
 	public static final String PROTOCOL = "http://";
-	
-	
-	private static org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger("com.telefonica.claudia.smi.provisioning.OneVmUtilities");
-	
+
+	private static org.apache.log4j.Logger log = org.apache.log4j.Logger
+			.getLogger("com.telefonica.claudia.smi.provisioning.OneVmUtilities");
+
 	private OneOperations operations;
-	
+
 	private String oneversion = "2.2";
-	
+
 	private String networkBridge = null;
-	
+
 	private String environmentRepositoryPath = null;
-	private String  oneSshKey = null;
-	private String  customizationPort = null;
-	private String  xendisk = null;
-	private String  arch = null;
-	private String  hypervisorInitrd = null;
-	private String  hypervisorKernel = null;
+	private String oneSshKey = null;
+	private String customizationPort = null;
+	private String xendisk = null;
+	private String arch = null;
+	private String hypervisorInitrd = null;
+	private String hypervisorKernel = null;
 	private String serverHost = null;
-	
-	//FALTA
-	
+
+	// FALTA
+
 	private String oneScriptPath = null;
-	
+
 	private static String eth0Dns = null;
 	private static String eth0Gateway = null;
 	private static String eth1Dns = null;
 	private static String eth1Gateway = null;
 	private static String netInitScript0 = null;
 	private static String netInitScript1 = null;
-	
-	
-	public OneVmUtilities (OneOperations operations, String oneversion, String networkBridge,
-			String environmentRepositoryPath ,String oneScriptPath, String  oneSshKey ,String  customizationPort, String hypervisorInitrd, String hypervisorKernel,
-			String xendisk, String arch, String serverHost, String netInitScript0, String netInitScript1
-	     )
-	{
+
+	public OneVmUtilities(OneOperations operations, String oneversion,
+			String networkBridge, String environmentRepositoryPath,
+			String oneScriptPath, String oneSshKey, String customizationPort,
+			String hypervisorInitrd, String hypervisorKernel, String xendisk,
+			String arch, String serverHost, String netInitScript0,
+			String netInitScript1) {
 		this.operations = operations;
-		this.oneversion=oneversion;
-		this.networkBridge=networkBridge;
+		this.oneversion = oneversion;
+		this.networkBridge = networkBridge;
 		this.environmentRepositoryPath = environmentRepositoryPath;
-		this.oneSshKey  =  oneSshKey ;
+		this.oneSshKey = oneSshKey;
 		this.customizationPort = customizationPort;
-		this.hypervisorInitrd=hypervisorInitrd;
-		this.hypervisorKernel=hypervisorKernel;
+		this.hypervisorInitrd = hypervisorInitrd;
+		this.hypervisorKernel = hypervisorKernel;
 		this.xendisk = xendisk;
 		this.arch = arch;
-		this.serverHost= serverHost;
-		this.netInitScript0= netInitScript0;
-		this.netInitScript1= netInitScript1;
-		this.oneScriptPath=oneScriptPath;
+		this.serverHost = serverHost;
+		this.netInitScript0 = netInitScript0;
+		this.netInitScript1 = netInitScript1;
+		this.oneScriptPath = oneScriptPath;
 	}
-	public String TCloud2ONEVM(String xml,
-			String veeFqn) throws Exception {
+
+	public String TCloud2ONEVM(String xml, String veeFqn) throws Exception {
 
 		try {
-			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+			DocumentBuilderFactory factory = DocumentBuilderFactory
+					.newInstance();
 			factory.setNamespaceAware(true);
 			DocumentBuilder builder = factory.newDocumentBuilder();
-			Document doc = builder.parse(new ByteArrayInputStream(xml.getBytes()));
+			Document doc = builder.parse(new ByteArrayInputStream(xml
+					.getBytes()));
 
-			if (!doc.getFirstChild().getNodeName().equals(TCloudConstants.TAG_INSTANTIATE_OVF)) {
-				log.error("Element <"+TCloudConstants.TAG_INSTANTIATE_OVF+"> not found.");
-				throw new Exception("Element <"+TCloudConstants.TAG_INSTANTIATE_OVF+"> not found.");
+			if (!doc.getFirstChild().getNodeName().equals(
+					TCloudConstants.TAG_INSTANTIATE_OVF)) {
+				log.error("Element <" + TCloudConstants.TAG_INSTANTIATE_OVF
+						+ "> not found.");
+				throw new Exception("Element <"
+						+ TCloudConstants.TAG_INSTANTIATE_OVF + "> not found.");
 			}
 
 			Element root = (Element) doc.getFirstChild();
 
 			String replicaName = root.getAttribute("name");
 
-			NodeList envelopeItems = doc.getElementsByTagNameNS("*", "Envelope");
+			NodeList envelopeItems = doc
+					.getElementsByTagNameNS("*", "Envelope");
 
 			if (envelopeItems.getLength() != 1) {
 				log.error("Envelope items not found.");
@@ -210,164 +212,234 @@ public class OneVmUtilities {
 
 			NodeList aspects = doc.getElementsByTagNameNS("*", "Aspect");
 
-			for (int i=0; i < aspects.getLength(); i++) {
+			for (int i = 0; i < aspects.getLength(); i++) {
 				Element aspect = (Element) aspects.item(i);
 
 				if (aspect.getAttribute("name").equals("IP Config")) {
 
-					NodeList properties = aspect.getElementsByTagNameNS("*", "Property");
+					NodeList properties = aspect.getElementsByTagNameNS("*",
+							"Property");
 
-					for (int j=0; j < properties.getLength(); j++) {
+					for (int j = 0; j < properties.getLength(); j++) {
 						Element property = (Element) properties.item(j);
 
-						NodeList keys = property.getElementsByTagNameNS("*", "Key");
-						NodeList values = property.getElementsByTagNameNS("*", "Value");
+						NodeList keys = property.getElementsByTagNameNS("*",
+								"Key");
+						NodeList values = property.getElementsByTagNameNS("*",
+								"Value");
 
-						if (keys.getLength() >0 && values.getLength()>0) {
-							ipOnNetworkMap.put(keys.item(0).getTextContent(), values.item(0).getTextContent());
+						if (keys.getLength() > 0 && values.getLength() > 0) {
+							ipOnNetworkMap.put(keys.item(0).getTextContent(),
+									values.item(0).getTextContent());
 						}
 					}
 				}
 			}
 
-			// Extract the ovf sections and pass them to the OVF manager to be processed.
+			// Extract the ovf sections and pass them to the OVF manager to be
+			// processed.
 			Document ovfDoc = builder.newDocument();
 			ovfDoc.appendChild(ovfDoc.importNode(envelopeItems.item(0), true));
 			OVFSerializer ovfSerializer = OVFSerializer.getInstance();
 			ovfSerializer.setValidateXML(false);
-			EnvelopeType envelope = ovfSerializer.readXMLEnvelope(new ByteArrayInputStream(DataTypesUtils.serializeXML(ovfDoc).getBytes()));
+			EnvelopeType envelope = ovfSerializer
+					.readXMLEnvelope(new ByteArrayInputStream(DataTypesUtils
+							.serializeXML(ovfDoc).getBytes()));
 
-			ContentType entityInstance = OVFEnvelopeUtils.getTopLevelVirtualSystemContent(envelope);
+			ContentType entityInstance = OVFEnvelopeUtils
+					.getTopLevelVirtualSystemContent(envelope);
 
 			if (entityInstance instanceof VirtualSystemType) {
 
 				VirtualSystemType vs = (VirtualSystemType) entityInstance;
 
-				VirtualHardwareSectionType vh = OVFEnvelopeUtils.getSection(vs, VirtualHardwareSectionType.class);
+				VirtualHardwareSectionType vh = OVFEnvelopeUtils.getSection(vs,
+						VirtualHardwareSectionType.class);
 				String virtualizationType = "kvm";
-				if (vh.getSystem()!= null)
-					virtualizationType = vh.getSystem().getVirtualSystemType().getValue();
+				if (vh.getSystem() != null)
+					virtualizationType = vh.getSystem().getVirtualSystemType()
+							.getValue();
 
-				
-				
 				ProductSectionType productSection = null;
 				String hostname = "";
 				String scriptListProp = "";
 				String netcontext = "";
 				String contextarget = "";
 				String scriptListTemplate = "";
-				
-				try
-				{
-				   productSection = OVFEnvelopeUtils.getSection(vs, ProductSectionType.class);
-				   hostname = this.getPropertyValue(productSection, "HOSTNAME");
-				   scriptListProp = this.getPropertyValue(productSection, "SCRIPT_LIST");
-				   netcontext=getNetContext(vh, veeFqn,xml, scriptListProp);
-					
-					
-				   
-				   if (scriptListProp!= null) {
-					   String[] scriptList = scriptListProp.split("/");
+				boolean bLvm = false;
 
-					for (String scrt: scriptList){
-
-						scriptListTemplate = scriptListTemplate + " "+oneScriptPath+"/"+scrt;
+				try {
+					productSection = OVFEnvelopeUtils.getSection(vs,
+							ProductSectionType.class);
+					hostname = this
+							.getPropertyValue(productSection, "HOSTNAME");
+					scriptListProp = this.getPropertyValue(productSection,
+							"SCRIPT_LIST");
+					if (this.getPropertyValue(productSection, "LVM") != null)
+					{
+					    System.out.println ("getting LVM property");
+						bLvm = true;
 					}
-					   }
+					netcontext = getNetContext(vh, veeFqn, xml, scriptListProp);
 
-					contextarget = this.getPropertyValue(productSection, "TARGET_CONF");
+					if (scriptListProp != null) {
+						String[] scriptList = scriptListProp.split("/");
+
+						for (String scrt : scriptList) {
+
+							scriptListTemplate = scriptListTemplate + " "
+									+ oneScriptPath + "/" + scrt;
+						}
+					}
+
+					contextarget = this.getPropertyValue(productSection,
+							"TARGET_CONF");
+				} catch (SectionNotPresentException e) {
+					log.info("No Product Section presented");
 				}
-				catch (SectionNotPresentException e)
-				{
-				  log.info("No Product Section presented");
-				}
 
-
-				StringBuffer allParametersString  = new StringBuffer();
+				StringBuffer allParametersString = new StringBuffer();
 
 				// Migrability ....
 
-				allParametersString.append(ONE_VM_NAME).append(ASSIGNATION_SYMBOL).append(replicaName).append(LINE_SEPARATOR);
-
+				allParametersString.append(ONE_VM_NAME).append(
+						ASSIGNATION_SYMBOL).append(replicaName).append(
+						LINE_SEPARATOR);
 
 				if (!virtualizationType.toLowerCase().equals("xenhvm"))
-					allParametersString.append("GRAPHICS").append(ASSIGNATION_SYMBOL).append("[type=\"vnc\",listen=\"0.0.0.0\"]").append(LINE_SEPARATOR);
-
+					allParametersString.append("GRAPHICS").append(
+							ASSIGNATION_SYMBOL).append(
+							"[type=\"vnc\",listen=\"0.0.0.0\"]").append(
+							LINE_SEPARATOR);
 
 				if (virtualizationType.toLowerCase().equals("kvm")) {
 
-					allParametersString.append("REQUIREMENTS").append(ASSIGNATION_SYMBOL).append("\"HYPERVISOR=\\\"kvm\\\"\"").append(LINE_SEPARATOR);
+					allParametersString.append("REQUIREMENTS").append(
+							ASSIGNATION_SYMBOL).append(
+							"\"HYPERVISOR=\\\"kvm\\\"\"")
+							.append(LINE_SEPARATOR);
 				} else if (virtualizationType.toLowerCase().equals("xenhvm")) {
-					allParametersString.append("REQUIREMENTS").append(ASSIGNATION_SYMBOL).append("\"HYPERVISOR=\\\"xen\\\"\"").append(LINE_SEPARATOR);
+					allParametersString.append("REQUIREMENTS").append(
+							ASSIGNATION_SYMBOL).append(
+							"\"HYPERVISOR=\\\"xen\\\"\"")
+							.append(LINE_SEPARATOR);
+				} else if (virtualizationType.toLowerCase().equals("xen")) {
+					allParametersString.append("REQUIREMENTS").append(
+							ASSIGNATION_SYMBOL).append(
+							"\"HYPERVISOR=\\\"xen\\\"\"")
+							.append(LINE_SEPARATOR);
 				}
-				else if (virtualizationType.toLowerCase().equals("xen")) {
-					allParametersString.append("REQUIREMENTS").append(ASSIGNATION_SYMBOL).append("\"HYPERVISOR=\\\"xen\\\"\"").append(LINE_SEPARATOR);
-				}
-				allParametersString.append(ONE_VM_OS).append(ASSIGNATION_SYMBOL).append(MULT_CONF_LEFT_DELIMITER);
 
+				if (!bLvm)
+					allParametersString.append(ONE_VM_OS).append(
+							ASSIGNATION_SYMBOL)
+							.append(MULT_CONF_LEFT_DELIMITER);
 
 				String diskRoot;
 				if (virtualizationType.toLowerCase().equals("kvm")) {
 					diskRoot = "h";
-					allParametersString.append(ONE_VM_OS_PARAM_BOOT).append(ASSIGNATION_SYMBOL).append("hd").append(MULT_CONF_SEPARATOR).append(LINE_SEPARATOR);
-				} 
-				else if (virtualizationType.toLowerCase().equals("xenhvm")) {
+					if (!bLvm)
+						allParametersString.append(ONE_VM_OS_PARAM_BOOT)
+								.append(ASSIGNATION_SYMBOL).append("hd")
+								.append(MULT_CONF_SEPARATOR).append(
+										LINE_SEPARATOR);
+				} else if (virtualizationType.toLowerCase().equals("xenhvm")) {
 					diskRoot = "h";
-					allParametersString.append(ONE_VM_OS_PARAM_KERNEL).append(ASSIGNATION_SYMBOL).append("/usr/lib/xen/boot/hvmloader").append(MULT_CONF_RIGHT_DELIMITER).append(LINE_SEPARATOR);
+					if (!bLvm)
+						allParametersString.append(ONE_VM_OS_PARAM_KERNEL)
+								.append(ASSIGNATION_SYMBOL).append(
+										"/usr/lib/xen/boot/hvmloader").append(
+										MULT_CONF_RIGHT_DELIMITER).append(
+										LINE_SEPARATOR);
 				}
 
 				else {
 					diskRoot = xendisk;
-					allParametersString.append(ONE_VM_OS_PARAM_INITRD).append(ASSIGNATION_SYMBOL).append(hypervisorInitrd).append(MULT_CONF_SEPARATOR).append(LINE_SEPARATOR);
-					allParametersString.append(ONE_VM_OS_PARAM_KERNEL).append(ASSIGNATION_SYMBOL).append(hypervisorKernel).append(MULT_CONF_SEPARATOR).append(LINE_SEPARATOR);
+					if (!bLvm)
+						allParametersString.append(ONE_VM_OS_PARAM_INITRD)
+								.append(ASSIGNATION_SYMBOL).append(
+										hypervisorInitrd).append(
+										MULT_CONF_SEPARATOR).append(
+										LINE_SEPARATOR);
+					if (!bLvm)
+						allParametersString.append(ONE_VM_OS_PARAM_KERNEL)
+								.append(ASSIGNATION_SYMBOL).append(
+										hypervisorKernel).append(
+										MULT_CONF_SEPARATOR).append(
+										LINE_SEPARATOR);
 				}
-				
-				
 
-				if(arch != null && arch.length()>0)
-					allParametersString.append("ARCH").append(ASSIGNATION_SYMBOL).append("\"").append(arch).append("\"").append(MULT_CONF_SEPARATOR).append(LINE_SEPARATOR);
+				if (arch != null && arch.length() > 0)
+					if (!bLvm)
+						allParametersString.append("ARCH").append(
+								ASSIGNATION_SYMBOL).append("\"").append(arch)
+								.append("\"").append(MULT_CONF_SEPARATOR)
+								.append(LINE_SEPARATOR);
 
 				if (!virtualizationType.toLowerCase().equals("xenhvm"))
-					allParametersString.append(ONE_VM_OS_PARAM_ROOT).append(ASSIGNATION_SYMBOL).append(diskRoot + "da1").append(MULT_CONF_RIGHT_DELIMITER).append(LINE_SEPARATOR);
+					if (!bLvm)
+						allParametersString.append(ONE_VM_OS_PARAM_ROOT)
+								.append(ASSIGNATION_SYMBOL).append(
+										diskRoot + "da1").append(
+										MULT_CONF_RIGHT_DELIMITER).append(
+										LINE_SEPARATOR);
 
+				allParametersString.append(ONE_CONTEXT).append(
+						ASSIGNATION_SYMBOL).append(MULT_CONF_LEFT_DELIMITER);
 
-				allParametersString.append(ONE_CONTEXT).append(ASSIGNATION_SYMBOL).append(MULT_CONF_LEFT_DELIMITER);
-
-				if(hostname != null && hostname.length()>0) {
-					allParametersString.append("hostname  = \""+hostname+"\"").append(MULT_CONF_SEPARATOR).append(LINE_SEPARATOR);
+				if (hostname != null && hostname.length() > 0) {
+					allParametersString.append(
+							"hostname  = \"" + hostname + "\"").append(
+							MULT_CONF_SEPARATOR).append(LINE_SEPARATOR);
 				}
-				if(netcontext != null && netcontext.length()>0) {
+				if (netcontext != null && netcontext.length() > 0) {
 					allParametersString.append(netcontext);
 				}
-				if (oneSshKey!=null && oneSshKey.length()>0)
-				allParametersString.append("public_key").append(ASSIGNATION_SYMBOL).append(oneSshKey).append(MULT_CONF_SEPARATOR).append(LINE_SEPARATOR);
-				allParametersString.append("CustomizationUrl").append(ASSIGNATION_SYMBOL).append("\"" + PROTOCOL + serverHost + ":" + customizationPort + "/"+ replicaName+ "\"").append(MULT_CONF_SEPARATOR).append(LINE_SEPARATOR);
+				if (oneSshKey != null && oneSshKey.length() > 0)
+					allParametersString.append("public_key").append(
+							ASSIGNATION_SYMBOL).append(oneSshKey).append(
+							MULT_CONF_SEPARATOR).append(LINE_SEPARATOR);
+				allParametersString.append("CustomizationUrl").append(
+						ASSIGNATION_SYMBOL).append(
+						"\"" + PROTOCOL + serverHost + ":" + customizationPort
+								+ "/" + replicaName + "\"").append(
+						MULT_CONF_SEPARATOR).append(LINE_SEPARATOR);
 
-			
-				  allParametersString.append("files").append(ASSIGNATION_SYMBOL).append("\"" + environmentRepositoryPath + "/"+ replicaName + "/ovf-env.xml" +scriptListTemplate+ "\"").append(MULT_CONF_SEPARATOR).append(LINE_SEPARATOR);
+				allParametersString.append("files").append(ASSIGNATION_SYMBOL)
+						.append(
+								"\"" + environmentRepositoryPath + "/"
+										+ replicaName + "/ovf-env.xml"
+										+ scriptListTemplate + "\"").append(
+								MULT_CONF_SEPARATOR).append(LINE_SEPARATOR);
 
-				if (contextarget!= null && contextarget.length()>0)
-					allParametersString.append("target").append(ASSIGNATION_SYMBOL).append("\"" + contextarget +"\"").append(MULT_CONF_RIGHT_DELIMITER).append(LINE_SEPARATOR);
+				if (contextarget != null && contextarget.length() > 0)
+					allParametersString.append("target").append(
+							ASSIGNATION_SYMBOL).append(
+							"\"" + contextarget + "\"").append(
+							MULT_CONF_RIGHT_DELIMITER).append(LINE_SEPARATOR);
 				else
-				    allParametersString.append("target").append(ASSIGNATION_SYMBOL).append("\"" + diskRoot + "dd"+ "\"").append(MULT_CONF_RIGHT_DELIMITER).append(LINE_SEPARATOR);
+					allParametersString.append("target").append(
+							ASSIGNATION_SYMBOL).append(
+							"\"" + diskRoot + "dd" + "\"").append(
+							MULT_CONF_RIGHT_DELIMITER).append(LINE_SEPARATOR);
 
-				
-				
-				
-				if (vh.getSystem() != null && vh.getSystem().getVirtualSystemType()!= null &&
-						vh.getSystem().getVirtualSystemType().getValue() != null &&
-						vh.getSystem().getVirtualSystemType().getValue().equals("vjsc"))
-				{
-					allParametersString.append("HYPERVISOR").append(ASSIGNATION_SYMBOL).append("VJSC").append(LINE_SEPARATOR);
+				if (vh.getSystem() != null
+						&& vh.getSystem().getVirtualSystemType() != null
+						&& vh.getSystem().getVirtualSystemType().getValue() != null
+						&& vh.getSystem().getVirtualSystemType().getValue()
+								.equals("vjsc")) {
+					allParametersString.append("HYPERVISOR").append(
+							ASSIGNATION_SYMBOL).append("VJSC").append(
+							LINE_SEPARATOR);
 				}
-
 
 				char sdaId = 'a';
 
 				List<RASDType> items = vh.getItem();
 				boolean ispaasaware = true;
-			
-				for (Iterator<RASDType> iteratorRASD = items.iterator(); iteratorRASD.hasNext();) {
+
+				for (Iterator<RASDType> iteratorRASD = items.iterator(); iteratorRASD
+						.hasNext();) {
 					RASDType item = (RASDType) iteratorRASD.next();
 
 					/* Get the resource type and process it accordingly */
@@ -375,16 +447,21 @@ public class OneVmUtilities {
 
 					int quantity = 1;
 					if (item.getVirtualQuantity() != null) {
-						quantity = item.getVirtualQuantity().getValue().intValue();
+						quantity = item.getVirtualQuantity().getValue()
+								.intValue();
 					}
 
 					switch (rsType) {
 					case ResourceTypeCPU:
 
-						//  for (int k = 0; k < quantity; k++) {
-						allParametersString.append(ONE_VM_CPU).append(ASSIGNATION_SYMBOL).append(quantity).append(LINE_SEPARATOR);
-						allParametersString.append(ONE_VM_VCPU).append(ASSIGNATION_SYMBOL).append(quantity).append(LINE_SEPARATOR);
-						//  }
+						// for (int k = 0; k < quantity; k++) {
+						allParametersString.append(ONE_VM_CPU).append(
+								ASSIGNATION_SYMBOL).append(quantity).append(
+								LINE_SEPARATOR);
+						allParametersString.append(ONE_VM_VCPU).append(
+								ASSIGNATION_SYMBOL).append(quantity).append(
+								LINE_SEPARATOR);
+						// }
 
 						break;
 
@@ -395,23 +472,30 @@ public class OneVmUtilities {
 						 * 'ovf://disk/<id>' where id is the ovf:diskId of some
 						 * <Disk>
 						 */
-						String hostRes = item.getHostResource().get(0).getValue();
+						String hostRes = item.getHostResource().get(0)
+								.getValue();
 						StringTokenizer st = new StringTokenizer(hostRes, "/");
-						
-						
+
 						/*
 						 * Only ovf:/<file|disk>/<n> format is valid, accodring
 						 * OVF spec
 						 */
 						if (st.countTokens() != 3) {
-							throw new IllegalArgumentException("malformed HostResource value (" + hostRes + ")");
+							throw new IllegalArgumentException(
+									"malformed HostResource value (" + hostRes
+											+ ")");
 						}
 						if (!(st.nextToken().equals("ovf:"))) {
-							throw new IllegalArgumentException("HostResource must start with ovf: (" + hostRes + ")");
+							throw new IllegalArgumentException(
+									"HostResource must start with ovf: ("
+											+ hostRes + ")");
 						}
 						String hostResType = st.nextToken();
-						if (!(hostResType.equals("disk") || hostResType.equals("file"))) {
-							throw new IllegalArgumentException("HostResource type must be either disk or file: (" + hostRes + ")");
+						if (!(hostResType.equals("disk") || hostResType
+								.equals("file"))) {
+							throw new IllegalArgumentException(
+									"HostResource type must be either disk or file: ("
+											+ hostRes + ")");
 						}
 						String hostResId = st.nextToken();
 
@@ -419,69 +503,76 @@ public class OneVmUtilities {
 						String capacity = null;
 						String format = null;
 						String target = null;
+						String diskId = null;
 						if (hostResType.equals("disk")) {
 							/* This type involves an indirection level */
 							DiskSectionType ds = null;
-							ds = OVFEnvelopeUtils.getSection(envelope, DiskSectionType.class);
+							ds = OVFEnvelopeUtils.getSection(envelope,
+									DiskSectionType.class);
 							List<VirtualDiskDescType> disks = ds.getDisk();
 
-							for (Iterator<VirtualDiskDescType> iteratorDk = disks.iterator(); iteratorDk.hasNext();) {
+							for (Iterator<VirtualDiskDescType> iteratorDk = disks
+									.iterator(); iteratorDk.hasNext();) {
 								VirtualDiskDescType disk = iteratorDk.next();
 
-								String diskId = disk.getDiskId();
+								 diskId = disk.getDiskId();
+								if (diskId.equals("ovfcontext"))
+									continue;
 								if (diskId.equals(hostResId)) {
 
 									fileRef = disk.getFileRef();
 									capacity = disk.getCapacity();
 									format = disk.getFormat();
-									Map<QName, String> attributesFile = disk.getOtherAttributes();
-									QName targetAtt = new QName("http://schemas.telefonica.com/claudia/ovf","target");
-									 target  = attributesFile.get(targetAtt);
+									Map<QName, String> attributesFile = disk
+											.getOtherAttributes();
+									QName targetAtt = new QName(
+											"http://schemas.telefonica.com/claudia/ovf",
+											"target");
+									target = attributesFile.get(targetAtt);
+									System.out.println ("fileref "+ fileRef );
 
 									if (fileRef == null) {
-										log.warn("file reference can not be found for disk: " + hostRes);
-										//ispaasaware = true;
-									}
-									else
-									{
+										log
+												.warn("file reference can not be found for disk: "
+														+ hostRes);
+										// ispaasaware = true;
+									} else {
 										ispaasaware = false;
 									}
-
 
 									break;
 								}
 							}
 						} else {
-							throw new IllegalArgumentException("File type not supported in Disk sections.");
+							throw new IllegalArgumentException(
+									"File type not supported in Disk sections.");
 						}
 
 						/* Throw exceptions in the case of missing information */
 						if (fileRef == null) {
-							log.warn("file reference can not be found for disk: " + hostRes);
+							log
+									.warn("file reference can not be found for disk: "
+											+ hostRes);
 						}
 
-
-						URL url = null;
+						String url = null;
 						String digest = null;
-					  	String driver = null;
+						String driver = null;
 
 						ReferencesType ref = envelope.getReferences();
 						List<FileType> files = ref.getFile();
 
-
-
-						for (Iterator<FileType> iteratorFl = files.iterator(); iteratorFl.hasNext();) {
+						for (Iterator<FileType> iteratorFl = files.iterator(); iteratorFl
+								.hasNext();) {
 							FileType fl = iteratorFl.next();
-							if (fileRef!=null)
-							{
+							System.out.println ("file type" + fl + " " + fileRef + " " + fl.getId());
+							if (fileRef != null) {
 
 								if (fl.getId().equals(fileRef)) {
-									try {
-										url = new URL(fl.getHref());
-									} catch (MalformedURLException e) {
-										throw new IllegalArgumentException("problems parsing disk href: " + e.getMessage());
-									}
+									url = fl.getHref();
 								}
+								else
+									continue;
 
 								/*
 								 * If capacity was not set using ovf:capacity in
@@ -493,161 +584,263 @@ public class OneVmUtilities {
 								}
 
 								/* Try to get the digest */
-								Map<QName, String> attributesFile = fl.getOtherAttributes();
-								QName digestAtt = new QName("http://schemas.telefonica.com/claudia/ovf","digest");
+								Map<QName, String> attributesFile = fl
+										.getOtherAttributes();
+								QName digestAtt = new QName(
+										"http://schemas.telefonica.com/claudia/ovf",
+										"digest");
 								digest = attributesFile.get(digestAtt);
 
-								Map<QName, String> attributesFile2 = fl.getOtherAttributes();
-								QName driverAtt = new QName("http://schemas.telefonica.com/claudia/ovf","driver");
+								Map<QName, String> attributesFile2 = fl
+										.getOtherAttributes();
+								QName driverAtt = new QName(
+										"http://schemas.telefonica.com/claudia/ovf",
+										"driver");
 								driver = attributesFile.get(driverAtt);
-
 
 								break;
 							}
 						}
 
 						/* Throw exceptions in the case of missing information */
-						if (capacity == null) {
-							throw new IllegalArgumentException("capacity can not be set for disk " + hostRes);
+						if ( capacity == null) {
+							log.warn (
+									"capacity can not be set for disk "
+											+ hostRes);
 						}
-						if (url == null && fileRef!=null) {
-							throw new IllegalArgumentException("url can not be set for disk " + hostRes);
+						if (url == null && fileRef != null) {
+							log.warn (
+									"url can not be set for disk " + hostRes);
 						}
 
 						if (digest == null) {
-							log.debug("md5sum digest was not found for disk " + hostRes);
+							log.debug("md5sum digest was not found for disk "
+									+ hostRes);
 						}
 
-
-
-						String urlDisk = null;
-
-						if (url != null)  
-						{
-							urlDisk = url.toString();
-
-							if (urlDisk.contains("file:/"))
-								urlDisk = urlDisk.replace("file:/", "file:///");
-						}
+						
+                  //      System.out.println ("url 1" + url);
+						String url2 = null;
+						if (url != null) {
 						
 
-						File filesystem = new File("/dev/" + diskRoot + "d" + sdaId);
-
-						allParametersString.append(ONE_VM_DISK).append(ASSIGNATION_SYMBOL).append(MULT_CONF_LEFT_DELIMITER);
-						if (urlDisk!= null)
-							allParametersString.append(ONE_VM_DISK_PARAM_IMAGE).append(ASSIGNATION_SYMBOL).append(urlDisk).append(MULT_CONF_SEPARATOR);
-
-						if (target != null && target.length()>0)
-						{
-							allParametersString.append(ONE_VM_DISK_PARAM_TARGET).append(ASSIGNATION_SYMBOL).append(target).append(MULT_CONF_SEPARATOR);
-						}
-						else
-						{
-						if (virtualizationType.toLowerCase().equals("kvm")) {
-							allParametersString.append(ONE_VM_DISK_PARAM_TARGET).append(ASSIGNATION_SYMBOL).append(diskRoot + "d" + sdaId).append(MULT_CONF_SEPARATOR);
-						}
-						else if (virtualizationType.toLowerCase().equals("xenhvm")){
-							allParametersString.append(ONE_VM_DISK_PARAM_TARGET).append(ASSIGNATION_SYMBOL).append(diskRoot + "d" + sdaId).append(MULT_CONF_SEPARATOR);
+							if (url.contains("file:/"))
+								url2 = url.replace("file:/", "file:///");
+							else if ( url.contains("pdisk://"))
+								url2 = url.replace("pdisk://", "pdisk:");
 							
+							else
+							{
+								URL urltemp = null;
+								try {
+									urltemp = new URL(url);
+								} catch (MalformedURLException e) {
+									throw new IllegalArgumentException(
+											"problems parsing disk href: "
+													+ e.getMessage());
+								}
+								url2 = urltemp.toString();
+							}
 						}
-						else
-							allParametersString.append(ONE_VM_DISK_PARAM_TARGET).append(ASSIGNATION_SYMBOL).append(filesystem.getAbsolutePath()).append(MULT_CONF_SEPARATOR);
-						}
-						if (format!=null)
+					//	System.out.println ("url 2" + url);
+
+						File filesystem = new File("/dev/" + diskRoot + "d"
+								+ sdaId);
+						
+						if (!diskId.equals("ovfcontext"))
 						{
 
-							if (format.equals("ext3"))
-							{
-								allParametersString.append(ONE_VM_DISK_PARAM_TYPE).append(ASSIGNATION_SYMBOL).append("fs").append(MULT_CONF_SEPARATOR); 
+						allParametersString.append(ONE_VM_DISK).append(
+								ASSIGNATION_SYMBOL).append(
+								MULT_CONF_LEFT_DELIMITER);
+						if (url2 != null)
+							allParametersString.append(ONE_VM_DISK_PARAM_IMAGE)
+									.append(ASSIGNATION_SYMBOL).append(url2)
+									.append(MULT_CONF_SEPARATOR);
+
+						if (target != null && target.length() > 0) {
+							allParametersString
+									.append(ONE_VM_DISK_PARAM_TARGET).append(
+											ASSIGNATION_SYMBOL).append(target)
+									.append(MULT_CONF_SEPARATOR);
+						} else {
+							if (virtualizationType.toLowerCase().equals("kvm")) {
+								allParametersString.append(
+										ONE_VM_DISK_PARAM_TARGET).append(
+										ASSIGNATION_SYMBOL).append(
+										diskRoot + "d" + sdaId).append(
+										MULT_CONF_SEPARATOR);
+							} else if (virtualizationType.toLowerCase().equals(
+									"xenhvm")) {
+								allParametersString.append(
+										ONE_VM_DISK_PARAM_TARGET).append(
+										ASSIGNATION_SYMBOL).append(
+										diskRoot + "d" + sdaId).append(
+										MULT_CONF_SEPARATOR);
+
+							} else
+								allParametersString.append(
+										ONE_VM_DISK_PARAM_TARGET).append(
+										ASSIGNATION_SYMBOL).append(
+										filesystem.getAbsolutePath()).append(
+										MULT_CONF_SEPARATOR);
+						}
+						if (format != null) {
+
+							if (format.equals("ext3")) {
+								allParametersString.append(
+										ONE_VM_DISK_PARAM_TYPE).append(
+										ASSIGNATION_SYMBOL).append("fs")
+										.append(MULT_CONF_SEPARATOR);
 							}
-							allParametersString.append(ONE_VM_DISK_PARAM_FORMAT).append(ASSIGNATION_SYMBOL).append(format).append(MULT_CONF_SEPARATOR);
+							allParametersString
+									.append(ONE_VM_DISK_PARAM_FORMAT).append(
+											ASSIGNATION_SYMBOL).append(format)
+									.append(MULT_CONF_SEPARATOR);
 						}
 						log.info("Driver " + driver);
-						if (driver!=null)
-							allParametersString.append(ONE_VM_DISK_PARAM_DRIVER).append(ASSIGNATION_SYMBOL).append(driver).append(MULT_CONF_SEPARATOR);
+						if (driver != null)
+							allParametersString
+									.append(ONE_VM_DISK_PARAM_DRIVER).append(
+											ASSIGNATION_SYMBOL).append(driver)
+									.append(MULT_CONF_SEPARATOR);
 
-
-
-
-						if (digest!=null)
-							allParametersString.append(ONE_VM_DISK_PARAM_DIGEST).append(ASSIGNATION_SYMBOL).append(digest).append(MULT_CONF_SEPARATOR);
-						allParametersString.append(ONE_VM_DISK_PARAM_SIZE).append(ASSIGNATION_SYMBOL).append(capacity);
-						allParametersString.append(MULT_CONF_RIGHT_DELIMITER).append(LINE_SEPARATOR);
-
+						if (digest != null)
+							allParametersString
+									.append(ONE_VM_DISK_PARAM_DIGEST).append(
+											ASSIGNATION_SYMBOL).append(digest)
+									.append(MULT_CONF_SEPARATOR);
+						allParametersString.append(ONE_VM_DISK_PARAM_SIZE)
+								.append(ASSIGNATION_SYMBOL).append(capacity);
+						allParametersString.append(MULT_CONF_RIGHT_DELIMITER)
+								.append(LINE_SEPARATOR);
+						}
 						sdaId++;
+						
 						break;
 
 					case ResourceTypeMEMORY:
-						allParametersString.append(ONE_VM_MEMORY).append(ASSIGNATION_SYMBOL).append(quantity).append(LINE_SEPARATOR);
+						allParametersString.append(ONE_VM_MEMORY).append(
+								ASSIGNATION_SYMBOL).append(quantity).append(
+								LINE_SEPARATOR);
 						break;
 
 					case ResourceTypeNIC:
-						String fqnNet = URICreation.getService(veeFqn) + ".networks." + item.getConnection().get(0).getValue();
-						log.info ("Generating tag for fqnNet " + fqnNet);
-						allParametersString.append(ONE_VM_NIC).append(ASSIGNATION_SYMBOL).append(MULT_CONF_LEFT_DELIMITER).append(LINE_SEPARATOR);
+						String fqnNet = URICreation.getService(veeFqn)
+								+ ".networks."
+								+ item.getConnection().get(0).getValue();
+						log.info("Generating tag for fqnNet " + fqnNet);
+						allParametersString.append(ONE_VM_NIC).append(
+								ASSIGNATION_SYMBOL).append(
+								MULT_CONF_LEFT_DELIMITER)
+								.append(LINE_SEPARATOR);
 
-						allParametersString.append(ONE_NET_BRIDGE).append(ASSIGNATION_SYMBOL).append(networkBridge).append(MULT_CONF_SEPARATOR).append(LINE_SEPARATOR);
-						if (oneversion.equals("3.0"))
-						{
-							
+						allParametersString.append(ONE_NET_BRIDGE).append(
+								ASSIGNATION_SYMBOL).append(networkBridge)
+								.append(MULT_CONF_SEPARATOR).append(
+										LINE_SEPARATOR);
+						if (oneversion.equals("3.0")) {
+
 							String idnet = null;
 							try {
-								idnet = operations.getOneNetworkId(item.getConnection().get(0).getValue());
-								log.info("Network information " + fqnNet + " " + idnet);
-								allParametersString.append("NETWORK_ID").append(ASSIGNATION_SYMBOL).append(idnet);
+								idnet = operations.getOneNetworkId(item
+										.getConnection().get(0).getValue());
+								log.info("Network information " + fqnNet + " "
+										+ idnet);
+								allParametersString.append("NETWORK_ID")
+										.append(ASSIGNATION_SYMBOL).append(
+												idnet);
 							} catch (IOException e) {
 								// TODO Auto-generated catch block
-								throw new IllegalArgumentException("Unknown network id");
+								throw new IllegalArgumentException(
+										"Unknown network id");
 							}
-						}
-						else if (fqnNet.indexOf("public")!=-1)
-						{
-							allParametersString.append(ONE_VM_NIC_PARAM_NETWORK).append(ASSIGNATION_SYMBOL).append("public");
-						}
-						else
-							//allParametersString.append(ONE_VM_NIC_PARAM_NETWORK).append(ASSIGNATION_SYMBOL).append(fqnNet);
-						    allParametersString.append(ONE_VM_NIC_PARAM_NETWORK).append(ASSIGNATION_SYMBOL).append(item.getConnection().get(0).getValue());
-						if (ipOnNetworkMap.get(fqnNet)!=null)
-							allParametersString.append(MULT_CONF_SEPARATOR).append(LINE_SEPARATOR).append(ONE_VM_NIC_PARAM_IP).append(ASSIGNATION_SYMBOL).append(ipOnNetworkMap.get(fqnNet)).append(LINE_SEPARATOR);
-						allParametersString.append(MULT_CONF_RIGHT_DELIMITER).append(LINE_SEPARATOR);
+						} else if (fqnNet.indexOf("public") != -1) {
+							allParametersString
+									.append(ONE_VM_NIC_PARAM_NETWORK).append(
+											ASSIGNATION_SYMBOL)
+									.append("public");
+						} else
+							// allParametersString.append(ONE_VM_NIC_PARAM_NETWORK).append(ASSIGNATION_SYMBOL).append(fqnNet);
+							allParametersString
+									.append(ONE_VM_NIC_PARAM_NETWORK).append(
+											ASSIGNATION_SYMBOL).append(
+											item.getConnection().get(0)
+													.getValue());
+						if (ipOnNetworkMap.get(fqnNet) != null)
+							allParametersString.append(MULT_CONF_SEPARATOR)
+									.append(LINE_SEPARATOR).append(
+											ONE_VM_NIC_PARAM_IP).append(
+											ASSIGNATION_SYMBOL).append(
+											ipOnNetworkMap.get(fqnNet)).append(
+											LINE_SEPARATOR);
+						allParametersString.append(MULT_CONF_RIGHT_DELIMITER)
+								.append(LINE_SEPARATOR);
 
 						break;
 					default:
-						throw new IllegalArgumentException("unknown hw type: " + rsType);
+						throw new IllegalArgumentException("unknown hw type: "
+								+ rsType);
 					}
 				}
 
-				if (ispaasaware)
-				{
-					allParametersString.append(ONE_VM_DISK).append(ASSIGNATION_SYMBOL).append(MULT_CONF_LEFT_DELIMITER);
-					allParametersString.append(ONE_VM_DISK_PARAM_IMAGE).append(ASSIGNATION_SYMBOL).append("http://appliances.stratuslab.eu/images/base/ubuntu-10.04-amd64-base/1.4/ubuntu-10.04-amd64-base-1.4.img.gz").append(MULT_CONF_SEPARATOR);
+				if (ispaasaware) {
+					allParametersString.append(ONE_VM_DISK).append(
+							ASSIGNATION_SYMBOL)
+							.append(MULT_CONF_LEFT_DELIMITER);
+					allParametersString
+							.append(ONE_VM_DISK_PARAM_IMAGE)
+							.append(ASSIGNATION_SYMBOL)
+							.append(
+									"http://appliances.stratuslab.eu/images/base/ubuntu-10.04-amd64-base/1.4/ubuntu-10.04-amd64-base-1.4.img.gz")
+							.append(MULT_CONF_SEPARATOR);
 
-					allParametersString.append(ONE_VM_DISK_PARAM_TARGET).append(ASSIGNATION_SYMBOL).append("sdc").append(MULT_CONF_SEPARATOR);
+					allParametersString.append(ONE_VM_DISK_PARAM_TARGET)
+							.append(ASSIGNATION_SYMBOL).append("sdc").append(
+									MULT_CONF_SEPARATOR);
 
-					allParametersString.append(ONE_VM_DISK_PARAM_SIZE).append(ASSIGNATION_SYMBOL).append(512);
-					allParametersString.append(MULT_CONF_RIGHT_DELIMITER).append(LINE_SEPARATOR);
+					allParametersString.append(ONE_VM_DISK_PARAM_SIZE).append(
+							ASSIGNATION_SYMBOL).append(512);
+					allParametersString.append(MULT_CONF_RIGHT_DELIMITER)
+							.append(LINE_SEPARATOR);
 				}
 
-				//allParametersString.append(LINE_SEPARATOR).append(DEBUGGING_CONSOLE).append(LINE_SEPARATOR);
+				// allParametersString.append(LINE_SEPARATOR).append(DEBUGGING_CONSOLE).append(LINE_SEPARATOR);
 
 				if (virtualizationType.toLowerCase().equals("xenhvm"))
-					allParametersString.append("RAW=[type=\"xen\",").append(LINE_SEPARATOR).append("data=\"builder = \\\"hvm\\\"").append(LINE_SEPARATOR)
-					.append("device_model = \\\"/usr/lib64/xen/bin/qemu-dm\\\"").append(LINE_SEPARATOR).append("pae = \\\"1\\\"").append(LINE_SEPARATOR)
-					.append("acpi = \\\"1\\\"").append(LINE_SEPARATOR).append("localtime = \\\"0\\\"").append(LINE_SEPARATOR).append("vnc = \\\"1\\\"\"]").append(LINE_SEPARATOR);
+					allParametersString
+							.append("RAW=[type=\"xen\",")
+							.append(LINE_SEPARATOR)
+							.append("data=\"builder = \\\"hvm\\\"")
+							.append(LINE_SEPARATOR)
+							.append(
+									"device_model = \\\"/usr/lib64/xen/bin/qemu-dm\\\"")
+							.append(LINE_SEPARATOR).append("pae = \\\"1\\\"")
+							.append(LINE_SEPARATOR).append("acpi = \\\"1\\\"")
+							.append(LINE_SEPARATOR).append(
+									"localtime = \\\"0\\\"").append(
+									LINE_SEPARATOR)
+							.append("vnc = \\\"1\\\"\"]")
+							.append(LINE_SEPARATOR);
 
-				log.debug("VM data sent:\n\n" + allParametersString.toString() + "\n\n");
-				System.out.println("VM data sent:\n\n" + allParametersString.toString() + "\n\n");
+				log.debug("VM data sent:\n\n" + allParametersString.toString()
+						+ "\n\n");
+				System.out.println("VM data sent:\n\n"
+						+ allParametersString.toString() + "\n\n");
 				return allParametersString.toString();
 
-
 			} else {
-				throw new IllegalArgumentException("OVF malformed. No VirtualSystemType found.");
+				throw new IllegalArgumentException(
+						"OVF malformed. No VirtualSystemType found.");
 			}
 
 		} catch (IOException e1) {
 
-			log.error("OVF of the virtual machine was not well formed or it contained some errors.");
-			throw new Exception("OVF of the virtual machine was not well formed or it contained some errors: " + e1.getMessage());
+			log
+					.error("OVF of the virtual machine was not well formed or it contained some errors.");
+			throw new Exception(
+					"OVF of the virtual machine was not well formed or it contained some errors: "
+							+ e1.getMessage());
 		} catch (ParserConfigurationException e) {
 			log.error("Error configuring parser: " + e.getMessage());
 			throw new Exception("Error configuring parser: " + e.getMessage());
@@ -657,21 +850,22 @@ public class OneVmUtilities {
 		} catch (Exception e) {
 			log.error("Error configuring a XML Builder.");
 			e.printStackTrace();
-			throw new Exception("Error configuring a XML Builder: " + e.getMessage());
+			throw new Exception("Error configuring a XML Builder: "
+					+ e.getMessage());
 		}
 	}
-	
-	protected static String getNetContext(VirtualHardwareSectionType vh, String veeFqn,String xml, String scriptListProp) throws Exception {
 
-		//	log.debug("PONG2 xml" +xml+ "\n");
+	protected static String getNetContext(VirtualHardwareSectionType vh,
+			String veeFqn, String xml, String scriptListProp) throws Exception {
 
-		StringBuffer allParametersString  = new StringBuffer();
+		// log.debug("PONG2 xml" +xml+ "\n");
 
-
+		StringBuffer allParametersString = new StringBuffer();
 
 		List<RASDType> items = vh.getItem();
-		int i=0;
-		for (Iterator<RASDType> iteratorRASD = items.iterator(); iteratorRASD.hasNext();) {
+		int i = 0;
+		for (Iterator<RASDType> iteratorRASD = items.iterator(); iteratorRASD
+				.hasNext();) {
 			RASDType item = (RASDType) iteratorRASD.next();
 
 			/* Get the resource type and process it accordingly */
@@ -687,164 +881,156 @@ public class OneVmUtilities {
 
 				try {
 
+					// log.debug("PONG eth0Dns" + eth0Dns + "\n");
+					// log.debug("PONG eth0Gateway" + eth0Gateway + "\n");
+					// log.debug("PONG eth1Dns" + eth1Dns + "\n");
+					// log.debug("PONG eth1Gateway" + eth1Gateway + "\n");
 
-					//					log.debug("PONG eth0Dns" + eth0Dns + "\n");
-					//					log.debug("PONG eth0Gateway" + eth0Gateway + "\n");
-					//					log.debug("PONG eth1Dns" + eth1Dns + "\n");
-					//					log.debug("PONG eth1Gateway" + eth1Gateway + "\n");
+					String fqnNet = URICreation.getService(veeFqn)
+							+ ".networks."
+							+ item.getConnection().get(0).getValue();
 
+					// allParametersString.append("ip_eth"+i).append(ASSIGNATION_SYMBOL).append("\"$NIC[IP, NETWORK=\\\""+fqnNet+"\\\"]\"").append(MULT_CONF_SEPARATOR).append(LINE_SEPARATOR);
+					allParametersString.append("ip_eth" + i).append(
+							ASSIGNATION_SYMBOL).append(
+							"\"$NIC[IP, NETWORK=\\\""
+									+ item.getConnection().get(0).getValue()
+									+ "\\\"]\"").append(MULT_CONF_SEPARATOR)
+							.append(LINE_SEPARATOR);
+					String dns = "";
+					String gateway = "";
 
-					String fqnNet = URICreation.getService(veeFqn) + ".networks." + item.getConnection().get(0).getValue();
-
-					//allParametersString.append("ip_eth"+i).append(ASSIGNATION_SYMBOL).append("\"$NIC[IP, NETWORK=\\\""+fqnNet+"\\\"]\"").append(MULT_CONF_SEPARATOR).append(LINE_SEPARATOR);
-					allParametersString.append("ip_eth"+i).append(ASSIGNATION_SYMBOL).append("\"$NIC[IP, NETWORK=\\\""+item.getConnection().get(0).getValue()+"\\\"]\"").append(MULT_CONF_SEPARATOR).append(LINE_SEPARATOR);
-					String dns="";
-					String gateway="";
-					
-					
-					if(i==0){
-						dns=eth0Dns;
-						gateway=eth0Gateway;
+					if (i == 0) {
+						dns = eth0Dns;
+						gateway = eth0Gateway;
 					}
-					if(i==1){
-						dns=eth1Dns;
-						gateway=eth1Gateway;
+					if (i == 1) {
+						dns = eth1Dns;
+						gateway = eth1Gateway;
 					}
-					
-					
-     
-					if(dns!=null &&dns.length()>0)
-					{
-						allParametersString.append("dns_eth"+i).append(ASSIGNATION_SYMBOL).append(dns).append(MULT_CONF_SEPARATOR).append(LINE_SEPARATOR);
+
+					if (dns != null && dns.length() > 0) {
+						allParametersString.append("dns_eth" + i).append(
+								ASSIGNATION_SYMBOL).append(dns).append(
+								MULT_CONF_SEPARATOR).append(LINE_SEPARATOR);
 					}
-					if(gateway != null && gateway.length()>0)
-					{
-						allParametersString.append("gateway_eth"+i).append(ASSIGNATION_SYMBOL).append(gateway).append(MULT_CONF_SEPARATOR).append(LINE_SEPARATOR);
+					if (gateway != null && gateway.length() > 0) {
+						allParametersString.append("gateway_eth" + i).append(
+								ASSIGNATION_SYMBOL).append(gateway).append(
+								MULT_CONF_SEPARATOR).append(LINE_SEPARATOR);
 					}
 
 					i++;
 
-
 				} catch (FactoryConfigurationError e) {
 					log.error("Error retrieving parser: " + e.getMessage());
-					throw new Exception("Error retrieving parser: " + e.getMessage());
+					throw new Exception("Error retrieving parser: "
+							+ e.getMessage());
 				} catch (Exception e) {
 					log.error("Error configuring a XML Builder.");
-					throw new Exception("Error configuring a XML Builder: " + e.getMessage());
+					throw new Exception("Error configuring a XML Builder: "
+							+ e.getMessage());
 				}
 
 				break;
 			default:
-				//throw new IllegalArgumentException("unknown hw type: " + rsType);
+				// throw new IllegalArgumentException("unknown hw type: " +
+				// rsType);
 			}
 
 		}
 
-		StringBuffer scriptexec=new StringBuffer();
+		StringBuffer scriptexec = new StringBuffer();
 		scriptexec.append("SCRIPT_EXEC=\"");
-		
-		/*if (getNetInitScript(scriptListProp))
-		{
-			if (i==1){
-				if(netInitScript0!= null && netInitScript0.length()>0) {
-					scriptexec.append(netInitScript0);	
-				}
-			}
-			if (i==2){
-				if(netInitScript1!= null && netInitScript1.length()>0) {
-					scriptexec.append(netInitScript1);	
-				}
-			}
-		}*/
-		
-		
-		
-		if (scriptListProp != null && scriptListProp.length()!=0)
-		{
+
+		/*
+		 * if (getNetInitScript(scriptListProp)) { if (i==1){
+		 * if(netInitScript0!= null && netInitScript0.length()>0) {
+		 * scriptexec.append(netInitScript0); } } if (i==2){ if(netInitScript1!=
+		 * null && netInitScript1.length()>0) {
+		 * scriptexec.append(netInitScript1); } } }
+		 */
+
+		if (scriptListProp != null && scriptListProp.length() != 0) {
 			String[] scriptList = scriptListProp.split("/");
 
+			System.out.println ("scriptList " + scriptList);
 			String scriptListTemplate = "";
 
-			for (String scrt: scriptList){
+			for (String scrt : scriptList) {
 
-				if (scrt.indexOf(".py")!=-1)
-				{
+				if (scrt.indexOf(".py") != -1) {
 					if (scrt.equals("OVFParser.py")) {
-						System.out.println ("python /mnt/stratuslab/"+scrt);
-						scriptexec.append("python /mnt/stratuslab/"+scrt+"; ");
-					}
-					else if (scrt.equals("restful-server.py")) {
-						System.out.println ("/etc/init.d/lb_server start");
+						System.out.println("python /mnt/stratuslab/" + scrt);
+						scriptexec.append("python /mnt/stratuslab/" + scrt
+								+ "; ");
+					} else if (scrt.equals("restful-server.py")) {
+						System.out.println("/etc/init.d/lb_server start");
 						scriptexec.append("/etc/init.d/lb_server start; ");
-					}
-					else if (scrt.equals("torqueProbe.py")) {
-						System.out.println ("/etc/init.d/probe start");
+					} else if (scrt.equals("torqueProbe.py")) {
+						System.out.println("/etc/init.d/probe start");
 						scriptexec.append("/etc/init.d/probe start; ");
 					}
-					/*else  {
-						System.out.println ("python /mnt/stratuslab/"+scrt);
-						scriptexec.append("python /mnt/stratuslab/"+scrt+"; ");
-					}*/
-				}
-				else if (scrt.indexOf(".sh")!=-1)
-				{
-					
-					scriptexec.append("/mnt/stratuslab/"+scrt +";");
+					else
+					{
+						System.out.println("python /mnt/stratuslab/" + scrt);
+						scriptexec.append("python /mnt/stratuslab/" + scrt
+								+ "; ");
+					}
+					/*
+					 * else { System.out.println
+					 * ("python /mnt/stratuslab/"+scrt);
+					 * scriptexec.append("python /mnt/stratuslab/"+scrt+"; "); }
+					 */
+				} else if (scrt.indexOf(".sh") != -1) {
+
+					scriptexec.append("/mnt/stratuslab/" + scrt + ";");
 
 				}
 			}
 		}
-		
-		if (scriptexec.length()>0){
-			scriptexec.append("\"").append(MULT_CONF_SEPARATOR).append(LINE_SEPARATOR);
-		}
-		else {
+
+		if (scriptexec.length() > 0) {
+			scriptexec.append("\"").append(MULT_CONF_SEPARATOR).append(
+					LINE_SEPARATOR);
+		} else {
 			scriptexec.append("");
 		}
 		allParametersString.append(scriptexec);
-		
+
 		return allParametersString.toString();
 
 	}
-	
-	
-	private String getPropertyValue (ProductSectionType productSection, String property)
-	{
-		String value = null;
-		try
-		{
-			Property prop = OVFProductUtils.getProperty(productSection, property);     			
-			if (prop.getValue().toString()!= null)
-				value =prop.getValue().toString();
 
-		}
-		catch (Exception e) 
-		{
-			
+	private String getPropertyValue(ProductSectionType productSection,
+			String property) {
+		String value = null;
+		try {
+			Property prop = OVFProductUtils.getProperty(productSection,
+					property);
+			if (prop.getValue().toString() != null)
+				value = prop.getValue().toString();
+
+		} catch (Exception e) {
+
 		}
 		return value;
 	}
-	
-	protected static boolean getNetInitScript (String scriptListProp)
-	{
 
-		if (scriptListProp== null)
+	protected static boolean getNetInitScript(String scriptListProp) {
+
+		if (scriptListProp == null)
 			return false;
 		String[] scriptList = scriptListProp.split("/");
-	
-		for (String scrt: scriptList){
 
-			if (scrt.indexOf("netinit")!=-1)
-			{
+		for (String scrt : scriptList) {
+
+			if (scrt.indexOf("netinit") != -1) {
 				return true;
 			}
 		}
 		return false;
-	
-	}
-	
 
-	
-	
+	}
 
 }

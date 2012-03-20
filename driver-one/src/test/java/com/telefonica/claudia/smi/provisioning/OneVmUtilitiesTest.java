@@ -50,7 +50,8 @@ public class OneVmUtilitiesTest {
 		
 		
 		
-		String pathxml = "src/test/resources/ovf.xml";
+		String pathxml = "src/test/resources/telefonica3.xml";
+		System.out.println (pathxml);
 		String xml = null;
 		try {
 			xml = readFileAsString(pathxml);

@@ -32,10 +32,17 @@ public class ONEUtilities {
           String vnet = tests.substring(tests.indexOf("<VNET>")+"<VNET>".length(),tests.indexOf("</VNET>"));
           tests = tests.substring (tests.indexOf("</VNET>")+ "</VNET>".length() );
       
-     
-          if (isFqnIncluded (vnet, fqn))
+         
+          if (fqn.contains("."))
+        	  fqn = fqn.substring(fqn.lastIndexOf("."),fqn.length());
+          
+          boolean included = isFqnIncluded (vnet, fqn);
+          
+          System.out.println ("Included  " + fqn + included);
+         
+          if (included)
           {
-    	    return obtainIdFromVnet (fqn, vnet);
+    	    return obtainIdFromVnet (vnet);
           }
 		}
 		while ((tests.indexOf("<VNET>")!=-1));
@@ -47,12 +54,17 @@ public class ONEUtilities {
 	
 	public boolean isFqnIncluded (String vnet, String fqn)
 	{
+		System.out.println ("vnet " + vnet +  " fqn + " +fqn);
+		if (fqn.contains("."))
+		{
+        	  fqn = fqn.substring(fqn.lastIndexOf(".")+1,fqn.length());
+		}
 		if (fqn.indexOf("public")!=-1)
 		{
 			if (vnet.indexOf("public")!= -1)
 				return true;
 		}
-		else if (vnet.indexOf(fqn)!= -1)
+		else if (vnet.indexOf(fqn)!=-1)
 			return true;
 		else
 			return false;
@@ -60,7 +72,7 @@ public class ONEUtilities {
 	     return false;
 	}
 	
-	public String obtainIdFromVnet (String fqn, String vnet)
+	public String obtainIdFromVnet ( String vnet)
 	{
 		
        String id = vnet.substring(vnet.indexOf("<ID>")+"<ID>".length(),vnet.indexOf("</ID>"));
