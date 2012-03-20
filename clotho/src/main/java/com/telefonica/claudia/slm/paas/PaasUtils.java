@@ -260,7 +260,8 @@ public class PaasUtils {
 					for (int z=0;z<values.getLength();z++)
 					{
 						
-						if (values.item(z).getNodeName().equals("IPv4Address")||values.item(z).getNodeName().equals("ns19:IPv4Address"))
+						if (values.item(z).getNodeName().equals("IPv4Address")||values.item(z).getNodeName().equals("ns19:IPv4Address")
+								||values.item(z).getNodeName().equals("ns17:IPv4Address"))
 						{
 							ip= values.item(z).getFirstChild().getNodeValue();
 

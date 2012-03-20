@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 
 import org.apache.log4j.Logger;
@@ -22,9 +23,15 @@ import org.dmtf.schemas.ovf.envelope._1.ContentType;
 import org.dmtf.schemas.ovf.envelope._1.DiskSectionType;
 import org.dmtf.schemas.ovf.envelope._1.EnvelopeType;
 import org.dmtf.schemas.ovf.envelope._1.FileType;
+import org.dmtf.schemas.ovf.envelope._1.ProductSectionType;
+import org.dmtf.schemas.ovf.envelope._1.RASDType;
 import org.dmtf.schemas.ovf.envelope._1.ReferencesType;
+import org.dmtf.schemas.ovf.envelope._1.VirtualDiskDescType;
+import org.dmtf.schemas.ovf.envelope._1.VirtualHardwareSectionType;
 import org.dmtf.schemas.ovf.envelope._1.VirtualSystemCollectionType;
 import org.dmtf.schemas.ovf.envelope._1.VirtualSystemType;
+import org.dmtf.schemas.wbem.wscim._1.cim_schema._2.cim_resourceallocationsettingdata.ResourceType;
+import org.dmtf.schemas.wbem.wscim._1.common.CimString;
 
 import com.abiquo.ovf.OVFEnvelopeUtils;
 import com.abiquo.ovf.OVFEnvironmentUtils;
@@ -39,6 +46,7 @@ import com.abiquo.ovf.exceptions.PoolNameNotFoundException;
 import com.abiquo.ovf.exceptions.PrecedentTierEntryPointNotFoundException;
 import com.abiquo.ovf.exceptions.SectionNotPresentException;
 import com.abiquo.ovf.exceptions.XMLException;
+import com.abiquo.ovf.section.OVFProductUtils;
 import com.abiquo.ovf.xml.OVFSerializer;
 import com.telefonica.claudia.slm.common.SMConfiguration;
 import com.telefonica.claudia.slm.deployment.ServiceApplication;
@@ -389,12 +397,22 @@ public class OVFContextualization {
 		
 		OVFSerializer ovfSerializer = OVFSerializer.getInstance();
 		String xmlvs = replica.getOvfRepresentation();
-		org.dmtf.schemas.ovf.envelope._1.ReferencesType diskSection = null;
+		org.dmtf.schemas.ovf.envelope._1.ReferencesType referenceSection = null;
+		org.dmtf.schemas.ovf.envelope._1.DiskSectionType diskSection = null;
+		VirtualSystemType vs = null;
+
+		VirtualSystemCollectionType topVsc = null;
 		EnvelopeType envelope = null;
 		try {
 			envelope = ovfSerializer.readXMLEnvelope(new ByteArrayInputStream(xmlvs.getBytes("UTF-8")));
-			diskSection = envelope.getReferences();
+			referenceSection = envelope.getReferences();
+			
+			diskSection = OVFEnvelopeUtils.getSection(envelope, DiskSectionType.class);
+			
+			
+			vs = (VirtualSystemType)OVFEnvelopeUtils.getTopLevelVirtualSystemContent(envelope);
 		
+			
 		//	vs = OVFEnvelopeUtils.getVirtualSystems ((VirtualSystemCollectionType)entityInstance);
 		} catch (UnsupportedEncodingException e2) {
 			// TODO Auto-generated catch block
@@ -402,15 +420,57 @@ public class OVFContextualization {
 		} catch (XMLException e2) {
 			// TODO Auto-generated catch block
 			e2.printStackTrace();
+		} catch (SectionNotPresentException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (InvalidSectionException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (EmptyEnvelopeException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		} 
 		
 		org.dmtf.schemas.ovf.envelope._1.FileType file = new FileType ();
 		
 		file.setHref(replica.getCustomizationFile());
 		file.setId("ovfcontext");
-		diskSection.getFile().add(file);
+		referenceSection.getFile().add(file);
+		VirtualDiskDescType disk = new VirtualDiskDescType();
+		String target = getPropertyFromVirtualSystem (vs,"TARGET_CONF" );
+		logger.info("target " + target);
+		disk.setTarget(target);
+		disk.setDiskId("ovfcontext");
+        disk.setCapacity("0");
+        disk.setFileRef("ovfcontext");
+		diskSection.getDisk().add(disk);
 		
-		
+		try {
+			VirtualHardwareSectionType vh = OVFEnvelopeUtils.getSection(vs, VirtualHardwareSectionType.class);
+			RASDType item = new RASDType ();
+			CimString elementName =  new CimString();
+			elementName.setValue("ovfcontext");
+			item.setElementName(elementName);
+			ResourceType type = new ResourceType();
+			type.setValue("17");
+			item.setResourceType(type);
+			CimString id = new CimString ();
+			id.setValue(""+17);
+			item.setInstanceID(id);
+			CimString hostresource =  new CimString();
+			hostresource.setValue("ovf://disk/ovfcontext");
+			item.getHostResource().add(hostresource);
+			vh.getItem().add(item);
+			
+			
+		} catch (SectionNotPresentException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		} catch (InvalidSectionException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+
 		
 		try {
 			return ovfSerializer.writeXML(envelope);
@@ -425,6 +485,26 @@ public class OVFContextualization {
 		
 		
 		
+	}
+	
+	private static String getPropertyFromVirtualSystem(VirtualSystemType virtualSystem, String property)
+	{
+		String propValue = null;
+
+		ProductSectionType productSection = null;
+		try
+		{
+			productSection = OVFEnvelopeUtils.getSection(virtualSystem, ProductSectionType.class);
+			org.dmtf.schemas.ovf.envelope._1.ProductSectionType.Property prop = OVFProductUtils.getProperty(productSection, property);
+			propValue = prop.getValue().toString();
+		}
+		catch (Exception e) 
+		{
+			//TODO throw PropertyNotFoundException
+			logger.error(e);
+		}
+
+		return propValue;
 	}
 	
 	

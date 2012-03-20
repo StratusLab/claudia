@@ -53,7 +53,9 @@ public class TestRubiUseCase {
 
 	//	String xmlFileName = "src/test/resources/rubisguille2.xml";
 		
-		String xmlFileName = "src/test/resources/fedora14monitv2.xml";
+	//	String xmlFileName = "src/test/resources/fedora14monitv2.xml";
+		
+		String xmlFileName = "src/test/resources/nubaCU5_3.xml";
 		
 		
 
@@ -73,6 +75,14 @@ public class TestRubiUseCase {
 			ServiceApplication sa = p.getServiceApplication();
 			RulesEngine rle = new RulesEngine ("");
 			fsm.rle = rle;
+			rle.sap=sa;
+			fsm.sap=sa;
+			
+			rle.claudiaRules2Drools();
+			
+			fsm.registerInDirectory ();
+			
+			
 			fsm.loadService(sa);
 			Iterator<VEE> vees = sa.getVEEs().iterator();
 			VEE master = vees.next();

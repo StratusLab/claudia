@@ -157,6 +157,14 @@ public class NUBAMonitoringClient extends MonitoringVMIHandler {
 
 	}
 	
+	public void setUpMonitoringReplicas (String fqn, String ip) throws AccessDeniedException,
+	CommunicationErrorException {
+
+		//setUpMonitoring(fqn, ip);
+
+        
+     }
+	
 	public void deleteSetupMonitoring(String fqn) throws AccessDeniedException,
 	CommunicationErrorException {
 

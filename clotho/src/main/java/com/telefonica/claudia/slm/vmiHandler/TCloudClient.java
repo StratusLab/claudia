@@ -769,7 +769,7 @@ public class TCloudClient implements VMIHandler {
     private boolean checkServiceDeployed (VEEReplica actualReplica) 
     {
     	
-    	Reference urlReplica = new Reference(serverURL + URICreation.getURIVDC(actualReplica.getFQN().toString())  + "/"+actualReplica.getVEE().getServiceApplication().getSerAppName());
+    	Reference urlReplica = new Reference(serverURL + URICreation.getURIVDC(actualReplica.getFQN().toString())  + "/vapp/"+actualReplica.getVEE().getServiceApplication().getSerAppName());
     	logger.info(urlReplica.toString());
     	// Create de DOM Representation for the replica
                // Call the server with the URI and the data
@@ -1208,7 +1208,8 @@ public class TCloudClient implements VMIHandler {
 
                 case 400:    // Bad Request
                 case 404:    // Not found
-                    throw new CommunicationErrorException(response.getStatus().getDescription(), new Exception(response.getStatus().getName()));
+                   // throw new CommunicationErrorException(response.getStatus().getDescription(), new Exception(response.getStatus().getName()));
+                	shutdownReplicaNuba (actualReplica);
 
                 case 501:
                 case 500:
@@ -1273,6 +1274,77 @@ public class TCloudClient implements VMIHandler {
                 Thread.sleep(POLLING_INTERVAL);
             } catch (InterruptedException e) {}
         }
+
+        return result;
+    }
+    
+    public Map<VEEReplica, VEEReplicaUpdateResult> shutdownReplicaNuba(VEEReplica actualReplica) throws CommunicationErrorException, AccessDeniedException {
+
+      
+        
+        Map<VEEReplica, VEEReplicaUpdateResult> result = new HashMap<VEEReplica, VEEReplicaUpdateResult>();
+
+        Map<VEEReplica, String> urlTasks = new HashMap<VEEReplica, String> ();
+
+      
+
+            // Compose the URL for the replica.
+            Reference urlReplica = new Reference(serverURL + URICreation.getURIVEE(actualReplica.getFQN().toString()));
+            logger.info("PONG urlReplica= "+ serverURL + URICreation.getURIVEEReplica(actualReplica.getFQN().toString()));
+
+            // Call the server with the URI and the data
+            Response response = client.delete(urlReplica);
+            logger.info("PONG response.getStatus().getCode() = "+ response.getStatus().getCode());
+
+            // Depending on the response code, return with an error, or wait for a response
+            switch (response.getStatus().getCode()) {
+
+                case 401:    // Unauthorized
+                case 403:    // Forbidden
+                    // Throw an Access Denied Exception
+                    throw new AccessDeniedException(response.getStatus().getDescription(), actualReplica, null);
+
+                case 400:    // Bad Request
+                case 404:    // Not found
+                    throw new CommunicationErrorException(response.getStatus().getDescription(), new Exception(response.getStatus().getName()));
+
+                case 501:
+                case 500:
+                    throw new CommunicationErrorException(response.getStatus().getDescription(), new Exception(response.getStatus().getName()));
+
+
+                case 202:
+                    // The VEE has been accepted to be deployed, but the response will be asynchronous.
+                    // Wait for the response actively.
+
+                case 201:
+
+                case 200:
+                    // The VirtualMachine has been started without errors. Parse the response and
+                    // get the task id.
+
+                    try {
+                        Document responseXml = response.getEntityAsDom().getDocument();
+                        
+                        System.out.println (responseXml);
+
+                        NodeList tasks = responseXml.getElementsByTagName(TCloudConstants.TAG_TASK);
+
+                        if (tasks.getLength() != 0 && ((Element)tasks.item(0)).getAttribute("href")!= null) {
+                            urlTasks.put(actualReplica, ((Element)tasks.item(0)).getAttribute("href"));
+                        } else {
+                            throw new CommunicationErrorException("Error retrieving task URL.", new Exception(response.getStatus().getName()));
+                        }
+
+                    } catch (IOException e) {
+                        throw new CommunicationErrorException(response.getStatus().getDescription(), new Exception(response.getStatus().getName()));
+                    } catch (Throwable e) {
+                        throw new CommunicationErrorException("Internal error while decoding the answer", e);
+                    }
+
+                    break;
+            }
+
 
         return result;
     }

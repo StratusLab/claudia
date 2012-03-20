@@ -143,6 +143,7 @@ public class Rule implements DirectoryEntry {
 	 */
 	public void configure(ServiceKPI kpi) {
 		this.kpi=kpi;
+		System.out.println ("configure " + kpi.getKPIName());
 		buffer = new double[(int) window];
 	}
 	
@@ -252,7 +253,9 @@ public class Rule implements DirectoryEntry {
 	}
 	
 	public void setKpi(ServiceKPI kpi) {
-		System.out.println ("Adding kpi " + kpi.getKPIName() + " " + this.getName());
+		System.out.println (" new set kpi " +
+				"" +
+				" " + kpi.getKPIName() + " " + this.getName());
 		this.kpi = kpi;
 	}
 

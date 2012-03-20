@@ -534,7 +534,7 @@ public class PersistenceClient
           int n = nthIndexOf(monitorfqn, '/', 12);
           String replica = monitorfqn.substring(m + 1, n);
           
-          kpiname = SITE_ROOT + ".customers." + customer
+          kpiname = SMConfiguration.getInstance().getSiteRoot()  + ".customers." + customer
           + ".services." + service + ".vees." + vee
           +  ".kpis." + measure;
         }

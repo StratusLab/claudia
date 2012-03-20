@@ -376,7 +376,7 @@ public class FSM extends Thread implements Serializable {
 	}
 
 	@SuppressWarnings("unchecked")
-	private void registerInDirectory() {
+	public void registerInDirectory() {
 
 		VEE vee;
 		Rule rule;
@@ -424,6 +424,7 @@ public class FSM extends Thread implements Serializable {
 				ReservoirDirectory.getInstance()
 				.registerObject(rule.getKpi().getFQN(), rule.getKpi());
 			
+			System.out.println (rule.getKPIName());
 		//	System.out.println ("Looking for " +new FQN(rule.getKPIName()) + " " +rule.getKpi().getFQN() + " " + rule.getKPIName());
 			rule.configure((ServiceKPI) ReservoirDirectory.getInstance()
 					.getObject(new FQN(rule.getKPIName())));
@@ -1763,14 +1764,16 @@ public class FSM extends Thread implements Serializable {
 		
 		while (it.hasNext()) {
 		  Map.Entry e = (Map.Entry)it.next();
-		  System.out.println("network name " + e.getKey() + " " + e.getValue());
-	
+		  logger.info ("network name " + e.getKey() + " " + e.getValue());
+		  
+		 
 		  for (NIC nic: rep.getNICs())
 		  {
-				System.out.println (" for networking ... " + nic.getNICConf().getNetwork().getName());
-				if (e.getKey().equals(nic.getNICConf().getNetwork().getName()))
+			  logger.info (" for networking ... " + e.getKey()+ " "+ nic.getNICConf().getNetwork().getName());
+				if (e.getKey().equals(nic.getNICConf().getNetwork().getName()) || 
+						(((String)e.getKey()).endsWith(nic.getNICConf().getNetwork().getName()) ==true))
 				{
-				    System.out.println ("Adding IP  " +  e.getValue() + " from network  " + e.getKey() + " for replica " + rep.getVEE().getVEEName()+rep.getId());
+				    logger.info ("Adding IP  " +  e.getValue() + " from network  " + e.getKey() + " for replica " + rep.getVEE().getVEEName()+ " " + rep.getId());
 					nic.addIPAddress((String)e.getValue());
 				}
 		  }

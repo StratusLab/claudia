@@ -67,6 +67,9 @@ public abstract class MonitoringVMIHandler {
 	
 	 public abstract void setUpMonitoring(String fqn, String ip) throws AccessDeniedException,
       CommunicationErrorException;
+	 
+	 public abstract void setUpMonitoringReplicas(String fqn, String ip) throws AccessDeniedException,
+     CommunicationErrorException;
 
 	 public abstract void deleteSetupMonitoring(String fqn) throws AccessDeniedException,
 		CommunicationErrorException ;

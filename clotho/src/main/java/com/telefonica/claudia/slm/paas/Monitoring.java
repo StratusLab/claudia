@@ -32,7 +32,21 @@ public class Monitoring {
 				MonitoringVMIHandler client  = (MonitoringVMIHandler) mon.getConstructor(String.class).newInstance(SMConfiguration.getInstance().getMonitoringUrl());
 				//MonitoringVMIHandler client = (MonitoringVMIHandler)classDriver;
 				//MonitoringClient client = new MonitoringClient (SMConfiguration.getInstance().getMonitoringUrl());
+				
+				// Monitoring the service
 				client.setUpMonitoring(sap.getFQN().toString(),getListIpsService(sap));
+				
+				
+				// Monitoring replicas
+				
+				for (VEE vee: sap.getVEEs())
+				{
+					for (VEEReplica replica: vee.getVEEReplicas())
+					{
+						client.setUpMonitoring(sap.getFQN().toString(),getListIpsService(sap));
+					}
+				}
+				
 				return true;
 			
 			} catch (Throwable e) {

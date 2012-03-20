@@ -179,6 +179,20 @@ public class MonitoringReportObtainKPI extends Thread {
 			SMConfiguration.getInstance().getSMIPort() + uriservice+"/monitor";
 		}
 		
+		reportLog.info("Waiting for 3 minutes to start");
+		 try{
+			   //do what you want to do before sleeping
+			   Thread.currentThread().sleep(400000);//sleep for 1000 ms
+			   //do what you want to do after sleeptig
+			 }
+			 catch(Exception ie){
+			 //If this thread was intrrupted by nother thread
+				 this.stop();
+				
+				 return;
+			 }
+			
+			 
 		boolean deploy = true;
 		reportLog.info ("starting thread");
 		int count = 0;

@@ -119,6 +119,17 @@ public class MonitoringClient extends MonitoringVMIHandler{
 
 	}
 	
+	public void setUpMonitoringReplicas (String fqn, String ip) throws AccessDeniedException,
+	CommunicationErrorException {
+
+		setUpMonitoring(fqn, ip);
+
+        
+     }
+
+
+
+	
 	public Document getMonitoringParams(String fqn) throws ParserConfigurationException
 	{
 		logger.info("Obtain XML for monitoring data for " +fqn);
