@@ -4,7 +4,7 @@
 
 	<groupId>eu.stratuslab.pkgs.claudia</groupId>
 	<artifactId>clotho-rpm</artifactId>
-	<version>0.1.14-SNAPSHOT</version>
+	<version>0.1.16-SNAPSHOT</version>
 	<name>Clotho RPM Packaging</name>
 
 <!-- Posible problema con hudson 
@@ -14,7 +14,7 @@
 	<parent>
 		<groupId>eu.stratuslab.pkgs.claudia</groupId>
 		<artifactId>claudia-parent</artifactId>
-		<version>1.14-SNAPSHOT</version>
+		<version>1.16-SNAPSHOT</version>
 	</parent>
 
 	<repositories>
@@ -30,7 +30,7 @@
 		<dependency>
 			<groupId>eu.stratuslab.pkgs.claudia</groupId>
 			<artifactId>clotho</artifactId>
-			<version>0.1.14-SNAPSHOT</version>
+			<version>0.1.16-SNAPSHOT</version>
 			<classifier>environment</classifier>
 			<type>zip</type>
 		</dependency>
