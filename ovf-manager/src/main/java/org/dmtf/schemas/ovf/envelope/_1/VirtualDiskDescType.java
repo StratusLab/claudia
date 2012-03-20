@@ -96,6 +96,8 @@ public class VirtualDiskDescType {
     protected Long populatedSize;
     @XmlAttribute(name = "parentRef", namespace = "http://schemas.dmtf.org/ovf/envelope/1")
     protected String parentRef;
+    @XmlAttribute(name = "target", namespace = "http://schemas.telefonica.com/claudia/ovf")
+    protected String target;
     @XmlAnyAttribute
     private Map<QName, String> otherAttributes = new HashMap<QName, String>();
 
@@ -251,6 +253,22 @@ public class VirtualDiskDescType {
      */
     public void setFormat(String value) {
         this.format = value;
+    }
+    
+    public String getTarget() {
+        return target;
+    }
+
+    /**
+     * Sets the value of the format property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setTarget(String value) {
+        this.target = value;
     }
 
     /**
