@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Context>
+
+ <Resource name="jdbc/placement" auth="Container" type="javax.sql.DataSource"
+    username="placement"
+    password="placementPass"
+    driverClassName="com.mysql.jdbc.Driver"
+    url="jdbc:mysql://localhost/placement"   
+    maxActive="20"/>
+     
+</Context>

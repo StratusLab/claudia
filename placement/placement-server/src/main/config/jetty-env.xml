@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<!DOCTYPE Configure PUBLIC "-//Jetty//Configure//EN" "http://www.eclipse.org/jetty/configure.dtd">
+ 
+ <Configure id="MiDatSource" class="org.eclipse.jetty.webapp.WebAppContext">
+<New class="org.eclipse.jetty.plus.jndi.Resource">
+    <Arg>jdbc/placement</Arg>
+    <Arg>
+     <New class="com.mysql.jdbc.jdbc2.optional.MysqlConnectionPoolDataSource">
+                 <Set name="Url">jdbc:mysql://localhost:3306/placement</Set>
+                 <Set name="User">placement</Set>
+                 <Set name="Password">placementPass</Set>
+     </New>
+    </Arg>
+   </New>
+</Configure>

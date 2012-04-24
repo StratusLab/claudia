@@ -1,0 +1,47 @@
+K 25
+svn:wc:ra_dav:version-url
+V 149
+/repositorio/boi/!svn/ver/22504/europ-iaas/federation/placement/trunk/placement-model/src/main/java/com/telefonica/euro_iaas/placement/model/provider
+END
+Location.java
+K 25
+svn:wc:ra_dav:version-url
+V 163
+/repositorio/boi/!svn/ver/21954/europ-iaas/federation/placement/trunk/placement-model/src/main/java/com/telefonica/euro_iaas/placement/model/provider/Location.java
+END
+CPUConf.java
+K 25
+svn:wc:ra_dav:version-url
+V 162
+/repositorio/boi/!svn/ver/22504/europ-iaas/federation/placement/trunk/placement-model/src/main/java/com/telefonica/euro_iaas/placement/model/provider/CPUConf.java
+END
+MemoryConf.java
+K 25
+svn:wc:ra_dav:version-url
+V 165
+/repositorio/boi/!svn/ver/21954/europ-iaas/federation/placement/trunk/placement-model/src/main/java/com/telefonica/euro_iaas/placement/model/provider/MemoryConf.java
+END
+NICConf.java
+K 25
+svn:wc:ra_dav:version-url
+V 162
+/repositorio/boi/!svn/ver/22504/europ-iaas/federation/placement/trunk/placement-model/src/main/java/com/telefonica/euro_iaas/placement/model/provider/NICConf.java
+END
+VEE.java
+K 25
+svn:wc:ra_dav:version-url
+V 158
+/repositorio/boi/!svn/ver/21954/europ-iaas/federation/placement/trunk/placement-model/src/main/java/com/telefonica/euro_iaas/placement/model/provider/VEE.java
+END
+DiskConf.java
+K 25
+svn:wc:ra_dav:version-url
+V 163
+/repositorio/boi/!svn/ver/22504/europ-iaas/federation/placement/trunk/placement-model/src/main/java/com/telefonica/euro_iaas/placement/model/provider/DiskConf.java
+END
+CloudProvider.java
+K 25
+svn:wc:ra_dav:version-url
+V 168
+/repositorio/boi/!svn/ver/22245/europ-iaas/federation/placement/trunk/placement-model/src/main/java/com/telefonica/euro_iaas/placement/model/provider/CloudProvider.java
+END

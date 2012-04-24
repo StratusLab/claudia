@@ -1,0 +1,47 @@
+K 25
+svn:wc:ra_dav:version-url
+V 103
+/repositorio/boi/!svn/ver/22289/europ-iaas/federation/placement/trunk/placement-core/src/main/resources
+END
+spring-core.xml
+K 25
+svn:wc:ra_dav:version-url
+V 119
+/repositorio/boi/!svn/ver/22163/europ-iaas/federation/placement/trunk/placement-core/src/main/resources/spring-core.xml
+END
+log4j.xml
+K 25
+svn:wc:ra_dav:version-url
+V 113
+/repositorio/boi/!svn/ver/21710/europ-iaas/federation/placement/trunk/placement-core/src/main/resources/log4j.xml
+END
+changeset.xml
+K 25
+svn:wc:ra_dav:version-url
+V 117
+/repositorio/boi/!svn/ver/22193/europ-iaas/federation/placement/trunk/placement-core/src/main/resources/changeset.xml
+END
+basic.drl
+K 25
+svn:wc:ra_dav:version-url
+V 113
+/repositorio/boi/!svn/ver/22289/europ-iaas/federation/placement/trunk/placement-core/src/main/resources/basic.drl
+END
+spring-drools.xml
+K 25
+svn:wc:ra_dav:version-url
+V 121
+/repositorio/boi/!svn/ver/22163/europ-iaas/federation/placement/trunk/placement-core/src/main/resources/spring-drools.xml
+END
+concrete.drl
+K 25
+svn:wc:ra_dav:version-url
+V 116
+/repositorio/boi/!svn/ver/22163/europ-iaas/federation/placement/trunk/placement-core/src/main/resources/concrete.drl
+END
+main.drl
+K 25
+svn:wc:ra_dav:version-url
+V 112
+/repositorio/boi/!svn/ver/22245/europ-iaas/federation/placement/trunk/placement-core/src/main/resources/main.drl
+END

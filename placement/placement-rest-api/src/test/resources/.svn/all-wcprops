@@ -1,0 +1,29 @@
+K 25
+svn:wc:ra_dav:version-url
+V 107
+/repositorio/boi/!svn/ver/22507/europ-iaas/federation/placement/trunk/placement-rest-api/src/test/resources
+END
+DemoService01.xml
+K 25
+svn:wc:ra_dav:version-url
+V 125
+/repositorio/boi/!svn/ver/22507/europ-iaas/federation/placement/trunk/placement-rest-api/src/test/resources/DemoService01.xml
+END
+DescriptorOVF.xml
+K 25
+svn:wc:ra_dav:version-url
+V 125
+/repositorio/boi/!svn/ver/22212/europ-iaas/federation/placement/trunk/placement-rest-api/src/test/resources/DescriptorOVF.xml
+END
+DescriptorOVFtest.xml
+K 25
+svn:wc:ra_dav:version-url
+V 129
+/repositorio/boi/!svn/ver/22212/europ-iaas/federation/placement/trunk/placement-rest-api/src/test/resources/DescriptorOVFtest.xml
+END
+restTemplateContext.xml
+K 25
+svn:wc:ra_dav:version-url
+V 131
+/repositorio/boi/!svn/ver/22212/europ-iaas/federation/placement/trunk/placement-rest-api/src/test/resources/restTemplateContext.xml
+END

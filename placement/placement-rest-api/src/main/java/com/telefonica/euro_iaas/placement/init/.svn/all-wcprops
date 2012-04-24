@@ -1,0 +1,17 @@
+K 25
+svn:wc:ra_dav:version-url
+V 142
+/repositorio/boi/!svn/ver/22504/europ-iaas/federation/placement/trunk/placement-rest-api/src/main/java/com/telefonica/euro_iaas/placement/init
+END
+InitDbBootstrap.java
+K 25
+svn:wc:ra_dav:version-url
+V 163
+/repositorio/boi/!svn/ver/22504/europ-iaas/federation/placement/trunk/placement-rest-api/src/main/java/com/telefonica/euro_iaas/placement/init/InitDbBootstrap.java
+END
+InitDbCloudProviders.java
+K 25
+svn:wc:ra_dav:version-url
+V 168
+/repositorio/boi/!svn/ver/22504/europ-iaas/federation/placement/trunk/placement-rest-api/src/main/java/com/telefonica/euro_iaas/placement/init/InitDbCloudProviders.java
+END

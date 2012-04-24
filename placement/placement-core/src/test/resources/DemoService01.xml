@@ -1,0 +1,206 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<InstantiateOvfParams name="DemoService01"
+	xmlns="http://schemas.telefonica.com/tcloud/1.0">
+	<Description>Ejemplo de servicio LAMP</Description>
+	<ns2:Envelope xmlns:ns2="http://schemas.dmtf.org/ovf/envelope/1"
+		xmlns:ns3="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_VirtualSystemSettingData"
+		xmlns:ns4="http://schemas.dmtf.org/wbem/wscim/1/common"
+		xmlns:ns5="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData"
+		xmlns:ns6="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_LogicalDevice"
+		xmlns:ns7="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_VirtualSystemManagementService"
+		xmlns:ns8="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_Network"
+		xmlns:ns9="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_Location"
+		xmlns:ns10="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_Organization"
+		xmlns:ns11="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_MetricService"
+		xmlns:ns12="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ApplicationSystem"
+		xmlns:ns13="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_InstalledProduct"
+		xmlns:ns14="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_Product"
+		xmlns:ns15="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_SoftwareFeature"
+		xmlns:ns16="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_SoftwareElement"
+		xmlns:ns17="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ProtocolEndpoint"
+		xmlns:ns18="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_DiskDrive"
+		xmlns:ns19="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_Memory"
+		xmlns:ns20="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_Processor"
+		xmlns:ns21="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ComputerSystem"
+		xmlns:ns22="http://schemas.telefonica.com/ovf-ext/exp" 
+		xmlns:ns23="http://schemas.telefonica.com/tcloud/1.0"
+		xmlns:ns24="http://schemas.telefonica.com/tcloud-ext/1.0"
+		xmlns:ns25="http://schemas.tcloud.telefonica.com/tcloud-mon/1.0">
+		<ns2:References>
+			<ns2:File ns2:href="http://84.21.173.57/centosminimal_hvmxen.img"
+				ns2:id="basedisk" />
+		</ns2:References>
+		<ns2:DiskSection>
+			<ns2:Disk ns2:capacity="100MB" ns2:diskId="home" />
+			<ns2:Disk ns2:capacity="256MB" ns2:diskId="swap" />
+		</ns2:DiskSection>
+		<ns2:NetworkSection />
+		<ns2:VirtualSystemCollection>
+			<ns2:StartupSection>
+				<ns2:Item ns2:id="vm01" ns2:order="4" />
+				<ns2:Item ns2:id="vm02" ns2:order="3" />
+			</ns2:StartupSection>
+
+			<ns2:VirtualSystem ns2:id="vm01">
+				<ns2:Info>VM description</ns2:Info>
+				<ns2:VirtualHardwareSection>
+					<ns2:Info>Virtual Hardware requirements</ns2:Info>
+					<ns2:System>
+						<ns3:ElementName>Virtual Hardware Family</ns3:ElementName>
+						<ns3:InstanceID>0</ns3:InstanceID>
+						<ns3:VirtualSystemType>xenhvm</ns3:VirtualSystemType>
+					</ns2:System>
+					<ns2:Item>
+						<ns5:AutomaticAllocation>true</ns5:AutomaticAllocation>
+						<ns5:ElementName>Hardisk 1</ns5:ElementName>
+						<ns5:HostResource>ovf:/disk/home</ns5:HostResource>
+						<ns5:InstanceID>0</ns5:InstanceID>
+						<ns5:ResourceType>17</ns5:ResourceType>
+					</ns2:Item>
+					<ns2:Item>
+						<ns5:AutomaticAllocation>true</ns5:AutomaticAllocation>
+						<ns5:ElementName>Hardisk 2</ns5:ElementName>
+						<ns5:HostResource>ovf:/disk/swap</ns5:HostResource>
+						<ns5:InstanceID>1</ns5:InstanceID>
+						<ns5:ResourceType>17</ns5:ResourceType>
+					</ns2:Item>
+					<ns2:Item>
+						<ns5:AllocationUnits>MegaBytes</ns5:AllocationUnits>
+						<ns5:Description>Memory Size</ns5:Description>
+						<ns5:ElementName>256 MB of Memory</ns5:ElementName>
+						<ns5:InstanceID>1</ns5:InstanceID>
+						<ns5:ResourceType>4</ns5:ResourceType>
+						<ns5:VirtualQuantity>256</ns5:VirtualQuantity>
+					</ns2:Item>
+					<ns2:Item>
+						<ns5:AutomaticAllocation>true</ns5:AutomaticAllocation>
+						<ns5:ElementName>Hardisk 3</ns5:ElementName>
+						<ns5:HostResource>ovf:/file/basedisk</ns5:HostResource>
+						<ns5:InstanceID>4</ns5:InstanceID>
+						<ns5:ResourceType>17</ns5:ResourceType>
+					</ns2:Item>
+					<ns2:Item>
+						<ns5:Description>Number of Virtual CPUs</ns5:Description>
+						<ns5:ElementName>8 virtual CPU</ns5:ElementName>
+						<ns5:InstanceID>0</ns5:InstanceID>
+						<ns5:ResourceType>3</ns5:ResourceType>
+						<ns5:VirtualQuantity>1</ns5:VirtualQuantity>
+					</ns2:Item>
+					<ns2:Item>
+						<ns5:AutomaticAllocation>true</ns5:AutomaticAllocation>
+						<ns5:Connection>Network 1</ns5:Connection>
+						<ns5:ElementName>Ethernet adapter on VM Network</ns5:ElementName>
+						<ns5:InstanceID>3</ns5:InstanceID>
+						<ns5:ResourceType>10</ns5:ResourceType>
+					</ns2:Item>
+				</ns2:VirtualHardwareSection>
+			</ns2:VirtualSystem>
+			<ns2:VirtualSystem ns2:id="vm02">
+				<ns2:Info>VM description</ns2:Info>
+				<ns2:VirtualHardwareSection>
+					<ns2:Info>Virtual Hardware requirements</ns2:Info>
+					<ns2:Item>
+						<ns5:AutomaticAllocation>true</ns5:AutomaticAllocation>
+						<ns5:ElementName>Hardisk 1</ns5:ElementName>
+						<ns5:HostResource>ovf:/disk/home</ns5:HostResource>
+						<ns5:InstanceID>0</ns5:InstanceID>
+						<ns5:ResourceType>17</ns5:ResourceType>
+					</ns2:Item>
+					<ns2:Item>
+						<ns5:AutomaticAllocation>true</ns5:AutomaticAllocation>
+						<ns5:ElementName>Hardisk 2</ns5:ElementName>
+						<ns5:HostResource>ovf:/disk/swap</ns5:HostResource>
+						<ns5:InstanceID>1</ns5:InstanceID>
+						<ns5:ResourceType>17</ns5:ResourceType>
+					</ns2:Item>
+					<ns2:Item>
+						<ns5:AllocationUnits>MegaBytes</ns5:AllocationUnits>
+						<ns5:Description>Memory Size</ns5:Description>
+						<ns5:ElementName>256 MB of Memory</ns5:ElementName>
+						<ns5:InstanceID>1</ns5:InstanceID>
+						<ns5:ResourceType>4</ns5:ResourceType>
+						<ns5:VirtualQuantity>256</ns5:VirtualQuantity>
+					</ns2:Item>
+					<ns2:Item>
+						<ns5:AutomaticAllocation>true</ns5:AutomaticAllocation>
+						<ns5:ElementName>Hardisk 3</ns5:ElementName>
+						<ns5:HostResource>ovf:/file/basedisk</ns5:HostResource>
+						<ns5:InstanceID>4</ns5:InstanceID>
+						<ns5:ResourceType>17</ns5:ResourceType>
+					</ns2:Item>
+					<ns2:Item>
+						<ns5:Description>Number of Virtual CPUs</ns5:Description>
+						<ns5:ElementName>8 virtual CPU</ns5:ElementName>
+						<ns5:InstanceID>0</ns5:InstanceID>
+						<ns5:ResourceType>3</ns5:ResourceType>
+						<ns5:VirtualQuantity>2</ns5:VirtualQuantity>
+					</ns2:Item>
+					<ns2:Item>
+						<ns5:AutomaticAllocation>true</ns5:AutomaticAllocation>
+						<ns5:Connection>Network 1</ns5:Connection>
+						<ns5:ElementName>Ethernet adapter on VM Network</ns5:ElementName>
+						<ns5:InstanceID>3</ns5:InstanceID>
+						<ns5:ResourceType>10</ns5:ResourceType>
+					</ns2:Item>
+					<ns2:Item>
+						<ns5:AutomaticAllocation>true</ns5:AutomaticAllocation>
+						<ns5:Connection>Network 2</ns5:Connection>
+						<ns5:ElementName>Ethernet adapter on VM Network</ns5:ElementName>
+						<ns5:InstanceID>3</ns5:InstanceID>
+						<ns5:ResourceType>10</ns5:ResourceType>
+					</ns2:Item>
+				</ns2:VirtualHardwareSection>
+			</ns2:VirtualSystem>
+			<!--
+				<ns2:VirtualSystem ns2:id="vm03"> <ns2:Info>VM
+				description</ns2:Info> <ns2:VirtualHardwareSection>
+				<ns2:Info>Virtual Hardware requirements</ns2:Info> <ns2:Item>
+				<ns5:AutomaticAllocation>true</ns5:AutomaticAllocation>
+				<ns5:ElementName>Hardisk 1</ns5:ElementName>
+				<ns5:HostResource>ovf:/disk/home</ns5:HostResource>
+				<ns5:InstanceID>0</ns5:InstanceID>
+				<ns5:ResourceType>17</ns5:ResourceType> </ns2:Item> <ns2:Item>
+				<ns5:AutomaticAllocation>true</ns5:AutomaticAllocation>
+				<ns5:ElementName>Hardisk 2</ns5:ElementName>
+				<ns5:HostResource>ovf:/disk/swap</ns5:HostResource>
+				<ns5:InstanceID>1</ns5:InstanceID>
+				<ns5:ResourceType>17</ns5:ResourceType> </ns2:Item> <ns2:Item>
+				<ns5:AllocationUnits>MegaBytes</ns5:AllocationUnits>
+				<ns5:Description>Memory Size</ns5:Description> <ns5:ElementName>512
+				MB of Memory</ns5:ElementName> <ns5:InstanceID>1</ns5:InstanceID>
+				<ns5:ResourceType>4</ns5:ResourceType>
+				<ns5:VirtualQuantity>512</ns5:VirtualQuantity> </ns2:Item>
+				<ns2:Item> <ns5:AutomaticAllocation>true</ns5:AutomaticAllocation>
+				<ns5:ElementName>Hardisk 3</ns5:ElementName>
+				<ns5:HostResource>ovf:/file/basedisk</ns5:HostResource>
+				<ns5:InstanceID>4</ns5:InstanceID>
+				<ns5:ResourceType>17</ns5:ResourceType> </ns2:Item> <ns2:Item>
+				<ns5:Description>Number of Virtual CPUs</ns5:Description>
+				<ns5:ElementName>8 virtual CPU</ns5:ElementName>
+				<ns5:InstanceID>0</ns5:InstanceID>
+				<ns5:ResourceType>3</ns5:ResourceType>
+				<ns5:VirtualQuantity>8</ns5:VirtualQuantity> </ns2:Item> <ns2:Item>
+				<ns5:AutomaticAllocation>true</ns5:AutomaticAllocation>
+				<ns5:Connection>Network 2</ns5:Connection> <ns5:ElementName>Ethernet
+				adapter on VM Network</ns5:ElementName>
+				<ns5:InstanceID>3</ns5:InstanceID>
+				<ns5:ResourceType>10</ns5:ResourceType> </ns2:Item>
+				</ns2:VirtualHardwareSection> </ns2:VirtualSystem>
+			-->
+		</ns2:VirtualSystemCollection>
+	</ns2:Envelope>
+	<InstantiationParams xmlns:ovf="http://schemas.dmtf.org/ovf/envelope/1">
+		<NetworkConfigSection>
+			<ovf:Info>Logical networks configuration</ovf:Info>
+
+			<NetworkConfig name="Network 1">
+				<NetworkAssociation name="bsc.vdc.test.net.net1"
+					href="http://localhost:8080/fco/api/org/bsc/vdc/test/net/net1" />
+			</NetworkConfig>
+			<NetworkConfig name="Network 2">
+				<NetworkAssociation name="bsc.vdc.test.net.net2"
+					href="http://localhost:8080/fco/api/org/bsc/vdc/test/net/net2" />
+			</NetworkConfig>
+		</NetworkConfigSection>
+	</InstantiationParams>
+</InstantiateOvfParams>

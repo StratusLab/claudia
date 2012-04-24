@@ -1,0 +1,165 @@
+#created on: 15-nov-2011
+package com.telefonica.euro_iaas.placement.core
+
+#list any import classes here.
+import com.telefonica.euro_iaas.placement.model.provider.CloudProvider;
+import com.telefonica.euro_iaas.placement.model.provider.Location;
+import com.telefonica.euro_iaas.placement.model.provider.VEE;
+
+import com.telefonica.euro_iaas.placement.model.application.VDC;
+import com.telefonica.euro_iaas.placement.model.application.ServiceApplication;
+import com.telefonica.euro_iaas.placement.model.application.VEERequired;
+
+import com.telefonica.euro_iaas.placement.model.VEEMapping;
+import com.telefonica.euro_iaas.placement.model.CloudProviderMapping;
+#declare any global variables here
+
+global java.util.logging.Logger LOGGER;
+
+
+
+rule "Create all the posibilities."
+	salience 10
+    when
+    	$veeProvider : VEE()
+    	$veeVDC : VEERequired()
+    then
+#insert one mapping that is valid (eligible). It will be discarded by next rules (if necessary)
+		VEEMapping mapping = new VEEMapping($veeProvider, $veeVDC);
+		insert( mapping );
+        LOGGER.info ("Inserted: " + mapping); 
+end
+
+
+
+rule "Filter by memory"
+	when
+		$mapping : VEEMapping($veeS : veeService ,$veeP : veeProvider )
+		VEERequired(this == $veeS, memoryConf > $veeP.memoryConf)
+	then
+		#modify ($mapping) { setValid(false) }
+		LOGGER.info ("Mapping deleted for memory: " + $mapping);
+		retract ($mapping)
+end
+
+rule "Warn about problems. VEE in no CP"
+	when
+		$veeService : VEERequired($sa : serviceApplication)
+		not VEEMapping(veeService == $veeService)
+	then
+		LOGGER.warning ("VEE: " + $veeService + " IS NOT QUALIFIED TO NOTHING");
+		LOGGER.warning ("SA: " + $sa + " IS NOT VALID");
+		drools.halt();
+end
+
+
+rule "Minimum Cost VEE Valid CloudProvider"
+	salience -10
+	no-loop true
+	when
+		$serviceApplication : ServiceApplication()
+		$cloudProvider : CloudProvider()
+		forall ( $veeS : VEERequired(serviceApplication == $serviceApplication)
+				 $veeP : VEE (cloudProvider == $cloudProvider )
+				 VEEMapping(veeService == $veeS, veeProvider == $veeP)
+				)
+		$bestMapping : VEEMapping($veeServiceBest : veeService, $veeProviderBest : veeProvider ,veeService.serviceApplication == $serviceApplication, veeProvider.cloudProvider == $cloudProvider, bestInCP == false)
+		not VEEMapping(veeService == $veeServiceBest, veeService.serviceApplication == $serviceApplication, veeProvider.cloudProvider == $cloudProvider , veeProvider.cost < $veeProviderBest.cost)
+	then
+		LOGGER.info ("BEST MAPPING for VEERequired: " + $veeServiceBest + " in CP: " +  $cloudProvider + ":"  + $bestMapping );
+		modify ($bestMapping) { setBestInCP(true) }
+end
+
+rule "Minimum Cost VEE Valid Global"
+	salience -10
+	no-loop true
+	when
+		$veeS : VEERequired($serviceApplication : serviceApplication)
+		$bestMapping : VEEMapping(veeService == $veeS, $veeP : veeProvider)
+		not VEEMapping(veeService == $veeS, veeProvider.cost < $veeP.cost )
+	then
+		modify ($bestMapping) { setBestGlobal(true) }
+end
+
+
+rule "Create CloudProvider Mappings"
+	salience -20
+	when
+		$serviceApplication : ServiceApplication()
+		$cloudProvider : CloudProvider()
+		forall ( $veeS : VEERequired(serviceApplication == $serviceApplication)
+				 $veeP : VEE (cloudProvider == $cloudProvider )
+				 VEEMapping(veeService == $veeS, veeProvider == $veeP )
+				)
+		$total : Number() from accumulate ( VEEMapping( veeService.serviceApplication == $serviceApplication, bestInCP == true, veeProvider.cloudProvider == $cloudProvider ,$cost : veeProvider.cost ), sum( $cost ) )
+	then
+		CloudProviderMapping cpm = new CloudProviderMapping();
+		cpm.setCloudProvider($cloudProvider);
+		cpm.setServiceApplication($serviceApplication);
+		cpm.setCost($total.intValue() );
+		insert (cpm);
+end
+
+
+
+rule "Valid Mappings"
+	salience -30
+	when	
+	 	$mapping : VEEMapping()
+	then
+		LOGGER.info ("VALID MAPPING: " + $mapping);
+end
+	
+rule "Valid CloudProvider"
+	salience -31
+	when
+		$serviceApplication : ServiceApplication()
+		$cloudProvider : CloudProvider()
+		forall ( $veeS : VEERequired(serviceApplication == $serviceApplication)
+				 $veeP : VEE (cloudProvider == $cloudProvider )
+				 VEEMapping(veeService == $veeS, veeProvider == $veeP )
+				)
+	then
+		LOGGER.info ("Cloudprovider " + $cloudProvider + " satisfies: " + $serviceApplication);
+end
+
+rule "Valid CloudProvider Cost"
+	salience -32
+	when
+		$serviceApplication : ServiceApplication()
+		$cloudProvider : CloudProvider()
+		forall ( $veeS : VEERequired(serviceApplication == $serviceApplication)
+				 $veeP : VEE (cloudProvider == $cloudProvider )
+				 VEEMapping(veeService == $veeS, veeProvider == $veeP )
+				)
+		$total : Number() from accumulate ( VEEMapping( veeService.serviceApplication == $serviceApplication, bestInCP == true, veeProvider.cloudProvider == $cloudProvider ,$cost : veeProvider.cost ), sum( $cost ) )
+	then
+		LOGGER.info ("TOTAL COST CLOUDPROVIDER: " + $cloudProvider + " TOTAL: " + $total);
+end
+
+rule "Best cost without CloudProvider"
+	salience -32
+	when
+		$serviceApplication : ServiceApplication()
+		$total : Number() from accumulate ( VEEMapping( veeService.serviceApplication == $serviceApplication, bestGlobal == true, $cost : veeProvider.cost ), sum( $cost ) )
+	then
+		LOGGER.info ("TOTAL COST WITHOUT CLOUDPROVIDER  TOTAL: " + $total);
+end	
+
+rule "VEEs not qualified"
+	when
+		$veeService : VEERequired($sa : serviceApplication)
+		not VEEMapping(veeService == $veeService)
+	then
+end
+
+query "Cheapest CloudProvider Total"
+	$cloudProviderMapping : CloudProviderMapping()
+	not CloudProviderMapping(cost < $cloudProviderMapping.cost)
+end
+
+query "Best VEE mappings for a CloudProvider"  (CloudProvider cp)
+	$bestMapping : VEEMapping($veeS : veeService, $veeP : veeProvider, veeProvider.cloudProvider == cp)
+	not VEEMapping(veeService == $veeS, veeProvider.cloudProvider == cp, veeProvider.cost < $veeP.cost)
+end
+

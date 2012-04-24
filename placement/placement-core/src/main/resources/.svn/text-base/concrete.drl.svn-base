@@ -1,0 +1,27 @@
+#created on: 15-nov-2011
+package com.telefonica.euro_iaas.placement.core
+
+#list any import classes here.
+import com.telefonica.euro_iaas.placement.model.provider.Location;
+import com.telefonica.euro_iaas.placement.model.provider.CloudProvider;
+import com.telefonica.euro_iaas.placement.model.provider.VEE;
+
+import com.telefonica.euro_iaas.placement.model.application.VDC;
+import com.telefonica.euro_iaas.placement.model.application.ServiceApplication;
+import com.telefonica.euro_iaas.placement.model.VEEMapping;
+#declare any global variables here
+
+global java.util.logging.Logger LOGGER;
+
+
+
+rule "User Telefonica valid locations."
+    when
+		$mapping : VEEMapping($vdc : veeService.serviceApplication.vDC ,$veeS : veeService ,$veeP : veeProvider, $cp : veeProvider.cloudProvider)
+		VDC(this == $vdc, name == "Telefonica")
+		CloudProvider (this == $cp, location == "Madrid")
+    then
+        LOGGER.info (" Mapping discarded for Telefónica" + $mapping);
+        retract ($mapping)
+end
+

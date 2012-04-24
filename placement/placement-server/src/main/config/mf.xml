@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<java version="1.6.0_24" class="java.beans.XMLDecoder">
+ <object id="CloudProvider0" class="com.telefonica.euro_iaas.placement.model.provider.CloudProvider">
+  <void property="name">
+   <string>EMOTIVE1</string>
+  </void>
+  <void property="uri">
+   <string>http://84.21.173.26:8080/DRP</string>
+  </void>
+  <void property="vees">
+   <object class="java.util.HashSet">
+    <void method="add">
+     <object id="VEE0" class="com.telefonica.euro_iaas.placement.model.provider.VEE">
+      <void property="cloudProvider">
+       <object idref="CloudProvider0"/>
+      </void>
+      <void property="cost">
+       <int>10</int>
+      </void>
+      <void property="memoryConf">
+       <object class="com.telefonica.euro_iaas.placement.model.provider.MemoryConf">
+        <void property="memoryUnit">
+         <object class="java.lang.Enum" method="valueOf">
+          <class>com.telefonica.euro_iaas.placement.model.provider.MemoryConf$MemoryUnit</class>
+          <string>GB</string>
+         </object>
+        </void>
+        <void property="quantity">
+         <int>128</int>
+        </void>
+       </object>
+      </void>
+      <void property="name">
+       <string>VEE1 EMOTIVE1</string>
+      </void>
+     </object>
+    </void>
+   </object>
+  </void>
+ </object>
+ <object idref="VEE0"/>
+ <object id="CloudProvider1" class="com.telefonica.euro_iaas.placement.model.provider.CloudProvider">
+  <void property="name">
+   <string>EMOTIVE2</string>
+  </void>
+  <void property="uri">
+   <string>http://84.21.173.27:8080/DRP</string>
+  </void>
+  <void property="vees">
+   <object class="java.util.HashSet">
+    <void method="add">
+     <object id="VEE1" class="com.telefonica.euro_iaas.placement.model.provider.VEE">
+      <void property="cloudProvider">
+       <object idref="CloudProvider1"/>
+      </void>
+      <void property="cost">
+       <int>20</int>
+      </void>
+      <void property="name">
+       <string>VEE1 EMOTIVE2</string>
+      </void>
+     </object>
+    </void>
+   </object>
+  </void>
+ </object>
+ <object idref="VEE1"/>
+ <object id="CloudProvider2" class="com.telefonica.euro_iaas.placement.model.provider.CloudProvider">
+  <void property="name">
+   <string>ONE</string>
+  </void>
+  <void property="uri">
+   <string>http://84.21.173.28:4567</string>
+  </void>
+  <void property="vees">
+   <object class="java.util.HashSet">
+    <void method="add">
+     <object id="VEE2" class="com.telefonica.euro_iaas.placement.model.provider.VEE">
+      <void property="cloudProvider">
+       <object idref="CloudProvider2"/>
+      </void>
+      <void property="cost">
+       <int>30</int>
+      </void>
+      <void property="name">
+       <string>VEE1 ONE</string>
+      </void>
+     </object>
+    </void>
+   </object>
+  </void>
+ </object>
+ <object idref="VEE2"/>
+</java>
