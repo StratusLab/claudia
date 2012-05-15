@@ -127,6 +127,18 @@ public class ONEUtilities {
 		DocumentBuilder builder = factory.newDocumentBuilder();
 		Document doc = builder.parse(new ByteArrayInputStream(xml.getBytes()));
 
+		NodeList remoteNIC = doc.getElementsByTagName("REMOTE_IP"); 
+		
+		if (remoteNIC == null || remoteNIC.getLength()==0)
+		{
+			System.out.println("Not remote IP");
+		}
+		else
+		{
+			String ip = remoteNIC.item(0).getTextContent();
+			map.put("public", ip);
+			return map;
+		}
 		NodeList nicList = doc.getElementsByTagName("NIC");
 		
 		for (int i = 0; i < nicList.getLength(); i++) 

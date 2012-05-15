@@ -2,6 +2,8 @@ package com.telefonica.claudia.smi.provisioning;
 
 import static org.junit.Assert.*;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -108,8 +110,18 @@ public class ONEUtilitiesTest {
 		"</VM_DIR><HID>2</HID><STIME>1319470267</STIME><ETIME>1319470277</ETIME><VMMMAD>vmm_kvm</VMMMAD><TMMAD>tm_ssh</TMMAD><PSTIME>1319470267</PSTIME><PETIME>1319470277</PETIME>" +
 		"<RSTIME>0</RSTIME><RETIME>0</RETIME><ESTIME>0</ESTIME><EETIME>0</EETIME><REASON>1</REASON></HISTORY></HISTORY_RECORDS></VM>";
 		
+		String result2 = null;
 		try {
-			HashMap map = util.getNetworksIp(result);
+			result2 = readFileAsString("./src/test/resources/remotevm");
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	   
+	    	
+		
+		try {
+			HashMap map = util.getNetworksIp(result2);
 			Iterator it = map.entrySet().iterator();
 			while (it.hasNext()) {
 			Map.Entry e = (Map.Entry)it.next();
@@ -126,5 +138,22 @@ public class ONEUtilitiesTest {
 			e.printStackTrace();
 		}
 	}
+	
+	private String readFileAsString(String filePath)
+    throws java.io.IOException{
+        StringBuffer fileData = new StringBuffer(1000);
+        BufferedReader reader = new BufferedReader(
+                new FileReader(filePath));
+        char[] buf = new char[1024];
+        int numRead=0;
+        while((numRead=reader.read(buf)) != -1){
+            String readData = String.valueOf(buf, 0, numRead);
+            fileData.append(readData);
+            buf = new char[1024];
+        }
+        reader.close();
+        return fileData.toString();
+    }
+
 
 }
