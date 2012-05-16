@@ -1,71 +1,38 @@
 package com.telefonica.claudia.slm.paas.vmiHandler;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.io.StringWriter;
-import java.net.URL;
-import java.net.URLClassLoader;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
-
-import javassist.convert.Transformer;
 
 import javax.xml.bind.Binder;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
-import javax.xml.bind.Unmarshaller;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
+
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.OutputKeys;
-import javax.xml.transform.TransformerConfigurationException;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
+
 
 import org.apache.log4j.Logger;
 import org.dmtf.schemas.ovf.envelope._1.EnvelopeType;
 import org.restlet.Client;
 import org.restlet.data.MediaType;
 import org.restlet.data.Protocol;
-import org.restlet.data.Reference;
+
 import org.restlet.data.Response;
 import org.restlet.resource.DomRepresentation;
-import org.restlet.resource.StringRepresentation;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 
-import org.w3c.dom.Document;
-import javax.xml.transform.*;
-import javax.xml.transform.dom.DOMSource;
 
 
 import com.abiquo.ovf.exceptions.XMLException;
 import com.abiquo.ovf.xml.OVFSerializer;
-import com.sun.jersey.api.client.WebResource;
-import com.telefonica.claudia.slm.common.SMConfiguration;
-import com.telefonica.claudia.slm.deployment.VEE;
-import com.telefonica.claudia.slm.deployment.paas.Product;
-import com.telefonica.claudia.slm.deployment.paas.Property;
-import com.telefonica.claudia.slm.paas.PaasUtils;
-import com.telefonica.claudia.slm.vmiHandler.TCloudClient;
+
 import com.telefonica.claudia.slm.vmiHandler.exceptions.AccessDeniedException;
 import com.telefonica.claudia.slm.vmiHandler.exceptions.CommunicationErrorException;
-import com.telefonica.claudia.smi.TCloudConstants;
-import com.telefonica.claudia.smi.URICreation;
+
 
 import com.telefonica.schemas.nuba_model.exp.CIMUserEntityType;
 
