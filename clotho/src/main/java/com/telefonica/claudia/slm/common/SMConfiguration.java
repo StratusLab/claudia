@@ -182,6 +182,8 @@ public class SMConfiguration extends Properties {
 	
 	private boolean nullvappvm = false;
 	
+	private String urlplacement = null;
+	
 	private SMConfiguration() throws Exception {		
 		readSMProperties();
 	}
@@ -414,7 +416,14 @@ public class SMConfiguration extends Properties {
 		logger.info("Property [" + "nullvappvm" + "] with value [" + nullvappvm + "]");
 		
 		
-		
+		try
+		{
+			urlplacement = readProperty("urlplacement");
+		}
+		catch (Throwable t) {
+			logger.error("Parsing error on " +  "urlplacement" + "property: not found");
+		}
+		logger.info("Property [" + "urlplacement" + "] with value [" + urlplacement + "]");
 		
 		
 	}
@@ -638,6 +647,10 @@ public void setSdcUrl(String sdcurl) {
 	
 	public void setNetworkId(int networkid) {
 		this.networkid= networkid;
+	}
+	
+	public String getUrlPlacement() {
+		return urlplacement;
 	}
 	
 	private String[] readCollectionInProperty(String propertyName) throws Exception {

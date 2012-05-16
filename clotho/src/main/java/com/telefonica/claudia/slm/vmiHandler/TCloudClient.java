@@ -89,6 +89,7 @@ public class TCloudClient implements VMIHandler {
     private static Logger logger = Logger.getLogger(TCloudClient.class);
 
     public TCloudClient(String url) {
+    	logger.info("Url for VIM manager " + url);
         if (url.charAt(url.length()-1) == '/')
             serverURL = url.substring(0, url.length()-1);
         else

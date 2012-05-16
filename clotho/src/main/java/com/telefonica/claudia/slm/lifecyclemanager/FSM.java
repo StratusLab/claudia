@@ -32,6 +32,7 @@ package com.telefonica.claudia.slm.lifecyclemanager;
 
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InvalidClassException;
@@ -48,10 +49,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.xml.bind.JAXBException;
+
 import org.apache.log4j.Logger;
 import org.dmtf.schemas.ovf.envelope._1.VirtualSystemType;
 import org.json.JSONException;
 
+import com.abiquo.ovf.exceptions.XMLException;
 import com.telefonica.claudia.configmanager.ConfiguratorFactory;
 import com.telefonica.claudia.configmanager.lb.LoadBalancerConfigurator;
 
@@ -82,6 +86,7 @@ import com.telefonica.claudia.slm.paas.OVFContextualization;
 import com.telefonica.claudia.slm.paas.PaasUtils;
 import com.telefonica.claudia.slm.paas.vmiHandler.MonitoringClient;
 import com.telefonica.claudia.slm.paas.vmiHandler.NUBAMonitoringClient;
+import com.telefonica.claudia.slm.paas.vmiHandler.PlacementModuleClient;
 import com.telefonica.claudia.slm.paas.vmiHandler.RECManagerClient;
 import com.telefonica.claudia.slm.report.MonitoringReportObtainKPI;
 import com.telefonica.claudia.slm.report.ReportKPIValue;
@@ -536,6 +541,24 @@ public class FSM extends Thread implements Serializable {
 		} catch (MalformedURLException ex) {
 
 		}
+		
+		String urlTCloud = oneURL.toString();
+		logger.info(" url ? " + SMConfiguration.getInstance().getUrlPlacement());
+		logger.info(" checking the service ");
+		if (SMConfiguration.getInstance().getUrlPlacement()!=null)
+		{
+			logger.info("Choosing the site to be deployed because of placement decisions");
+			PlacementModuleClient placement = new PlacementModuleClient (SMConfiguration.getInstance().getUrlPlacement());
+			try {
+				String url = placement.bestOVFProvider(sap.getXmlFile());
+				if (url != null)
+					urlTCloud = url;
+			
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} 
+		}
 
 		vmi = new TCloudClient(oneURL.toString());
 
@@ -605,7 +628,8 @@ public class FSM extends Thread implements Serializable {
 		} catch (MalformedURLException ex) {
 
 		}
-
+		
+		
 		vmi = new TCloudClient(oneURL.toString());
 
 		// Initialize the WASUP client.
