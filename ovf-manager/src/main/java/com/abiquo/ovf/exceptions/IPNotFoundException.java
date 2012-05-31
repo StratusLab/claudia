@@ -11,7 +11,7 @@
  *
  * The Original Code is available at https://svn.forge.morfeo-project.org/claudia
  *
- * The Initial Developer of the Original Code is Telefónica Investigación y Desarrollo S.A.U.,
+ * The Initial Developer of the Original Code is Telefonica Investigacion y Desarrollo S.A.U.,
  * (http://www.tid.es), Emilio Vargas 6, 28043 Madrid, Spain.
 .*
  * No portions of the Code have been created by third parties.

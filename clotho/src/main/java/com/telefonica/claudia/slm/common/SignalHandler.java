@@ -48,7 +48,7 @@ public class SignalHandler extends Observable implements sun.misc.SignalHandler 
 			logger.warn("Signal not supported or java signal handling not supported by the JavaVM. Shutdown should be forced. Data loses may occur.");
 			
 		} catch (Throwable t) {
-			logger.warn("Unexpected error registering signal handling. Current JavaVM versión may not support signal handling.");
+			logger.warn("Unexpected error registering signal handling. Current JavaVM version may not support signal handling.");
 		}
 	}
 	

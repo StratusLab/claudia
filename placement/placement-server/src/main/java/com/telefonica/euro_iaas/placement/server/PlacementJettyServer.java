@@ -79,7 +79,7 @@ public class PlacementJettyServer {
 	private String webAppHome="../placement-rest-api/target/placement-rest-api-0.0.1-SNAPSHOT";	
 		
 	/**
-	 * Metodo para leer un fichero de configuración para el PlacementJettyServer.
+	 * Metodo para leer un fichero de configuracion para el PlacementJettyServer.
 	 * 
 	 */
 	public void readResourceBundle() {

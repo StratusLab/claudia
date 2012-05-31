@@ -50,7 +50,7 @@ public class SMMonitoringNoJMSDriver implements MonitoringDriver {
 	private String namingFactory = null;
 	
 	//yo
-	//la url está bien escrita?
+	//la url esta bien escrita?
 	private final static String USER_PROPERTY = "monitoring.login";
 	private final static String PASSWORD_PROPERTY = "monitoring.password";	
 	private final static String URL_PROPERTY = "monitoring.uri";
@@ -98,7 +98,7 @@ public class SMMonitoringNoJMSDriver implements MonitoringDriver {
     	System.out.println("Connection data: URL " + url + " user " + username + " password " + password);
 		restClient = new TCloudMonitoringClient();
 		
-		//meter url, usuario y contraseña a mano
+		//meter url, usuario y contrasenya a mano
 		
 		db = new DriverClothoDbManager(url, false, username, password);
   

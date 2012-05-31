@@ -127,7 +127,7 @@ public class DeployPublicNet  {
 
 	/*	try {
 			Assert.assertTrue(response.getStatus().isSuccess());
-			System.out.println("Test pasado con éxito");
+			System.out.println("Test pasado con exito");
 		} catch (AssertionFailedError e) {
 			System.err.println("El test ha fallado");
 		}

@@ -17,7 +17,7 @@
  * All Rights Reserved.
  *
  * Contributor(s):
- *     Telefónica Investigación y Desarrollo S.A.U. (http://www.tid.es)
+ *     Telefonica Investigacion y Desarrollo S.A.U. (http://www.tid.es)
  *     Emilio Vargas 6, 28043 Madrid, Spain.
  *
  */

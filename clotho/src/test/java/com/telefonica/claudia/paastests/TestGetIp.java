@@ -82,7 +82,7 @@ public class TestGetIp {
 					
 					if (e.getKey().equals(nic.getNICConf().getNetwork().getName()))
 					{
-					    System.out.println ("Añadiendo ip .. " +  e.getValue());
+					    System.out.println ("Anyadiendo ip .. " +  e.getValue());
 						nic.addIPAddress((String)e.getValue());
 					}
 			    	

@@ -178,7 +178,7 @@ public class PersistenceClient {
                 }
             }
         } catch (Exception spe) {
-            // Algún tipo de error: fichero no accesible, formato de XML
+            // Algun tipo de error: fichero no accesible, formato de XML
             // incorrecto, etc.
         }
         return vdcs;
@@ -210,7 +210,7 @@ public class PersistenceClient {
                 }
             }
         } catch (Exception spe) {
-            // Algún tipo de error: fichero no accesible, formato de XML
+            // Algun tipo de error: fichero no accesible, formato de XML
             // incorrecto, etc.
         }
         return vapps;
@@ -241,7 +241,7 @@ public class PersistenceClient {
                 }
             }
         } catch (Exception spe) {
-            // Algún tipo de error: fichero no accesible, formato de XML
+            // Algun tipo de error: fichero no accesible, formato de XML
             // incorrecto, etc.
         }
         return vms;
@@ -279,7 +279,7 @@ public class PersistenceClient {
                 logger.info(" measure found " + name);
             }
         } catch (Exception spe) {
-            // Algún tipo de error: fichero no accesible, formato de XML
+            // Algun tipo de error: fichero no accesible, formato de XML
             // incorrecto, etc.
         }
 
@@ -397,7 +397,7 @@ public class PersistenceClient {
                 }
             }
         } catch (Exception spe) {
-            // Algún tipo de error: fichero no accesible, formato de XML
+            // Algun tipo de error: fichero no accesible, formato de XML
             // incorrecto, etc.
         }
     }

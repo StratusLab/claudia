@@ -7,16 +7,18 @@
 	<name>Placement - Top-Level</name>
 	<packaging>pom</packaging>
 	
+
+  <parent>
+    <groupId>eu.stratuslab.pkgs.claudia</groupId>
+    <artifactId>claudia-parent</artifactId>
+    <version>1.16-SNAPSHOT</version>
+  </parent>
+
+
 	<properties>
 			<spring.version>3.0.6.RELEASE</spring.version>
 	        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>		
 	</properties>
-
-	<scm>
-		<connection>scm:svn:https://barricada.hi.inet/repositorio/boi/europ-iaas/federation/placement/trunk/</connection>
-		<developerConnection>scm:svn:https://barricada.hi.inet/repositorio/boi/europ-iaas/federation/placement/trunk/</developerConnection>
-		<url>http://wikis.hi.inet/boi/index.php/Federation</url>
-	</scm>
 
 	<developers>
 		<developer>
@@ -43,7 +45,7 @@
 		<dependency>
 			<groupId>log4j</groupId>
 			<artifactId>log4j</artifactId>
-			<version>1.2.16</version>
+			<!-- <version>1.2.16</version> -->
 			<exclusions>
 				<exclusion>
 					<groupId>javax.mail</groupId>

@@ -1013,7 +1013,7 @@ public class FSM extends Thread implements Serializable {
                     }
                 }*/
 
-					// Parche para borrar la réplica del reservoir directory
+					// Parche para borrar la replica del reservoir directory
 
 					FQN fqn = removeCandidate.getFQN();
 					ReservoirDirectory.getInstance().removeMatchingNames(fqn);

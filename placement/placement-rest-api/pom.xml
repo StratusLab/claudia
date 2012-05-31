@@ -162,7 +162,7 @@
 				<version>1.1</version>
 				<configuration>
 					<fork>true</fork>
-					<port>8081</port>
+					<port>18081</port>
 				</configuration>
 				<executions>
 					<execution>

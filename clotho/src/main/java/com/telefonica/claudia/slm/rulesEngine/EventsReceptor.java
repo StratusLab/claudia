@@ -120,7 +120,7 @@ public class EventsReceptor implements BusListener {
     	}
     	
     	/**
-    	 * Rococó engineering: the inline implementation of this interface seems to have one
+    	 * Rococo engineering: the inline implementation of this interface seems to have one
     	 * and only purpose: code obfuscation. The interface itself it's not the most useful
     	 * software component...
     	 */
