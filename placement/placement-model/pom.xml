@@ -28,7 +28,7 @@
 
 	</dependencies>
 
-
+<!--
 	<repositories>
 		<repository>
 			<id>private releases</id>
@@ -37,7 +37,7 @@
 			<layout>default</layout>
 		</repository>
 	</repositories>
-
+-->
 	<build>
 		<plugins>
 			<!-- Force Java 6 -->

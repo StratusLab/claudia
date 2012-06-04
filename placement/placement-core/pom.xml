@@ -34,13 +34,13 @@
 			<name>maven_repo-releases</name>
 			<url>http://84.21.173.139:8080/artifactory/repo</url>
 		</repository>
-		 -->		
 		<repository>
 			<id>private releases</id>
 			<name>releases</name>
 			<url>http://ci-cpr01.hi.inet/nexus/content/repositories/releases/</url>
 			<layout>default</layout>
 		</repository>
+		 -->		
 	</repositories>
 
 
