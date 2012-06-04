@@ -39,6 +39,13 @@
 		<module>placement-server</module>
 		<module>placement-rpm</module>
 	</modules>
+	<repositories>
+		<repository> 
+			<id>jbossdeprecated</id>
+			<name>JBoss Deprecated</name>
+			<url>https://repository.jboss.org/nexus/content/repositories/deprecated</url>
+		</repository>
+	</repositories>
 
 	<dependencies>
 
