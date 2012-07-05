@@ -2,12 +2,12 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.telefonica.euro_iaas</groupId>
   <artifactId>placement-rpm</artifactId>
-  <version>0.0.2-SNAPSHOT</version>
+  <version>0.0.3-SNAPSHOT</version>
   <name>placement-rpm packaging module</name>
   <parent>
   	<groupId>com.telefonica.euro_iaas</groupId>
   	<artifactId>placement</artifactId>
-  	<version>0.0.2-SNAPSHOT</version>
+  	<version>0.0.3-SNAPSHOT</version>
   </parent>
   <packaging>rpm</packaging>
 
@@ -16,13 +16,13 @@
 	      <artifactId>placement-rest-api</artifactId>
 	      <groupId>com.telefonica.euro_iaas</groupId>
 	      <type>war</type>
-	      <version>0.0.2-SNAPSHOT</version>
+	      <version>0.0.3-SNAPSHOT</version>
 	</dependency>
 	<dependency> 
 	      <artifactId>placement-server</artifactId>
 	      <groupId>com.telefonica.euro_iaas</groupId>
 	      <type>jar</type>
-	      <version>0.0.2-SNAPSHOT</version>
+	      <version>0.0.3-SNAPSHOT</version>
 	</dependency>
   </dependencies>
   <build>
