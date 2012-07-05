@@ -2,13 +2,13 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.telefonica.euro_iaas</groupId>
   <artifactId>placement-server</artifactId>
-  <version>0.0.1</version>
+  <version>0.0.2-SNAPSHOT</version>
   <packaging>jar</packaging>
 
   <parent>
         <groupId>com.telefonica.euro_iaas</groupId>
         <artifactId>placement</artifactId>
-        <version>0.0.1</version>
+        <version>0.0.2-SNAPSHOT</version>
   </parent>
 
   <dependencies> 
