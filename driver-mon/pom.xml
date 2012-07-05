@@ -3,14 +3,14 @@
 
     <groupId>eu.stratuslab.pkgs.claudia</groupId>
     <artifactId>driver-mon</artifactId>
-    <version>0.1.18</version>
+    <version>0.1.19-SNAPSHOT</version>
     <name>OpenNebula driver for TCloud</name>
 
 
   <parent>
     <groupId>eu.stratuslab.pkgs.claudia</groupId>
     <artifactId>claudia-parent</artifactId>
-    <version>1.18</version> 
+    <version>1.19-SNAPSHOT</version> 
   </parent>
   
 	<dependencies>
