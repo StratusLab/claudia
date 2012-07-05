@@ -4,7 +4,7 @@
 	<parent>
 		<artifactId>placement</artifactId>
 		<groupId>com.telefonica.euro_iaas</groupId>
-		<version>0.0.3-SNAPSHOT</version>
+		<version>0.0.3</version>
 	</parent>
 	<artifactId>placement-rest-api</artifactId>
 	<packaging>war</packaging>
