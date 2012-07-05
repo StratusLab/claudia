@@ -498,11 +498,11 @@ grid certificates, and VOMS proxies.
 
   <!-- FOR STRATUSLAB COMPILATION -->
        <ciManagement.url>http://hudson.stratuslab.eu:8080/</ciManagement.url>
-       <scm.connection>scm:git:ssh://apache@code.stratuslab.eu/ext/git/claudia.git</scm.connection>
-       <scm.developerConnection>scm:git:ssh://apache@code.stratuslab.eu/ext/git/claudia.git</scm.developerConnection>
+       <scm.connection>scm:git:git@github.com/StratusLab/claudia.git</scm.connection>
+       <scm.developerConnection>scm:git:git@github.com/StratusLab/claudia.git</scm.developerConnection>
        <nexus.release.url>http://repo.stratuslab.eu:8081</nexus.release.url> 
-       <nexus.release.id>stratuslab.releases</nexus.release.id>
-       <nexus.snapshot.id>stratuslab.snapshots</nexus.snapshot.id>
+       <nexus.release.id>fedora-14-releases</nexus.release.id>
+       <nexus.snapshot.id>fedora-14-snapshots</nexus.snapshot.id>
       <!-- END STRATUSLAB COMPILATION -->
 
     <package.os>fc14</package.os>
