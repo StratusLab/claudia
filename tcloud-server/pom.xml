@@ -4,13 +4,13 @@
 
   <groupId>eu.stratuslab.pkgs.claudia</groupId>
   <artifactId>tcloud-server</artifactId>
-  <version>0.1.16-SNAPSHOT</version>
+  <version>0.1.17-SNAPSHOT</version>
   <name>TCloud Server</name>
 
   <parent>
     <groupId>eu.stratuslab.pkgs.claudia</groupId>
     <artifactId>claudia-parent</artifactId>
-    <version>1.16-SNAPSHOT</version>
+    <version>1.17-SNAPSHOT</version>
   </parent>
 
   <repositories>

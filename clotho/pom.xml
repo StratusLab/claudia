@@ -4,13 +4,13 @@
 
   <groupId>eu.stratuslab.pkgs.claudia</groupId>
   <artifactId>clotho</artifactId>
-  <version>0.1.16-SNAPSHOT</version>
+  <version>0.1.17-SNAPSHOT</version>
   <name>Clotho: Claudias Service Lifecycle Manager</name>
 
   <parent>
     <groupId>eu.stratuslab.pkgs.claudia</groupId>
     <artifactId>claudia-parent</artifactId>
-    <version>1.16-SNAPSHOT</version>
+    <version>1.17-SNAPSHOT</version>
   </parent>
 
   <dependencies>
@@ -93,7 +93,7 @@
     <dependency>
       <groupId>eu.stratuslab.pkgs.claudia</groupId>
 	  <artifactId>configurators</artifactId>
-	   <version>0.1.16-SNAPSHOT</version>
+	   <version>0.1.17-SNAPSHOT</version>
     </dependency>
     
     
