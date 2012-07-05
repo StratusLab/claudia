@@ -4,14 +4,14 @@
 
   <groupId>eu.stratuslab.pkgs.claudia</groupId>
     <artifactId>claudia-model</artifactId>
-    <version>0.1.16-SNAPSHOT</version>
+    <version>0.1.16</version>
     <name>Claudia model</name>
 
 
   <parent>
     <groupId>eu.stratuslab.pkgs.claudia</groupId>
     <artifactId>claudia-parent</artifactId>
-    <version>1.16-SNAPSHOT</version>
+    <version>1.16</version>
   </parent>
   
   <dependencies>
