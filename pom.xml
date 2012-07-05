@@ -501,8 +501,8 @@ grid certificates, and VOMS proxies.
        <scm.connection>scm:git:ssh://git@github.com/StratusLab/claudia.git</scm.connection>
        <scm.developerConnection>scm:git:ssh://git@github.com/StratusLab/claudia.git</scm.developerConnection>
        <nexus.release.url>http://repo.stratuslab.eu:8081</nexus.release.url> 
-       <nexus.release.id>fedora-14-releases</nexus.release.id>
-       <nexus.snapshot.id>fedora-14-snapshots</nexus.snapshot.id>
+       <nexus.release.id>StratusLabReleases</nexus.release.id>
+       <nexus.snapshot.id>StratusLabSnapshots</nexus.snapshot.id>
       <!-- END STRATUSLAB COMPILATION -->
 
     <package.os>fc14</package.os>
