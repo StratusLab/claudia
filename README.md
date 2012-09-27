@@ -1,6 +1,10 @@
 Claudia Service Manager
 =======================
 
+** THIS CODE IS NO LONGER SUPPORTED OR DISTRIBUTED AS PART OF THE
+STRATUSLAB PROJECT.  PLEASE CONTACT THE [4CaaSt
+PROJECT](http://4caast.morfeo-project.org/) **
+
 The Claudia service manager permits the definition of multi-machine
 services.  It allows those services to be deployed, controlled, and
 autoscaled.
